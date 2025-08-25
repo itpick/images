@@ -1,0 +1,227 @@
+name: Build and Push Container Images
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Daily build at 2 AM UTC to check for package updates
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Job to dynamically discover all images
+  discover-images:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Generate matrix from images folder
+        id: set-matrix
+        run: |
+          echo "Discovering images in images/ folder..."
+          matrix='{"include":['
+          first=true
+          for dir in images/*/; do
+            if [ -d "$dir" ] && [ -f "$dir/default.nix" ]; then
+              image_name=$(basename "$dir")
+              if [ "$first" = true ]; then
+                first=false
+              else
+                matrix="$matrix,"
+              fi
+              matrix="$matrix{\"name\":\"$image_name\",\"path\":\"$dir\"}"
+              echo "Found image: $image_name at $dir"
+            fi
+          done
+          matrix="$matrix]}"
+          echo "Generated matrix: $matrix"
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+
+  build-and-push:
+    needs: discover-images
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.discover-images.outputs.matrix) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        run: |
+          # Install Nix with retry logic
+          for i in {1..3}; do
+            echo "Attempt $i: Installing Nix..."
+            if curl --connect-timeout 30 --max-time 300 -fsSL https://nixos.org/nix/install | sh -s -- --daemon --yes; then
+              echo "Nix installation successful"
+              break
+            else
+              echo "Nix installation failed on attempt $i"
+              if [ $i -eq 3 ]; then
+                echo "All attempts failed, but continuing workflow"
+                exit 0  # Don't fail the entire workflow
+              fi
+              sleep 10
+            fi
+          done
+          
+          # Setup Nix if installation succeeded
+          if [ -f /nix/var/nix/profiles/default/etc/profile.d/nix.sh ]; then
+            . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+            mkdir -p ~/.config/nix
+            echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+            echo "access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}" >> ~/.config/nix/nix.conf
+            echo "/nix/var/nix/profiles/default/bin" >> $GITHUB_PATH
+            echo "NIX_INSTALLED=true" >> $GITHUB_ENV
+          else
+            echo "NIX_INSTALLED=false" >> $GITHUB_ENV
+          fi
+
+      - name: Setup Docker
+        run: |
+          # Docker is already available on Ubuntu runners, just start the daemon if needed
+          sudo systemctl start docker
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build nix2container image
+        if: env.NIX_INSTALLED == 'true'
+        continue-on-error: true
+        run: |
+          # Source Nix environment
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          # Build image using Nix flakes with explicit experimental features
+          nix --extra-experimental-features "nix-command flakes" build .#${{ matrix.name }} --print-build-logs
+          echo "BUILD_SUCCESS=true" >> $GITHUB_ENV
+
+      - name: Load and push image to registry
+        if: env.NIX_INSTALLED == 'true' && env.BUILD_SUCCESS == 'true'
+        continue-on-error: true
+        run: |
+          # Load the nix2container image and push directly to registry
+          if [ -f ./result ]; then
+            echo "Loading nix2container image..."
+            # Check what nix2container actually created
+            ls -la ./result* || true
+            
+            # The result is a JSON file, we need to load it using Docker
+            echo "Reading nix2container JSON manifest..."
+            cat ./result | head -20
+            
+            # Use nix2container's copyTo function or load the JSON directly
+            # Source Nix environment first
+            . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+            
+            # Load using nix2container copyTo function
+            echo "Loading image using nix2container..."
+            nix --extra-experimental-features "nix-command flakes" run .#${{ matrix.name }}.copyTo -- docker-daemon:${{ matrix.name }}:latest
+            
+            # Get the loaded image details
+            echo "=== Available Docker images ==="
+            docker images
+            
+            # Find the most recently created image (should be ours)
+            IMAGE_ID=$(docker images --format "{{.ID}}" | head -1)
+            if [ -z "$IMAGE_ID" ]; then
+              echo "Error: No image found after loading"
+              exit 1
+            fi
+            echo "Found image ID: $IMAGE_ID"
+            
+            # Generate the target registry URL
+            REGISTRY_URL="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.name }}"
+            
+            # Tag with different versions
+            docker tag "$IMAGE_ID" "${REGISTRY_URL}:latest"
+            docker tag "$IMAGE_ID" "${REGISTRY_URL}:${{ github.sha }}"
+            if [ "${{ github.ref_name }}" != "main" ]; then
+              docker tag "$IMAGE_ID" "${REGISTRY_URL}:${{ github.ref_name }}"
+            fi
+            
+            # Push all tags
+            echo "Pushing to registry..."
+            docker push "${REGISTRY_URL}:latest"
+            docker push "${REGISTRY_URL}:${{ github.sha }}"
+            if [ "${{ github.ref_name }}" != "main" ]; then
+              docker push "${REGISTRY_URL}:${{ github.ref_name }}"
+            fi
+            
+            echo "✅ Successfully pushed ${{ matrix.name }} to registry"
+          else
+            echo "Error: Could not find nix2container result file"
+            exit 1
+          fi
+
+      - name: Build Summary
+        if: always()
+        run: |
+          echo "=== Build Summary for ${{ matrix.name }} ==="
+          if [ "$NIX_INSTALLED" = "true" ]; then
+            echo "✅ Nix installation: SUCCESS"
+          else
+            echo "❌ Nix installation: FAILED"
+          fi
+          
+          if [ "$BUILD_SUCCESS" = "true" ]; then
+            echo "✅ Container build: SUCCESS"
+          elif [ "$NIX_INSTALLED" = "true" ]; then
+            echo "❌ Container build: FAILED"
+          else
+            echo "⏭️ Container build: SKIPPED (Nix not available)"
+          fi
+
+  # TODO: Implement smart daily build pipeline
+  check-package-updates:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    steps:
+      - name: Placeholder for package update detection
+        run: |
+          echo "TODO: Implement package update detection logic"
+          echo "This job should:"
+          echo "  - Check if any packages in flake.lock have updates"
+          echo "  - Compare current package versions with previous build"
+          echo "  - Only trigger builds if packages have changed"
+          echo "  - Store package fingerprints for comparison"
+
+  # TODO: Add security scanning jobs
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: always() && needs.build-and-push.result == 'success'
+    steps:
+      - name: Placeholder for security scanning
+        run: |
+          echo "TODO: Implement security scanning with:"
+          echo "  - Grype for vulnerability scanning"
+          echo "  - Syft for SBOM generation" 
+          echo "  - Trivy for additional security checks"
+          echo "  - Upload SBOM artifacts to GitHub"
+          echo "  - Fail builds on critical vulnerabilities"
+
+  # TODO: Add licensing labels
+    # echo "TODO: Implement licensing label addition with:"
+    # echo "  - Check for a LICENSE file in the repository"
+    # echo "  - Determine the license type (e.g., MIT, Apache 2.0)"
+    # echo "  - Add the appropriate license label to the GitHub repository"
