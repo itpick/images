@@ -32,6 +32,13 @@ nix2container.buildImage {
     ];
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "PHP programming language";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.php.version;
+      "io.nix-containers.image.upstream" = "https://www.php.net/";
+      "io.nix-containers.image.category" = "runtime";
+      "io.nix-containers.image.aliases" = "php,scripting,web-dev";
     };
   };
 }

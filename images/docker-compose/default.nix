@@ -27,6 +27,14 @@ nix2container.buildImage {
     Env = base.defaultEnv ++ nonRoot.userEnv ++ [
       "PATH=${lib.makeBinPath docker_composePackages}"
     ];
-    Labels = base.defaultLabels;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.description" = "Docker Compose for multi-container applications";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "io.nix-containers.image.upstream" = "https://docs.docker.com/compose/";
+      "io.nix-containers.image.category" = "devops-tool";
+      "io.nix-containers.image.aliases" = "docker-compose,compose,orchestration";
+    };
   };
 }

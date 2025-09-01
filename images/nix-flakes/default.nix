@@ -27,6 +27,14 @@ nix2container.buildImage {
     Env = base.defaultEnv ++ nonRoot.userEnv ++ [
       "PATH=${lib.makeBinPath nix_flakesPackages}"
     ];
-    Labels = base.defaultLabels;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.description" = "Nix package manager with Flakes support for reproducible builds";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "io.nix-containers.image.upstream" = "https://nixos.org/";
+      "io.nix-containers.image.category" = "devops-tool";
+      "io.nix-containers.image.aliases" = "nix-flakes,nix,flakes";
+    };
   };
 }

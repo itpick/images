@@ -27,6 +27,14 @@ nix2container.buildImage {
     Env = base.defaultEnv ++ nonRoot.userEnv ++ [
       "PATH=${lib.makeBinPath pocket_idPackages}"
     ];
-    Labels = base.defaultLabels;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.description" = "Lightweight self-hosted identity provider with OAuth2 and OpenID Connect";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "io.nix-containers.image.upstream" = "https://github.com/pocket-id/pocket-id";
+      "io.nix-containers.image.category" = "web-service";
+      "io.nix-containers.image.aliases" = "pocket-id,oauth2,oidc,identity";
+    };
   };
 }

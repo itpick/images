@@ -27,6 +27,14 @@ nix2container.buildImage {
     Env = base.defaultEnv ++ nonRoot.userEnv ++ [
       "PATH=${lib.makeBinPath atticPackages}"
     ];
-    Labels = base.defaultLabels;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.description" = "Attic client for multi-tenant Nix binary cache with S3 storage";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "io.nix-containers.image.upstream" = "https://github.com/zhaofengli/attic";
+      "io.nix-containers.image.category" = "devops-tool";
+      "io.nix-containers.image.aliases" = "attic,nix-cache,binary-cache";
+    };
   };
 }

@@ -27,6 +27,14 @@ nix2container.buildImage {
     Env = base.defaultEnv ++ nonRoot.userEnv ++ [
       "PATH=${lib.makeBinPath devcontainerPackages}"
     ];
-    Labels = base.defaultLabels;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.description" = "DevContainer CLI for development containers with VS Code";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "io.nix-containers.image.upstream" = "https://containers.dev/";
+      "io.nix-containers.image.category" = "devops-tool";
+      "io.nix-containers.image.aliases" = "devcontainer,dev-container,vscode";
+    };
   };
 }

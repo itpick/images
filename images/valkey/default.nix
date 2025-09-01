@@ -30,6 +30,13 @@ nix2container.buildImage {
     };
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "High-performance data structure server (Redis fork)";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.valkey.version;
+      "io.nix-containers.image.upstream" = "https://valkey.io/";
+      "io.nix-containers.image.category" = "database";
+      "io.nix-containers.image.aliases" = "valkey,cache,key-value,redis";
     };
   };
 }

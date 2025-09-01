@@ -35,6 +35,13 @@ nix2container.buildImage {
     ];
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "Ruby programming language";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.ruby.version;
+      "io.nix-containers.image.upstream" = "https://www.ruby-lang.org/";
+      "io.nix-containers.image.category" = "runtime";
+      "io.nix-containers.image.aliases" = "ruby,rails,gem";
     };
   };
 }

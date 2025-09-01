@@ -33,6 +33,13 @@ nix2container.buildImage {
     ];
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "Kubernetes package manager";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.kubernetes-helm.version;
+      "io.nix-containers.image.upstream" = "https://helm.sh/";
+      "io.nix-containers.image.category" = "devops-tool";
+      "io.nix-containers.image.aliases" = "helm,kubernetes,k8s";
     };
   };
 }

@@ -31,6 +31,13 @@ nix2container.buildImage {
     };
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "MariaDB database server";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.mariadb.version;
+      "io.nix-containers.image.upstream" = "https://mariadb.org/";
+      "io.nix-containers.image.category" = "database";
+      "io.nix-containers.image.aliases" = "mariadb,mysql,database,sql";
     };
   };
 }

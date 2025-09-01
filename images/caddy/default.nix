@@ -27,6 +27,15 @@ nix2container.buildImage {
     Env = base.defaultEnv ++ nonRoot.userEnv ++ [
       "PATH=${lib.makeBinPath caddyPackages}"
     ];
-    Labels = base.defaultLabels;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.description" = "Powerful web server with automatic HTTPS";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.caddy.version;
+      "io.nix-containers.image.upstream" = "https://caddyserver.com/";
+      "io.nix-containers.image.category" = "web-service";
+      "io.nix-containers.image.aliases" = "caddy,webserver,proxy,https";
+    };
   };
 }

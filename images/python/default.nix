@@ -36,7 +36,14 @@ nix2container.buildImage {
       "PIP_USER=1"
     ];
     Labels = base.defaultLabels // {
-      "org.opencontainers.image.description" = "Python programming language";
+      "org.opencontainers.image.description" = "Python 3.12 runtime with pip and development tools";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.python3.version;
+      "io.nix-containers.image.upstream" = "https://www.python.org/";
+      "io.nix-containers.image.category" = "runtime";
+      "io.nix-containers.image.aliases" = "python,python3,py";
     };
   };
 }

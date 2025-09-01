@@ -27,6 +27,15 @@ nix2container.buildImage {
     Env = base.defaultEnv ++ nonRoot.userEnv ++ [
       "PATH=${lib.makeBinPath nixPackages}"
     ];
-    Labels = base.defaultLabels;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.description" = "Nix package manager and build system";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.nix.version;
+      "io.nix-containers.image.upstream" = "https://nixos.org/";
+      "io.nix-containers.image.category" = "build-env";
+      "io.nix-containers.image.aliases" = "nix,nixos,package-manager";
+    };
   };
 }

@@ -29,6 +29,13 @@ nix2container.buildImage {
     ];
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "Tool for exploring a docker image, layer contents, and discovering ways to shrink size";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.dive.version;
+      "io.nix-containers.image.upstream" = "https://github.com/wagoodman/dive";
+      "io.nix-containers.image.category" = "devops-tool";
+      "io.nix-containers.image.aliases" = "dive,docker-dive";
     };
   };
 }

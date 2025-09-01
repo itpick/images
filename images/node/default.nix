@@ -35,7 +35,14 @@ nix2container.buildImage {
       "NODE_PATH=/home/nonroot/.npm-global/lib/node_modules"
     ];
     Labels = base.defaultLabels // {
-      "org.opencontainers.image.description" = "Node.js JavaScript runtime";
+      "org.opencontainers.image.description" = "Node.js JavaScript runtime with npm and yarn";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.nodejs.version;
+      "io.nix-containers.image.upstream" = "https://nodejs.org/";
+      "io.nix-containers.image.category" = "runtime";
+      "io.nix-containers.image.aliases" = "node,nodejs,javascript";
     };
   };
 }

@@ -32,6 +32,12 @@ nix2container.buildImage {
     ];
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "Build and deploy Go applications on Kubernetes";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "io.nix-containers.image.upstream" = "https://ko.build/";
+      "io.nix-containers.image.category" = "devops-tool";
+      "io.nix-containers.image.aliases" = "ko,kubernetes,golang,build";
     };
   };
 }

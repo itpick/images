@@ -17,8 +17,14 @@ buildCLIImage {
   # Optional: labels for OCI metadata
   labels = {
     "org.opencontainers.image.title" = "kubectl";
-    "org.opencontainers.image.source" = "https://github.com/kubernetes/kubectl";
+    "org.opencontainers.image.description" = "Kubernetes command-line tool";
+    "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+    "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+    "org.opencontainers.image.vendor" = "nix-containers";
     "org.opencontainers.image.version" = kubectl.version;
+    "io.nix-containers.image.upstream" = "https://kubernetes.io/";
+    "io.nix-containers.image.category" = "devops-tool";
+    "io.nix-containers.image.aliases" = "kubectl,kubernetes,k8s,cli";
   };
 
   # Optional: user/group to run as

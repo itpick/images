@@ -64,6 +64,14 @@ nix2container.buildImage {
       "LIBRARY_PATH=${pkgs.glibc}/lib:${pkgs.gcc.cc.lib}/lib"
       "LD_LIBRARY_PATH=${pkgs.glibc}/lib:${pkgs.gcc.cc.lib}/lib"
     ];
-    Labels = base.defaultLabels;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.description" = "Rust development environment with complete toolchain and system libraries";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "io.nix-containers.image.upstream" = "https://www.rust-lang.org/";
+      "io.nix-containers.image.category" = "build-env";
+      "io.nix-containers.image.aliases" = "rust-build,rust-dev,cargo-build";
+    };
   };
 }

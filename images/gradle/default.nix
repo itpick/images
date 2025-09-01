@@ -33,6 +33,13 @@ nix2container.buildImage {
     ];
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "Gradle build automation tool";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.gradle.version;
+      "io.nix-containers.image.upstream" = "https://gradle.org/";
+      "io.nix-containers.image.category" = "build-env";
+      "io.nix-containers.image.aliases" = "gradle,java-build,build-tool";
     };
   };
 }

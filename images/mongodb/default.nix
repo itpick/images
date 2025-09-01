@@ -30,6 +30,13 @@ nix2container.buildImage {
     };
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "MongoDB document database";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.mongodb.version;
+      "io.nix-containers.image.upstream" = "https://www.mongodb.com/";
+      "io.nix-containers.image.category" = "database";
+      "io.nix-containers.image.aliases" = "mongodb,mongo,nosql";
     };
   };
 }

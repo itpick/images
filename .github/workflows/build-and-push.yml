@@ -118,9 +118,18 @@ jobs:
             # Generate the target registry URL
             REGISTRY_URL="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.name }}"
             
+            # Extract package version for version tagging
+            echo "Extracting package version..."
+            . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+            PACKAGE_VERSION=$(nix --extra-experimental-features "nix-command flakes" eval --raw ".#${{ matrix.name }}.config.Labels.\"org.opencontainers.image.version\"" 2>/dev/null || echo "latest")
+            echo "Package version: $PACKAGE_VERSION"
+            
             # Tag with different versions
             docker tag "$IMAGE_ID" "${REGISTRY_URL}:latest"
             docker tag "$IMAGE_ID" "${REGISTRY_URL}:${{ github.sha }}"
+            if [ "$PACKAGE_VERSION" != "latest" ]; then
+              docker tag "$IMAGE_ID" "${REGISTRY_URL}:$PACKAGE_VERSION"
+            fi
             if [ "${{ github.ref_name }}" != "main" ]; then
               docker tag "$IMAGE_ID" "${REGISTRY_URL}:${{ github.ref_name }}"
             fi
@@ -129,6 +138,9 @@ jobs:
             echo "Pushing to registry..."
             docker push "${REGISTRY_URL}:latest"
             docker push "${REGISTRY_URL}:${{ github.sha }}"
+            if [ "$PACKAGE_VERSION" != "latest" ]; then
+              docker push "${REGISTRY_URL}:$PACKAGE_VERSION"
+            fi
             if [ "${{ github.ref_name }}" != "main" ]; then
               docker push "${REGISTRY_URL}:${{ github.ref_name }}"
             fi

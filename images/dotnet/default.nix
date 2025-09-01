@@ -32,6 +32,13 @@ nix2container.buildImage {
     ];
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = ".NET SDK for building applications";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.dotnet-sdk.version;
+      "io.nix-containers.image.upstream" = "https://dotnet.microsoft.com/";
+      "io.nix-containers.image.category" = "runtime";
+      "io.nix-containers.image.aliases" = "dotnet,csharp,fsharp,sdk";
     };
   };
 }

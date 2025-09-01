@@ -39,7 +39,14 @@ nix2container.buildImage {
       "RUSTUP_HOME=/home/nonroot/.rustup"
     ];
     Labels = base.defaultLabels // {
-      "org.opencontainers.image.description" = "Rust programming language";
+      "org.opencontainers.image.description" = "Rust programming language and development tools";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.rustc.version;
+      "io.nix-containers.image.upstream" = "https://www.rust-lang.org/";
+      "io.nix-containers.image.category" = "build-env";
+      "io.nix-containers.image.aliases" = "rust,rustc,cargo";
     };
   };
 }

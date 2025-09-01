@@ -32,6 +32,13 @@ nix2container.buildImage {
     ];
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "OpenJDK Java Development Kit";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.openjdk.version;
+      "io.nix-containers.image.upstream" = "https://openjdk.java.net/";
+      "io.nix-containers.image.category" = "build-env";
+      "io.nix-containers.image.aliases" = "jdk,java,openjdk";
     };
   };
 }

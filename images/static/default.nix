@@ -28,6 +28,12 @@ nix2container.buildImage {
     ];
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "Statically linked base image with essential tools";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "io.nix-containers.image.upstream" = "https://www.gnu.org/software/coreutils/";
+      "io.nix-containers.image.category" = "utility";
+      "io.nix-containers.image.aliases" = "static,base,minimal";
     };
   };
 }

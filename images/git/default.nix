@@ -33,7 +33,14 @@ nix2container.buildImage {
       "GIT_SSL_CAINFO=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
     ];
     Labels = base.defaultLabels // {
-      "org.opencontainers.image.description" = "Git version control system";
+      "org.opencontainers.image.description" = "Git version control system with SSH and GPG support";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.git.version;
+      "io.nix-containers.image.upstream" = "https://git-scm.com/";
+      "io.nix-containers.image.category" = "devops-tool";
+      "io.nix-containers.image.aliases" = "git,vcs";
     };
   };
 }

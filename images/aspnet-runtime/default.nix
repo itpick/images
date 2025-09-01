@@ -31,6 +31,13 @@ nix2container.buildImage {
     };
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "ASP.NET Core runtime";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.aspnetcore-runtime.version;
+      "io.nix-containers.image.upstream" = "https://dotnet.microsoft.com/";
+      "io.nix-containers.image.category" = "runtime";
+      "io.nix-containers.image.aliases" = "aspnet,dotnet,runtime,web";
     };
   };
 }

@@ -36,6 +36,14 @@ nix2container.buildImage {
       "PATH=${lib.makeBinPath runtimePkgs}"
       "LD_LIBRARY_PATH=${pkgs.glibc}/lib:${pkgs.openssl.out}/lib:${pkgs.gcc.cc.lib}/lib"
     ];
-    Labels = base.defaultLabels;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.description" = "Minimal runtime environment for C++ and Rust applications";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "io.nix-containers.image.upstream" = "https://www.gnu.org/software/libc/";
+      "io.nix-containers.image.category" = "runtime";
+      "io.nix-containers.image.aliases" = "cpp-runtime,c++-runtime,runtime";
+    };
   };
 }

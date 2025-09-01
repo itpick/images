@@ -27,6 +27,15 @@ nix2container.buildImage {
     Env = base.defaultEnv ++ nonRoot.userEnv ++ [
       "PATH=${lib.makeBinPath bashPackages}"
     ];
-    Labels = base.defaultLabels;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.description" = "GNU Bash shell with core utilities";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.bash.version;
+      "io.nix-containers.image.upstream" = "https://www.gnu.org/software/bash/";
+      "io.nix-containers.image.category" = "shell";
+      "io.nix-containers.image.aliases" = "bash,sh";
+    };
   };
 }

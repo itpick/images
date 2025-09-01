@@ -27,6 +27,51 @@
 
       # Dynamically discover and import all image folders using filesystem discovery
       imagesPath = ./images;
+      
+      # Function to extract main package version for tagging
+      getPackageVersion = imageName: 
+        let
+          versionMap = {
+            python = pkgs.python3.version;
+            go = pkgs.go.version;
+            node = pkgs.nodejs.version;
+            rust = pkgs.rustc.version;
+            jdk = pkgs.openjdk.version;
+            jre = pkgs.openjdk.version;
+            postgres = pkgs.postgresql.version;
+            redis = pkgs.redis.version;
+            mongodb = pkgs.mongodb.version;
+            nginx = pkgs.nginx.version;
+            nix = pkgs.nix.version;
+            bash = pkgs.bash.version;
+            curl = pkgs.curl.version;
+            git = pkgs.git.version;
+            busybox = pkgs.busybox.version;
+            gradle = pkgs.gradle.version;
+            maven = pkgs.maven.version;
+            dotnet = pkgs.dotnet-sdk.version;
+            ruby = pkgs.ruby.version;
+            php = pkgs.php.version;
+            helm = pkgs.kubernetes-helm.version;
+            kubectl = pkgs.kubectl.version;
+            cosign = pkgs.cosign.version;
+            grype = pkgs.grype.version;
+            hugo = pkgs.hugo.version;
+            caddy = pkgs.caddy.version;
+            haproxy = pkgs.haproxy.version;
+            mariadb = pkgs.mariadb.version;
+            valkey = pkgs.valkey.version;
+            sops = pkgs.sops.version;
+            dive = pkgs.dive.version;
+            crane = pkgs.crane.version;
+            ko = pkgs.ko.version;
+            cachix = pkgs.cachix.version;
+            devenv = pkgs.devenv.version;
+            attic = pkgs.attic-client.version;
+          };
+        in versionMap.${imageName} or "latest";
+      
+      # Create images with both latest and version tags
       images = builtins.listToAttrs (map (imageName: {
         name = imageName;
         value = pkgs.callPackage (imagesPath + "/${imageName}") {
@@ -35,6 +80,19 @@
           inherit pkgs;
         };
       }) discoveredImages);
+      
+      # Create version-tagged images
+      versionedImages = builtins.listToAttrs (map (imageName:
+        let
+          baseImage = images.${imageName};
+          version = getPackageVersion imageName;
+        in {
+          name = "${imageName}-${version}";
+          value = baseImage // {
+            tag = version;
+          };
+        }
+      ) discoveredImages);
       
       # Get image names for helper scripts
       imageNames = builtins.attrNames images;
@@ -221,7 +279,9 @@
       '';
 
     in {
-      packages.${system} = images // 
+      packages.${system} = images //
+        # Include version-tagged images
+        versionedImages //
         # Include individual image tests
         imageTests //
         # Dynamically generate Docker loaders for all images

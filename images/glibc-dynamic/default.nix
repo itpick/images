@@ -29,6 +29,12 @@ nix2container.buildImage {
     ];
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "Dynamically linked glibc base image";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "io.nix-containers.image.upstream" = "https://www.gnu.org/software/libc/";
+      "io.nix-containers.image.category" = "utility";
+      "io.nix-containers.image.aliases" = "glibc,glibc-dynamic,base";
     };
   };
 }

@@ -27,6 +27,15 @@ nix2container.buildImage {
     Env = base.defaultEnv ++ nonRoot.userEnv ++ [
       "PATH=${lib.makeBinPath nginxPackages}"
     ];
-    Labels = base.defaultLabels;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.description" = "High-performance HTTP server and reverse proxy";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.nginx.version;
+      "io.nix-containers.image.upstream" = "https://nginx.org/";
+      "io.nix-containers.image.category" = "web-service";
+      "io.nix-containers.image.aliases" = "nginx,webserver,proxy";
+    };
   };
 }
