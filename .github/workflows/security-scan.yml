@@ -1,0 +1,17 @@
+name: Security Scan
+
+on:
+  workflow_call:
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder for security scanning
+        run: |
+          echo "TODO: Implement security scanning with:"
+          echo "  - Grype for vulnerability scanning"
+          echo "  - Syft for SBOM generation" 
+          echo "  - Trivy for additional security checks"
+          echo "  - Upload SBOM artifacts to GitHub"
+          echo "  - Fail builds on critical vulnerabilities"

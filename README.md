@@ -21,7 +21,7 @@ A collection of container images built with nix2container, featuring dynamic dis
 
 | Provider | <img src="https://nixos.org/favicon.ico" width="20" height="20"> Nix Containers | <img src="https://images.chainguard.dev/favicon.svg" width="20" height="20"> Chainguard | <img src="https://securebuild.com/favicon.ico" width="20" height="20"> Replicated SecureBuild |
 |----------|:-----------:|:-----------:|:-----------:|
-| **Public Images** | **27** | **51** | **31 (zero public)** |
+| **Public Images** | **54** | **51** | **31 (zero public)** |
 | **Build System** | Nix + nix2container | apko + melange | Buildpacks |
 | **Base** | NixOS/nixpkgs | Alpine/glibc | Various |
 | **Security Focus** | Reproducible builds & minimal attack surface | Minimal attack surface | Supply chain security |
@@ -29,7 +29,7 @@ A collection of container images built with nix2container, featuring dynamic dis
 
 </div>
 
-*Last updated: 2025-08-24*
+*Last updated: 2025-08-31*
 
 ---
 ## Available Images
@@ -61,9 +61,13 @@ A collection of container images built with nix2container, featuring dynamic dis
 
 - **kubectl** - Kubernetes command-line tool
 - **kubernetes-helm** - Package manager for Kubernetes
+- **helm** - Kubernetes package manager (standalone)
+- **ko** - Build and deploy Go applications on Kubernetes
 - **dragonfly-operator** - Kubernetes operator for Dragonfly instances
 - **external-dns** - External DNS controller for Kubernetes
 - **docker-compose** - Tool for defining multi-container Docker applications
+- **crane** - Tool for interacting with remote images and registries
+- **dive** - Tool for exploring docker image layers and reducing size
 
 ### Development Tools
 
@@ -71,17 +75,47 @@ A collection of container images built with nix2container, featuring dynamic dis
 - **rust-build-env** - Complete Rust development environment with Cargo, Clippy, rust-analyzer
 - **devcontainer** - Development container with common tools
 - **devenv** - Fast, declarative, reproducible development environments
+- **git** - Git version control system with SSH and GPG support
+- **go** - Go programming language with development tools
+- **python** - Python programming language with pip and development tools
+- **node** - Node.js JavaScript runtime with npm and yarn
+- **rust** - Rust programming language with Cargo toolchain
+- **jdk** - OpenJDK Java Development Kit
+- **jre** - OpenJDK Java Runtime Environment
+- **gradle** - Gradle build automation tool for Java
+- **maven** - Apache Maven build automation tool for Java
+- **php** - PHP programming language with Composer
+- **ruby** - Ruby programming language with Bundler
+- **dotnet** - .NET SDK for building applications
+- **aspnet-runtime** - ASP.NET Core runtime environment
 
 ### Security & Auth
 
 - **sops** - SOPS encryption tool with GPG support
 - **pocket-id** - Personal identity provider for OAuth2/OIDC
+- **cosign** - Container signing tool with support for OCI registry
+- **grype** - Vulnerability scanner for container images and filesystems
+
+### Databases & Data Stores
+
+- **postgres** - PostgreSQL relational database
+- **redis** - Redis key-value store
+- **mongodb** - MongoDB document database
+- **mariadb** - MariaDB relational database
+- **valkey** - High-performance data structure server (Redis fork)
 
 ### Web Servers & Networking
 
 - **nginx** - High-performance HTTP server and reverse proxy
 - **caddy** - Modern HTTP/2 web server with automatic HTTPS
+- **haproxy** - High-performance TCP/HTTP load balancer
 - **curl** - Command line tool for transferring data with URLs
+
+### Base Images & Utilities
+
+- **static** - Statically linked base image with essential tools
+- **glibc-dynamic** - Dynamically linked glibc base image
+- **wait-for-it** - Wait for service dependencies before starting
 
 ### Quick Build Commands
 
@@ -102,21 +136,65 @@ nix build .#load-all-to-docker && ./result/bin/load-all-to-docker
 ---
 ## Local Development
 
-### Build and Load Single Image to Docker
+### Quick Start (Makefile "Training Wheels")
+
+The Makefile provides convenient shortcuts for common tasks - especially useful if you're new to Nix:
 
 ```bash
-# Build and load a specific image to Docker in one command
+# See all available commands
+make help
+
+# Test everything
+make verify                    # Run 3 verification tests
+make test-all                 # Build and test all images
+make list-images              # List available images
+
+# Test specific images
+make test-image IMAGE=bash    # Test single image
+make test-bash                # Quick test for bash image
+
+# GitHub Actions testing
+make test-workflows           # Test workflows with act (dry run)
+make install-act              # Install act tool automatically
+```
+
+### Pure Nix Commands (Advanced)
+
+If you prefer using Nix directly without the Makefile abstraction:
+
+```bash
+# Discovery using lib.filesystem.listFilesRecursive
+nix eval --json .#discoveredImages
+
+# Build and load specific images
 nix build .#load-<image-name>-to-docker
-example:
+# Example:
 nix build .#load-sops-to-docker
-```
 
-### Build and Load All Images at Once
-
-```bash
-# Build and load all images to Docker
+# Build and load all images at once
 nix build .#load-all-to-docker && ./result/bin/load-all-to-docker
+
+# Run comprehensive test suite
+nix run .#test-all-images
+
+# Image discovery script
+nix run .#discover-images
 ```
+
+### Why Both Makefile and Nix?
+
+The **Makefile serves as "training wheels"** for developers:
+- **Familiar interface**: `make test` is more intuitive than complex Nix commands
+- **Documentation**: `make help` shows available tasks without knowing Nix
+- **Tool management**: Automatically installs `act` and handles dependencies
+- **IDE integration**: Most editors understand Makefiles for task running
+- **Onboarding**: New contributors can be productive without learning Nix first
+
+The **Nix commands are the "real" implementation**:
+- More powerful and flexible
+- Direct access to all flake outputs
+- Better integration with Nix ecosystem
+- Required for advanced workflows
 
 ### Verify Images in Docker
 

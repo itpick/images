@@ -1,0 +1,39 @@
+name: Discover Images
+
+on:
+  workflow_call:
+    outputs:
+      matrix:
+        description: "Matrix of images to build"
+        value: ${{ jobs.discover-images.outputs.matrix }}
+
+jobs:
+  discover-images:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Generate matrix from images folder
+        id: set-matrix
+        run: |
+          echo "Discovering images in images/ folder..."
+          matrix='{"include":['
+          first=true
+          for dir in images/*/; do
+            if [ -d "$dir" ] && [ -f "$dir/default.nix" ]; then
+              image_name=$(basename "$dir")
+              if [ "$first" = true ]; then
+                first=false
+              else
+                matrix="$matrix,"
+              fi
+              matrix="$matrix{\"name\":\"$image_name\",\"path\":\"$dir\"}"
+              echo "Found image: $image_name at $dir"
+            fi
+          done
+          matrix="$matrix]}"
+          echo "Generated matrix: $matrix"
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
