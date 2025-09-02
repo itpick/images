@@ -90,6 +90,28 @@ list-tests: ## List images that have custom tests
 		fi \
 	done
 
+load-with-version: ## Load image with both latest and version tags (usage: make load-with-version IMAGE=python)
+	@if [ -z "$(IMAGE)" ]; then \
+		echo "Error: Please specify IMAGE=<name>"; \
+		echo "Example: make load-with-version IMAGE=python"; \
+		exit 1; \
+	fi
+	@echo "🔄 Loading $(IMAGE) image with version tags..."
+	@nix run .#$(IMAGE).copyTo -- docker-daemon:$(IMAGE):latest
+	@VERSION=$$(docker inspect $(IMAGE):latest --format '{{ index .Config.Labels "org.opencontainers.image.version" }}' 2>/dev/null || echo "latest"); \
+	COMPRESSED_SIZE=$$(docker save $(IMAGE):latest | gzip | wc -c); \
+	IMAGE_ID=$$(docker images $(IMAGE):latest --format "{{.ID}}"); \
+	echo "📏 Compressed size: $$COMPRESSED_SIZE bytes"; \
+	docker build -t $(IMAGE):temp - <<< "FROM $$IMAGE_ID\nLABEL org.opencontainers.image.size=\"$$COMPRESSED_SIZE\""; \
+	docker tag $(IMAGE):temp $(IMAGE):latest; \
+	docker rmi $(IMAGE):temp 2>/dev/null || true; \
+	if [ "$$VERSION" != "latest" ]; then \
+		docker tag $(IMAGE):latest $(IMAGE):$$VERSION; \
+		echo "✅ Tagged $(IMAGE):latest as $(IMAGE):$$VERSION"; \
+	else \
+		echo "ℹ️  No version available for $(IMAGE)"; \
+	fi
+
 cleanup: ## Clean up test artifacts and Docker images
 	@./scripts/test-image-build.sh cleanup
 

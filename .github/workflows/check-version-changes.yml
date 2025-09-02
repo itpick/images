@@ -1,0 +1,113 @@
+name: Check Version Changes
+
+on:
+  workflow_call:
+    outputs:
+      changes-detected:
+        description: "Whether any package versions have changed"
+        value: ${{ jobs.check-versions.outputs.changes-detected }}
+      changed-images:
+        description: "Matrix of images that need rebuilding"
+        value: ${{ jobs.check-versions.outputs.changed-images }}
+
+jobs:
+  check-versions:
+    runs-on: ubuntu-latest
+    outputs:
+      changes-detected: ${{ steps.check.outputs.changes-detected }}
+      changed-images: ${{ steps.check.outputs.changed-images }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need history to compare versions
+
+      - name: Install Nix
+        run: |
+          curl --connect-timeout 30 --max-time 300 -fsSL https://nixos.org/nix/install | sh -s -- --daemon --yes
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          mkdir -p ~/.config/nix
+          echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+          echo "access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}" >> ~/.config/nix/nix.conf
+
+      - name: Get current package versions
+        id: current-versions
+        run: |
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          
+          echo "📋 Getting current package versions..."
+          
+          # Use the built-in version checker and clean the output
+          nix --extra-experimental-features "nix-command flakes" run .#check-versions | sed 's/🔍 Checking package versions...//' | jq . > current-versions.json
+          
+          echo "📋 Current versions:"
+          cat current-versions.json
+
+      - name: Get previous package versions from git history
+        id: previous-versions
+        continue-on-error: true
+        run: |
+          echo "📋 Getting previous package versions from git history..."
+          
+          # Try to get the last successful build's versions from a committed file
+          if git show HEAD~1:package-versions.json >/dev/null 2>&1; then
+            echo "📋 Found previous versions in git history"
+            git show HEAD~1:package-versions.json > previous-versions.json
+          else
+            echo "📋 No previous versions found in git history"
+            echo "{}" > previous-versions.json
+          fi
+          
+          echo "📋 Previous versions:"
+          cat previous-versions.json
+
+      - name: Compare versions and determine changes
+        id: check
+        run: |
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          
+          echo "🔍 Comparing package versions..."
+          
+          # If no previous versions exist, rebuild all
+          if [ ! -f previous-versions.json ] || [ ! -s previous-versions.json ]; then
+            echo "No previous versions found, rebuilding all images"
+            IMAGES=$(nix --extra-experimental-features "nix-command flakes" eval --json .#discoveredImages)
+            echo "changes-detected=true" >> $GITHUB_OUTPUT
+            echo "changed-images=$IMAGES" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Compare current vs previous versions
+          CHANGED_IMAGES="[]"
+          CHANGES_DETECTED=false
+          
+          IMAGES=$(nix --extra-experimental-features "nix-command flakes" eval --json .#discoveredImages | jq -r '.[]')
+          for IMAGE in $IMAGES; do
+            CURRENT_VERSION=$(jq -r ".$IMAGE // \"none\"" current-versions.json)
+            PREVIOUS_VERSION=$(jq -r ".$IMAGE // \"none\"" previous-versions.json)
+            
+            echo "📦 $IMAGE: $PREVIOUS_VERSION → $CURRENT_VERSION"
+            
+            if [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ]; then
+              echo "  ✅ Version changed, will rebuild"
+              CHANGED_IMAGES=$(echo "$CHANGED_IMAGES" | jq ". + [{\"name\": \"$IMAGE\"}]")
+              CHANGES_DETECTED=true
+            else
+              echo "  ⏭️  No change, skipping"
+            fi
+          done
+          
+          echo "🎯 Changes detected: $CHANGES_DETECTED"
+          echo "📋 Images to rebuild: $CHANGED_IMAGES"
+          
+          echo "changes-detected=$CHANGES_DETECTED" >> $GITHUB_OUTPUT
+          echo "changed-images=$CHANGED_IMAGES" >> $GITHUB_OUTPUT
+
+      - name: Upload version comparison results
+        uses: actions/upload-artifact@v4
+        with:
+          name: version-comparison
+          path: |
+            current-versions.json
+            previous-versions.json

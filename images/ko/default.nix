@@ -32,6 +32,7 @@ nix2container.buildImage {
     ];
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "Build and deploy Go applications on Kubernetes";
+      "org.opencontainers.image.version" = pkgs.ko.version;
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.vendor" = "nix-containers";

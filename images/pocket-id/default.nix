@@ -29,6 +29,7 @@ nix2container.buildImage {
     ];
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "Lightweight self-hosted identity provider with OAuth2 and OpenID Connect";
+      "org.opencontainers.image.version" = "1.0.0";
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.vendor" = "nix-containers";

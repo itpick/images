@@ -1,2 +1,5 @@
 ignore
 result
+.claude
+.cache
+.env

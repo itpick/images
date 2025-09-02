@@ -16,6 +16,7 @@
       lib = {
         base = pkgs.callPackage ./lib/base.nix {};
         nonRoot = pkgs.callPackage ./lib/nonRoot.nix {};
+        devShell = pkgs.callPackage ./lib/devShell.nix {};
         buildCLIImage = pkgs.callPackage ./lib/buildCLIImage.nix { 
           nix2container = nix2container.packages.${system}.nix2container;
           inherit (pkgs) lib;
@@ -33,6 +34,7 @@
         let
           versionMap = {
             python = pkgs.python3.version;
+            python-fips = pkgs.python3.version;
             go = pkgs.go.version;
             node = pkgs.nodejs.version;
             rust = pkgs.rustc.version;
@@ -319,10 +321,78 @@
             chmod +x $out/bin/test-all-images
           '';
         };
+        
+        # Version checker script  
+        check-versions = pkgs.writeShellScriptBin "check-versions" ''
+          echo "🔍 Checking package versions..."
+          echo "{"
+          FIRST=true
+          ${pkgs.lib.concatStringsSep "\n" (map (imageName: 
+            let version = getPackageVersion imageName; in
+            ''
+              if [ "$FIRST" = "true" ]; then
+                FIRST=false
+              else
+                echo ","
+              fi
+              echo "  \"${imageName}\": \"${version}\""
+            ''
+          ) discoveredImages)}
+          echo "}"
+        '';
+        
+        # Static website generator
+        website = pkgs.stdenv.mkDerivation {
+          name = "nix-containers-website";
+          dontUnpack = true;
+          buildPhase = ''
+            mkdir -p $out
+            
+            # Copy static website files
+            cp ${./website/static/index.html} $out/index.html
+            cp ${./website/static/app.js} $out/app.js
+            
+            # Generate simple images data
+            cat > $out/images-data.json << 'EOF'
+            {
+              "images": ${builtins.toJSON (map (imageName: 
+                let
+                  imageConfig = images.${imageName}.config or {};
+                  labels = imageConfig.Labels or {};
+                  version = getPackageVersion imageName;
+                in {
+                  name = imageName;
+                  description = labels."org.opencontainers.image.description" or "Container image for ${imageName}";
+                  version = version;
+                  category = labels."io.nix-containers.image.category" or "utility";
+                  hasTest = builtins.pathExists (./images + "/${imageName}/test.nix");
+                  pullCommand = "docker pull ghcr.io/nix-containers/images/${imageName}:latest";
+                  upstream = labels."io.nix-containers.image.upstream" or "";
+                  aliases = labels."io.nix-containers.image.aliases" or imageName;
+                  size = "Not built";
+                  readme = if builtins.pathExists (./images + "/${imageName}/README.md") 
+                           then builtins.readFile (./images + "/${imageName}/README.md")
+                           else "# ${imageName}\n\nNo README available.";
+                }) discoveredImages)},
+              "totalCount": ${toString (builtins.length discoveredImages)},
+              "lastUpdated": "BUILD_TIME"
+            }
+            EOF
+            
+            # Replace BUILD_TIME with build timestamp
+            ${pkgs.gnused}/bin/sed -i "s/BUILD_TIME/$(date -Iseconds)/g" $out/images-data.json
+          '';
+          
+          installPhase = ''
+            echo "✅ Static website generated"
+            echo "📁 Files: $(ls -la $out/)"
+            echo "📊 Images: ${toString (builtins.length discoveredImages)}"
+          '';
+        };
       };
 
       # Export discovered images and traditional names for external use
-      inherit discoveredImages imageNames;
+      inherit discoveredImages imageNames getPackageVersion;
 
       # Development shells for each image
       devShells.${system} = {
@@ -358,11 +428,30 @@
             echo "  ./scripts/update-image-stats.sh            - Update README comparison chart"
             echo "  ./scripts/update-readme-images.sh          - Update README available images section"
             echo ""
+            echo "🌐 Website:"
+            echo "  nix develop .#website-dev                  - Start website development"
+            echo "  cd website && npm install && npm run dev   - Run local website on :3000"
+            echo ""
             echo "📋 Available images:"
             echo "  ${pkgs.lib.concatStringsSep ", " imageNames}"
             echo ""
             echo "💡 Quick start:"
             echo "  nix build .#load-cpp-runtime-to-docker     - Example: build and load cpp-runtime"
+          '';
+        };
+        
+        # Website development shell
+        website-dev = pkgs.mkShell {
+          buildInputs = with pkgs; [ nodejs npm python3 ];
+          shellHook = ''
+            echo "🌐 Static Website Development Environment"
+            echo ""
+            echo "📦 Build static website:"
+            echo "  nix build .#website                        - Generate static site"
+            echo "  python3 -m http.server 8000 -d result     - Serve static site on :8000"
+            echo ""
+            echo "🛠️  Development:"
+            echo "  cd website && python3 -m http.server 8000 -d static  - Serve during development"
           '';
         };
       };

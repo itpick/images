@@ -11,6 +11,7 @@ A collection of container images built with nix2container, featuring dynamic dis
 - **Shared libraries and layers** - Common functionality in `lib/` folder
   - `base.nix` - Common packages, environment, and labels - optional layer
   - `nonRoot.nix` - A common Non-root user configuration - optional layer
+  - `devShell.nix` - Development shell configurations with bash and dev tools
   - `buildCLIImage.nix` - CLI application wrapper
   - `mkUserEnvironment.nix` - User environment setup
 
@@ -280,4 +281,29 @@ act -j build-containers
 
 # Force x86_64 architecture (if needed on ARM systems)
 act --container-architecture linux/amd64
+```
+
+### Using Development Shell Library
+
+The `lib/devShell.nix` library provides reusable development shell configurations:
+
+```nix
+# In your image's default.nix
+{ pkgs, ... }:
+let
+  devShell = pkgs.callPackage ../lib/devShell.nix {};
+in {
+  # Use predefined shells
+  packages = devShell.minimalDevShell.packages;     # bash + basic tools
+  packages = devShell.standardDevShell.packages;    # + extended utilities  
+  packages = devShell.fullDevShell.packages;        # + programming & container tools
+  
+  # Create custom shell
+  packages = (devShell.mkDevShell {
+    extraPackages = [ pkgs.htop pkgs.tmux ];
+    includeBasic = true;
+    includeExtended = true;
+    includeProgramming = false;
+  }).packages;
+}
 ```

@@ -28,6 +28,7 @@ nix2container.buildImage {
     ];
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "Statically linked base image with essential tools";
+      "org.opencontainers.image.version" = pkgs.busybox.version;
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.vendor" = "nix-containers";

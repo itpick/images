@@ -38,6 +38,7 @@ nix2container.buildImage {
     ];
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "Minimal runtime environment for C++ and Rust applications";
+      "org.opencontainers.image.version" = pkgs.glibc.version;
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.vendor" = "nix-containers";

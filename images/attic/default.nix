@@ -29,6 +29,7 @@ nix2container.buildImage {
     ];
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "Attic client for multi-tenant Nix binary cache with S3 storage";
+      "org.opencontainers.image.version" = pkgs.attic-client.version;
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.vendor" = "nix-containers";

@@ -29,6 +29,7 @@ nix2container.buildImage {
     ];
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "Cachix binary cache client optimized for Nix Flakes workflows";
+      "org.opencontainers.image.version" = pkgs.cachix.version;
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.vendor" = "nix-containers";

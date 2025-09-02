@@ -4,13 +4,13 @@
 rec {
   # Standard non-root user configuration
   user = {
-    uid = 1000;
-    gid = 1000; 
+    uid = 65532;
+    gid = 65532; 
     name = "nonroot";
   };
   
   # User string for container config
-  userString = "1000:1000";
+  userString = "65532:65532";
   
   # Standard environment variables for non-root user
   userEnv = [

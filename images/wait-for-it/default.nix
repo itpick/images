@@ -29,6 +29,7 @@ nix2container.buildImage {
     ];
     Labels = base.defaultLabels // {
       "org.opencontainers.image.description" = "Wait for service dependencies before starting";
+      "org.opencontainers.image.version" = "1.0.0";
     };
   };
 }

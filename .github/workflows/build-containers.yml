@@ -9,29 +9,85 @@ on:
     # Daily build at 2 AM UTC to check for package updates
     - cron: '0 2 * * *'
   workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: 'Force rebuild all images regardless of version changes'
+        required: false
+        default: 'false'
+        type: boolean
 
 jobs:
   discover-images:
     uses: ./.github/workflows/discover-images.yml
 
+  check-version-changes:
+    uses: ./.github/workflows/check-version-changes.yml
+
   test-images:
-    needs: discover-images
+    needs: [discover-images, check-version-changes]
+    if: needs.check-version-changes.outputs.changes-detected == 'true' || github.event.inputs.force_rebuild == 'true'
     uses: ./.github/workflows/test-images.yml
     with:
-      matrix: ${{ needs.discover-images.outputs.matrix }}
+      matrix: ${{ github.event.inputs.force_rebuild == 'true' && needs.discover-images.outputs.matrix || needs.check-version-changes.outputs.changed-images }}
 
   build-and-push:
-    needs: [discover-images, test-images]
+    needs: [discover-images, check-version-changes, test-images]
+    if: needs.check-version-changes.outputs.changes-detected == 'true' || github.event.inputs.force_rebuild == 'true'
     uses: ./.github/workflows/build-and-push.yml
     permissions:
       contents: read
       packages: write
     with:
-      matrix: ${{ needs.discover-images.outputs.matrix }}
+      matrix: ${{ github.event.inputs.force_rebuild == 'true' && needs.discover-images.outputs.matrix || needs.check-version-changes.outputs.changed-images }}
 
   check-package-updates:
     uses: ./.github/workflows/check-package-updates.yml
 
+  save-versions:
+    needs: [build-and-push, check-version-changes]
+    if: needs.check-version-changes.outputs.changes-detected == 'true' || github.event.inputs.force_rebuild == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Nix
+        run: |
+          curl --connect-timeout 30 --max-time 300 -fsSL https://nixos.org/nix/install | sh -s -- --daemon --yes
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          mkdir -p ~/.config/nix
+          echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+
+      - name: Generate and commit package versions
+        run: |
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          
+          echo "📋 Generating current package versions..."
+          
+          # Use the built-in version checker
+          nix --extra-experimental-features "nix-command flakes" run .#check-versions | sed 's/🔍 Checking package versions...//' | jq . > package-versions.json
+          
+          # Commit the versions file
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add package-versions.json
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update package versions after successful build
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+            git push
+          fi
+
   security-scan:
     needs: build-and-push
+    if: needs.build-and-push.result == 'success'
     uses: ./.github/workflows/security-scan.yml

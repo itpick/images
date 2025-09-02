@@ -1,0 +1,61 @@
+name: Deploy Website to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'images/*/README.md'
+      - 'images/*/default.nix'
+      - 'website/**'
+      - 'flake.nix'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-website:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        run: |
+          curl --connect-timeout 30 --max-time 300 -fsSL https://nixos.org/nix/install | sh -s -- --daemon --yes
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          mkdir -p ~/.config/nix
+          echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+          echo "/nix/var/nix/profiles/default/bin" >> $GITHUB_PATH
+
+      - name: Build static website
+        run: |
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          nix build .#website --print-build-logs
+          mkdir -p ./website-build
+          cp -r ./result/* ./website-build/
+        
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './website-build'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build-website
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

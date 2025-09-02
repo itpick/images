@@ -124,6 +124,22 @@ jobs:
             PACKAGE_VERSION=$(nix --extra-experimental-features "nix-command flakes" eval --raw ".#${{ matrix.name }}.config.Labels.\"org.opencontainers.image.version\"" 2>/dev/null || echo "latest")
             echo "Package version: $PACKAGE_VERSION"
             
+            # Calculate compressed size and add as label
+            echo "Calculating compressed image size..."
+            COMPRESSED_SIZE=$(docker save "${{ matrix.name }}:latest" | gzip | wc -c)
+            echo "Compressed size: $COMPRESSED_SIZE bytes"
+            
+            # Create new image with size label
+            docker build -t "${{ matrix.name }}:temp" - <<EOF
+FROM ${{ matrix.name }}:latest
+LABEL org.opencontainers.image.size="$COMPRESSED_SIZE"
+EOF
+            
+            # Replace the original image
+            docker tag "${{ matrix.name }}:temp" "${{ matrix.name }}:latest"
+            docker rmi "${{ matrix.name }}:temp"
+            IMAGE_ID=$(docker images "${{ matrix.name }}:latest" --format "{{.ID}}")
+            
             # Tag with different versions
             docker tag "$IMAGE_ID" "${REGISTRY_URL}:latest"
             docker tag "$IMAGE_ID" "${REGISTRY_URL}:${{ github.sha }}"
