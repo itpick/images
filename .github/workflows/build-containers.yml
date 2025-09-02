@@ -87,5 +87,8 @@ jobs:
     needs: [build-and-push, check-version-changes]
     if: needs.build-and-push.result == 'success'
     uses: ./.github/workflows/security-scan.yml
+    permissions:
+      contents: read
+      security-events: write
     with:
       images: ${{ needs.check-version-changes.outputs.changed-images }}
