@@ -79,15 +79,13 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Update package versions after successful build
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>"
+            git commit -m "Update package versions after successful build" \
             git push
           fi
 
   security-scan:
-    needs: build-and-push
+    needs: [build-and-push, check-version-changes]
     if: needs.build-and-push.result == 'success'
     uses: ./.github/workflows/security-scan.yml
+    with:
+      images: ${{ needs.check-version-changes.outputs.changed-images }}

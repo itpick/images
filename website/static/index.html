@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nix Containers - Container Images</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/5.1.1/marked.min.js"></script>
+    <style>
+        .copy-btn:hover { background-color: #374151; }
+        .image-card { transition: transform 0.2s; }
+        .image-card:hover { transform: translateY(-2px); }
+        .category-badge { @apply px-2 py-1 text-xs font-semibold rounded-full; }
+        .category-runtime { @apply bg-blue-100 text-blue-800; }
+        .category-build-env { @apply bg-green-100 text-green-800; }
+        .category-database { @apply bg-purple-100 text-purple-800; }
+        .category-web-service { @apply bg-orange-100 text-orange-800; }
+        .category-devops-tool { @apply bg-indigo-100 text-indigo-800; }
+        .category-utility { @apply bg-gray-100 text-gray-800; }
+        .category-shell { @apply bg-yellow-100 text-yellow-800; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-6">
+                    <div class="flex items-center">
+                        <i class="fas fa-cube text-blue-600 text-2xl mr-3"></i>
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">Nix Containers</h1>
+                            <p class="text-gray-600">Secure, reproducible container images built with Nix</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-500" id="image-count">Loading...</span>
+                        <span class="text-sm text-gray-500" id="last-updated"></span>
+                        <a href="https://github.com/nix-containers/images" class="text-gray-600 hover:text-gray-900" target="_blank">
+                            <i class="fab fa-github text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Overview -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white rounded-lg shadow-sm p-4 text-center">
+                    <div class="text-2xl font-bold text-blue-600" id="total-images">-</div>
+                    <div class="text-sm text-gray-600">Total Images</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm p-4 text-center">
+                    <div class="text-2xl font-bold text-green-600" id="tested-images">-</div>
+                    <div class="text-sm text-gray-600">With Tests</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm p-4 text-center">
+                    <div class="text-2xl font-bold text-purple-600" id="categories-count">-</div>
+                    <div class="text-sm text-gray-600">Categories</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm p-4 text-center">
+                    <div class="text-2xl font-bold text-orange-600" id="latest-version">-</div>
+                    <div class="text-sm text-gray-600">Build System</div>
+                </div>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <input type="text" id="search" placeholder="Search images by name, description, or aliases..." 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div class="flex gap-2">
+                        <select id="category-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="">All Categories</option>
+                        </select>
+                        <select id="sort-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="name">Sort by Name</option>
+                            <option value="category">Sort by Category</option>
+                            <option value="size">Sort by Size</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Images Grid -->
+            <div id="images-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Loading placeholder -->
+                <div class="col-span-full text-center py-12">
+                    <i class="fas fa-spinner fa-spin text-4xl text-gray-400 mb-4"></i>
+                    <p class="text-gray-600">Loading images...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="image-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-4xl w-full max-h-screen overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 id="modal-title" class="text-2xl font-bold text-gray-900"></h2>
+                        <button id="close-modal" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    <div id="modal-content" class="prose max-w-none">
+                        <!-- README content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,293 @@
+name: Post-Pipeline Evaluation
+
+# Enable with: gh workflow run post-pipeline-evaluation.yml -f enable_evaluation=true
+
+on:
+  workflow_run:
+    workflows: ["Build and Push Container Images"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      enable_evaluation:
+        description: 'Enable post-pipeline evaluation (disabled by default)'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  evaluate-pipeline:
+    runs-on: ubuntu-latest
+    # Job is disabled by default - only runs when explicitly enabled
+    if: github.event.inputs.enable_evaluation == 'true' || (github.event_name == 'workflow_run' && false)
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq curl
+          
+          # Install GitHub CLI
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install -y gh
+
+      - name: Get workflow run details
+        id: workflow-details
+        run: |
+          echo "🔍 Analyzing workflow run: ${{ github.event.workflow_run.id }}"
+          
+          # Get workflow run details
+          gh api repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }} > workflow-run.json
+          
+          # Extract key information
+          CONCLUSION=$(jq -r '.conclusion' workflow-run.json)
+          STATUS=$(jq -r '.status' workflow-run.json)
+          HEAD_SHA=$(jq -r '.head_sha' workflow-run.json)
+          BRANCH=$(jq -r '.head_branch' workflow-run.json)
+          
+          echo "conclusion=$CONCLUSION" >> $GITHUB_OUTPUT
+          echo "status=$STATUS" >> $GITHUB_OUTPUT
+          echo "head_sha=$HEAD_SHA" >> $GITHUB_OUTPUT
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+          
+          echo "📊 Workflow Status: $STATUS"
+          echo "📊 Workflow Conclusion: $CONCLUSION"
+          echo "📊 Branch: $BRANCH"
+          echo "📊 Commit: $HEAD_SHA"
+
+      - name: Check if pipeline ran unnecessarily
+        id: check-unnecessary
+        run: |
+          echo "🔍 Checking if pipeline ran for up-to-date images..."
+          
+          # Get the workflow jobs
+          gh api repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/jobs > workflow-jobs.json
+          
+          # Check if version changes were detected
+          VERSION_CHECK_JOB=$(jq -r '.jobs[] | select(.name == "check-versions") | .conclusion' workflow-jobs.json)
+          
+          # Download version comparison artifacts if available
+          ARTIFACTS=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/artifacts)
+          VERSION_ARTIFACT_ID=$(echo "$ARTIFACTS" | jq -r '.artifacts[] | select(.name == "version-comparison") | .id')
+          
+          UNNECESSARY_RUN=false
+          
+          if [ "$VERSION_ARTIFACT_ID" != "null" ] && [ "$VERSION_ARTIFACT_ID" != "" ]; then
+            echo "📋 Downloading version comparison artifacts..."
+            gh api repos/${{ github.repository }}/actions/artifacts/$VERSION_ARTIFACT_ID/zip > version-comparison.zip
+            unzip -q version-comparison.zip
+            
+            if [ -f current-versions.json ] && [ -f previous-versions.json ]; then
+              # Compare versions to see if anything actually changed
+              if cmp -s current-versions.json previous-versions.json; then
+                echo "⚠️  Pipeline ran but no version changes detected!"
+                UNNECESSARY_RUN=true
+              else
+                echo "✅ Version changes detected, pipeline run was necessary"
+              fi
+            fi
+          fi
+          
+          echo "unnecessary_run=$UNNECESSARY_RUN" >> $GITHUB_OUTPUT
+
+      - name: Analyze build failures
+        id: analyze-failures
+        if: steps.workflow-details.outputs.conclusion == 'failure'
+        run: |
+          echo "🔍 Analyzing build failures..."
+          
+          # Get failed jobs
+          FAILED_JOBS=$(jq -r '.jobs[] | select(.conclusion == "failure") | .name' workflow-jobs.json)
+          FAILED_COUNT=$(echo "$FAILED_JOBS" | wc -l)
+          
+          echo "❌ Failed jobs count: $FAILED_COUNT"
+          echo "❌ Failed jobs:"
+          echo "$FAILED_JOBS"
+          
+          # Get failure details for each failed job
+          echo "## Build Failure Analysis" > failure-report.md
+          echo "" >> failure-report.md
+          echo "Pipeline run: [${{ github.event.workflow_run.id }}](${{ github.event.workflow_run.html_url }})" >> failure-report.md
+          echo "Branch: \`${{ steps.workflow-details.outputs.branch }}\`" >> failure-report.md
+          echo "Commit: \`${{ steps.workflow-details.outputs.head_sha }}\`" >> failure-report.md
+          echo "" >> failure-report.md
+          
+          while IFS= read -r job_name; do
+            if [ -n "$job_name" ]; then
+              echo "### Failed Job: $job_name" >> failure-report.md
+              echo "" >> failure-report.md
+              
+              # Get job details
+              JOB_ID=$(jq -r ".jobs[] | select(.name == \"$job_name\") | .id" workflow-jobs.json)
+              gh api repos/${{ github.repository }}/actions/jobs/$JOB_ID/logs > "$job_name-logs.txt" || true
+              
+              # Extract relevant error information
+              if [ -f "$job_name-logs.txt" ]; then
+                echo '```' >> failure-report.md
+                tail -50 "$job_name-logs.txt" | grep -E "(Error|Failed|error:|ERROR)" | head -10 >> failure-report.md || echo "No specific errors found in logs" >> failure-report.md
+                echo '```' >> failure-report.md
+                echo "" >> failure-report.md
+              fi
+            fi
+          done <<< "$FAILED_JOBS"
+          
+          echo "failed_count=$FAILED_COUNT" >> $GITHUB_OUTPUT
+
+      - name: Create issue branch for failures
+        id: create-branch
+        if: steps.analyze-failures.outputs.failed_count > 0 || steps.check-unnecessary.outputs.unnecessary_run == 'true'
+        run: |
+          echo "🔧 Creating branch for pipeline issues..."
+          
+          ISSUE_TYPE=""
+          if [ "${{ steps.analyze-failures.outputs.failed_count }}" -gt "0" ]; then
+            ISSUE_TYPE="build-failures"
+          elif [ "${{ steps.check-unnecessary.outputs.unnecessary_run }}" == "true" ]; then
+            ISSUE_TYPE="unnecessary-pipeline-run"
+          fi
+          
+          BRANCH_NAME="fix/pipeline-$ISSUE_TYPE-$(date +%Y%m%d-%H%M%S)"
+          
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git checkout -b "$BRANCH_NAME"
+          
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          echo "issue_type=$ISSUE_TYPE" >> $GITHUB_OUTPUT
+
+      - name: Create fix for unnecessary pipeline runs
+        if: steps.check-unnecessary.outputs.unnecessary_run == 'true'
+        run: |
+          echo "🔧 Creating fix for unnecessary pipeline execution..."
+          
+          # Create a simple workflow improvement suggestion
+          cat > pipeline-optimization.md << 'EOF'
+          # Pipeline Optimization Suggestion
+          
+          ## Issue
+          The pipeline executed but no package version changes were detected.
+          
+          ## Suggested Fix
+          Consider adding an early exit check in the workflow to prevent unnecessary builds:
+          
+          ```yaml
+          - name: Early exit if no changes
+            run: |
+              if [ -f package-versions.json ] && [ -f current-versions.json ]; then
+                if cmp -s package-versions.json current-versions.json; then
+                  echo "No changes detected, exiting early"
+                  echo "skip_build=true" >> $GITHUB_OUTPUT
+                  exit 0
+                fi
+              fi
+          ```
+          EOF
+          
+          git add pipeline-optimization.md
+
+      - name: Create merge request for issues
+        if: steps.create-branch.outputs.branch_name != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📝 Creating merge request for pipeline issues..."
+          
+          ISSUE_TYPE="${{ steps.create-branch.outputs.issue_type }}"
+          BRANCH_NAME="${{ steps.create-branch.outputs.branch_name }}"
+          
+          # Commit any changes
+          if ! git diff --staged --quiet; then
+            git commit -m "fix: address pipeline $ISSUE_TYPE detected by post-pipeline evaluation
+          fi
+          
+          # Push the branch
+          git push origin "$BRANCH_NAME"
+          
+          # Create pull request based on issue type
+          if [ "$ISSUE_TYPE" == "build-failures" ]; then
+            gh pr create \
+              --title "Fix: Address build failures from pipeline run ${{ github.event.workflow_run.id }}" \
+              --body "$(cat <<'EOF'
+          ## Summary
+          - Automated fix for build failures detected in pipeline run [${{ github.event.workflow_run.id }}](${{ github.event.workflow_run.html_url }})
+          - Analysis of failed jobs and proposed fixes
+          
+          ## Build Failure Details
+          $(cat failure-report.md)
+          
+          ## Test Plan
+          - [ ] Verify build fixes resolve the identified issues
+          - [ ] Test locally with `act -j build-containers`
+          - [ ] Ensure all images build successfully
+          
+          🤖 Generated with [Claude Code](https://claude.ai/code)
+          EOF
+          )"
+          elif [ "$ISSUE_TYPE" == "unnecessary-pipeline-run" ]; then
+            gh pr create \
+              --title "Optimize: Prevent unnecessary pipeline execution" \
+              --body "$(cat <<'EOF'
+          ## Summary
+          - Pipeline ran but no package version changes were detected
+          - Add optimization to prevent unnecessary builds
+          
+          ## Optimization Details
+          $(cat pipeline-optimization.md)
+          
+          ## Test Plan
+          - [ ] Test that pipeline skips when no changes detected
+          - [ ] Verify version comparison logic works correctly
+          - [ ] Test with `act` locally
+          
+          🤖 Generated with [Claude Code](https://claude.ai/code)
+          EOF
+          )"
+          fi
+          
+          echo "✅ Merge request created: $BRANCH_NAME"
+
+      - name: Test with act (if available)
+        if: steps.create-branch.outputs.branch_name != ''
+        continue-on-error: true
+        run: |
+          echo "🎭 Testing pipeline changes with act..."
+          
+          # Check if act is available
+          if command -v act >/dev/null 2>&1; then
+            echo "✅ act is available, running pipeline test..."
+            
+            # Test the build workflow on the new branch
+            act -j check-version-changes --dry-run || true
+            
+            echo "🎭 act test completed (check logs for details)"
+          else
+            echo "⚠️  act not available in runner environment"
+            echo "Manual testing required with: act -j build-containers"
+          fi
+
+      - name: Report evaluation results
+        if: always()
+        run: |
+          echo "📊 Post-Pipeline Evaluation Results"
+          echo "=================================="
+          echo "Workflow Run: ${{ github.event.workflow_run.id }}"
+          echo "Status: ${{ steps.workflow-details.outputs.status }}"
+          echo "Conclusion: ${{ steps.workflow-details.outputs.conclusion }}"
+          echo "Unnecessary Run: ${{ steps.check-unnecessary.outputs.unnecessary_run }}"
+          echo "Failed Jobs: ${{ steps.analyze-failures.outputs.failed_count }}"
+          
+          if [ "${{ steps.create-branch.outputs.branch_name }}" != "" ]; then
+            echo "🔧 Created fix branch: ${{ steps.create-branch.outputs.branch_name }}"
+          else
+            echo "✅ No issues detected, no action needed"
+          fi

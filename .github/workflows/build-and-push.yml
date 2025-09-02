@@ -130,10 +130,10 @@ jobs:
             echo "Compressed size: $COMPRESSED_SIZE bytes"
             
             # Create new image with size label
-            docker build -t "${{ matrix.name }}:temp" - <<EOF
-FROM ${{ matrix.name }}:latest
-LABEL org.opencontainers.image.size="$COMPRESSED_SIZE"
-EOF
+            echo "FROM ${{ matrix.name }}:latest" > Dockerfile.temp
+            echo "LABEL org.opencontainers.image.size=\"$COMPRESSED_SIZE\"" >> Dockerfile.temp
+            docker build -t "${{ matrix.name }}:temp" -f Dockerfile.temp .
+            rm Dockerfile.temp
             
             # Replace the original image
             docker tag "${{ matrix.name }}:temp" "${{ matrix.name }}:latest"
