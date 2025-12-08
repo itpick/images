@@ -1,298 +1,325 @@
 # Images TODO List
 # ==================
-# This file tracks container images to be added to the nix-containers project.
-# Generated: 2025-12-07
+# This file tracks container images in the nix-containers project.
+# Updated: 2025-12-07
 #
 # IMPORTANT: We build UPSTREAM versions of images (from nixpkgs), NOT IronBank/BigBang
 # hardened versions. The BigBang list is used as a reference for which images are
 # commonly needed in enterprise Kubernetes deployments.
 #
 # Legend:
-#   [ ] - Not started
-#   [~] - In progress
-#   [x] - Completed
-#   [?] - Needs investigation
+#   [ ] - Placeholder only (needs implementation)
+#   [x] - Completed (fully implemented)
 
 # ==============================================================================
-# REFERENCE PATTERNS - Use these existing images as templates
+# COMPLETED IMAGES (132 fully implemented)
+# ==============================================================================
+
+## Observability Stack
+[x] alertmanager
+[x] alloy
+[x] blackbox-exporter
+[x] grafana
+[x] grafana-image-renderer
+[x] kube-state-metrics
+[x] loki
+[x] memcached-exporter
+[x] metrics-server
+[x] mimir
+[x] node-exporter
+[x] prometheus
+[x] prometheus-adapter
+[x] prometheus-config-reloader
+[x] prometheus-operator
+[x] redis-exporter
+[x] rollout-operator
+[x] tempo
+[x] thanos
+
+## Security & Identity
+[x] cert-manager-controller
+[x] cert-manager-webhook
+[x] cert-manager-cainjector
+[x] cert-manager-startupapicheck
+[x] dex
+[x] external-secrets
+[x] gatekeeper
+[x] kube-rbac-proxy
+[x] kyverno
+[x] kyverno-cli
+[x] kyvernopre
+[x] kyverno-background-controller
+[x] kyverno-cleanup-controller
+[x] kyverno-reports-controller
+[x] oauth2-proxy
+[x] trust-manager
+[x] vault
+[x] vault-k8s
+[x] vault-csi-provider
+
+## GitOps & CI/CD
+[x] argocd
+[x] argocd-extension-installer
+[x] flux-cli
+[x] flux-operator
+[x] helm-controller
+[x] image-automation-controller
+[x] image-reflector-controller
+[x] kustomize-controller
+[x] notification-controller
+[x] source-controller
+[x] gitlab-runner
+
+## Operators & Controllers
+[x] cloudnative-pg
+[x] configmap-reload
+[x] crossplane
+[x] dragonfly-operator
+[x] external-dns
+[x] ingress-nginx
+[x] k8s-sidecar
+[x] keda
+[x] keda-metrics-apiserver
+[x] keda-admission-webhooks
+[x] node-local-dns
+[x] reflector
+[x] reloader
+[x] snapshot-controller
+[x] spegel
+[x] velero
+
+## Storage & Databases
+[x] gitea
+[x] memcached
+[x] minio
+[x] minio-client
+[x] openldap
+[x] pgpool
+[x] postgres-exporter
+[x] seaweedfs
+[x] zookeeper
+
+## Networking
+[x] fluent-bit
+[x] traefik
+
+## Utilities
+[x] bats
+[x] geoipupdate
+[x] shellcheck
+[x] yq
+
+## Core Images (previously implemented)
+[x] aspnet-runtime
+[x] attic
+[x] bash
+[x] busybox
+[x] cachix
+[x] cachix-flakes
+[x] caddy
+[x] cosign
+[x] cpp-build-env
+[x] cpp-runtime
+[x] crane
+[x] curl
+[x] devcontainer
+[x] devenv
+[x] dive
+[x] docker-compose
+[x] dotnet
+[x] git
+[x] glibc-dynamic
+[x] go
+[x] gradle
+[x] grype
+[x] haproxy
+[x] helm
+[x] hugo
+[x] jdk
+[x] jre
+[x] ko
+[x] kubectl
+[x] kubernetes-helm
+[x] maddy
+[x] mariadb
+[x] maven
+[x] mongodb
+[x] nginx
+[x] nix
+[x] nix-flakes
+[x] nix-unstable
+[x] node
+[x] php
+[x] pocket-id
+[x] postgres
+[x] python
+[x] python-fips
+[x] redis
+[x] ruby
+[x] rust
+[x] rust-build-env
+[x] sops
+[x] static
+[x] valkey
+[x] wait-for-it
+
+# ==============================================================================
+# PLACEHOLDER IMAGES (114 - need implementation)
+# ==============================================================================
+
+## GitLab Components
+[ ] cfssl-self-sign
+[ ] gitaly
+[ ] gitlab-base
+[ ] gitlab-certificates
+[ ] gitlab-container-registry
+[ ] gitlab-exporter
+[ ] gitlab-mailroom
+[ ] gitlab-pages
+[ ] gitlab-runner-helper
+[ ] gitlab-shell
+[ ] gitlab-sidekiq
+[ ] gitlab-toolbox
+[ ] gitlab-webservice
+[ ] gitlab-workhorse
+[ ] golang
+
+## Harbor Registry
+[ ] harbor-core
+[ ] harbor-exporter
+[ ] harbor-jobservice
+[ ] harbor-portal
+[ ] harbor-registry
+[ ] harbor-registryctl
+[ ] trivy-adapter
+
+## Istio Service Mesh
+[ ] istio-pilot
+[ ] istio-proxyv2
+[ ] istio-install-cni
+[ ] authservice
+
+## Rook-Ceph Storage
+[ ] rook-ceph
+[ ] rook-ceph-operator
+[ ] ceph
+[ ] cephcsi
+
+## ML/Kubeflow Platform
+[ ] apache-nifi
+[ ] spark
+[ ] spark-operator
+[ ] kubeflow-trainer
+[ ] kubeflow-notebooks
+[ ] kubeflow-pipelines
+[ ] katib-controller
+[ ] katib-db-manager
+[ ] katib-ui
+[ ] kserve
+[ ] mlflow
+[ ] alibi-detect
+[ ] explainer-dashboard
+[ ] trainer-controller-manager
+[ ] jobset
+
+## Elastic Stack
+[ ] elasticsearch
+[ ] kibana
+[ ] eck-operator
+[ ] elasticsearch-exporter
+
+## Security Scanning
+[ ] anchore-enterprise
+[ ] anchore-enterpriseui
+[ ] twistlock-console
+[ ] twistlock-defender
+[ ] neuvector-controller
+[ ] neuvector-enforcer
+[ ] neuvector-manager
+[ ] neuvector-scanner
+[ ] neuvector-prometheus-exporter
+[ ] neuvector-registry-adapter
+
+## Crossplane Providers
+[ ] crossplane-provider-aws
+[ ] crossplane-provider-gcp
+[ ] crossplane-provider-azure
+
+## Kyverno Policy Reporter
+[ ] kyverno-plugin
+[ ] policy-reporter
+[ ] policy-reporter-ui
+
+## Grafana Enterprise
+[ ] alloy-operator
+[ ] enterprise-logs
+[ ] enterprise-logs-provisioner
+[ ] enterprise-metrics
+[ ] grafana-enterprise-logs
+[ ] grafana-agent-operator
+
+## Developer Tools
+[ ] backstage
+[ ] headlamp
+[ ] sonarqube
+[ ] nexus
+[ ] mysql
+[ ] mattermost
+[ ] mattermost-operator
+
+## MinIO Operator
+[ ] minio-operator
+[ ] minio-operator-sidecar
+
+## Velero Plugins
+[ ] velero-plugin-aws
+[ ] velero-plugin-azure
+[ ] velero-plugin-csi
+
+## CSI Drivers
+[ ] csi-attacher
+[ ] csi-node-driver-registrar
+[ ] csi-provisioner
+[ ] csi-resizer
+[ ] csi-snapshotter
+[ ] snapshot-validation-webhook
+
+## Other Utilities
+[ ] keycloak
+[ ] keycloak-proxy
+[ ] kiali
+[ ] kiali-operator
+[ ] kubernetes-reflector
+[ ] kube-webhook-certgen
+[ ] loki-canary
+[ ] loki-helm-test
+[ ] mc
+[ ] nifi
+[ ] nifi-registry
+[ ] nifi-toolkit
+[ ] nginx-unprivileged
+[ ] netshoot
+[ ] tempo-query
+[ ] snmp-exporter
+[ ] windows-exporter
+
+## Base Images
+[ ] alpine
+[ ] distroless
+[ ] wolfi
+
+# ==============================================================================
+# TESTING TODO
 # ==============================================================================
 #
-# When adding a new image, use the closest matching pattern:
+# [~] Add test.nix files to 78 implemented images missing tests
+# [ ] Add kind cluster e2e/integration test framework
+#     - Deploy images to kind cluster
+#     - Verify pods start successfully
+#     - Run health checks against services
+#     - Test basic functionality (version commands, help, etc.)
+#     - Implement as lib/e2e-tests.nix
 #
-# OPERATORS / GO BINARIES (built from source):
-#   Reference: images/dragonfly-operator, images/external-dns
-#   Pattern: buildCLIImage + buildGoModule from GitHub source
-#   Use for: Kubernetes operators, Go controllers, custom binaries
-#
-# CLI TOOLS (from nixpkgs):
-#   Reference: images/kubectl, images/helm, images/cosign, images/crane
-#   Pattern: buildCLIImage with nixpkgs package directly
-#   Use for: Command-line tools already in nixpkgs
-#
-# DATABASES:
-#   Reference: images/postgres, images/mariadb, images/redis, images/valkey
-#   Pattern: nix2container.buildImage with nonRoot user, exposed ports
-#   Use for: Database servers, data stores
-#
-# WEB SERVERS / SERVICES:
-#   Reference: images/nginx, images/caddy, images/haproxy
-#   Pattern: nix2container.buildImage with nonRoot user
-#   Use for: HTTP servers, reverse proxies, load balancers
-#
-# LANGUAGE RUNTIMES:
-#   Reference: images/python, images/node, images/go, images/rust, images/jdk
-#   Pattern: nix2container.buildImage with development tools
-#   Use for: Programming language environments
-#
-# ==============================================================================
-
-# ==============================================================================
-# CURRENTLY AVAILABLE IMAGES (Already implemented)
-# ==============================================================================
-# aspnet-runtime, attic, bash, busybox, cachix, cachix-flakes, caddy, cosign,
-# cpp-build-env, cpp-runtime, crane, curl, devcontainer, devenv, dive,
-# docker-compose, dotnet, dragonfly-operator, external-dns, git, glibc-dynamic,
-# go, gradle, grype, haproxy, helm, hugo, jdk, jre, ko, kubectl, kubernetes-helm,
-# maddy, mariadb, maven, mongodb, nginx, nix, nix-flakes, nix-unstable, node,
-# php, pocket-id, postgres, python, python-fips, redis, ruby, rust, rust-build-env,
-# sops, static, valkey, wait-for-it
-
-# ==============================================================================
-# INFRASTRUCTURE IMAGES (from Helm charts - UPSTREAM versions)
-# ==============================================================================
-
-## Grafana Stack (upstream: grafana.com)
-[ ] alloy                      # → ref: dragonfly-operator (Go operator)
-[ ] loki                       # → ref: postgres (service with data)
-[ ] mimir                      # → ref: postgres (service with data)
-[ ] tempo                      # → ref: postgres (service with data)
-[ ] grafana                    # → ref: nginx (web service)
-[ ] grafana-image-renderer     # → ref: nginx (web service)
-[ ] rollout-operator           # → ref: dragonfly-operator (Go operator)
-
-## Cert Management (upstream: cert-manager.io)
-[ ] cert-manager               # → ref: dragonfly-operator (Go operator)
-[ ] cert-manager-webhook       # → ref: dragonfly-operator (Go operator)
-[ ] cert-manager-cainjector    # → ref: dragonfly-operator (Go operator)
-[ ] trust-manager              # → ref: dragonfly-operator (Go operator)
-
-## Database Operators (upstream: cloudnative-pg.io)
-[ ] cloudnative-pg             # → ref: dragonfly-operator (Go operator)
-[ ] cloudnative-pg-operator    # → ref: dragonfly-operator (Go operator)
-
-## Crossplane (upstream: crossplane.io)
-[ ] crossplane                 # → ref: dragonfly-operator (Go operator)
-[ ] crossplane-provider-aws    # → ref: dragonfly-operator (Go operator)
-[ ] crossplane-provider-gcp    # → ref: dragonfly-operator (Go operator)
-[ ] crossplane-provider-azure  # → ref: dragonfly-operator (Go operator)
-
-## KEDA (upstream: keda.sh)
-[ ] keda                       # → ref: dragonfly-operator (Go operator)
-[ ] keda-metrics-apiserver     # → ref: dragonfly-operator (Go operator)
-[ ] keda-admission-webhooks    # → ref: dragonfly-operator (Go operator)
-
-## DNS & Networking
-[ ] node-local-dns             # → ref: external-dns (Go service)
-
-## Prometheus Stack (upstream: prometheus.io)
-[ ] prometheus                 # → ref: dragonfly-operator (Go, nixpkgs has it)
-[ ] prometheus-adapter         # → ref: dragonfly-operator (Go operator)
-[ ] prometheus-operator        # → ref: dragonfly-operator (Go operator)
-[ ] prometheus-config-reloader # → ref: kubectl (CLI tool)
-[ ] alertmanager               # → ref: dragonfly-operator (Go service)
-[ ] node-exporter              # → ref: kubectl (CLI tool, nixpkgs has it)
-[ ] blackbox-exporter          # → ref: kubectl (CLI tool)
-[ ] kube-state-metrics         # → ref: dragonfly-operator (Go service)
-[ ] metrics-server             # → ref: dragonfly-operator (Go service)
-
-## Storage
-[ ] rook-ceph                  # → ref: dragonfly-operator (Go operator)
-[ ] rook-ceph-cluster          # → ref: dragonfly-operator (Go operator)
-[ ] snapshot-controller        # → ref: dragonfly-operator (Go operator)
-
-## Other Infrastructure
-[ ] reflector                  # → ref: dragonfly-operator (Go operator)
-[ ] reloader                   # → ref: dragonfly-operator (Go operator)
-[ ] spegel                     # → ref: dragonfly-operator (Go operator)
-
-# ==============================================================================
-# KUBEFLOW / ML PLATFORM IMAGES (upstream versions)
-# ==============================================================================
-
-## Apache NiFi (upstream: nifi.apache.org)
-[ ] apache-nifi                # → ref: nginx (Java web service)
-
-## Spark (upstream: spark.apache.org)
-[ ] spark-operator             # → ref: dragonfly-operator (Go operator)
-[ ] spark                      # → ref: jdk (Java runtime)
-
-## Kubeflow Core (upstream: kubeflow.org)
-[ ] kubeflow-trainer           # → ref: dragonfly-operator (Go operator)
-[ ] kubeflow-notebooks         # → ref: python (Python service)
-[ ] kubeflow-pipelines         # → ref: python (Python service)
-
-## Katib (upstream: github.com/kubeflow/katib)
-[ ] katib-controller           # → ref: dragonfly-operator (Go operator)
-[ ] katib-db-manager           # → ref: python (Python service)
-[ ] katib-ui                   # → ref: nginx (web service)
-
-## Model Serving
-[ ] kserve                     # → ref: dragonfly-operator (Go operator)
-[ ] mlflow                     # → ref: python (nixpkgs has it)
-[ ] alibi-detect               # → ref: python (Python service)
-
-## Other ML Tools
-[ ] explainer-dashboard        # → ref: python (Python service)
-
-# ==============================================================================
-# GITOPS & CI/CD IMAGES (upstream versions)
-# ==============================================================================
-
-## FluxCD (upstream: fluxcd.io)
-[ ] flux-helm-controller       # → ref: dragonfly-operator (Go operator)
-[ ] flux-kustomize-controller  # → ref: dragonfly-operator (Go operator)
-[ ] flux-notification-controller # → ref: dragonfly-operator (Go operator)
-[ ] flux-source-controller     # → ref: dragonfly-operator (Go operator)
-
-## ArgoCD (upstream: argoproj.github.io)
-[ ] argocd                     # → ref: dragonfly-operator (Go service)
-[ ] argocd-applicationset      # → ref: dragonfly-operator (Go operator)
-[ ] argocd-notifications       # → ref: dragonfly-operator (Go service)
-
-## GitLab (upstream: gitlab.com)
-[ ] gitlab-runner              # → ref: dragonfly-operator (Go service)
-[ ] gitlab-runner-helper       # → ref: kubectl (CLI tool)
-
-# ==============================================================================
-# SERVICE MESH & NETWORKING (upstream versions)
-# ==============================================================================
-
-## Istio (upstream: istio.io)
-[ ] istio-pilot                # → ref: dragonfly-operator (Go service)
-[ ] istio-proxyv2              # → ref: external-dns (Go + Envoy)
-[ ] istio-install-cni          # → ref: dragonfly-operator (Go binary)
-
-## Ingress
-[ ] ingress-nginx              # → ref: nginx (nixpkgs has nginx-ingress)
-[ ] traefik                    # → ref: dragonfly-operator (Go, nixpkgs has it)
-
-# ==============================================================================
-# SECURITY & IDENTITY (upstream versions)
-# ==============================================================================
-
-## Keycloak (upstream: keycloak.org)
-[ ] keycloak                   # → ref: jdk (Java service)
-
-## Vault (upstream: hashicorp.com)
-[ ] vault                      # → ref: kubectl (CLI, nixpkgs has it)
-[ ] vault-k8s                  # → ref: dragonfly-operator (Go operator)
-[ ] vault-csi-provider         # → ref: dragonfly-operator (Go operator)
-
-## Policy Engines
-[ ] kyverno                    # → ref: dragonfly-operator (Go operator)
-[ ] gatekeeper                 # → ref: dragonfly-operator (Go operator)
-
-## External Secrets
-[ ] external-secrets           # → ref: dragonfly-operator (Go operator)
-
-## Dex (upstream: dexidp.io)
-[ ] dex                        # → ref: dragonfly-operator (Go service)
-
-# ==============================================================================
-# OBSERVABILITY (upstream versions)
-# ==============================================================================
-
-## Kiali (upstream: kiali.io)
-[ ] kiali                      # → ref: nginx (Go web service)
-[ ] kiali-operator             # → ref: dragonfly-operator (Go operator)
-
-## Thanos (upstream: thanos.io)
-[ ] thanos                     # → ref: dragonfly-operator (Go, nixpkgs has it)
-
-## Fluent (upstream: fluentbit.io)
-[ ] fluent-bit                 # → ref: kubectl (CLI, nixpkgs has it)
-
-# ==============================================================================
-# STORAGE & DATABASES (upstream versions)
-# ==============================================================================
-
-## MinIO (upstream: min.io)
-[ ] minio                      # → ref: postgres (service, nixpkgs has it)
-[ ] minio-mc                   # → ref: kubectl (CLI tool)
-[ ] minio-operator             # → ref: dragonfly-operator (Go operator)
-
-## Elasticsearch (upstream: elastic.co)
-[ ] elasticsearch              # → ref: jdk (Java service)
-[ ] kibana                     # → ref: node (Node.js service)
-[ ] eck-operator               # → ref: dragonfly-operator (Go operator)
-
-## Memcached
-[ ] memcached                  # → ref: redis (nixpkgs has it)
-[ ] memcached-exporter         # → ref: kubectl (CLI, nixpkgs has it)
-
-# ==============================================================================
-# BACKUP & DISASTER RECOVERY (upstream versions)
-# ==============================================================================
-
-## Velero (upstream: velero.io)
-[ ] velero                     # → ref: dragonfly-operator (Go, nixpkgs has it)
-[ ] velero-plugin-aws          # → ref: dragonfly-operator (Go plugin)
-[ ] velero-plugin-csi          # → ref: dragonfly-operator (Go plugin)
-[ ] velero-plugin-azure        # → ref: dragonfly-operator (Go plugin)
-
-# ==============================================================================
-# DEVELOPER TOOLS (upstream versions)
-# ==============================================================================
-
-## Harbor (upstream: goharbor.io)
-[ ] harbor-core                # → ref: dragonfly-operator (Go service)
-[ ] harbor-jobservice          # → ref: dragonfly-operator (Go service)
-[ ] harbor-portal              # → ref: nginx (web UI)
-[ ] harbor-registryctl         # → ref: dragonfly-operator (Go service)
-
-## Mattermost (upstream: mattermost.com)
-[ ] mattermost                 # → ref: dragonfly-operator (Go service)
-[ ] mattermost-operator        # → ref: dragonfly-operator (Go operator)
-
-## NeuVector (upstream: neuvector.com)
-[ ] neuvector-controller       # → ref: dragonfly-operator (Go operator)
-[ ] neuvector-enforcer         # → ref: dragonfly-operator (Go service)
-[ ] neuvector-manager          # → ref: nginx (web UI)
-[ ] neuvector-scanner          # → ref: dragonfly-operator (Go service)
-
-# ==============================================================================
-# BASE IMAGES
-# ==============================================================================
-[ ] alpine                     # → ref: static (minimal base)
-[ ] distroless                 # → ref: static (minimal base)
-[ ] wolfi                      # → ref: static (minimal base)
-
-# ==============================================================================
-# UTILITY IMAGES
-# ==============================================================================
-[ ] k8s-sidecar                # → ref: kubectl (Python, nixpkgs has it)
-[ ] bats                       # → ref: bash (nixpkgs has bats)
-[ ] yq                         # → ref: kubectl (CLI, nixpkgs has it)
-
-# ==============================================================================
-# FLAKE ENHANCEMENTS TODO
-# ==============================================================================
-#
-# SELECTIVE IMAGE BUILDING:
-# [ ] Add ability to build only specific images via input file
-#     - Read image list from file (e.g., images-to-build.txt)
-#     - Support filtering by category (infrastructure, ml-platform, etc.)
-#     - Example usage: nix build .#selected-images --argstr imageList "./images-to-build.txt"
-#     - This enables pipeline jobs to build subsets of images
-#
-# PLANNED IMPLEMENTATION:
-#   1. Add flake input for image list file path
-#   2. Create filtered-images output that reads from file
-#   3. Support glob patterns (e.g., "prometheus-*")
-#   4. Support category filters (e.g., "@infrastructure")
-#
-# ==============================================================================
-
 # ==============================================================================
 # NOTES
 # ==============================================================================
@@ -301,17 +328,6 @@
 # - We build images from nixpkgs, NOT from IronBank/registry1.dso.mil
 # - BigBang list is used as a reference for commonly needed enterprise images
 # - Each image should be built from upstream source code via nixpkgs
-#
-# CHART INTEGRATION:
-# - Charts are pulled separately and packaged together
-# - Images are matched to chart versions for compatibility
-# - See charts.nix for chart definitions
-#
-# Priority order:
-# 1. Infrastructure images (cert-manager, prometheus, etc.) - Most commonly needed
-# 2. Base images (alpine, distroless, wolfi) - Foundation for custom images
-# 3. GitOps/CD tools (flux, argocd) - Platform baseline
-# 4. ML/AI platform (kubeflow, spark, mlflow) - Specialized workloads
 #
 # Build considerations:
 # - Some images require unfree licenses (mongodb already handled)
