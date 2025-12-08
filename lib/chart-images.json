@@ -1,0 +1,1193 @@
+{
+  "generated": "2025-12-08T03:45:08Z",
+  "total_unique_images": 150,
+  "by_chart": [
+    {
+      "chart": "alloy",
+      "images": [
+        "docker.io/grafana/alloy:v1.5.1",
+        "ghcr.io/jimmidyson/configmap-reload:v0.12.0",
+        "ghcr.io/maxmind/geoipupdate:v6.0",
+        "grafana/alloy:null",
+        "jimmidyson/configmap-reload:v0.12.0"
+      ]
+    },
+    {
+      "chart": "argo-cd",
+      "images": [
+        "busybox:1.34.1",
+        "ghcr.io/dexidp/dex:v2.41.1",
+        "koalaman/shellcheck:v0.5.0",
+        "public.ecr.aws/bitnami/redis-exporter:1.58.0",
+        "public.ecr.aws/docker/library/haproxy:2.9.4-alpine",
+        "public.ecr.aws/docker/library/redis:7.2.4-alpine",
+        "quay.io/argoproj/argocd:",
+        "quay.io/argoproj/argocd:v2.13.0",
+        "quay.io/argoprojlabs/argocd-extension-installer:v0.0.5"
+      ]
+    },
+    {
+      "chart": "cert-manager",
+      "images": [
+        "quay.io/jetstack/cert-manager-acmesolver:latest",
+        "quay.io/jetstack/cert-manager-cainjector:latest",
+        "quay.io/jetstack/cert-manager-cainjector:v1.16.2",
+        "quay.io/jetstack/cert-manager-controller:latest",
+        "quay.io/jetstack/cert-manager-controller:v1.16.2",
+        "quay.io/jetstack/cert-manager-startupapicheck:latest",
+        "quay.io/jetstack/cert-manager-startupapicheck:v1.16.2",
+        "quay.io/jetstack/cert-manager-webhook:latest",
+        "quay.io/jetstack/cert-manager-webhook:v1.16.2"
+      ]
+    },
+    {
+      "chart": "cloudnative-pg",
+      "images": [
+        "ghcr.io/cloudnative-pg/cloudnative-pg:",
+        "ghcr.io/cloudnative-pg/cloudnative-pg:1.26.0"
+      ]
+    },
+    {
+      "chart": "crossplane",
+      "images": [
+        "xpkg.upbound.io/crossplane/crossplane:"
+      ]
+    },
+    {
+      "chart": "dragonfly-operator",
+      "images": [
+        "docker.dragonflydb.io/dragonflydb/operator:",
+        "docker.dragonflydb.io/dragonflydb/operator:v1.1.11",
+        "quay.io/brancz/kube-rbac-proxy:v0.13.1"
+      ]
+    },
+    {
+      "chart": "external-dns",
+      "images": [
+        "registry.k8s.io/external-dns/external-dns:null",
+        "registry.k8s.io/external-dns/external-dns:v0.15.0"
+      ]
+    },
+    {
+      "chart": "external-secrets",
+      "images": [
+        "ghcr.io/external-secrets/bitwarden-sdk-server:",
+        "ghcr.io/external-secrets/external-secrets:",
+        "ghcr.io/external-secrets/external-secrets:v0.10.0"
+      ]
+    },
+    {
+      "chart": "istiod",
+      "images": [
+        "busybox:1.28",
+        "docker.io/istio/pilot:1.24.0"
+      ]
+    },
+    {
+      "chart": "keda",
+      "images": [
+        "ghcr.io/kedacore/keda-admission-webhooks:2.16.1",
+        "ghcr.io/kedacore/keda-metrics-apiserver:2.16.1",
+        "ghcr.io/kedacore/keda:2.16.1",
+        "kedacore/keda-admission-webhooks:",
+        "kedacore/keda-metrics-apiserver:",
+        "kedacore/keda:"
+      ]
+    },
+    {
+      "chart": "kube-prometheus-stack",
+      "images": [
+        "bats/bats:v1.4.1",
+        "brancz/kube-rbac-proxy:v0.18.0",
+        "curlimages/curl:7.85.0",
+        "docker.io/bats/bats:v1.4.1",
+        "docker.io/grafana/grafana:11.2.1",
+        "grafana/grafana-image-renderer:latest",
+        "grafana/grafana:",
+        "ingress-nginx/kube-webhook-certgen:v20221220-controller-v1.5.1-58-g787ea74b6",
+        "kiwigrid/k8s-sidecar:1.27.4",
+        "kube-state-metrics/kube-state-metrics:",
+        "library/busybox:1.31.1",
+        "prometheus-community/windows-exporter:",
+        "prometheus-operator/admission-webhook:",
+        "prometheus-operator/prometheus-config-reloader:",
+        "prometheus-operator/prometheus-operator:",
+        "prometheus/alertmanager:v0.27.0",
+        "prometheus/node-exporter:",
+        "prometheus/prometheus:v2.54.1",
+        "quay.io/gambol99/keycloak-proxy:latest",
+        "quay.io/kiwigrid/k8s-sidecar:1.27.4",
+        "quay.io/oauth2-proxy/oauth2-proxy:v7.5.1",
+        "quay.io/prometheus-operator/prometheus-operator:v0.77.1",
+        "quay.io/prometheus/alertmanager:v0.27.0",
+        "quay.io/prometheus/node-exporter:v1.8.2",
+        "quay.io/prometheus/prometheus:v2.54.1",
+        "registry.k8s.io/ingress-nginx/kube-webhook-certgen:v20221220-controller-v1.5.1-58-g787ea74b6",
+        "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.13.0",
+        "thanos/thanos:v0.36.1"
+      ]
+    },
+    {
+      "chart": "kubeflow-trainer",
+      "images": [
+        "ghcr.io/kubeflow/trainer/trainer-controller-manager:v2.1.0",
+        "kubeflow/trainer/trainer-controller-manager:",
+        "registry.k8s.io/jobset/jobset:v0.10.1"
+      ]
+    },
+    {
+      "chart": "kyverno",
+      "images": [
+        "bitnami/kubectl:1.30.2",
+        "busybox:1.35",
+        "ghcr.io/kyverno/background-controller:v1.13.0",
+        "ghcr.io/kyverno/cleanup-controller:v1.13.0",
+        "ghcr.io/kyverno/kyverno-cli:v1.13.0",
+        "ghcr.io/kyverno/kyverno:latest",
+        "ghcr.io/kyverno/kyverno:v1.13.0",
+        "ghcr.io/kyverno/kyvernopre:v1.13.0",
+        "ghcr.io/kyverno/reports-controller:v1.13.0",
+        "kyverno/background-controller:null",
+        "kyverno/cleanup-controller:null",
+        "kyverno/kyverno-cli:null",
+        "kyverno/kyverno:null",
+        "kyverno/kyvernopre:null",
+        "kyverno/reports-controller:null"
+      ]
+    },
+    {
+      "chart": "loki",
+      "images": [
+        "bitnami/kubectl:null",
+        "grafana/agent-operator:v0.39.1",
+        "grafana/enterprise-logs-provisioner:null",
+        "grafana/enterprise-logs:null",
+        "grafana/loki-canary:null",
+        "grafana/loki-helm-test:ewelch-distributed-helm-chart-17db5ee",
+        "grafana/loki:null",
+        "grafana/rollout-operator:",
+        "kiwigrid/k8s-sidecar:1.27.5",
+        "memcached:1.6.23-alpine",
+        "nginxinc/nginx-unprivileged:1.27-alpine",
+        "prom/memcached-exporter:v0.14.2",
+        "quay.io/minio/mc:RELEASE.2022-09-16T09-16-47Z",
+        "quay.io/minio/minio:RELEASE.2022-09-17T00-09-45Z"
+      ]
+    },
+    {
+      "chart": "mlflow",
+      "images": [
+        "burakince/mlflow:",
+        "burakince/mlflow:2.20.3"
+      ]
+    },
+    {
+      "chart": "nifi",
+      "images": [
+        "apache/nifi-registry:0.8.0",
+        "apache/nifi-toolkit:1.12.1",
+        "apache/nifi:1.23.2",
+        "bitnami/bitnami-shell:11-debian-11-r4",
+        "bitnami/zookeeper:3.8.0-debian-11-r5",
+        "busybox:1.32.0",
+        "dduportal/bats:0.4.0",
+        "docker.io/bitnami/openldap:latest",
+        "docker.io/bitnami/zookeeper:3.8.0-debian-11-r5",
+        "docker.io/nicolaka/netshoot:latest",
+        "osixia/openldap:1.2.4",
+        "quay.io/keycloak/keycloak:16.1.0"
+      ]
+    },
+    {
+      "chart": "node-local-dns",
+      "images": [
+        "registry.k8s.io/dns/k8s-dns-node-cache:",
+        "registry.k8s.io/dns/k8s-dns-node-cache:1.23.1"
+      ]
+    },
+    {
+      "chart": "prometheus-adapter",
+      "images": [
+        "registry.k8s.io/prometheus-adapter/prometheus-adapter:",
+        "registry.k8s.io/prometheus-adapter/prometheus-adapter:v0.12.0"
+      ]
+    },
+    {
+      "chart": "reflector",
+      "images": [
+        "docker.io/emberstack/kubernetes-reflector:",
+        "docker.io/emberstack/kubernetes-reflector:9.1.41"
+      ]
+    },
+    {
+      "chart": "rook-ceph-cluster",
+      "images": [
+        "quay.io/ceph/ceph:v19.2.0",
+        "quay.io/ceph/ceph:v19.2.0-20240927"
+      ]
+    },
+    {
+      "chart": "rook-ceph",
+      "images": [
+        "docker.io/rook/ceph:v1.16.1",
+        "quay.io/cephcsi/cephcsi:v3.13.0",
+        "quay.io/csiaddons/k8s-sidecar:v0.11.0",
+        "registry.k8s.io/sig-storage/csi-attacher:v4.6.1",
+        "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.11.1",
+        "registry.k8s.io/sig-storage/csi-provisioner:v5.0.1",
+        "registry.k8s.io/sig-storage/csi-resizer:v1.11.1",
+        "registry.k8s.io/sig-storage/csi-snapshotter:v8.2.0"
+      ]
+    },
+    {
+      "chart": "snapshot-controller",
+      "images": [
+        "registry.k8s.io/sig-storage/snapshot-controller:",
+        "registry.k8s.io/sig-storage/snapshot-controller:v8.1.0",
+        "registry.k8s.io/sig-storage/snapshot-validation-webhook:",
+        "registry.k8s.io/sig-storage/snapshot-validation-webhook:v8.1.0"
+      ]
+    },
+    {
+      "chart": "spark-operator",
+      "images": [
+        "ghcr.io/kubeflow/spark-operator/controller:2.4.0",
+        "kubeflow/spark-operator/controller:",
+        "kubeflow/spark-operator/kubectl:"
+      ]
+    },
+    {
+      "chart": "spegel",
+      "images": [
+        "ghcr.io/spegel-org/spegel:",
+        "ghcr.io/spegel-org/spegel@sha256:4f9f7cf0b8006f2a17599f0a9f2fa6c02c7a206726f2a89ca26c42622346d17f"
+      ]
+    },
+    {
+      "chart": "tempo",
+      "images": [
+        "grafana/tempo-query:null",
+        "grafana/tempo:",
+        "grafana/tempo:2.5.0"
+      ]
+    },
+    {
+      "chart": "vault",
+      "images": [
+        "hashicorp/vault-csi-provider:1.4.2",
+        "hashicorp/vault-k8s:1.4.1",
+        "hashicorp/vault:1.16.1"
+      ]
+    },
+    {
+      "chart": "velero",
+      "images": [
+        "docker.io/bitnami/kubectl:1.33",
+        "docker.io/bitnami/kubectl:latest",
+        "velero/velero:v1.14.1"
+      ]
+    }
+  ],
+  "images": [
+    {
+      "full": "apache/nifi-registry:0.8.0",
+      "registry": "apache",
+      "repository": "apache/nifi-registry",
+      "tag": "0.8.0"
+    },
+    {
+      "full": "apache/nifi-toolkit:1.12.1",
+      "registry": "apache",
+      "repository": "apache/nifi-toolkit",
+      "tag": "1.12.1"
+    },
+    {
+      "full": "apache/nifi:1.23.2",
+      "registry": "apache",
+      "repository": "apache/nifi",
+      "tag": "1.23.2"
+    },
+    {
+      "full": "bats/bats:v1.4.1",
+      "registry": "bats",
+      "repository": "bats/bats",
+      "tag": "v1.4.1"
+    },
+    {
+      "full": "bitnami/bitnami-shell:11-debian-11-r4",
+      "registry": "bitnami",
+      "repository": "bitnami/bitnami-shell",
+      "tag": "11-debian-11-r4"
+    },
+    {
+      "full": "bitnami/kubectl:1.30.2",
+      "registry": "bitnami",
+      "repository": "bitnami/kubectl",
+      "tag": "1.30.2"
+    },
+    {
+      "full": "bitnami/kubectl:null",
+      "registry": "bitnami",
+      "repository": "bitnami/kubectl",
+      "tag": "null"
+    },
+    {
+      "full": "bitnami/zookeeper:3.8.0-debian-11-r5",
+      "registry": "bitnami",
+      "repository": "bitnami/zookeeper",
+      "tag": "3.8.0-debian-11-r5"
+    },
+    {
+      "full": "brancz/kube-rbac-proxy:v0.18.0",
+      "registry": "brancz",
+      "repository": "brancz/kube-rbac-proxy",
+      "tag": "v0.18.0"
+    },
+    {
+      "full": "burakince/mlflow:",
+      "registry": "burakince",
+      "repository": "burakince/mlflow",
+      "tag": ""
+    },
+    {
+      "full": "burakince/mlflow:2.20.3",
+      "registry": "burakince",
+      "repository": "burakince/mlflow",
+      "tag": "2.20.3"
+    },
+    {
+      "full": "busybox:1.28",
+      "registry": "docker.io",
+      "repository": "busybox",
+      "tag": "1.28"
+    },
+    {
+      "full": "busybox:1.32.0",
+      "registry": "docker.io",
+      "repository": "busybox",
+      "tag": "1.32.0"
+    },
+    {
+      "full": "busybox:1.34.1",
+      "registry": "docker.io",
+      "repository": "busybox",
+      "tag": "1.34.1"
+    },
+    {
+      "full": "busybox:1.35",
+      "registry": "docker.io",
+      "repository": "busybox",
+      "tag": "1.35"
+    },
+    {
+      "full": "curlimages/curl:7.85.0",
+      "registry": "curlimages",
+      "repository": "curlimages/curl",
+      "tag": "7.85.0"
+    },
+    {
+      "full": "dduportal/bats:0.4.0",
+      "registry": "dduportal",
+      "repository": "dduportal/bats",
+      "tag": "0.4.0"
+    },
+    {
+      "full": "docker.dragonflydb.io/dragonflydb/operator:",
+      "registry": "docker.dragonflydb.io",
+      "repository": "docker.dragonflydb.io/dragonflydb/operator",
+      "tag": ""
+    },
+    {
+      "full": "docker.dragonflydb.io/dragonflydb/operator:v1.1.11",
+      "registry": "docker.dragonflydb.io",
+      "repository": "docker.dragonflydb.io/dragonflydb/operator",
+      "tag": "v1.1.11"
+    },
+    {
+      "full": "docker.io/bats/bats:v1.4.1",
+      "registry": "docker.io",
+      "repository": "docker.io/bats/bats",
+      "tag": "v1.4.1"
+    },
+    {
+      "full": "docker.io/bitnami/kubectl:1.33",
+      "registry": "docker.io",
+      "repository": "docker.io/bitnami/kubectl",
+      "tag": "1.33"
+    },
+    {
+      "full": "docker.io/bitnami/kubectl:latest",
+      "registry": "docker.io",
+      "repository": "docker.io/bitnami/kubectl",
+      "tag": "latest"
+    },
+    {
+      "full": "docker.io/bitnami/openldap:latest",
+      "registry": "docker.io",
+      "repository": "docker.io/bitnami/openldap",
+      "tag": "latest"
+    },
+    {
+      "full": "docker.io/bitnami/zookeeper:3.8.0-debian-11-r5",
+      "registry": "docker.io",
+      "repository": "docker.io/bitnami/zookeeper",
+      "tag": "3.8.0-debian-11-r5"
+    },
+    {
+      "full": "docker.io/emberstack/kubernetes-reflector:",
+      "registry": "docker.io",
+      "repository": "docker.io/emberstack/kubernetes-reflector",
+      "tag": ""
+    },
+    {
+      "full": "docker.io/emberstack/kubernetes-reflector:9.1.41",
+      "registry": "docker.io",
+      "repository": "docker.io/emberstack/kubernetes-reflector",
+      "tag": "9.1.41"
+    },
+    {
+      "full": "docker.io/grafana/alloy:v1.5.1",
+      "registry": "docker.io",
+      "repository": "docker.io/grafana/alloy",
+      "tag": "v1.5.1"
+    },
+    {
+      "full": "docker.io/grafana/grafana:11.2.1",
+      "registry": "docker.io",
+      "repository": "docker.io/grafana/grafana",
+      "tag": "11.2.1"
+    },
+    {
+      "full": "docker.io/istio/pilot:1.24.0",
+      "registry": "docker.io",
+      "repository": "docker.io/istio/pilot",
+      "tag": "1.24.0"
+    },
+    {
+      "full": "docker.io/nicolaka/netshoot:latest",
+      "registry": "docker.io",
+      "repository": "docker.io/nicolaka/netshoot",
+      "tag": "latest"
+    },
+    {
+      "full": "docker.io/rook/ceph:v1.16.1",
+      "registry": "docker.io",
+      "repository": "docker.io/rook/ceph",
+      "tag": "v1.16.1"
+    },
+    {
+      "full": "ghcr.io/cloudnative-pg/cloudnative-pg:",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/cloudnative-pg/cloudnative-pg",
+      "tag": ""
+    },
+    {
+      "full": "ghcr.io/cloudnative-pg/cloudnative-pg:1.26.0",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/cloudnative-pg/cloudnative-pg",
+      "tag": "1.26.0"
+    },
+    {
+      "full": "ghcr.io/dexidp/dex:v2.41.1",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/dexidp/dex",
+      "tag": "v2.41.1"
+    },
+    {
+      "full": "ghcr.io/external-secrets/bitwarden-sdk-server:",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/external-secrets/bitwarden-sdk-server",
+      "tag": ""
+    },
+    {
+      "full": "ghcr.io/external-secrets/external-secrets:",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/external-secrets/external-secrets",
+      "tag": ""
+    },
+    {
+      "full": "ghcr.io/external-secrets/external-secrets:v0.10.0",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/external-secrets/external-secrets",
+      "tag": "v0.10.0"
+    },
+    {
+      "full": "ghcr.io/jimmidyson/configmap-reload:v0.12.0",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/jimmidyson/configmap-reload",
+      "tag": "v0.12.0"
+    },
+    {
+      "full": "ghcr.io/kedacore/keda-admission-webhooks:2.16.1",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/kedacore/keda-admission-webhooks",
+      "tag": "2.16.1"
+    },
+    {
+      "full": "ghcr.io/kedacore/keda-metrics-apiserver:2.16.1",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/kedacore/keda-metrics-apiserver",
+      "tag": "2.16.1"
+    },
+    {
+      "full": "ghcr.io/kedacore/keda:2.16.1",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/kedacore/keda",
+      "tag": "2.16.1"
+    },
+    {
+      "full": "ghcr.io/kubeflow/spark-operator/controller:2.4.0",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/kubeflow/spark-operator/controller",
+      "tag": "2.4.0"
+    },
+    {
+      "full": "ghcr.io/kubeflow/trainer/trainer-controller-manager:v2.1.0",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/kubeflow/trainer/trainer-controller-manager",
+      "tag": "v2.1.0"
+    },
+    {
+      "full": "ghcr.io/kyverno/background-controller:v1.13.0",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/kyverno/background-controller",
+      "tag": "v1.13.0"
+    },
+    {
+      "full": "ghcr.io/kyverno/cleanup-controller:v1.13.0",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/kyverno/cleanup-controller",
+      "tag": "v1.13.0"
+    },
+    {
+      "full": "ghcr.io/kyverno/kyverno-cli:v1.13.0",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/kyverno/kyverno-cli",
+      "tag": "v1.13.0"
+    },
+    {
+      "full": "ghcr.io/kyverno/kyverno:latest",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/kyverno/kyverno",
+      "tag": "latest"
+    },
+    {
+      "full": "ghcr.io/kyverno/kyverno:v1.13.0",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/kyverno/kyverno",
+      "tag": "v1.13.0"
+    },
+    {
+      "full": "ghcr.io/kyverno/kyvernopre:v1.13.0",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/kyverno/kyvernopre",
+      "tag": "v1.13.0"
+    },
+    {
+      "full": "ghcr.io/kyverno/reports-controller:v1.13.0",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/kyverno/reports-controller",
+      "tag": "v1.13.0"
+    },
+    {
+      "full": "ghcr.io/maxmind/geoipupdate:v6.0",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/maxmind/geoipupdate",
+      "tag": "v6.0"
+    },
+    {
+      "full": "ghcr.io/spegel-org/spegel:",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/spegel-org/spegel",
+      "tag": ""
+    },
+    {
+      "full": "ghcr.io/spegel-org/spegel@sha256:4f9f7cf0b8006f2a17599f0a9f2fa6c02c7a206726f2a89ca26c42622346d17f",
+      "registry": "ghcr.io",
+      "repository": "ghcr.io/spegel-org/spegel@sha256",
+      "tag": "4f9f7cf0b8006f2a17599f0a9f2fa6c02c7a206726f2a89ca26c42622346d17f"
+    },
+    {
+      "full": "grafana/agent-operator:v0.39.1",
+      "registry": "grafana",
+      "repository": "grafana/agent-operator",
+      "tag": "v0.39.1"
+    },
+    {
+      "full": "grafana/alloy:null",
+      "registry": "grafana",
+      "repository": "grafana/alloy",
+      "tag": "null"
+    },
+    {
+      "full": "grafana/enterprise-logs-provisioner:null",
+      "registry": "grafana",
+      "repository": "grafana/enterprise-logs-provisioner",
+      "tag": "null"
+    },
+    {
+      "full": "grafana/enterprise-logs:null",
+      "registry": "grafana",
+      "repository": "grafana/enterprise-logs",
+      "tag": "null"
+    },
+    {
+      "full": "grafana/grafana-image-renderer:latest",
+      "registry": "grafana",
+      "repository": "grafana/grafana-image-renderer",
+      "tag": "latest"
+    },
+    {
+      "full": "grafana/grafana:",
+      "registry": "grafana",
+      "repository": "grafana/grafana",
+      "tag": ""
+    },
+    {
+      "full": "grafana/loki-canary:null",
+      "registry": "grafana",
+      "repository": "grafana/loki-canary",
+      "tag": "null"
+    },
+    {
+      "full": "grafana/loki-helm-test:ewelch-distributed-helm-chart-17db5ee",
+      "registry": "grafana",
+      "repository": "grafana/loki-helm-test",
+      "tag": "ewelch-distributed-helm-chart-17db5ee"
+    },
+    {
+      "full": "grafana/loki:null",
+      "registry": "grafana",
+      "repository": "grafana/loki",
+      "tag": "null"
+    },
+    {
+      "full": "grafana/rollout-operator:",
+      "registry": "grafana",
+      "repository": "grafana/rollout-operator",
+      "tag": ""
+    },
+    {
+      "full": "grafana/tempo-query:null",
+      "registry": "grafana",
+      "repository": "grafana/tempo-query",
+      "tag": "null"
+    },
+    {
+      "full": "grafana/tempo:",
+      "registry": "grafana",
+      "repository": "grafana/tempo",
+      "tag": ""
+    },
+    {
+      "full": "grafana/tempo:2.5.0",
+      "registry": "grafana",
+      "repository": "grafana/tempo",
+      "tag": "2.5.0"
+    },
+    {
+      "full": "hashicorp/vault-csi-provider:1.4.2",
+      "registry": "hashicorp",
+      "repository": "hashicorp/vault-csi-provider",
+      "tag": "1.4.2"
+    },
+    {
+      "full": "hashicorp/vault-k8s:1.4.1",
+      "registry": "hashicorp",
+      "repository": "hashicorp/vault-k8s",
+      "tag": "1.4.1"
+    },
+    {
+      "full": "hashicorp/vault:1.16.1",
+      "registry": "hashicorp",
+      "repository": "hashicorp/vault",
+      "tag": "1.16.1"
+    },
+    {
+      "full": "ingress-nginx/kube-webhook-certgen:v20221220-controller-v1.5.1-58-g787ea74b6",
+      "registry": "ingress-nginx",
+      "repository": "ingress-nginx/kube-webhook-certgen",
+      "tag": "v20221220-controller-v1.5.1-58-g787ea74b6"
+    },
+    {
+      "full": "jimmidyson/configmap-reload:v0.12.0",
+      "registry": "jimmidyson",
+      "repository": "jimmidyson/configmap-reload",
+      "tag": "v0.12.0"
+    },
+    {
+      "full": "kedacore/keda-admission-webhooks:",
+      "registry": "kedacore",
+      "repository": "kedacore/keda-admission-webhooks",
+      "tag": ""
+    },
+    {
+      "full": "kedacore/keda-metrics-apiserver:",
+      "registry": "kedacore",
+      "repository": "kedacore/keda-metrics-apiserver",
+      "tag": ""
+    },
+    {
+      "full": "kedacore/keda:",
+      "registry": "kedacore",
+      "repository": "kedacore/keda",
+      "tag": ""
+    },
+    {
+      "full": "kiwigrid/k8s-sidecar:1.27.4",
+      "registry": "kiwigrid",
+      "repository": "kiwigrid/k8s-sidecar",
+      "tag": "1.27.4"
+    },
+    {
+      "full": "kiwigrid/k8s-sidecar:1.27.5",
+      "registry": "kiwigrid",
+      "repository": "kiwigrid/k8s-sidecar",
+      "tag": "1.27.5"
+    },
+    {
+      "full": "koalaman/shellcheck:v0.5.0",
+      "registry": "koalaman",
+      "repository": "koalaman/shellcheck",
+      "tag": "v0.5.0"
+    },
+    {
+      "full": "kube-state-metrics/kube-state-metrics:",
+      "registry": "kube-state-metrics",
+      "repository": "kube-state-metrics/kube-state-metrics",
+      "tag": ""
+    },
+    {
+      "full": "kubeflow/spark-operator/controller:",
+      "registry": "kubeflow",
+      "repository": "kubeflow/spark-operator/controller",
+      "tag": ""
+    },
+    {
+      "full": "kubeflow/spark-operator/kubectl:",
+      "registry": "kubeflow",
+      "repository": "kubeflow/spark-operator/kubectl",
+      "tag": ""
+    },
+    {
+      "full": "kubeflow/trainer/trainer-controller-manager:",
+      "registry": "kubeflow",
+      "repository": "kubeflow/trainer/trainer-controller-manager",
+      "tag": ""
+    },
+    {
+      "full": "kyverno/background-controller:null",
+      "registry": "kyverno",
+      "repository": "kyverno/background-controller",
+      "tag": "null"
+    },
+    {
+      "full": "kyverno/cleanup-controller:null",
+      "registry": "kyverno",
+      "repository": "kyverno/cleanup-controller",
+      "tag": "null"
+    },
+    {
+      "full": "kyverno/kyverno-cli:null",
+      "registry": "kyverno",
+      "repository": "kyverno/kyverno-cli",
+      "tag": "null"
+    },
+    {
+      "full": "kyverno/kyverno:null",
+      "registry": "kyverno",
+      "repository": "kyverno/kyverno",
+      "tag": "null"
+    },
+    {
+      "full": "kyverno/kyvernopre:null",
+      "registry": "kyverno",
+      "repository": "kyverno/kyvernopre",
+      "tag": "null"
+    },
+    {
+      "full": "kyverno/reports-controller:null",
+      "registry": "kyverno",
+      "repository": "kyverno/reports-controller",
+      "tag": "null"
+    },
+    {
+      "full": "library/busybox:1.31.1",
+      "registry": "library",
+      "repository": "library/busybox",
+      "tag": "1.31.1"
+    },
+    {
+      "full": "memcached:1.6.23-alpine",
+      "registry": "docker.io",
+      "repository": "memcached",
+      "tag": "1.6.23-alpine"
+    },
+    {
+      "full": "nginxinc/nginx-unprivileged:1.27-alpine",
+      "registry": "nginxinc",
+      "repository": "nginxinc/nginx-unprivileged",
+      "tag": "1.27-alpine"
+    },
+    {
+      "full": "osixia/openldap:1.2.4",
+      "registry": "osixia",
+      "repository": "osixia/openldap",
+      "tag": "1.2.4"
+    },
+    {
+      "full": "prom/memcached-exporter:v0.14.2",
+      "registry": "prom",
+      "repository": "prom/memcached-exporter",
+      "tag": "v0.14.2"
+    },
+    {
+      "full": "prometheus-community/windows-exporter:",
+      "registry": "prometheus-community",
+      "repository": "prometheus-community/windows-exporter",
+      "tag": ""
+    },
+    {
+      "full": "prometheus-operator/admission-webhook:",
+      "registry": "prometheus-operator",
+      "repository": "prometheus-operator/admission-webhook",
+      "tag": ""
+    },
+    {
+      "full": "prometheus-operator/prometheus-config-reloader:",
+      "registry": "prometheus-operator",
+      "repository": "prometheus-operator/prometheus-config-reloader",
+      "tag": ""
+    },
+    {
+      "full": "prometheus-operator/prometheus-operator:",
+      "registry": "prometheus-operator",
+      "repository": "prometheus-operator/prometheus-operator",
+      "tag": ""
+    },
+    {
+      "full": "prometheus/alertmanager:v0.27.0",
+      "registry": "prometheus",
+      "repository": "prometheus/alertmanager",
+      "tag": "v0.27.0"
+    },
+    {
+      "full": "prometheus/node-exporter:",
+      "registry": "prometheus",
+      "repository": "prometheus/node-exporter",
+      "tag": ""
+    },
+    {
+      "full": "prometheus/prometheus:v2.54.1",
+      "registry": "prometheus",
+      "repository": "prometheus/prometheus",
+      "tag": "v2.54.1"
+    },
+    {
+      "full": "public.ecr.aws/bitnami/redis-exporter:1.58.0",
+      "registry": "public.ecr.aws",
+      "repository": "public.ecr.aws/bitnami/redis-exporter",
+      "tag": "1.58.0"
+    },
+    {
+      "full": "public.ecr.aws/docker/library/haproxy:2.9.4-alpine",
+      "registry": "public.ecr.aws",
+      "repository": "public.ecr.aws/docker/library/haproxy",
+      "tag": "2.9.4-alpine"
+    },
+    {
+      "full": "public.ecr.aws/docker/library/redis:7.2.4-alpine",
+      "registry": "public.ecr.aws",
+      "repository": "public.ecr.aws/docker/library/redis",
+      "tag": "7.2.4-alpine"
+    },
+    {
+      "full": "quay.io/argoproj/argocd:",
+      "registry": "quay.io",
+      "repository": "quay.io/argoproj/argocd",
+      "tag": ""
+    },
+    {
+      "full": "quay.io/argoproj/argocd:v2.13.0",
+      "registry": "quay.io",
+      "repository": "quay.io/argoproj/argocd",
+      "tag": "v2.13.0"
+    },
+    {
+      "full": "quay.io/argoprojlabs/argocd-extension-installer:v0.0.5",
+      "registry": "quay.io",
+      "repository": "quay.io/argoprojlabs/argocd-extension-installer",
+      "tag": "v0.0.5"
+    },
+    {
+      "full": "quay.io/brancz/kube-rbac-proxy:v0.13.1",
+      "registry": "quay.io",
+      "repository": "quay.io/brancz/kube-rbac-proxy",
+      "tag": "v0.13.1"
+    },
+    {
+      "full": "quay.io/ceph/ceph:v19.2.0",
+      "registry": "quay.io",
+      "repository": "quay.io/ceph/ceph",
+      "tag": "v19.2.0"
+    },
+    {
+      "full": "quay.io/ceph/ceph:v19.2.0-20240927",
+      "registry": "quay.io",
+      "repository": "quay.io/ceph/ceph",
+      "tag": "v19.2.0-20240927"
+    },
+    {
+      "full": "quay.io/cephcsi/cephcsi:v3.13.0",
+      "registry": "quay.io",
+      "repository": "quay.io/cephcsi/cephcsi",
+      "tag": "v3.13.0"
+    },
+    {
+      "full": "quay.io/csiaddons/k8s-sidecar:v0.11.0",
+      "registry": "quay.io",
+      "repository": "quay.io/csiaddons/k8s-sidecar",
+      "tag": "v0.11.0"
+    },
+    {
+      "full": "quay.io/gambol99/keycloak-proxy:latest",
+      "registry": "quay.io",
+      "repository": "quay.io/gambol99/keycloak-proxy",
+      "tag": "latest"
+    },
+    {
+      "full": "quay.io/jetstack/cert-manager-acmesolver:latest",
+      "registry": "quay.io",
+      "repository": "quay.io/jetstack/cert-manager-acmesolver",
+      "tag": "latest"
+    },
+    {
+      "full": "quay.io/jetstack/cert-manager-cainjector:latest",
+      "registry": "quay.io",
+      "repository": "quay.io/jetstack/cert-manager-cainjector",
+      "tag": "latest"
+    },
+    {
+      "full": "quay.io/jetstack/cert-manager-cainjector:v1.16.2",
+      "registry": "quay.io",
+      "repository": "quay.io/jetstack/cert-manager-cainjector",
+      "tag": "v1.16.2"
+    },
+    {
+      "full": "quay.io/jetstack/cert-manager-controller:latest",
+      "registry": "quay.io",
+      "repository": "quay.io/jetstack/cert-manager-controller",
+      "tag": "latest"
+    },
+    {
+      "full": "quay.io/jetstack/cert-manager-controller:v1.16.2",
+      "registry": "quay.io",
+      "repository": "quay.io/jetstack/cert-manager-controller",
+      "tag": "v1.16.2"
+    },
+    {
+      "full": "quay.io/jetstack/cert-manager-startupapicheck:latest",
+      "registry": "quay.io",
+      "repository": "quay.io/jetstack/cert-manager-startupapicheck",
+      "tag": "latest"
+    },
+    {
+      "full": "quay.io/jetstack/cert-manager-startupapicheck:v1.16.2",
+      "registry": "quay.io",
+      "repository": "quay.io/jetstack/cert-manager-startupapicheck",
+      "tag": "v1.16.2"
+    },
+    {
+      "full": "quay.io/jetstack/cert-manager-webhook:latest",
+      "registry": "quay.io",
+      "repository": "quay.io/jetstack/cert-manager-webhook",
+      "tag": "latest"
+    },
+    {
+      "full": "quay.io/jetstack/cert-manager-webhook:v1.16.2",
+      "registry": "quay.io",
+      "repository": "quay.io/jetstack/cert-manager-webhook",
+      "tag": "v1.16.2"
+    },
+    {
+      "full": "quay.io/keycloak/keycloak:16.1.0",
+      "registry": "quay.io",
+      "repository": "quay.io/keycloak/keycloak",
+      "tag": "16.1.0"
+    },
+    {
+      "full": "quay.io/kiwigrid/k8s-sidecar:1.27.4",
+      "registry": "quay.io",
+      "repository": "quay.io/kiwigrid/k8s-sidecar",
+      "tag": "1.27.4"
+    },
+    {
+      "full": "quay.io/minio/mc:RELEASE.2022-09-16T09-16-47Z",
+      "registry": "quay.io",
+      "repository": "quay.io/minio/mc",
+      "tag": "RELEASE.2022-09-16T09-16-47Z"
+    },
+    {
+      "full": "quay.io/minio/minio:RELEASE.2022-09-17T00-09-45Z",
+      "registry": "quay.io",
+      "repository": "quay.io/minio/minio",
+      "tag": "RELEASE.2022-09-17T00-09-45Z"
+    },
+    {
+      "full": "quay.io/oauth2-proxy/oauth2-proxy:v7.5.1",
+      "registry": "quay.io",
+      "repository": "quay.io/oauth2-proxy/oauth2-proxy",
+      "tag": "v7.5.1"
+    },
+    {
+      "full": "quay.io/prometheus-operator/prometheus-operator:v0.77.1",
+      "registry": "quay.io",
+      "repository": "quay.io/prometheus-operator/prometheus-operator",
+      "tag": "v0.77.1"
+    },
+    {
+      "full": "quay.io/prometheus/alertmanager:v0.27.0",
+      "registry": "quay.io",
+      "repository": "quay.io/prometheus/alertmanager",
+      "tag": "v0.27.0"
+    },
+    {
+      "full": "quay.io/prometheus/node-exporter:v1.8.2",
+      "registry": "quay.io",
+      "repository": "quay.io/prometheus/node-exporter",
+      "tag": "v1.8.2"
+    },
+    {
+      "full": "quay.io/prometheus/prometheus:v2.54.1",
+      "registry": "quay.io",
+      "repository": "quay.io/prometheus/prometheus",
+      "tag": "v2.54.1"
+    },
+    {
+      "full": "registry.k8s.io/dns/k8s-dns-node-cache:",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/dns/k8s-dns-node-cache",
+      "tag": ""
+    },
+    {
+      "full": "registry.k8s.io/dns/k8s-dns-node-cache:1.23.1",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/dns/k8s-dns-node-cache",
+      "tag": "1.23.1"
+    },
+    {
+      "full": "registry.k8s.io/external-dns/external-dns:null",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/external-dns/external-dns",
+      "tag": "null"
+    },
+    {
+      "full": "registry.k8s.io/external-dns/external-dns:v0.15.0",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/external-dns/external-dns",
+      "tag": "v0.15.0"
+    },
+    {
+      "full": "registry.k8s.io/ingress-nginx/kube-webhook-certgen:v20221220-controller-v1.5.1-58-g787ea74b6",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/ingress-nginx/kube-webhook-certgen",
+      "tag": "v20221220-controller-v1.5.1-58-g787ea74b6"
+    },
+    {
+      "full": "registry.k8s.io/jobset/jobset:v0.10.1",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/jobset/jobset",
+      "tag": "v0.10.1"
+    },
+    {
+      "full": "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.13.0",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/kube-state-metrics/kube-state-metrics",
+      "tag": "v2.13.0"
+    },
+    {
+      "full": "registry.k8s.io/prometheus-adapter/prometheus-adapter:",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/prometheus-adapter/prometheus-adapter",
+      "tag": ""
+    },
+    {
+      "full": "registry.k8s.io/prometheus-adapter/prometheus-adapter:v0.12.0",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/prometheus-adapter/prometheus-adapter",
+      "tag": "v0.12.0"
+    },
+    {
+      "full": "registry.k8s.io/sig-storage/csi-attacher:v4.6.1",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/sig-storage/csi-attacher",
+      "tag": "v4.6.1"
+    },
+    {
+      "full": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.11.1",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/sig-storage/csi-node-driver-registrar",
+      "tag": "v2.11.1"
+    },
+    {
+      "full": "registry.k8s.io/sig-storage/csi-provisioner:v5.0.1",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/sig-storage/csi-provisioner",
+      "tag": "v5.0.1"
+    },
+    {
+      "full": "registry.k8s.io/sig-storage/csi-resizer:v1.11.1",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/sig-storage/csi-resizer",
+      "tag": "v1.11.1"
+    },
+    {
+      "full": "registry.k8s.io/sig-storage/csi-snapshotter:v8.2.0",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/sig-storage/csi-snapshotter",
+      "tag": "v8.2.0"
+    },
+    {
+      "full": "registry.k8s.io/sig-storage/snapshot-controller:",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/sig-storage/snapshot-controller",
+      "tag": ""
+    },
+    {
+      "full": "registry.k8s.io/sig-storage/snapshot-controller:v8.1.0",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/sig-storage/snapshot-controller",
+      "tag": "v8.1.0"
+    },
+    {
+      "full": "registry.k8s.io/sig-storage/snapshot-validation-webhook:",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/sig-storage/snapshot-validation-webhook",
+      "tag": ""
+    },
+    {
+      "full": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v8.1.0",
+      "registry": "registry.k8s.io",
+      "repository": "registry.k8s.io/sig-storage/snapshot-validation-webhook",
+      "tag": "v8.1.0"
+    },
+    {
+      "full": "thanos/thanos:v0.36.1",
+      "registry": "thanos",
+      "repository": "thanos/thanos",
+      "tag": "v0.36.1"
+    },
+    {
+      "full": "velero/velero:v1.14.1",
+      "registry": "velero",
+      "repository": "velero/velero",
+      "tag": "v1.14.1"
+    },
+    {
+      "full": "xpkg.upbound.io/crossplane/crossplane:",
+      "registry": "xpkg.upbound.io",
+      "repository": "xpkg.upbound.io/crossplane/crossplane",
+      "tag": ""
+    }
+  ]
+}

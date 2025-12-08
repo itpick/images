@@ -1,0 +1,16 @@
+{ buildCLIImage, pkgs, lib, ... }:
+
+buildCLIImage {
+  drv = pkgs.crossplane-cli;
+  name = "crossplane";
+  tag = "v${pkgs.crossplane-cli.version}";
+  entrypoint = [ "${pkgs.crossplane-cli}/bin/crossplane" ];
+  cmd = [];
+
+  labels = {
+    "org.opencontainers.image.title" = "Crossplane";
+    "org.opencontainers.image.description" = "Cloud Native Control Plane";
+    "org.opencontainers.image.version" = pkgs.crossplane-cli.version;
+    "io.nix-containers.chart" = "crossplane";
+  };
+}

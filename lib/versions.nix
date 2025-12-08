@@ -102,26 +102,66 @@ let
     prometheus-operator = "0.77.1";  # Built from source
     prometheus-adapter = "0.12.0";  # Built from source
 
-    # Chart images - security
+    # Chart images - security - Vault
     vault = toVersionString pkgs.vault.version;
+    vault-k8s = "1.4.1";  # Built from source
+    vault-csi-provider = "1.4.2";  # Built from source
+
+    # Chart images - security - Kyverno
     kyverno = toVersionString pkgs.kyverno.version;
+    kyverno-cli = toVersionString pkgs.kyverno.version;
+    kyvernopre = "1.13.0";  # Built from source
+    kyverno-background-controller = "1.13.0";  # Built from source
+    kyverno-cleanup-controller = "1.13.0";  # Built from source
+    kyverno-reports-controller = "1.13.0";  # Built from source
+
+    # Chart images - security - Other
     dex = toVersionString pkgs.dex-oidc.version;
     oauth2-proxy = toVersionString pkgs.oauth2-proxy.version;
     external-secrets = "0.10.0";  # Built from source
-    cert-manager = toVersionString pkgs.cmctl.version;
     kube-rbac-proxy = "0.18.0";  # Built from source
+
+    # Chart images - security - cert-manager
+    cert-manager-controller = "1.16.2";  # Built from source
+    cert-manager-webhook = "1.16.2";  # Built from source
+    cert-manager-cainjector = "1.16.2";  # Built from source
+    cert-manager-startupapicheck = toVersionString pkgs.cmctl.version;
 
     # Chart images - gitops
     argocd = toVersionString pkgs.argocd.version;
+    argocd-extension-installer = "0.0.5";  # Built from source
 
-    # Chart images - operators
+    # Chart images - operators - KEDA
     keda = "2.16.1";  # Built from source
+    keda-metrics-apiserver = "2.16.1";  # Built from source
+    keda-admission-webhooks = "2.16.1";  # Built from source
+
+    # Chart images - operators - Other
     velero = toVersionString pkgs.velero.version;
 
     # Chart images - storage
     minio = toVersionString pkgs.minio.version;
     minio-client = toVersionString pkgs.minio-client.version;
     memcached = toVersionString pkgs.memcached.version;
+    seaweedfs = toVersionString pkgs.seaweedfs.version;
+
+    # Chart images - git
+    gitea = toVersionString pkgs.gitea.version;
+
+    # Chart images - postgresql
+    pgpool = toVersionString pkgs.pgpool.version;
+    postgres-exporter = toVersionString pkgs.prometheus-postgres-exporter.version;
+    cloudnative-pg = "1.27.1";  # Built from source
+
+    # Chart images - flux cd
+    flux-cli = toVersionString pkgs.fluxcd.version;
+    flux-operator = toVersionString pkgs.fluxcd-operator.version;
+    source-controller = "1.7.4";  # Built from source
+    kustomize-controller = "1.7.3";  # Built from source
+    helm-controller = "1.4.5";  # Built from source
+    notification-controller = "1.7.5";  # Built from source
+    image-automation-controller = "1.0.4";  # Built from source
+    image-reflector-controller = "1.0.4";  # Built from source
 
     # Chart images - other
     zookeeper = toVersionString pkgs.zookeeper.version;
@@ -129,6 +169,39 @@ let
     bats = toVersionString pkgs.bats.version;
     shellcheck = toVersionString pkgs.shellcheck.version;
     geoipupdate = toVersionString pkgs.geoipupdate.version;
+
+    # Chart images - additional observability
+    blackbox-exporter = toVersionString pkgs.prometheus-blackbox-exporter.version;
+    memcached-exporter = toVersionString pkgs.prometheus-memcached-exporter.version;
+    redis-exporter = toVersionString pkgs.prometheus-redis-exporter.version;
+    metrics-server = toVersionString pkgs.metrics-server.version;
+    mimir = toVersionString pkgs.mimir.version;
+    grafana-image-renderer = "3.11.6";  # Built from source
+    rollout-operator = "0.20.0";  # Built from source
+    prometheus-config-reloader = "0.77.1";  # Built from source
+
+    # Chart images - networking
+    fluent-bit = toVersionString pkgs.fluent-bit.version;
+    traefik = toVersionString pkgs.traefik.version;
+    node-local-dns = "1.23.1";  # Built from source
+
+    # Chart images - security
+    gatekeeper = toVersionString pkgs.gatekeeper.version;
+    trust-manager = "0.12.0";  # Built from source
+
+    # Chart images - utilities
+    yq = toVersionString pkgs.yq-go.version;
+    configmap-reload = "0.14.0";  # Built from source
+    k8s-sidecar = "1.28.0";  # Built from source
+
+    # Chart images - operators and controllers
+    crossplane = toVersionString pkgs.crossplane-cli.version;
+    gitlab-runner = toVersionString pkgs.gitlab-runner.version;
+    snapshot-controller = "8.1.0";  # Built from source
+    spegel = "0.0.27";  # Built from source
+    reloader = "1.2.1";  # Built from source
+    reflector = "9.1.41";  # Built from source
+    ingress-nginx = "1.12.0";  # Built from source
   };
 
 in

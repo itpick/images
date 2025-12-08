@@ -1,0 +1,48 @@
+{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+
+let
+  version = "1.4.5";
+  helm-controller = buildGoModule {
+    pname = "helm-controller";
+    inherit version;
+
+    src = fetchFromGitHub {
+      owner = "fluxcd";
+      repo = "helm-controller";
+      rev = "v${version}";
+      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    };
+
+    vendorHash = null;  # TODO: Update after first build
+
+    env.CGO_ENABLED = 0;
+
+    ldflags = [
+      "-s" "-w"
+      "-X main.VERSION=${version}"
+    ];
+
+    doCheck = false;
+
+    meta = with lib; {
+      description = "Flux helm-controller for managing Helm releases";
+      homepage = "https://github.com/fluxcd/helm-controller";
+      license = licenses.asl20;
+    };
+  };
+
+in
+buildCLIImage {
+  drv = helm-controller;
+  name = "helm-controller";
+  tag = "v${version}";
+  entrypoint = [ "${helm-controller}/bin/helm-controller" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "Flux Helm Controller";
+    "org.opencontainers.image.description" = "Manages Helm releases declaratively";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "flux2";
+  };
+}

@@ -111,18 +111,35 @@
     "kube-state-metrics"
     "prometheus-operator"
     "prometheus-adapter"
-    # Security
+    # Security - Vault
     "vault"
+    "vault-k8s"
+    "vault-csi-provider"
+    # Security - Kyverno
     "kyverno"
+    "kyverno-cli"
+    "kyvernopre"
+    "kyverno-background-controller"
+    "kyverno-cleanup-controller"
+    "kyverno-reports-controller"
+    # Security - Other
     "dex"
     "oauth2-proxy"
     "external-secrets"
-    "cert-manager"
     "kube-rbac-proxy"
+    # Security - cert-manager
+    "cert-manager-controller"
+    "cert-manager-webhook"
+    "cert-manager-cainjector"
+    "cert-manager-startupapicheck"
     # GitOps
     "argocd"
-    # Operators
+    "argocd-extension-installer"
+    # Operators - KEDA
     "keda"
+    "keda-metrics-apiserver"
+    "keda-admission-webhooks"
+    # Operators - Other
     "velero"
     "dragonfly-operator"
     "external-dns"
@@ -130,11 +147,55 @@
     "minio"
     "minio-client"
     "memcached"
+    "seaweedfs"
+    # Git
+    "gitea"
+    # PostgreSQL
+    "pgpool"
+    "postgres-exporter"
+    "cloudnative-pg"
+    # Flux CD
+    "flux-cli"
+    "flux-operator"
+    "source-controller"
+    "kustomize-controller"
+    "helm-controller"
+    "notification-controller"
+    "image-automation-controller"
+    "image-reflector-controller"
     # Other
     "zookeeper"
     "openldap"
     "bats"
     "shellcheck"
     "geoipupdate"
+    # Additional observability
+    "blackbox-exporter"
+    "memcached-exporter"
+    "redis-exporter"
+    "metrics-server"
+    "mimir"
+    "grafana-image-renderer"
+    "rollout-operator"
+    "prometheus-config-reloader"
+    # Networking
+    "fluent-bit"
+    "traefik"
+    "node-local-dns"
+    # Security
+    "gatekeeper"
+    "trust-manager"
+    # Utilities
+    "yq"
+    "configmap-reload"
+    "k8s-sidecar"
+    # Operators and controllers
+    "crossplane"
+    "gitlab-runner"
+    "snapshot-controller"
+    "spegel"
+    "reloader"
+    "reflector"
+    "ingress-nginx"
   ];
 }
