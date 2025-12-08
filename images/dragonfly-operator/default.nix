@@ -13,7 +13,7 @@ let
       hash = "sha256-7VpYKg/VsMDhLzHTW93+02MzgTZHRHZwL3uHZnQPOS0=";
     };
 
-    vendorHash = "sha256-D6Az6izatEjxN44Kju+HBISHqoD7x/bckpDA7Dj3OT4=";
+    vendorHash = "sha256-C4CkrpLK6yMLhOx3vJKFUhOtF0Ht68I8DqCRJm1vbVA=";
 
     env.CGO_ENABLED = 0;
 

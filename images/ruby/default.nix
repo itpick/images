@@ -3,7 +3,7 @@
 let
   rubyPackages = with pkgs; [
     ruby_3_3
-    bundler
+    # bundler is already included in ruby_3_3
     git
     bash
     coreutils

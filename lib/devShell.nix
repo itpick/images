@@ -33,7 +33,7 @@ rec {
     gnupg
     unzip
     zip
-    tar
+    gnutar
     gzip
   ];
   
@@ -54,8 +54,7 @@ rec {
   containerTools = with pkgs; [
     dive
     skopeo
-    buildah
-    docker
+    crane
     kubernetes-helm
     kubectl
   ];

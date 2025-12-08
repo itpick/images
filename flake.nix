@@ -9,451 +9,578 @@
 
   outputs = { self, nixpkgs, nix2container }:
     let
-      system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
+      # Supported systems for container images (Linux only)
+      linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
 
-      # Import lib functions following docker-nixpkgs pattern
-      lib = {
-        base = pkgs.callPackage ./lib/base.nix {};
-        nonRoot = pkgs.callPackage ./lib/nonRoot.nix {};
-        devShell = pkgs.callPackage ./lib/devShell.nix {};
-        buildCLIImage = pkgs.callPackage ./lib/buildCLIImage.nix { 
-          nix2container = nix2container.packages.${system}.nix2container;
-          inherit (pkgs) lib;
-          base = pkgs.callPackage ./lib/base.nix {};
-        };
-        mkUserEnvironment = pkgs.callPackage ./lib/mkUserEnvironment.nix {};
-        importDir = pkgs.callPackage ./lib/importDir.nix {};
-      };
+      # Supported systems for pipeline scripts (includes macOS for local dev)
+      allSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
 
-      # Dynamically discover and import all image folders using filesystem discovery
+      # Helper to generate outputs for each system
+      forAllSystems = nixpkgs.lib.genAttrs allSystems;
+      forLinuxSystems = nixpkgs.lib.genAttrs linuxSystems;
+
+      # Use a reference pkgs for discovery (doesn't affect builds)
+      refPkgs = nixpkgs.legacyPackages.x86_64-linux;
+
+      # Import chart definitions (architecture-independent)
+      chartDefs = import ./charts.nix;
+
+      # Import image categories
+      imageCategories = import ./lib/categories.nix;
+
+      # Discover images once (architecture-independent)
       imagesPath = ./images;
-      
-      # Function to extract main package version for tagging
-      getPackageVersion = imageName: 
-        let
-          versionMap = {
-            python = pkgs.python3.version;
-            python-fips = pkgs.python3.version;
-            go = pkgs.go.version;
-            node = pkgs.nodejs.version;
-            rust = pkgs.rustc.version;
-            jdk = pkgs.openjdk.version;
-            jre = pkgs.openjdk.version;
-            postgres = pkgs.postgresql.version;
-            redis = pkgs.redis.version;
-            mongodb = pkgs.mongodb.version;
-            nginx = pkgs.nginx.version;
-            nix = pkgs.nix.version;
-            bash = pkgs.bash.version;
-            curl = pkgs.curl.version;
-            git = pkgs.git.version;
-            busybox = pkgs.busybox.version;
-            gradle = pkgs.gradle.version;
-            maven = pkgs.maven.version;
-            dotnet = pkgs.dotnet-sdk.version;
-            ruby = pkgs.ruby.version;
-            php = pkgs.php.version;
-            helm = pkgs.kubernetes-helm.version;
-            kubectl = pkgs.kubectl.version;
-            cosign = pkgs.cosign.version;
-            grype = pkgs.grype.version;
-            hugo = pkgs.hugo.version;
-            caddy = pkgs.caddy.version;
-            haproxy = pkgs.haproxy.version;
-            mariadb = pkgs.mariadb.version;
-            valkey = pkgs.valkey.version;
-            sops = pkgs.sops.version;
-            dive = pkgs.dive.version;
-            crane = pkgs.crane.version;
-            ko = pkgs.ko.version;
-            cachix = pkgs.cachix.version;
-            devenv = pkgs.devenv.version;
-            attic = pkgs.attic-client.version;
-          };
-        in versionMap.${imageName} or "latest";
-      
-      # Create images with both latest and version tags
-      images = builtins.listToAttrs (map (imageName: {
-        name = imageName;
-        value = pkgs.callPackage (imagesPath + "/${imageName}") {
-          inherit (lib) buildCLIImage mkUserEnvironment base nonRoot;
-          nix2container = nix2container.packages.${system}.nix2container;
-          inherit pkgs;
-        };
-      }) discoveredImages);
-      
-      # Create version-tagged images
-      versionedImages = builtins.listToAttrs (map (imageName:
-        let
-          baseImage = images.${imageName};
-          version = getPackageVersion imageName;
-        in {
-          name = "${imageName}-${version}";
-          value = baseImage // {
-            tag = version;
-          };
-        }
-      ) discoveredImages);
-      
-      # Get image names for helper scripts
-      imageNames = builtins.attrNames images;
-
-      # Use pkgs.lib.filesystem.listFilesRecursive for comprehensive discovery
       discoveredImages = let
-        allFiles = pkgs.lib.filesystem.listFilesRecursive ./images;
-        # Filter for default.nix files and extract directory names
-        imageFiles = builtins.filter (path: 
+        allFiles = refPkgs.lib.filesystem.listFilesRecursive ./images;
+        imageFiles = builtins.filter (path:
           let
             pathStr = toString path;
-            # Check if it's a default.nix file directly in an image directory (not subdirectories)
-            relativePath = pkgs.lib.removePrefix (toString ./images + "/") pathStr;
-            parts = pkgs.lib.splitString "/" relativePath;
+            relativePath = refPkgs.lib.removePrefix (toString ./images + "/") pathStr;
+            parts = refPkgs.lib.splitString "/" relativePath;
           in
-            builtins.length parts == 2 && 
+            builtins.length parts == 2 &&
             builtins.elemAt parts 1 == "default.nix" &&
-            # Exclude subdirectories like nix/fake_nixpkgs/default.nix
             !(builtins.any (part: part == "fake_nixpkgs" || part == "root" || part == "patches") parts)
         ) allFiles;
-        
-        # Extract unique image directory names
         imageNamesList = map (path:
           let
             pathStr = toString path;
-            relativePath = pkgs.lib.removePrefix (toString ./images + "/") pathStr;
-            parts = pkgs.lib.splitString "/" relativePath;
+            relativePath = refPkgs.lib.removePrefix (toString ./images + "/") pathStr;
+            parts = refPkgs.lib.splitString "/" relativePath;
           in
             builtins.elemAt parts 0
         ) imageFiles;
       in
-        pkgs.lib.lists.unique imageNamesList;
+        refPkgs.lib.lists.unique imageNamesList;
 
-      # Discovery script for local testing
-      discoveryScript = pkgs.writeShellScript "discover-images" ''
-        echo "🔍 Discovering images using Nix evaluation..."
-        ${pkgs.nix}/bin/nix --extra-experimental-features "nix-command flakes" eval --json .#discoveredImages
-      '';
+      # Import user's image selection config
+      imageBuildConfig = import ./images-to-build.nix;
 
-      # Helper script to load all images to Docker at once
-      loadAllScript = pkgs.writeShellScript "load-all-images" ''
-        echo "🔄 Loading all container images to Docker..."
-        
-        ${pkgs.lib.concatStringsSep "\n" (pkgs.lib.mapAttrsToList (name: image: ''
-          echo "🔄 Loading ${name} to Docker..."
-          ${image.copyToDockerDaemon}/bin/copy-to-docker-daemon
-        '') images)}
-        
-        echo "✅ All images loaded successfully!"
-        echo ""
-        echo "Available Docker images:"
-        docker images | grep -E "(${pkgs.lib.concatStringsSep "|" imageNames})" || echo "No images found (run 'docker images' to verify)"
-      '';
-
-      # Discover and create tests for images that have test.nix files
-      imageTests = builtins.listToAttrs (builtins.filter (x: x != null) (map (imageName:
+      # Helper function to check if a string matches a glob pattern
+      matchesPattern = pattern: name:
         let
-          testPath = imagesPath + "/${imageName}/test.nix";
+          # Simple glob matching: * at start, end, or both
+          hasStartWildcard = refPkgs.lib.hasPrefix "*" pattern;
+          hasEndWildcard = refPkgs.lib.hasSuffix "*" pattern;
+          stripped = refPkgs.lib.removePrefix "*" (refPkgs.lib.removeSuffix "*" pattern);
         in
-          if builtins.pathExists testPath
-          then {
-            name = "${imageName}-test";
-            value = pkgs.stdenv.mkDerivation {
-              name = "${imageName}-test";
-              buildCommand = ''
-                mkdir -p $out/bin
-                cp ${pkgs.callPackage testPath { image = images.${imageName}; }} $out/bin/${imageName}-test
-                chmod +x $out/bin/${imageName}-test
-              '';
-            };
-          }
-          else null
-      ) discoveredImages));
+          if pattern == name then true
+          else if hasStartWildcard && hasEndWildcard then
+            refPkgs.lib.hasInfix stripped name
+          else if hasStartWildcard then
+            refPkgs.lib.hasSuffix stripped name
+          else if hasEndWildcard then
+            refPkgs.lib.hasPrefix stripped name
+          else
+            pattern == name;
 
-      # Test runner script for all images with tests
-      testImagesScript = pkgs.writeShellScript "test-images" ''
-        set -euo pipefail
-        
-        echo "🧪 Testing all container images with comprehensive tests..."
-        
-        TOTAL_IMAGES=0
-        SUCCESSFUL_BUILDS=0
-        SUCCESSFUL_LOADS=0
-        SUCCESSFUL_TESTS=0
-        
-        # Test images that have specific test files
-        IMAGES_WITH_TESTS="${pkgs.lib.concatStringsSep " " (builtins.attrNames imageTests)}"
-        
-        for TEST_NAME in $IMAGES_WITH_TESTS; do
-          IMAGE_NAME="''${TEST_NAME%-test}"
-          echo "----------------------------------------"
-          echo "🔨 Testing image: $IMAGE_NAME (with custom tests)"
-          TOTAL_IMAGES=$((TOTAL_IMAGES + 1))
-          
-          # Test 1: Build the image
-          echo "  📦 Building image..."
-          if ${pkgs.nix}/bin/nix --extra-experimental-features "nix-command flakes" build ".#$IMAGE_NAME" --print-build-logs; then
-            echo "  ✅ Build successful"
-            SUCCESSFUL_BUILDS=$((SUCCESSFUL_BUILDS + 1))
-            
-            # Test 2: Load to Docker
-            echo "  🐳 Loading to Docker..."
-            if ${pkgs.nix}/bin/nix --extra-experimental-features "nix-command flakes" run ".#$IMAGE_NAME.copyTo" -- docker-daemon:"$IMAGE_NAME:test"; then
-              echo "  ✅ Docker load successful"
-              SUCCESSFUL_LOADS=$((SUCCESSFUL_LOADS + 1))
-              
-              # Test 3: Run comprehensive tests
-              echo "  🧪 Running comprehensive tests..."
-              if ${pkgs.nix}/bin/nix --extra-experimental-features "nix-command flakes" run ".#$TEST_NAME"; then
-                echo "  ✅ Comprehensive tests passed"
-                SUCCESSFUL_TESTS=$((SUCCESSFUL_TESTS + 1))
-              else
-                echo "  ❌ Comprehensive tests failed"
-              fi
-              
-              # Clean up test image
-              docker rmi "$IMAGE_NAME:test" >/dev/null 2>&1 || true
-            else
-              echo "  ❌ Docker load failed"
-            fi
-          else
-            echo "  ❌ Build failed"
-          fi
-        done
-        
-        # Test remaining images with basic tests
-        for IMAGE_NAME in ${pkgs.lib.concatStringsSep " " imageNames}; do
-          # Skip if already tested above
-          if echo "$IMAGES_WITH_TESTS" | grep -q "$IMAGE_NAME-test"; then
-            continue
-          fi
-          
-          echo "----------------------------------------"
-          echo "🔨 Testing image: $IMAGE_NAME (basic tests)"
-          TOTAL_IMAGES=$((TOTAL_IMAGES + 1))
-          
-          # Test 1: Build the image
-          echo "  📦 Building image..."
-          if ${pkgs.nix}/bin/nix --extra-experimental-features "nix-command flakes" build ".#$IMAGE_NAME" --print-build-logs; then
-            echo "  ✅ Build successful"
-            SUCCESSFUL_BUILDS=$((SUCCESSFUL_BUILDS + 1))
-            
-            # Test 2: Load to Docker
-            echo "  🐳 Loading to Docker..."
-            if ${pkgs.nix}/bin/nix --extra-experimental-features "nix-command flakes" run ".#$IMAGE_NAME.copyTo" -- docker-daemon:"$IMAGE_NAME:test"; then
-              echo "  ✅ Docker load successful"
-              SUCCESSFUL_LOADS=$((SUCCESSFUL_LOADS + 1))
-              
-              # Test 3: Basic functionality test
-              echo "  🔍 Testing basic functionality..."
-              if docker run --rm "$IMAGE_NAME:test" --version >/dev/null 2>&1 || \
-                 docker run --rm "$IMAGE_NAME:test" --help >/dev/null 2>&1 || \
-                 docker run --rm "$IMAGE_NAME:test" true >/dev/null 2>&1; then
-                echo "  ✅ Basic functionality test passed"
-                SUCCESSFUL_TESTS=$((SUCCESSFUL_TESTS + 1))
-              else
-                echo "  ⚠️  Basic functionality test failed (may be expected for some images)"
-              fi
-              
-              # Clean up test image
-              docker rmi "$IMAGE_NAME:test" >/dev/null 2>&1 || true
-            else
-              echo "  ❌ Docker load failed"
-            fi
-          else
-            echo "  ❌ Build failed"
-          fi
-        done
-        
-        echo "========================================"
-        echo "📊 Test Summary:"
-        echo "  Total images: $TOTAL_IMAGES"
-        echo "  Successful builds: $SUCCESSFUL_BUILDS/$TOTAL_IMAGES"
-        echo "  Successful Docker loads: $SUCCESSFUL_LOADS/$TOTAL_IMAGES"
-        echo "  Successful functionality tests: $SUCCESSFUL_TESTS/$TOTAL_IMAGES"
-        
-        if [ $SUCCESSFUL_BUILDS -eq $TOTAL_IMAGES ]; then
-          echo "🎉 All images built successfully!"
-          exit 0
+      # Expand categories and patterns to image names
+      expandImageSpec = spec:
+        if refPkgs.lib.hasPrefix "@" spec then
+          # Category reference
+          let categoryName = refPkgs.lib.removePrefix "@" spec;
+          in imageCategories.${categoryName} or []
+        else if refPkgs.lib.hasInfix "*" spec then
+          # Glob pattern
+          builtins.filter (matchesPattern spec) discoveredImages
         else
-          echo "❌ Some images failed to build"
-          exit 1
-        fi
-      '';
+          # Exact name
+          if builtins.elem spec discoveredImages then [ spec ] else [];
+
+      # Get selected images from config
+      selectedImages =
+        let
+          expanded = refPkgs.lib.flatten (map expandImageSpec imageBuildConfig.images);
+          excluded = refPkgs.lib.flatten (map expandImageSpec (imageBuildConfig.exclude or []));
+        in
+          refPkgs.lib.filter (img: !(builtins.elem img excluded)) expanded;
+
+      # Generate packages for a specific system
+      mkPackages = system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config = {
+              allowUnfree = true;
+            };
+          };
+
+          # Import lib functions
+          lib = {
+            base = pkgs.callPackage ./lib/base.nix {};
+            nonRoot = pkgs.callPackage ./lib/nonRoot.nix {};
+            devShell = pkgs.callPackage ./lib/devShell.nix {};
+            buildCLIImage = pkgs.callPackage ./lib/buildCLIImage.nix {
+              nix2container = nix2container.packages.${system}.nix2container;
+              inherit (pkgs) lib;
+              base = pkgs.callPackage ./lib/base.nix {};
+            };
+            mkUserEnvironment = pkgs.callPackage ./lib/mkUserEnvironment.nix {};
+            importDir = pkgs.callPackage ./lib/importDir.nix {};
+            mkDevImage = pkgs.callPackage ./lib/mkDevImage.nix {
+              nix2container = nix2container.packages.${system}.nix2container;
+              inherit (pkgs) lib buildEnv;
+              devShell = pkgs.callPackage ./lib/devShell.nix {};
+            };
+          };
+
+          # Import version lookup function
+          getPackageVersion = import ./lib/versions.nix { inherit pkgs; };
+
+          # Create images
+          images = builtins.listToAttrs (map (imageName: {
+            name = imageName;
+            value = pkgs.callPackage (imagesPath + "/${imageName}") {
+              inherit (lib) buildCLIImage mkUserEnvironment base nonRoot;
+              nix2container = nix2container.packages.${system}.nix2container;
+              inherit pkgs;
+            };
+          }) discoveredImages);
+
+          # Create version-tagged images
+          versionedImages = builtins.listToAttrs (map (imageName:
+            let
+              baseImage = images.${imageName};
+              version = getPackageVersion imageName;
+            in {
+              name = "${imageName}-${version}";
+              value = baseImage // { tag = version; };
+            }
+          ) discoveredImages);
+
+          # Create dev variants of all images
+          devImages = builtins.listToAttrs (map (imageName:
+            let
+              baseImage = images.${imageName};
+            in {
+              name = "${imageName}-dev";
+              value = lib.mkDevImage {
+                inherit baseImage;
+                devLevel = "standard";
+              };
+            }
+          ) discoveredImages);
+
+          # Import manifest generator
+          manifest = import ./lib/manifest.nix {
+            inherit pkgs images getPackageVersion discoveredImages;
+          };
+
+          imageNames = builtins.attrNames images;
+
+          # Discovery script
+          discoveryScript = pkgs.writeShellScript "discover-images" ''
+            echo "Discovering images using Nix evaluation..."
+            ${pkgs.nix}/bin/nix --extra-experimental-features "nix-command flakes" eval --json .#discoveredImages
+          '';
+
+          # Load all images script
+          loadAllScript = pkgs.writeShellScript "load-all-images" ''
+            echo "Loading all container images to Docker..."
+            ${pkgs.lib.concatStringsSep "\n" (pkgs.lib.mapAttrsToList (name: image: ''
+              echo "Loading ${name} to Docker..."
+              ${image.copyToDockerDaemon}/bin/copy-to-docker-daemon
+            '') images)}
+            echo "All images loaded successfully!"
+          '';
+
+          # Image tests
+          imageTests = builtins.listToAttrs (builtins.filter (x: x != null) (map (imageName:
+            let
+              testPath = imagesPath + "/${imageName}/test.nix";
+            in
+              if builtins.pathExists testPath
+              then {
+                name = "${imageName}-test";
+                value = pkgs.stdenv.mkDerivation {
+                  name = "${imageName}-test";
+                  buildCommand = ''
+                    mkdir -p $out/bin
+                    cp ${pkgs.callPackage testPath { image = images.${imageName}; }} $out/bin/${imageName}-test
+                    chmod +x $out/bin/${imageName}-test
+                  '';
+                };
+              }
+              else null
+          ) discoveredImages));
+
+          # Test runner script
+          testImagesScript = pkgs.writeShellScript "test-images" ''
+            set -euo pipefail
+            echo "Testing all container images..."
+            TOTAL=0
+            SUCCESS=0
+            for IMAGE_NAME in ${pkgs.lib.concatStringsSep " " imageNames}; do
+              echo "Building: $IMAGE_NAME"
+              TOTAL=$((TOTAL + 1))
+              if ${pkgs.nix}/bin/nix --extra-experimental-features "nix-command flakes" build ".#$IMAGE_NAME" --print-build-logs; then
+                echo "  OK: $IMAGE_NAME"
+                SUCCESS=$((SUCCESS + 1))
+              else
+                echo "  FAIL: $IMAGE_NAME"
+              fi
+            done
+            echo "Summary: $SUCCESS/$TOTAL images built successfully"
+            [ $SUCCESS -eq $TOTAL ]
+          '';
+
+          # Script to pull all charts (defined in let block so it can be referenced by platform-bundle)
+          pullAllChartsScript = pkgs.writeShellScriptBin "pull-all-charts" ''
+            set -euo pipefail
+            CHART_DIR="''${1:-./charts}"
+            mkdir -p "$CHART_DIR"
+
+            echo "Pulling all Helm charts to $CHART_DIR..."
+
+            # Infrastructure charts
+            ${pkgs.lib.concatStringsSep "\n" (pkgs.lib.mapAttrsToList (name: chart:
+              if chart ? chart then
+                ''echo "Pulling ${name}..." && ${pkgs.kubernetes-helm}/bin/helm pull ${chart.chart} --repo ${chart.url} --version ${chart.version} -d "$CHART_DIR" || echo "Failed: ${name}"''
+              else
+                ''echo "Pulling ${name}..." && ${pkgs.kubernetes-helm}/bin/helm pull ${chart.url}:${chart.version} -d "$CHART_DIR" || echo "Failed: ${name}"''
+            ) chartDefs.infrastructure)}
+
+            # ML Platform charts
+            ${pkgs.lib.concatStringsSep "\n" (pkgs.lib.mapAttrsToList (name: chart:
+              if chart ? chart then
+                ''echo "Pulling ${name}..." && ${pkgs.kubernetes-helm}/bin/helm pull ${chart.chart} --repo ${chart.url} --version ${chart.version} -d "$CHART_DIR" || echo "Failed: ${name}"''
+              else
+                ''echo "Pulling ${name}..." && ${pkgs.kubernetes-helm}/bin/helm pull ${chart.url}:${chart.version} -d "$CHART_DIR" || echo "Failed: ${name}"''
+            ) chartDefs.ml-platform)}
+
+            # Observability charts
+            ${pkgs.lib.concatStringsSep "\n" (pkgs.lib.mapAttrsToList (name: chart:
+              if chart ? chart then
+                ''echo "Pulling ${name}..." && ${pkgs.kubernetes-helm}/bin/helm pull ${chart.chart} --repo ${chart.url} --version ${chart.version} -d "$CHART_DIR" || echo "Failed: ${name}"''
+              else
+                ''echo "Pulling ${name}..." && ${pkgs.kubernetes-helm}/bin/helm pull ${chart.url}:${chart.version} -d "$CHART_DIR" || echo "Failed: ${name}"''
+            ) chartDefs.observability)}
+
+            # Security charts
+            ${pkgs.lib.concatStringsSep "\n" (pkgs.lib.mapAttrsToList (name: chart:
+              if chart ? chart then
+                ''echo "Pulling ${name}..." && ${pkgs.kubernetes-helm}/bin/helm pull ${chart.chart} --repo ${chart.url} --version ${chart.version} -d "$CHART_DIR" || echo "Failed: ${name}"''
+              else
+                ''echo "Pulling ${name}..." && ${pkgs.kubernetes-helm}/bin/helm pull ${chart.url}:${chart.version} -d "$CHART_DIR" || echo "Failed: ${name}"''
+            ) chartDefs.security)}
+
+            # GitOps charts
+            ${pkgs.lib.concatStringsSep "\n" (pkgs.lib.mapAttrsToList (name: chart:
+              if chart ? chart then
+                ''echo "Pulling ${name}..." && ${pkgs.kubernetes-helm}/bin/helm pull ${chart.chart} --repo ${chart.url} --version ${chart.version} -d "$CHART_DIR" || echo "Failed: ${name}"''
+              else
+                ''echo "Pulling ${name}..." && ${pkgs.kubernetes-helm}/bin/helm pull ${chart.url}:${chart.version} -d "$CHART_DIR" || echo "Failed: ${name}"''
+            ) chartDefs.gitops)}
+
+            # Service Mesh charts
+            ${pkgs.lib.concatStringsSep "\n" (pkgs.lib.mapAttrsToList (name: chart:
+              if chart ? chart then
+                ''echo "Pulling ${name}..." && ${pkgs.kubernetes-helm}/bin/helm pull ${chart.chart} --repo ${chart.url} --version ${chart.version} -d "$CHART_DIR" || echo "Failed: ${name}"''
+              else
+                ''echo "Pulling ${name}..." && ${pkgs.kubernetes-helm}/bin/helm pull ${chart.url}:${chart.version} -d "$CHART_DIR" || echo "Failed: ${name}"''
+            ) chartDefs.service-mesh)}
+
+            # Backup charts
+            ${pkgs.lib.concatStringsSep "\n" (pkgs.lib.mapAttrsToList (name: chart:
+              if chart ? chart then
+                ''echo "Pulling ${name}..." && ${pkgs.kubernetes-helm}/bin/helm pull ${chart.chart} --repo ${chart.url} --version ${chart.version} -d "$CHART_DIR" || echo "Failed: ${name}"''
+              else
+                ''echo "Pulling ${name}..." && ${pkgs.kubernetes-helm}/bin/helm pull ${chart.url}:${chart.version} -d "$CHART_DIR" || echo "Failed: ${name}"''
+            ) chartDefs.backup)}
+
+            echo "Done! Charts saved to $CHART_DIR"
+            ls -la "$CHART_DIR"
+          '';
+
+        in
+          images //
+          versionedImages //
+          devImages //
+          imageTests //
+          (builtins.listToAttrs (map (imageName: {
+            name = "load-${imageName}-to-docker";
+            value = images.${imageName}.copyToDockerDaemon;
+          }) imageNames)) // {
+
+          # Manifest for all images
+          generate-manifest = manifest.generateManifest;
+          manifest-json = manifest.manifestFile;
+
+          # Build all images at once (creates a derivation that depends on all images)
+          all-images = pkgs.symlinkJoin {
+            name = "all-images";
+            paths = builtins.attrValues images;
+          };
+
+          # Build selected images from images-to-build.nix
+          selected-images = pkgs.symlinkJoin {
+            name = "selected-images";
+            paths = map (name: images.${name}) (builtins.filter (n: images ? ${n}) selectedImages);
+          };
+
+          # Category-based image builds
+          infrastructure-images = pkgs.symlinkJoin {
+            name = "infrastructure-images";
+            paths = map (name: images.${name}) (builtins.filter (n: images ? ${n}) imageCategories.infrastructure);
+          };
+
+          database-images = pkgs.symlinkJoin {
+            name = "database-images";
+            paths = map (name: images.${name}) (builtins.filter (n: images ? ${n}) imageCategories.database);
+          };
+
+          web-images = pkgs.symlinkJoin {
+            name = "web-images";
+            paths = map (name: images.${name}) (builtins.filter (n: images ? ${n}) imageCategories.web);
+          };
+
+          runtime-images = pkgs.symlinkJoin {
+            name = "runtime-images";
+            paths = map (name: images.${name}) (builtins.filter (n: images ? ${n}) imageCategories.runtime);
+          };
+
+          cli-images = pkgs.symlinkJoin {
+            name = "cli-images";
+            paths = map (name: images.${name}) (builtins.filter (n: images ? ${n}) imageCategories.cli);
+          };
+
+          devops-images = pkgs.symlinkJoin {
+            name = "devops-images";
+            paths = map (name: images.${name}) (builtins.filter (n: images ? ${n}) imageCategories.devops);
+          };
+
+          nix-images = pkgs.symlinkJoin {
+            name = "nix-images";
+            paths = map (name: images.${name}) (builtins.filter (n: images ? ${n}) imageCategories.nix);
+          };
+
+          build-images = pkgs.symlinkJoin {
+            name = "build-images";
+            paths = map (name: images.${name}) (builtins.filter (n: images ? ${n}) imageCategories.build);
+          };
+
+          # List selected images script
+          list-selected = pkgs.writeShellScriptBin "list-selected" ''
+            echo "Selected images from images-to-build.nix:"
+            ${pkgs.lib.concatStringsSep "\n" (map (name: ''echo "  - ${name}"'') selectedImages)}
+            echo ""
+            echo "Total: ${toString (builtins.length selectedImages)} images"
+          '';
+
+          # Load all images at once
+          load-all-to-docker = pkgs.stdenv.mkDerivation {
+            name = "load-all-to-docker";
+            buildCommand = ''
+              mkdir -p $out/bin
+              cp ${loadAllScript} $out/bin/load-all-to-docker
+              chmod +x $out/bin/load-all-to-docker
+            '';
+          };
+
+          # Discovery script
+          discover-images = pkgs.stdenv.mkDerivation {
+            name = "discover-images";
+            buildCommand = ''
+              mkdir -p $out/bin
+              cp ${discoveryScript} $out/bin/discover-images
+              chmod +x $out/bin/discover-images
+            '';
+          };
+
+          # Test all images
+          test-all-images = pkgs.stdenv.mkDerivation {
+            name = "test-all-images";
+            buildCommand = ''
+              mkdir -p $out/bin
+              cp ${testImagesScript} $out/bin/test-all-images
+              chmod +x $out/bin/test-all-images
+            '';
+          };
+
+          # Version checker script
+          check-versions = pkgs.writeShellScriptBin "check-versions" ''
+            echo "Package versions:"
+            ${pkgs.lib.concatStringsSep "\n" (map (imageName:
+              let version = getPackageVersion imageName; in
+              ''echo "  ${imageName}: ${version}"''
+            ) discoveredImages)}
+          '';
+
+          # Static website generator
+          website = pkgs.stdenv.mkDerivation {
+            name = "nix-containers-website";
+            dontUnpack = true;
+            buildPhase = ''
+              mkdir -p $out
+              cp ${./website/static/index.html} $out/index.html
+              cp ${./website/static/app.js} $out/app.js
+              cat > $out/images-data.json << 'EOF'
+              {
+                "images": ${builtins.toJSON (map (imageName:
+                  let
+                    imageConfig = images.${imageName}.config or {};
+                    labels = imageConfig.Labels or {};
+                    version = getPackageVersion imageName;
+                  in {
+                    name = imageName;
+                    description = labels."org.opencontainers.image.description" or "Container image for ${imageName}";
+                    version = version;
+                    category = labels."io.nix-containers.image.category" or "utility";
+                    hasTest = builtins.pathExists (./images + "/${imageName}/test.nix");
+                    pullCommand = "docker pull ghcr.io/nix-containers/images/${imageName}:latest";
+                    upstream = labels."io.nix-containers.image.upstream" or "";
+                    aliases = labels."io.nix-containers.image.aliases" or imageName;
+                    size = "Not built";
+                    readme = if builtins.pathExists (./images + "/${imageName}/README.md")
+                             then builtins.readFile (./images + "/${imageName}/README.md")
+                             else "# ${imageName}\n\nNo README available.";
+                  }) discoveredImages)},
+                "totalCount": ${toString (builtins.length discoveredImages)},
+                "lastUpdated": "BUILD_TIME"
+              }
+              EOF
+              ${pkgs.gnused}/bin/sed -i "s/BUILD_TIME/$(date -Iseconds)/g" $out/images-data.json
+            '';
+            installPhase = ''
+              echo "Static website generated"
+            '';
+          };
+
+          # Expose the chart puller script
+          pull-all-charts = pullAllChartsScript;
+
+          # Package bundle: all images + chart puller
+          platform-bundle = pkgs.symlinkJoin {
+            name = "platform-bundle";
+            paths = [
+              (pkgs.symlinkJoin { name = "all-images"; paths = builtins.attrValues images; })
+              pullAllChartsScript
+            ];
+          };
+
+        } // (import ./lib/pipelines.nix {
+          inherit pkgs imageNames selectedImages imageCategories getPackageVersion discoveredImages;
+        }) // (import ./lib/chart-tools.nix {
+          inherit pkgs;
+          chartDefs = chartDefs;
+        });
+
+      # Generate devShells for a specific system
+      mkDevShells = system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in {
+          default = pkgs.mkShell {
+            buildInputs = with pkgs; [
+              nix
+              docker
+              act
+              jq
+              git
+              gh
+              gnumake
+              just
+            ];
+            shellHook = ''
+              echo "Nix Containers Development Environment"
+              echo ""
+              echo "Pipeline commands (local CI):"
+              echo "  nix run .#pipeline             [target]  - Full pipeline (build, test, push)"
+              echo "  nix run .#pipeline-build       [target]  - Build images"
+              echo "  nix run .#pipeline-test        [target]  - Test images"
+              echo "  nix run .#pipeline-push        [target]  - Push to registry"
+              echo "  nix run .#pipeline-check-versions       - Check for version changes"
+              echo "  nix run .#pipeline-save-versions        - Save current versions"
+              echo ""
+              echo "  Targets: all, selected, <category>, or <image-name>"
+              echo "  Environment: SKIP_TEST=true SKIP_PUSH=true PARALLEL=4"
+              echo ""
+              echo "Direct build commands:"
+              echo "  nix build .#<image-name>           - Build single image"
+              echo "  nix build .#all-images             - Build ALL images"
+              echo "  nix build .#selected-images        - Build images from images-to-build.nix"
+              echo "  nix build .#<category>-images      - Build by category"
+              echo ""
+              echo "Categories: infrastructure, database, web, runtime, cli, devops, nix, build"
+              echo ""
+              echo "Available images: ${toString (builtins.length discoveredImages)}"
+              echo "Selected images: ${toString (builtins.length selectedImages)}"
+            '';
+          };
+
+          website-dev = pkgs.mkShell {
+            buildInputs = with pkgs; [ nodejs npm python3 ];
+            shellHook = ''
+              echo "Static Website Development Environment"
+              echo "  nix build .#website - Generate static site"
+            '';
+          };
+        };
+
+      # Generate pipeline-only packages for Darwin systems
+      mkDarwinPackages = system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config = { allowUnfree = true; };
+          };
+
+          # Import version lookup function (uses x86_64-linux as reference)
+          getPackageVersion = import ./lib/versions.nix {
+            pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          };
+
+          imageNames = discoveredImages;
+
+          # Import manifest generator (no images needed, just metadata)
+          manifest = import ./lib/manifest.nix {
+            inherit pkgs getPackageVersion discoveredImages;
+            images = {};  # No images on Darwin
+          };
+
+          pipelines = import ./lib/pipelines.nix {
+            inherit pkgs imageNames selectedImages imageCategories getPackageVersion discoveredImages;
+          };
+
+          chartTools = import ./lib/chart-tools.nix {
+            inherit pkgs;
+            chartDefs = chartDefs;
+          };
+
+        in pipelines // chartTools // {
+          generate-manifest = manifest.generateManifest;
+          manifest-json = manifest.manifestFile;
+        };
 
     in {
-      packages.${system} = images //
-        # Include version-tagged images
-        versionedImages //
-        # Include individual image tests
-        imageTests //
-        # Dynamically generate Docker loaders for all images
-        (builtins.listToAttrs (map (imageName: {
-          name = "load-${imageName}-to-docker";
-          value = images.${imageName}.copyToDockerDaemon;
-        }) imageNames)) // {
-        
-        # Load all images at once
-        load-all-to-docker = pkgs.stdenv.mkDerivation {
-          name = "load-all-to-docker";
-          buildCommand = ''
-            mkdir -p $out/bin
-            cp ${loadAllScript} $out/bin/load-all-to-docker
-            chmod +x $out/bin/load-all-to-docker
-          '';
-        };
-        
-        # Discovery script using lib.filesystem.listFilesRecursive
-        discover-images = pkgs.stdenv.mkDerivation {
-          name = "discover-images";
-          buildCommand = ''
-            mkdir -p $out/bin
-            cp ${discoveryScript} $out/bin/discover-images
-            chmod +x $out/bin/discover-images
-          '';
-        };
-        
-        # Comprehensive test suite
-        test-all-images = pkgs.stdenv.mkDerivation {
-          name = "test-all-images";
-          buildCommand = ''
-            mkdir -p $out/bin
-            cp ${testImagesScript} $out/bin/test-all-images
-            chmod +x $out/bin/test-all-images
-          '';
-        };
-        
-        # Version checker script  
-        check-versions = pkgs.writeShellScriptBin "check-versions" ''
-          echo "🔍 Checking package versions..."
-          echo "{"
-          FIRST=true
-          ${pkgs.lib.concatStringsSep "\n" (map (imageName: 
-            let version = getPackageVersion imageName; in
-            ''
-              if [ "$FIRST" = "true" ]; then
-                FIRST=false
-              else
-                echo ","
-              fi
-              echo "  \"${imageName}\": \"${version}\""
-            ''
-          ) discoveredImages)}
-          echo "}"
-        '';
-        
-        # Static website generator
-        website = pkgs.stdenv.mkDerivation {
-          name = "nix-containers-website";
-          dontUnpack = true;
-          buildPhase = ''
-            mkdir -p $out
-            
-            # Copy static website files
-            cp ${./website/static/index.html} $out/index.html
-            cp ${./website/static/app.js} $out/app.js
-            
-            # Generate simple images data
-            cat > $out/images-data.json << 'EOF'
-            {
-              "images": ${builtins.toJSON (map (imageName: 
-                let
-                  imageConfig = images.${imageName}.config or {};
-                  labels = imageConfig.Labels or {};
-                  version = getPackageVersion imageName;
-                in {
-                  name = imageName;
-                  description = labels."org.opencontainers.image.description" or "Container image for ${imageName}";
-                  version = version;
-                  category = labels."io.nix-containers.image.category" or "utility";
-                  hasTest = builtins.pathExists (./images + "/${imageName}/test.nix");
-                  pullCommand = "docker pull ghcr.io/nix-containers/images/${imageName}:latest";
-                  upstream = labels."io.nix-containers.image.upstream" or "";
-                  aliases = labels."io.nix-containers.image.aliases" or imageName;
-                  size = "Not built";
-                  readme = if builtins.pathExists (./images + "/${imageName}/README.md") 
-                           then builtins.readFile (./images + "/${imageName}/README.md")
-                           else "# ${imageName}\n\nNo README available.";
-                }) discoveredImages)},
-              "totalCount": ${toString (builtins.length discoveredImages)},
-              "lastUpdated": "BUILD_TIME"
-            }
-            EOF
-            
-            # Replace BUILD_TIME with build timestamp
-            ${pkgs.gnused}/bin/sed -i "s/BUILD_TIME/$(date -Iseconds)/g" $out/images-data.json
-          '';
-          
-          installPhase = ''
-            echo "✅ Static website generated"
-            echo "📁 Files: $(ls -la $out/)"
-            echo "📊 Images: ${toString (builtins.length discoveredImages)}"
-          '';
-        };
+      # Generate packages for Linux systems (includes container images)
+      # Generate packages for Darwin systems (pipeline scripts only)
+      packages = forLinuxSystems mkPackages // {
+        x86_64-darwin = mkDarwinPackages "x86_64-darwin";
+        aarch64-darwin = mkDarwinPackages "aarch64-darwin";
       };
 
-      # Export discovered images and traditional names for external use
-      inherit discoveredImages imageNames getPackageVersion;
+      # Generate devShells for all supported systems
+      devShells = forAllSystems mkDevShells;
 
-      # Development shells for each image
-      devShells.${system} = {
-        default = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            nix
-            docker
-            act
-            jq
-            git
-            gh
-            gnumake
-            just
-          ];
-          shellHook = ''
-            echo "🚀 Nix Containers Development Environment"
-            echo ""
-            echo "📦 Local Building:"
-            echo "  nix build .#<image-name>                    - Build container image"
-            echo "  nix build .#load-<image-name>-to-docker     - Build and load to Docker"
-            echo "  nix build .#load-all-to-docker && ./result/bin/load-all-to-docker"
-            echo ""
-            echo "🐳 Docker Commands:"
-            echo "  docker images                               - List Docker images"
-            echo "  docker run -it <image-name> bash           - Run container interactively"
-            echo ""
-            echo "🔄 GitHub Actions Testing:"
-            echo "  act -l                                      - List available workflows"
-            echo "  act -j build-containers                     - Test build workflow locally"
-            echo "  act --container-architecture linux/amd64   - Force x86_64 architecture"
-            echo ""
-            echo "📊 Scripts:"
-            echo "  ./scripts/update-image-stats.sh            - Update README comparison chart"
-            echo "  ./scripts/update-readme-images.sh          - Update README available images section"
-            echo ""
-            echo "🌐 Website:"
-            echo "  nix develop .#website-dev                  - Start website development"
-            echo "  cd website && npm install && npm run dev   - Run local website on :3000"
-            echo ""
-            echo "📋 Available images:"
-            echo "  ${pkgs.lib.concatStringsSep ", " imageNames}"
-            echo ""
-            echo "💡 Quick start:"
-            echo "  nix build .#load-cpp-runtime-to-docker     - Example: build and load cpp-runtime"
-          '';
-        };
-        
-        # Website development shell
-        website-dev = pkgs.mkShell {
-          buildInputs = with pkgs; [ nodejs npm python3 ];
-          shellHook = ''
-            echo "🌐 Static Website Development Environment"
-            echo ""
-            echo "📦 Build static website:"
-            echo "  nix build .#website                        - Generate static site"
-            echo "  python3 -m http.server 8000 -d result     - Serve static site on :8000"
-            echo ""
-            echo "🛠️  Development:"
-            echo "  cd website && python3 -m http.server 8000 -d static  - Serve during development"
-          '';
-        };
+      # Export discovered images for external use
+      inherit discoveredImages;
+
+      # Export selected images (from images-to-build.nix)
+      inherit selectedImages;
+
+      # Export image categories
+      inherit imageCategories;
+
+      # Export chart definitions
+      chartDefinitions = import ./charts.nix;
+
+      # Helper to get image names
+      imageNames = discoveredImages;
+
+      # Helper function for version lookup (uses x86_64-linux as reference)
+      getPackageVersion = import ./lib/versions.nix {
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
       };
     };
 }

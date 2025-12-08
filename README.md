@@ -4,7 +4,11 @@ A collection of container images built with nix2container, featuring dynamic dis
 
 ## Architecture
 
-- **Auto-build latest images** - Multiple patterns to build latest images securely (github actions, etc) 
+- **Auto-build latest images** - Multiple patterns to build latest images securely (nix pipeline and github actions) 
+- **Support building on Linux or MacOS (with lima)**
+- **Pull and package latest upstream charts with the nix containers**
+- **E2E image testing with the charts** - Testing with live cluster (kind)
+- **CVE scanning** - Trivy/Grype
 - **Multi-layer images** - Base packages in separate layers for better caching
 - **Non-root users** - All images run as UID 1000 for security
 - **Dynamic discovery** - Images automatically discovered from `images/` folder
