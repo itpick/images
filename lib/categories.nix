@@ -96,4 +96,45 @@
     "pocket-id"
     "maddy"
   ];
+
+  # Chart images - Images for Helm chart deployments
+  chart = [
+    # Observability
+    "prometheus"
+    "alertmanager"
+    "grafana"
+    "loki"
+    "tempo"
+    "thanos"
+    "alloy"
+    "node-exporter"
+    "kube-state-metrics"
+    "prometheus-operator"
+    "prometheus-adapter"
+    # Security
+    "vault"
+    "kyverno"
+    "dex"
+    "oauth2-proxy"
+    "external-secrets"
+    "cert-manager"
+    "kube-rbac-proxy"
+    # GitOps
+    "argocd"
+    # Operators
+    "keda"
+    "velero"
+    "dragonfly-operator"
+    "external-dns"
+    # Storage
+    "minio"
+    "minio-client"
+    "memcached"
+    # Other
+    "zookeeper"
+    "openldap"
+    "bats"
+    "shellcheck"
+    "geoipupdate"
+  ];
 }

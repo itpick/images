@@ -88,6 +88,47 @@ let
     dragonfly-operator = "1.1.11";
     external-dns = "0.16.1";
     maddy = toVersionString pkgs.maddy.version;
+
+    # Chart images - observability
+    prometheus = toVersionString pkgs.prometheus.version;
+    alertmanager = toVersionString pkgs.prometheus-alertmanager.version;
+    grafana = toVersionString pkgs.grafana.version;
+    loki = toVersionString pkgs.grafana-loki.version;
+    tempo = toVersionString pkgs.tempo.version;
+    thanos = toVersionString pkgs.thanos.version;
+    alloy = toVersionString pkgs.grafana-alloy.version;
+    node-exporter = toVersionString pkgs.prometheus-node-exporter.version;
+    kube-state-metrics = toVersionString pkgs.kube-state-metrics.version;
+    prometheus-operator = "0.77.1";  # Built from source
+    prometheus-adapter = "0.12.0";  # Built from source
+
+    # Chart images - security
+    vault = toVersionString pkgs.vault.version;
+    kyverno = toVersionString pkgs.kyverno.version;
+    dex = toVersionString pkgs.dex-oidc.version;
+    oauth2-proxy = toVersionString pkgs.oauth2-proxy.version;
+    external-secrets = "0.10.0";  # Built from source
+    cert-manager = toVersionString pkgs.cmctl.version;
+    kube-rbac-proxy = "0.18.0";  # Built from source
+
+    # Chart images - gitops
+    argocd = toVersionString pkgs.argocd.version;
+
+    # Chart images - operators
+    keda = "2.16.1";  # Built from source
+    velero = toVersionString pkgs.velero.version;
+
+    # Chart images - storage
+    minio = toVersionString pkgs.minio.version;
+    minio-client = toVersionString pkgs.minio-client.version;
+    memcached = toVersionString pkgs.memcached.version;
+
+    # Chart images - other
+    zookeeper = toVersionString pkgs.zookeeper.version;
+    openldap = toVersionString pkgs.openldap.version;
+    bats = toVersionString pkgs.bats.version;
+    shellcheck = toVersionString pkgs.shellcheck.version;
+    geoipupdate = toVersionString pkgs.geoipupdate.version;
   };
 
 in
