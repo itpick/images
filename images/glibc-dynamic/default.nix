@@ -1,5 +1,14 @@
 { nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
 
+
+# Chainguard SBOM packages for glibc-dynamic:
+# Packages available in nixpkgs:
+#   pkgs.glibc  # glibc (2.42-r4)
+#   pkgs.libgcc  # libgcc (15.2.0-r6)
+# Packages NOT in nixpkgs:
+#   ld-linux (2.42-r4)
+#   libstdc++ (15.2.0-r6)
+
 let
   glibcPackages = with pkgs; [
     glibc

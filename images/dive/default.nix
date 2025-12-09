@@ -1,5 +1,10 @@
 { nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
 
+
+# Chainguard SBOM packages for dive:
+# Packages available in nixpkgs:
+#   pkgs.dive  # dive (0.13.1-r10)
+
 let
   divePackages = with pkgs; [
     dive

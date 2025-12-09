@@ -1,0 +1,138 @@
+{ buildCLIImage, pkgs, lib, ... }:
+
+# Image: ingress-nginx-controller-fips
+# Reference: https://images.chainguard.dev/directory/image/ingress-nginx-controller-fips/overview
+
+# Packages available in nixpkgs:
+#   pkgs.brotli  # brotli (1.2.0-r1)
+#   pkgs.busybox  # busybox (1.37.0-r50)
+#   pkgs.c-ares  # c-ares (1.34.5-r3)
+#   pkgs.cyrus_sasl  # cyrus-sasl (2.1.28-r45)
+#   pkgs.freetype  # freetype (2.14.1-r0)
+#   pkgs.gd  # gd (2.3.3-r12)
+#   pkgs.gdbm  # gdbm (1.26-r1)
+#   pkgs.geoip  # geoip (1.6.12-r7)
+#   pkgs.glibc  # glibc (2.42-r4)
+#   pkgs.grpc  # grpc-1.76 (1.76.0-r2)
+#   pkgs.gtest  # gtest (1.17.0-r3)
+#   pkgs.libavif  # libavif (1.3.0-r2)
+#   pkgs.libcap  # libcap (2.77-r0)
+#   pkgs.libgcc  # libgcc (15.2.0-r6)
+#   pkgs.libice  # libice (1.1.2-r2)
+#   pkgs.libidn2  # libidn2 (2.3.8-r3)
+#   pkgs.libjpeg_turbo  # libjpeg-turbo (3.1.2-r1)
+#   pkgs.libmaxminddb  # libmaxminddb (1.12.2-r3)
+#   pkgs.libnghttp2  # libnghttp2-14 (1.68.0-r0)
+#   pkgs.libpng  # libpng (1.6.52-r0)
+#   pkgs.libpsl  # libpsl (0.21.5-r6)
+#   pkgs.libsm  # libsm (1.2.6-r1)
+#   pkgs.libunistring  # libunistring (1.4.1-r1)
+#   pkgs.libuuid  # libuuid (2.41.2-r2)
+#   pkgs.libverto  # libverto (0.3.2-r6)
+#   pkgs.libwebp  # libwebp (1.6.0-r1)
+#   pkgs.libx11  # libx11 (1.8.12-r3)
+#   pkgs.libxau  # libxau (1.0.12-r3)
+#   pkgs.libxcb  # libxcb (1.17.0-r8)
+#   pkgs.libxcrypt  # libxcrypt (4.5.2-r0)
+#   pkgs.libxdmcp  # libxdmcp (1.1.5-r9)
+#   pkgs.libxext  # libxext (1.3.6-r7)
+#   pkgs.libxml2  # libxml2 (2.15.1-r2)
+#   pkgs.libxml2  # libxml2-16 (2.15.1-r2)
+#   pkgs.libxpm  # libxpm (3.5.17-r6)
+#   pkgs.libxslt  # libxslt (1.1.45-r0)
+#   pkgs.libxt  # libxt (1.3.1-r2)
+#   pkgs.luajit  # luajit (2.1_p20250117-r3)
+#   pkgs.mimalloc  # mimalloc (1.9.4-r1)
+#   pkgs.modsecurity-crs  # modsecurity (3.0.14-r4)
+#   pkgs.msgpack-cxx  # msgpack-cxx (7.0.0-r4)
+#   pkgs.ncurses  # ncurses (6.5_p20251025-r1)
+#   pkgs.nghttp3  # nghttp3 (1.13.1-r0)
+#   pkgs.openssl  # openssl (3.6.0-r4)
+#   pkgs.pcre  # pcre (8.45-r7)
+#   pkgs.re2  # re2 (2025.11.05-r0)
+#   pkgs.readline  # readline (8.3-r1)
+#   pkgs.ssdeep  # ssdeep (2.14.1-r7)
+#   pkgs.yajl  # yajl (2.1.0-r8)
+#   pkgs.yaml-cpp  # yaml-cpp (0.8.0-r10)
+#   pkgs.zlib  # zlib (1.3.1-r51)
+
+# Packages NOT in nixpkgs (need custom derivations):
+#   aom-libs (3.13.1-r0)
+#   ca-certificates (20251003-r0)
+#   dumb-init-privileged-netbindservice (1.2.5-r9)
+#   fontconfig-config (2.17.1-r1)
+#   gmock (1.17.0-r3)
+#   heimdal-libs (7.8.0-r42)
+#   icu78-data-full (78.1-r0)
+#   ingress-nginx-controller-fips-1.14 (1.14.0-r1)
+#   ingress-nginx-opentelemetry-plugin-1.14 (1.14.0-r1)
+#   jitterentropy-library (3.6.3-r2)
+#   jitterentropy-library-dev (3.6.3-r2)
+#   keyutils-libs (1.6.3-r37)
+#   krb5-conf (1.0-r7)
+#   krb5-libs (1.22.1-r1)
+#   ld-linux (2.42-r4)
+#   libabsl2508.0.0 (20250814.1-r1)
+#   libbrotlicommon1 (1.2.0-r1)
+#   libbrotlidec1 (1.2.0-r1)
+#   libbrotlienc1 (1.2.0-r1)
+#   libbz2-1 (1.0.8-r21)
+#   libcom_err (1.47.3-r1)
+#   libcrypt1 (2.42-r4)
+#   libcrypto3 (3.6.0-r4)
+#   libcurl-openssl4 (8.17.0-r0)
+#   libdav1d (1.5.2-r0)
+#   libexpat1 (2.7.3-r0)
+#   libfontconfig1 (2.17.1-r1)
+#   libgd (2.3.3-r12)
+#   libicu78 (78.1-r0)
+#   libldap-2.6 (2.6.10-r7)
+#   libmaxminddb-libs (1.12.2-r3)
+#   libopentelemetry-cpp1 (1.24.0-r1)
+#   libpcre2-8-0 (10.47-r0)
+#   libprotobuf33.1.0 (33.1-r1)
+#   libprotoc33.1.0 (33.1-r1)
+#   libssl3 (3.6.0-r4)
+#   libstdc++ (15.2.0-r6)
+#   libsystemd (258.2-r3)
+#   libzstd1 (1.5.7-r5)
+#   lua-cjson (2.1.0.12-r8)
+#   lua-resty-balancer (0.05-r8)
+#   lua-resty-cache (0.15-r3)
+#   lua-resty-cookie (0.1.0-r7)
+#   lua-resty-core (0.1.32-r0)
+#   lua-resty-dns (0.23-r6)
+#   lua-resty-global-throttle (0.2.0-r8)
+#   lua-resty-http (0.17.2-r4)
+#   lua-resty-ipmatcher (0.6.1-r7)
+#   lua-resty-lock (0.09-r7)
+#   lua-resty-memcached (0.17-r7)
+#   lua-resty-redis (0.33-r1)
+#   lua-resty-string (0.15-r7)
+#   lua-resty-upload (0.11-r3)
+#   modsecurity-config (3.0.14-r4)
+#   ncurses-terminfo-base (6.5_p20251025-r1)
+#   openssl-config-fipshardened (3.6.0-r4)
+#   openssl-dev (3.6.0-r4)
+#   openssl-fips-test (0.6-r0)
+#   openssl-provider-fips-3.1.2 (3.1.2-r3)
+#   sqlite-libs (3.51.1-r0)
+#   tiff (4.7.1-r0)
+
+# TODO: Implement ingress-nginx-controller-fips image
+throw "Image 'ingress-nginx-controller-fips' is not yet implemented"
+
+# Suggested implementation:
+# buildCLIImage {
+#   drv = pkgs.brotli;
+#   name = "ingress-nginx-controller-fips";
+#   tag = "v${pkgs.brotli.version}";
+#   entrypoint = [ "${pkgs.brotli}/bin/BINARY" ];
+#   cmd = [ "--help" ];
+#   user = "0";
+#
+#   labels = {
+#     "org.opencontainers.image.title" = "ingress-nginx-controller-fips";
+#     "org.opencontainers.image.description" = "TODO: Add description";
+#   };
+# }

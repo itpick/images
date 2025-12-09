@@ -1,4 +1,12 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+
+
+# Chainguard SBOM packages for kyverno-reports-controller:
+# Packages available in nixpkgs:
+#   pkgs.kubectl  # kubectl-1.34 (1.34.2-r3)
+# Packages NOT in nixpkgs:
+#   kubectl-latest (0-r11)
+#   kyverno-reports-controller-1.16 (1.16.1-r0)
 
 let
   version = "1.13.0";
@@ -38,7 +46,7 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   drv = kyverno-reports-controller;
   name = "kyverno-reports-controller";
   tag = "v${version}";

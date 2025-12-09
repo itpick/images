@@ -1,6 +1,6 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-buildCLIImage {
+mkImage {
   drv = pkgs.yq-go;
   name = "yq";
   tag = "v${pkgs.yq-go.version}";

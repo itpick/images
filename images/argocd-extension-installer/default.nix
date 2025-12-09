@@ -1,4 +1,4 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
 
 let
   version = "0.0.5";
@@ -32,7 +32,7 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   drv = argocd-extension-installer;
   name = "argocd-extension-installer";
   tag = "v${version}";

@@ -8,4 +8,9 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for authservice:
+# Packages NOT in nixpkgs:
+#   authservice (1.1.4-r1)
+
 throw "Image 'authservice' is not yet implemented. See default.nix for implementation notes."

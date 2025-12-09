@@ -1,0 +1,24 @@
+{ lib, stdenv, fetchFromGitHub, ... }:
+
+# Package: pg_timetable
+# TODO: Find source and implement derivation
+
+stdenv.mkDerivation rec {
+  pname = "pg_timetable";
+  version = "0.0.0";  # TODO: Set version
+
+  src = fetchFromGitHub {
+    owner = "TODO";
+    repo = "pg_timetable";
+    rev = "v${version}";
+    sha256 = lib.fakeSha256;
+  };
+
+  meta = with lib; {
+    description = "TODO: Add description for pg_timetable";
+    homepage = "https://github.com/TODO/pg_timetable";
+    license = licenses.asl20;  # TODO: Verify license
+    maintainers = [ ];
+    platforms = platforms.linux;
+  };
+}

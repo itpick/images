@@ -1,5 +1,10 @@
 { nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
 
+
+# Chainguard SBOM packages for crane:
+# Packages available in nixpkgs:
+#   pkgs.crane  # crane (0.20.7-r1)
+
 let
   cranePackages = with pkgs; [
     crane

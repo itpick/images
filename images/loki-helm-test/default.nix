@@ -13,4 +13,9 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for loki-helm-test:
+# Packages available in nixpkgs:
+#   pkgs.helm  # helm-4 (4.0.1-r2)
+
 throw "Image 'loki-helm-test' is not yet implemented. See default.nix for implementation notes."

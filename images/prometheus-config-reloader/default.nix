@@ -1,4 +1,9 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+
+
+# Chainguard SBOM packages for prometheus-config-reloader:
+# Packages NOT in nixpkgs:
+#   prometheus-config-reloader (0.87.0-r1)
 
 let
   version = "0.77.1";
@@ -34,7 +39,7 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   drv = prometheus-config-reloader;
   name = "prometheus-config-reloader";
   tag = "v${version}";

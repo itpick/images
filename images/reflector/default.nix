@@ -1,4 +1,13 @@
-{ buildCLIImage, fetchFromGitHub, buildDotnetModule, dotnetCorePackages, lib, ... }:
+{ mkImage, fetchFromGitHub, buildDotnetModule, dotnetCorePackages, lib, ... }:
+
+
+# Chainguard SBOM packages for reflector:
+# Packages available in nixpkgs:
+#   pkgs.glibc  # glibc (2.42-r4)
+#   pkgs.libgcc  # libgcc (15.2.0-r6)
+# Packages NOT in nixpkgs:
+#   flux-image-reflector-controller (1.0.4-r3)
+#   ld-linux (2.42-r4)
 
 let
   version = "9.1.41";
@@ -27,7 +36,7 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   drv = reflector;
   name = "reflector";
   tag = "v${version}";

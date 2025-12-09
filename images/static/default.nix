@@ -1,5 +1,10 @@
 { nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
 
+
+# Chainguard SBOM packages for static:
+# Packages available in nixpkgs:
+#   pkgs.tzdata  # tzdata (2025b-r2)
+
 let
   staticPackages = with pkgs.pkgsStatic; [
     bash

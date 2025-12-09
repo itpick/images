@@ -1,16 +1,47 @@
-# nginx-unprivileged
-# =============
-# Placeholder for nginx-unprivileged container image.
-# This image is referenced in Helm charts but not yet implemented.
-#
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
 
-{ ... }:
+# nginx-unprivileged - runs as non-root user (65532)
+# Same as nginx but configured to run without root privileges
 
-throw "Image 'nginx-unprivileged' is not yet implemented. See default.nix for implementation notes."
+let
+  nginxPackages = with pkgs; [
+    nginx
+    bash
+    coreutils
+  ];
+
+  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+
+in
+nix2container.buildImage {
+  name = "nginx-unprivileged";
+  tag = "latest";
+
+  copyToRoot = [
+    (buildEnv {
+      name = "nginx-unprivileged-root";
+      paths = base.basePackages ++ nginxPackages ++ [ userEnv ];
+    })
+  ];
+
+  config = nonRoot.defaultConfig // {
+    User = "65532:65532";
+    Env = base.defaultEnv ++ nonRoot.userEnv ++ [
+      "PATH=${lib.makeBinPath nginxPackages}"
+      "NGINX_ENTRYPOINT_QUIET_LOGS=1"
+    ];
+    ExposedPorts = {
+      "8080/tcp" = {};
+    };
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.description" = "nginx running as non-root user";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.nginx.version;
+      "io.nix-containers.image.upstream" = "https://nginx.org/";
+      "io.nix-containers.image.category" = "web-service";
+      "io.nix-containers.image.aliases" = "nginx,webserver,proxy,unprivileged";
+    };
+  };
+}

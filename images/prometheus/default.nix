@@ -1,6 +1,15 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-buildCLIImage {
+
+# Chainguard SBOM packages for prometheus:
+# Packages available in nixpkgs:
+#   pkgs.glibc  # glibc (2.42-r4)
+#   pkgs.libgcc  # libgcc (15.2.0-r6)
+#   pkgs.prometheus  # prometheus-3.5 (3.5.0-r10)
+# Packages NOT in nixpkgs:
+#   ld-linux (2.42-r4)
+
+mkImage {
   drv = pkgs.prometheus;
   name = "prometheus";
   tag = "v${pkgs.prometheus.version}";

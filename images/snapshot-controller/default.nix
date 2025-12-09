@@ -1,4 +1,9 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+
+
+# Chainguard SBOM packages for snapshot-controller:
+# Packages NOT in nixpkgs:
+#   kubernetes-csi-external-snapshot-controller-8.4 (8.4.0-r1)
 
 let
   version = "8.1.0";
@@ -34,7 +39,7 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   drv = snapshot-controller;
   name = "snapshot-controller";
   tag = "v${version}";

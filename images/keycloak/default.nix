@@ -1,16 +1,50 @@
-# keycloak
-# =============
-# Placeholder for keycloak container image.
-# This image is referenced in Helm charts but not yet implemented.
-#
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
 
-{ ... }:
+# Keycloak - Open Source Identity and Access Management
+# https://github.com/keycloak/keycloak
 
-throw "Image 'keycloak' is not yet implemented. See default.nix for implementation notes."
+let
+  keycloakPackages = with pkgs; [
+    keycloak
+    bash
+    busybox
+    openjdk21
+    cacert
+  ];
+
+  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+
+in
+nix2container.buildImage {
+  name = "keycloak";
+  tag = "latest";
+
+  copyToRoot = [
+    (buildEnv {
+      name = "keycloak-root";
+      paths = base.basePackages ++ keycloakPackages ++ [ userEnv ];
+    })
+  ];
+
+  config = nonRoot.defaultConfig // {
+    Env = base.defaultEnv ++ nonRoot.userEnv ++ [
+      "PATH=${lib.makeBinPath keycloakPackages}"
+      "KC_HOME=${pkgs.keycloak}"
+      "JAVA_HOME=${pkgs.openjdk21}"
+    ];
+    ExposedPorts = {
+      "8080/tcp" = {};
+      "8443/tcp" = {};
+    };
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.description" = "Keycloak Identity and Access Management";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "org.opencontainers.image.version" = pkgs.keycloak.version;
+      "io.nix-containers.image.upstream" = "https://www.keycloak.org/";
+      "io.nix-containers.image.category" = "identity";
+      "io.nix-containers.image.aliases" = "keycloak,iam,sso,oauth";
+    };
+  };
+}

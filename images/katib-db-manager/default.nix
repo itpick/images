@@ -13,4 +13,7 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for katib-db-manager:
+
 throw "Image 'katib-db-manager' is not yet implemented. See default.nix for implementation notes."

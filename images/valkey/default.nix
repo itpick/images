@@ -1,5 +1,21 @@
 { nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
 
+
+# Chainguard SBOM packages for valkey:
+# Packages available in nixpkgs:
+#   pkgs.bash  # bash (5.3-r3)
+#   pkgs.glibc  # glibc (2.42-r4)
+#   pkgs.libgcc  # libgcc (15.2.0-r6)
+#   pkgs.ncurses  # ncurses (6.5_p20251025-r1)
+#   pkgs.valkey  # valkey-9.0 (9.0.0-r0)
+# Packages NOT in nixpkgs:
+#   ld-linux (2.42-r4)
+#   libcrypto3 (3.6.0-r4)
+#   libssl3 (3.6.0-r4)
+#   ncurses-terminfo-base (6.5_p20251025-r1)
+#   posix-libc-utils (2.42-r4)
+#   valkey-9.0-cli (9.0.0-r0)
+
 let
   valkeyPackages = with pkgs; [
     valkey

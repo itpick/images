@@ -13,4 +13,9 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for harbor-jobservice:
+# Packages NOT in nixpkgs:
+#   harbor-2.14-jobservice (2.14.1-r1)
+
 throw "Image 'harbor-jobservice' is not yet implemented. See default.nix for implementation notes."

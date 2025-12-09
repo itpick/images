@@ -1,5 +1,25 @@
 { nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
 
+
+# Chainguard SBOM packages for redis:
+# Packages available in nixpkgs:
+#   pkgs.bash  # bash (5.3-r3)
+#   pkgs.busybox  # busybox (1.37.0-r50)
+#   pkgs.glibc  # glibc (2.42-r4)
+#   pkgs.libgcc  # libgcc (15.2.0-r6)
+#   pkgs.libxcrypt  # libxcrypt (4.5.2-r0)
+#   pkgs.ncurses  # ncurses (6.5_p20251025-r1)
+#   pkgs.redis  # redis-8.4 (8.4.0-r0)
+# Packages NOT in nixpkgs:
+#   ld-linux (2.42-r4)
+#   libcrypt1 (2.42-r4)
+#   libcrypto3 (3.6.0-r4)
+#   libssl3 (3.6.0-r4)
+#   libstdc++ (15.2.0-r6)
+#   ncurses-terminfo-base (6.5_p20251025-r1)
+#   posix-libc-utils (2.42-r4)
+#   redis-cli-8.4 (8.4.0-r0)
+
 let
   redisPackages = with pkgs; [
     redis

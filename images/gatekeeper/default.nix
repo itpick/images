@@ -1,6 +1,11 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-buildCLIImage {
+
+# Chainguard SBOM packages for gatekeeper:
+# Packages available in nixpkgs:
+#   pkgs.gatekeeper  # gatekeeper-3.21 (3.21.0-r2)
+
+mkImage {
   drv = pkgs.gatekeeper;
   name = "gatekeeper";
   tag = "v${pkgs.gatekeeper.version}";

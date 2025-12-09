@@ -1,4 +1,13 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+
+
+# Chainguard SBOM packages for helm-controller:
+# Packages available in nixpkgs:
+#   pkgs.glibc  # glibc (2.42-r4)
+#   pkgs.libgcc  # libgcc (15.2.0-r6)
+# Packages NOT in nixpkgs:
+#   cluster-api-helm-controller (0.5.2-r1)
+#   ld-linux (2.42-r4)
 
 let
   version = "1.4.5";
@@ -32,7 +41,7 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   drv = helm-controller;
   name = "helm-controller";
   tag = "v${version}";

@@ -1,4 +1,9 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+
+
+# Chainguard SBOM packages for spegel:
+# Packages NOT in nixpkgs:
+#   spegel (0.5.1-r2)
 
 let
   version = "0.0.27";
@@ -32,12 +37,14 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   drv = spegel;
   name = "spegel";
   tag = "v${version}";
   entrypoint = [ "${spegel}/bin/spegel" ];
   cmd = [];
+  # Chainguard runs spegel as root
+  user = "0:0";
 
   labels = {
     "org.opencontainers.image.title" = "Spegel";

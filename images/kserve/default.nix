@@ -13,4 +13,9 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for kserve:
+# Packages NOT in nixpkgs:
+#   kserve-agent (0.16.0-r2)
+
 throw "Image 'kserve' is not yet implemented. See default.nix for implementation notes."

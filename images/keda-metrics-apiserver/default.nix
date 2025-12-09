@@ -1,49 +1,21 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
+
+# Uses keda package from pkgs/keda
+# Built from wolfi-dev/os keda-2.18.yaml
+# https://github.com/kedacore/keda
 
 let
-  version = "2.16.1";
-  keda-metrics-apiserver = buildGoModule {
-    pname = "keda-metrics-apiserver";
-    inherit version;
-
-    src = fetchFromGitHub {
-      owner = "kedacore";
-      repo = "keda";
-      rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
-    };
-
-    vendorHash = null;  # TODO: Update after first build
-
-    env.CGO_ENABLED = 0;
-
-    ldflags = [
-      "-s" "-w"
-      "-X github.com/kedacore/keda/v2/version.Version=${version}"
-    ];
-
-    subPackages = [ "cmd/adapter" ];
-
-    postInstall = ''
-      mv $out/bin/adapter $out/bin/keda-metrics-apiserver
-    '';
-
-    doCheck = false;
-
-    meta = with lib; {
-      description = "KEDA Metrics API Server for custom metrics";
-      homepage = "https://github.com/kedacore/keda";
-      license = licenses.asl20;
-    };
-  };
-
+  keda = pkgs.keda;
+  version = keda.version;
 in
-buildCLIImage {
-  drv = keda-metrics-apiserver;
+mkImage {
+  drv = keda;
   name = "keda-metrics-apiserver";
   tag = "v${version}";
-  entrypoint = [ "${keda-metrics-apiserver}/bin/keda-metrics-apiserver" ];
+  entrypoint = [ "${keda}/bin/keda-adapter" ];
   cmd = [ "--help" ];
+
+  extraPkgs = with pkgs; [ busybox tzdata ];
 
   labels = {
     "org.opencontainers.image.title" = "KEDA Metrics API Server";

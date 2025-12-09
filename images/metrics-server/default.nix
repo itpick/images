@@ -1,6 +1,11 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-buildCLIImage {
+
+# Chainguard SBOM packages for metrics-server:
+# Packages NOT in nixpkgs:
+#   metrics-server (0.8.0-r5)
+
+mkImage {
   drv = pkgs.metrics-server;
   name = "metrics-server";
   tag = "v${pkgs.metrics-server.version}";

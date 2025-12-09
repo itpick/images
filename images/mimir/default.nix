@@ -1,6 +1,11 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-buildCLIImage {
+
+# Chainguard SBOM packages for mimir:
+# Packages NOT in nixpkgs:
+#   grafana-mimir (3.0.1-r1)
+
+mkImage {
   drv = pkgs.mimir;
   name = "mimir";
   tag = "v${pkgs.mimir.version}";

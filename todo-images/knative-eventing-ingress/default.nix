@@ -1,0 +1,25 @@
+{ buildCLIImage, pkgs, lib, ... }:
+
+# Image: knative-eventing-ingress
+# Reference: https://images.chainguard.dev/directory/image/knative-eventing-ingress/overview
+
+# Packages NOT in nixpkgs (need custom derivations):
+#   knative-eventing-1.19-ingress (1.19.8-r2)
+
+# TODO: Implement knative-eventing-ingress image
+throw "Image 'knative-eventing-ingress' is not yet implemented"
+
+# Suggested implementation:
+# buildCLIImage {
+#   drv = pkgs.PACKAGE_NAME;
+#   name = "knative-eventing-ingress";
+#   tag = "v${pkgs.PACKAGE_NAME.version}";
+#   entrypoint = [ "${pkgs.PACKAGE_NAME}/bin/BINARY" ];
+#   cmd = [ "--help" ];
+#   user = "65532";
+#
+#   labels = {
+#     "org.opencontainers.image.title" = "knative-eventing-ingress";
+#     "org.opencontainers.image.description" = "TODO: Add description";
+#   };
+# }

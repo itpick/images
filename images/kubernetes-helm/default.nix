@@ -1,5 +1,10 @@
 { nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
 
+
+# Chainguard SBOM packages for kubernetes-helm:
+# Packages available in nixpkgs:
+#   pkgs.helm  # helm-4 (4.0.1-r2)
+
 let
   # kubernetes-helm packages
   kubernetes_helmPackages = with pkgs; [

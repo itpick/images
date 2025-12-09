@@ -13,4 +13,9 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for harbor-core:
+# Packages available in nixpkgs:
+#   pkgs.harbor-cli  # harbor-2.14 (2.14.1-r1)
+
 throw "Image 'harbor-core' is not yet implemented. See default.nix for implementation notes."

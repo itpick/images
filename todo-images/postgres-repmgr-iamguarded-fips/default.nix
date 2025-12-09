@@ -1,0 +1,136 @@
+{ buildCLIImage, pkgs, lib, ... }:
+
+# Image: postgres-repmgr-iamguarded-fips
+# Reference: https://images.chainguard.dev/directory/image/postgres-repmgr-iamguarded-fips/overview
+
+# Packages available in nixpkgs:
+#   pkgs.bash  # bash (5.3-r3)
+#   pkgs.brotli  # brotli (1.2.0-r1)
+#   pkgs.busybox  # busybox (1.37.0-r50)
+#   pkgs.coreutils  # coreutils (9.9-r0)
+#   pkgs.curl  # curl (8.17.0-r0)
+#   pkgs.cyrus_sasl  # cyrus-sasl (2.1.28-r45)
+#   pkgs.gdbm  # gdbm (1.26-r1)
+#   pkgs.glibc  # glibc (2.42-r4)
+#   pkgs.glibclocales  # glibc-locales (2.42-r4)
+#   pkgs.gmp  # gmp (6.3.0-r8)
+#   pkgs.gnutls  # gnutls (3.8.11-r0)
+#   pkgs.rep-grep  # grep (3.12-r3)
+#   pkgs.jansson  # jansson (2.14.1-r1)
+#   pkgs.json_c  # json-c (0.18-r4)
+#   pkgs.krb5  # krb5 (1.22.1-r1)
+#   pkgs.libcap  # libcap (2.77-r0)
+#   pkgs.libedit  # libedit (3.1-r13)
+#   pkgs.libffi  # libffi (3.5.2-r1)
+#   pkgs.libgcc  # libgcc (15.2.0-r6)
+#   pkgs.libidn  # libidn (1.43-r2)
+#   pkgs.libidn2  # libidn2 (2.3.8-r3)
+#   pkgs.libllvm  # libllvm-19 (19.1.7-r14)
+#   pkgs.libmd  # libmd (1.1.0-r5)
+#   pkgs.libnghttp2  # libnghttp2-14 (1.68.0-r0)
+#   pkgs.libpq  # libpq-18 (18.1-r0)
+#   pkgs.libpsl  # libpsl (0.21.5-r6)
+#   pkgs.libselinux  # libselinux (3.9-r1)
+#   pkgs.libsepol  # libsepol (3.9-r1)
+#   pkgs.libssh  # libssh (0.11.3-r0)
+#   pkgs.libtasn1  # libtasn1 (4.20.0-r5)
+#   pkgs.libunistring  # libunistring (1.4.1-r1)
+#   pkgs.libuuid  # libuuid (2.41.2-r2)
+#   pkgs.libverto  # libverto (0.3.2-r6)
+#   pkgs.libxcrypt  # libxcrypt (4.5.2-r0)
+#   pkgs.libxml2  # libxml2 (2.15.1-r2)
+#   pkgs.libxml2  # libxml2-16 (2.15.1-r2)
+#   pkgs.libxslt  # libxslt (1.1.45-r0)
+#   pkgs.linux-pam  # linux-pam (1.7.1-r3)
+#   pkgs.mpdecimal  # mpdecimal (4.0.1-r3)
+#   pkgs.ncurses  # ncurses (6.5_p20251025-r1)
+#   pkgs.net-tools  # net-tools (2.10-r31)
+#   pkgs.nettle  # nettle (3.10.2-r1)
+#   pkgs.nghttp3  # nghttp3 (1.13.1-r0)
+#   pkgs.p11-kit  # p11-kit (0.25.10-r0)
+#   pkgs.pcre2  # pcre2 (10.47-r0)
+#   pkgs.popt  # popt (1.19-r3)
+#   pkgs.postgresql  # postgresql-18 (18.1-r0)
+#   pkgs.procps  # procps (4.0.5-r42)
+#   pkgs.readline  # readline (8.3-r1)
+#   pkgs.sudo  # sudo (1.9.17_p2-r2)
+#   pkgs.talloc  # talloc (2.4.3-r4)
+#   pkgs.tdb  # tdb (1.4.14-r0)
+#   pkgs.tevent  # tevent (0.17.1-r0)
+#   pkgs.tzdata  # tzdata (2025b-r2)
+#   pkgs.xz  # xz (5.8.1-r6)
+#   pkgs.zlib  # zlib (1.3.1-r51)
+
+# Packages NOT in nixpkgs (need custom derivations):
+#   e2fsprogs-libs (1.47.3-r1)
+#   ecpg-18 (18.1-r0)
+#   gmp-dev (6.3.0-r8)
+#   heimdal-libs (7.8.0-r42)
+#   icu-data-full (75.1-r42)
+#   icu-libs (75.1-r42)
+#   icu78-data-full (78.1-r0)
+#   keyutils-libs (1.6.3-r37)
+#   krb5-conf (1.0-r7)
+#   krb5-libs (1.22.1-r1)
+#   ld-linux (2.42-r4)
+#   libacl1 (2.3.2-r54)
+#   libattr1 (2.5.2-r54)
+#   libbrotlicommon1 (1.2.0-r1)
+#   libbrotlidec1 (1.2.0-r1)
+#   libbrotlienc1 (1.2.0-r1)
+#   libbz2-1 (1.0.8-r21)
+#   libcom_err (1.47.3-r1)
+#   libcrypt1 (2.42-r4)
+#   libcrypto3 (3.6.0-r4)
+#   libcurl-openssl4 (8.17.0-r0)
+#   libexpat1 (2.7.3-r0)
+#   libicu78 (78.1-r0)
+#   libldap-2.6 (2.6.10-r7)
+#   liblz4-1 (1.10.0-r6)
+#   libpcre2-16-0 (10.47-r0)
+#   libpcre2-32-0 (10.47-r0)
+#   libpcre2-8-0 (10.47-r0)
+#   libpcre2-posix-3 (10.47-r0)
+#   libproc-2-0 (4.0.5-r42)
+#   librtmp (2.6_git20251114-r0)
+#   libssl3 (3.6.0-r4)
+#   libstdc++ (15.2.0-r6)
+#   libstdc++-6 (6.5.0-r7)
+#   libwbclient (4.23.3-r1)
+#   libzstd1 (1.5.7-r5)
+#   ncurses-terminfo-base (6.5_p20251025-r1)
+#   openssl-config-fipshardened (3.6.0-r4)
+#   openssl-fips-test (0.6-r0)
+#   openssl-provider-fips-3.1.2 (3.1.2-r3)
+#   p11-kit-trust (0.25.10-r0)
+#   pgaudit-18 (18.0-r1)
+#   posix-libc-utils (2.42-r4)
+#   postgresql-18-base (18.1-r0)
+#   postgresql-18-client (18.1-r0)
+#   postgresql-18-client-base (18.1-r0)
+#   postgresql-18-contrib (18.1-r0)
+#   py3-pip-wheel (25.3-r2)
+#   python-3.13-base (3.13.10-r0)
+#   repmgr-18 (5.5.0-r0)
+#   samba-libs (4.23.3-r1)
+#   samba-util-libs (4.23.3-r1)
+#   sed (4.9-r6)
+#   sqlite-libs (3.51.1-r0)
+
+# TODO: Implement postgres-repmgr-iamguarded-fips image
+throw "Image 'postgres-repmgr-iamguarded-fips' is not yet implemented"
+
+# Suggested implementation:
+# buildCLIImage {
+#   drv = pkgs.brotli;
+#   name = "postgres-repmgr-iamguarded-fips";
+#   tag = "v${pkgs.brotli.version}";
+#   entrypoint = [ "${pkgs.brotli}/bin/BINARY" ];
+#   cmd = [ "--help" ];
+#   user = "1001";
+#
+#   labels = {
+#     "org.opencontainers.image.title" = "postgres-repmgr-iamguarded-fips";
+#     "org.opencontainers.image.description" = "TODO: Add description";
+#   };
+# }

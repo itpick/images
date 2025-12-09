@@ -172,9 +172,9 @@ let
 
     # Chart images - additional observability
     blackbox-exporter = toVersionString pkgs.prometheus-blackbox-exporter.version;
-    memcached-exporter = toVersionString pkgs.prometheus-memcached-exporter.version;
+    memcached-exporter = "0.15.0";  # Built from source (not in nixpkgs)
     redis-exporter = toVersionString pkgs.prometheus-redis-exporter.version;
-    metrics-server = toVersionString pkgs.metrics-server.version;
+    metrics-server = "0.7.2";  # Built from source (not in nixpkgs)
     mimir = toVersionString pkgs.mimir.version;
     grafana-image-renderer = "3.11.6";  # Built from source
     rollout-operator = "0.20.0";  # Built from source

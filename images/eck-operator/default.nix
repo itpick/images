@@ -13,4 +13,9 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for eck-operator:
+# Packages NOT in nixpkgs:
+#   eck-operator (3.2.0-r2)
+
 throw "Image 'eck-operator' is not yet implemented. See default.nix for implementation notes."

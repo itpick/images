@@ -13,4 +13,9 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for kube-webhook-certgen:
+# Packages NOT in nixpkgs:
+#   kube-webhook-certgen-1.14 (1.14.1-r0)
+
 throw "Image 'kube-webhook-certgen' is not yet implemented. See default.nix for implementation notes."

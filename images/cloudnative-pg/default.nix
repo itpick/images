@@ -1,49 +1,19 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
+
+# Uses cloudnative-pg package from pkgs/cloudnative-pg
+# Built from wolfi-dev/os cloudnative-pg.yaml
+# https://github.com/cloudnative-pg/cloudnative-pg
 
 let
-  version = "1.27.1";
-  cloudnative-pg = buildGoModule {
-    pname = "cloudnative-pg";
-    inherit version;
-
-    src = fetchFromGitHub {
-      owner = "cloudnative-pg";
-      repo = "cloudnative-pg";
-      rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
-    };
-
-    vendorHash = null;  # TODO: Update after first build
-
-    env.CGO_ENABLED = 0;
-
-    ldflags = [
-      "-s" "-w"
-      "-X github.com/cloudnative-pg/cloudnative-pg/pkg/versions.buildVersion=${version}"
-    ];
-
-    subPackages = [ "cmd/manager" ];
-
-    postInstall = ''
-      mv $out/bin/manager $out/bin/cloudnative-pg
-    '';
-
-    doCheck = false;
-
-    meta = with lib; {
-      description = "CloudNativePG is a comprehensive platform designed to manage PostgreSQL databases within Kubernetes";
-      homepage = "https://github.com/cloudnative-pg/cloudnative-pg";
-      license = licenses.asl20;
-    };
-  };
-
+  cloudnative-pg = pkgs.cloudnative-pg;
+  version = cloudnative-pg.version;
 in
-buildCLIImage {
+mkImage {
   drv = cloudnative-pg;
   name = "cloudnative-pg";
   tag = "v${version}";
-  entrypoint = [ "${cloudnative-pg}/bin/cloudnative-pg" ];
-  cmd = [ "--help" ];
+  entrypoint = [ "${cloudnative-pg}/bin/manager" ];
+  cmd = [];
 
   labels = {
     "org.opencontainers.image.title" = "CloudNativePG Operator";

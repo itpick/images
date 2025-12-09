@@ -1,4 +1,9 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+
+
+# Chainguard SBOM packages for source-controller:
+# Packages NOT in nixpkgs:
+#   flux-source-controller (1.7.4-r3)
 
 let
   version = "1.7.4";
@@ -32,7 +37,7 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   drv = source-controller;
   name = "source-controller";
   tag = "v${version}";

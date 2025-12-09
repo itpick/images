@@ -1,4 +1,12 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+
+
+# Chainguard SBOM packages for trust-manager:
+# Packages available in nixpkgs:
+#   pkgs.glibc  # glibc (2.42-r4)
+#   pkgs.libgcc  # libgcc (15.2.0-r6)
+# Packages NOT in nixpkgs:
+#   ld-linux (2.42-r4)
 
 let
   version = "0.12.0";
@@ -32,7 +40,7 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   drv = trust-manager;
   name = "trust-manager";
   tag = "v${version}";

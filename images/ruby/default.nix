@@ -1,5 +1,24 @@
 { nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
 
+
+# Chainguard SBOM packages for ruby:
+# Packages available in nixpkgs:
+#   pkgs.glibc  # glibc (2.42-r4)
+#   pkgs.gmp  # gmp (6.3.0-r8)
+#   pkgs.libffi  # libffi (3.5.2-r1)
+#   pkgs.libgcc  # libgcc (15.2.0-r6)
+#   pkgs.libxcrypt  # libxcrypt (4.5.2-r0)
+#   pkgs.ruby  # ruby-3.4 (3.4.7-r2)
+#   pkgs.yaml-language-server  # yaml (0.2.5-r7)
+#   pkgs.zlib  # zlib (1.3.1-r51)
+# Packages NOT in nixpkgs:
+#   ld-linux (2.42-r4)
+#   libcrypt1 (2.42-r4)
+#   libcrypto3 (3.6.0-r4)
+#   libjemalloc2 (5.3.0-r6)
+#   libssl3 (3.6.0-r4)
+#   libstdc++ (15.2.0-r6)
+
 let
   rubyPackages = with pkgs; [
     ruby_3_3

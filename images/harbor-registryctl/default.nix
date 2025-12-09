@@ -13,4 +13,10 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for harbor-registryctl:
+# Packages NOT in nixpkgs:
+#   harbor-2.14-registryctl (2.14.1-r1)
+#   harbor-registry (3.0.0-r13)
+
 throw "Image 'harbor-registryctl' is not yet implemented. See default.nix for implementation notes."

@@ -103,6 +103,10 @@
             config = {
               allowUnfree = true;
             };
+            overlays = [
+              # Custom packages overlay
+              (final: prev: import ./pkgs { pkgs = final; })
+            ];
           };
 
           # Import lib functions
@@ -110,7 +114,7 @@
             base = pkgs.callPackage ./lib/base.nix {};
             nonRoot = pkgs.callPackage ./lib/nonRoot.nix {};
             devShell = pkgs.callPackage ./lib/devShell.nix {};
-            buildCLIImage = pkgs.callPackage ./lib/buildCLIImage.nix {
+            mkImage = pkgs.callPackage ./lib/mkImage.nix {
               nix2container = nix2container.packages.${system}.nix2container;
               inherit (pkgs) lib;
               base = pkgs.callPackage ./lib/base.nix {};
@@ -131,7 +135,7 @@
           images = builtins.listToAttrs (map (imageName: {
             name = imageName;
             value = pkgs.callPackage (imagesPath + "/${imageName}") {
-              inherit (lib) buildCLIImage mkUserEnvironment base nonRoot;
+              inherit (lib) mkImage mkUserEnvironment base nonRoot;
               nix2container = nix2container.packages.${system}.nix2container;
               inherit pkgs;
             };

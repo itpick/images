@@ -1,6 +1,13 @@
-{ buildCLIImage, kubectl, nonRoot, ... }:
+{ mkImage, kubectl, nonRoot, ... }:
 
-buildCLIImage {
+
+# Chainguard SBOM packages for kubectl:
+# Packages available in nixpkgs:
+#   pkgs.kubectl  # kubectl-1.34 (1.34.2-r3)
+# Packages NOT in nixpkgs:
+#   kubectl-1.34-default (1.34.2-r3)
+
+mkImage {
   # The derivation or package you want in the image
   drv = kubectl;
 

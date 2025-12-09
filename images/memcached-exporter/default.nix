@@ -1,6 +1,11 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-buildCLIImage {
+
+# Chainguard SBOM packages for memcached-exporter:
+# Packages available in nixpkgs:
+#   pkgs.memcached-exporter  # memcached-exporter (0.15.4-r2)
+
+mkImage {
   drv = pkgs.prometheus-memcached-exporter;
   name = "memcached-exporter";
   tag = "v${pkgs.prometheus-memcached-exporter.version}";

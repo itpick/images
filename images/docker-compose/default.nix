@@ -1,5 +1,14 @@
 { nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
 
+
+# Chainguard SBOM packages for docker-compose:
+# Packages available in nixpkgs:
+#   pkgs.docker-compose  # docker-compose (5.0.0-r1)
+#   pkgs.glibc  # glibc (2.42-r4)
+#   pkgs.libgcc  # libgcc (15.2.0-r6)
+# Packages NOT in nixpkgs:
+#   ld-linux (2.42-r4)
+
 let
   # docker-compose packages
   docker_composePackages = with pkgs; [
@@ -7,9 +16,6 @@ let
     bash
     coreutils
   ];
-
-  # Use default non-root user environment
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
 
 in
 nix2container.buildImage {
@@ -19,12 +25,13 @@ nix2container.buildImage {
   copyToRoot = [
     (buildEnv {
       name = "docker-compose-root";
-      paths = base.basePackages ++ docker_composePackages ++ [ userEnv ];
+      paths = base.basePackages ++ docker_composePackages;
     })
   ];
 
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv ++ [
+  # Chainguard runs docker-compose as root
+  config = nonRoot.rootConfig // {
+    Env = base.defaultEnv ++ nonRoot.rootEnv ++ [
       "PATH=${lib.makeBinPath docker_composePackages}"
     ];
     Labels = base.defaultLabels // {

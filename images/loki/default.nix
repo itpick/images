@@ -1,6 +1,11 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-buildCLIImage {
+
+# Chainguard SBOM packages for loki:
+# Packages available in nixpkgs:
+#   pkgs.loki  # loki-3.6 (3.6.2-r0)
+
+mkImage {
   drv = pkgs.grafana-loki;
   name = "loki";
   tag = pkgs.grafana-loki.version;

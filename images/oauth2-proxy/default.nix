@@ -1,6 +1,11 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-buildCLIImage {
+
+# Chainguard SBOM packages for oauth2-proxy:
+# Packages available in nixpkgs:
+#   pkgs.oauth2-proxy  # oauth2-proxy (7.13.0-r2)
+
+mkImage {
   drv = pkgs.oauth2-proxy;
   name = "oauth2-proxy";
   tag = "v${pkgs.oauth2-proxy.version}";

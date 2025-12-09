@@ -13,4 +13,9 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for loki-canary:
+# Packages NOT in nixpkgs:
+#   loki-3.6-loki-canary (3.6.2-r0)
+
 throw "Image 'loki-canary' is not yet implemented. See default.nix for implementation notes."

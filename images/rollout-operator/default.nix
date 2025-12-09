@@ -1,4 +1,9 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+
+
+# Chainguard SBOM packages for rollout-operator:
+# Packages NOT in nixpkgs:
+#   grafana-rollout-operator (0.32.0-r2)
 
 let
   version = "0.20.0";
@@ -32,7 +37,7 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   drv = rollout-operator;
   name = "rollout-operator";
   tag = "v${version}";

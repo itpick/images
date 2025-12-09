@@ -8,4 +8,12 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for kyverno-plugin:
+# Packages available in nixpkgs:
+#   pkgs.kubectl  # kubectl-1.34 (1.34.2-r3)
+#   pkgs.kyverno  # kyverno-1.16 (1.16.1-r0)
+# Packages NOT in nixpkgs:
+#   kubectl-latest (0-r11)
+
 throw "Image 'kyverno-plugin' is not yet implemented. See default.nix for implementation notes."

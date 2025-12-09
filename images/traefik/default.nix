@@ -1,6 +1,11 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-buildCLIImage {
+
+# Chainguard SBOM packages for traefik:
+# Packages available in nixpkgs:
+#   pkgs.traefik  # traefik-3.6 (3.6.2-r2)
+
+mkImage {
   drv = pkgs.traefik;
   name = "traefik";
   tag = "v${pkgs.traefik.version}";

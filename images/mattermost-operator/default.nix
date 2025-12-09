@@ -13,4 +13,17 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for mattermost-operator:
+# Packages available in nixpkgs:
+#   pkgs.bash  # bash (5.3-r3)
+#   pkgs.glibc  # glibc (2.42-r4)
+#   pkgs.libgcc  # libgcc (15.2.0-r6)
+#   pkgs.mattermost  # mattermost-11.1 (11.1.1-r1)
+#   pkgs.ncurses  # ncurses (6.5_p20251025-r1)
+#   pkgs.tzdata  # tzdata (2025b-r2)
+# Packages NOT in nixpkgs:
+#   ld-linux (2.42-r4)
+#   ncurses-terminfo-base (6.5_p20251025-r1)
+
 throw "Image 'mattermost-operator' is not yet implemented. See default.nix for implementation notes."

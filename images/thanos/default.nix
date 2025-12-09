@@ -1,6 +1,11 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-buildCLIImage {
+
+# Chainguard SBOM packages for thanos:
+# Packages available in nixpkgs:
+#   pkgs.thanos  # thanos (0.40.1-r1)
+
+mkImage {
   drv = pkgs.thanos;
   name = "thanos";
   tag = "v${pkgs.thanos.version}";

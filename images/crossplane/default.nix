@@ -1,6 +1,11 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-buildCLIImage {
+
+# Chainguard SBOM packages for crossplane:
+# Packages available in nixpkgs:
+#   pkgs.crossplane  # crossplane-2.1 (2.1.3-r1)
+
+mkImage {
   drv = pkgs.crossplane-cli;
   name = "crossplane";
   tag = "v${pkgs.crossplane-cli.version}";

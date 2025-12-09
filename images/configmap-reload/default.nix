@@ -1,35 +1,14 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
+
+# Uses configmap-reload package from pkgs/configmap-reload
+# Built from wolfi-dev/os configmap-reload.yaml
+# https://github.com/jimmidyson/configmap-reload
 
 let
-  version = "0.14.0";
-  configmap-reload = buildGoModule {
-    pname = "configmap-reload";
-    inherit version;
-
-    src = fetchFromGitHub {
-      owner = "jimmidyson";
-      repo = "configmap-reload";
-      rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
-    };
-
-    vendorHash = null;  # TODO: Update after first build
-
-    env.CGO_ENABLED = 0;
-
-    ldflags = [ "-s" "-w" ];
-
-    doCheck = false;
-
-    meta = with lib; {
-      description = "Watches ConfigMaps and triggers reloads on changes";
-      homepage = "https://github.com/jimmidyson/configmap-reload";
-      license = licenses.asl20;
-    };
-  };
-
+  configmap-reload = pkgs.configmap-reload;
+  version = configmap-reload.version;
 in
-buildCLIImage {
+mkImage {
   drv = configmap-reload;
   name = "configmap-reload";
   tag = "v${version}";

@@ -1,11 +1,12 @@
 { nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
 
 let
-  # Attic packages
+  # Attic packages (Chainguard doesn't have an SBOM for attic, using sensible defaults)
   atticPackages = with pkgs; [
     attic-client
     bash
     coreutils
+    cacert
   ];
 
   # Use default non-root user environment

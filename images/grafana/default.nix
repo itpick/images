@@ -1,6 +1,6 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-buildCLIImage {
+mkImage {
   drv = pkgs.grafana;
   name = "grafana";
   tag = pkgs.grafana.version;

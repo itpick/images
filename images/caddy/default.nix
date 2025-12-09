@@ -1,5 +1,10 @@
 { nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
 
+
+# Chainguard SBOM packages for caddy:
+# Packages available in nixpkgs:
+#   pkgs.caddy  # caddy (2.10.2-r6)
+
 let
   # Caddy packages
   caddyPackages = with pkgs; [

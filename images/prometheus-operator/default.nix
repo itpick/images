@@ -1,4 +1,9 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+
+
+# Chainguard SBOM packages for prometheus-operator:
+# Packages NOT in nixpkgs:
+#   prometheus-operator (0.87.0-r2)
 
 let
   version = "0.77.1";
@@ -38,7 +43,7 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   drv = prometheus-operator;
   name = "prometheus-operator";
   tag = "v${version}";

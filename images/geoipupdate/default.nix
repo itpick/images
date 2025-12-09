@@ -1,6 +1,6 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-buildCLIImage {
+mkImage {
   drv = pkgs.geoipupdate;
   name = "geoipupdate";
   tag = "v${pkgs.geoipupdate.version}";

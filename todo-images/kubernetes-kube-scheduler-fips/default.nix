@@ -1,0 +1,36 @@
+{ buildCLIImage, pkgs, lib, ... }:
+
+# Image: kubernetes-kube-scheduler-fips
+# Reference: https://images.chainguard.dev/directory/image/kubernetes-kube-scheduler-fips/overview
+
+# Packages available in nixpkgs:
+#   pkgs.glibc  # glibc (2.42-r4)
+#   pkgs.libgcc  # libgcc (15.2.0-r6)
+
+# Packages NOT in nixpkgs (need custom derivations):
+#   kube-scheduler-fips-1.34 (1.34.2-r2)
+#   kube-scheduler-fips-1.34-default (1.34.2-r2)
+#   kubernetes-release-go-runner (0.18.0-r5)
+#   ld-linux (2.42-r4)
+#   libcrypto3 (3.6.0-r4)
+#   openssl-config-fipshardened (3.6.0-r4)
+#   openssl-fips-test (0.6-r0)
+#   openssl-provider-fips-3.1.2 (3.1.2-r3)
+
+# TODO: Implement kubernetes-kube-scheduler-fips image
+throw "Image 'kubernetes-kube-scheduler-fips' is not yet implemented"
+
+# Suggested implementation:
+# buildCLIImage {
+#   drv = pkgs.glibc;
+#   name = "kubernetes-kube-scheduler-fips";
+#   tag = "v${pkgs.glibc.version}";
+#   entrypoint = [ "${pkgs.glibc}/bin/BINARY" ];
+#   cmd = [ "--help" ];
+#   user = "0";
+#
+#   labels = {
+#     "org.opencontainers.image.title" = "kubernetes-kube-scheduler-fips";
+#     "org.opencontainers.image.description" = "TODO: Add description";
+#   };
+# }

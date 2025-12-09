@@ -13,4 +13,9 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for csi-node-driver-registrar:
+# Packages NOT in nixpkgs:
+#   kubernetes-csi-node-driver-registrar-2.15 (2.15.0-r2)
+
 throw "Image 'csi-node-driver-registrar' is not yet implemented. See default.nix for implementation notes."

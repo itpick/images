@@ -1,4 +1,9 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+
+
+# Chainguard SBOM packages for prometheus-adapter:
+# Packages NOT in nixpkgs:
+#   prometheus-adapter (0.12.0-r18)
 
 let
   version = "0.12.0";
@@ -38,7 +43,7 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   drv = prometheus-adapter;
   name = "prometheus-adapter";
   tag = "v${version}";

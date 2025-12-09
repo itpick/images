@@ -1,16 +1,25 @@
-# cert-manager-acmesolver
-# =============
-# Placeholder for cert-manager-acmesolver container image.
-# This image is referenced in Helm charts but not yet implemented.
-#
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+{ mkImage, pkgs, lib, ... }:
 
-{ ... }:
+# Uses cert-manager package from pkgs/cert-manager
+# https://github.com/cert-manager/cert-manager
 
-throw "Image 'cert-manager-acmesolver' is not yet implemented. See default.nix for implementation notes."
+let
+  cert-manager = pkgs.cert-manager;
+  version = cert-manager.version;
+in
+mkImage {
+  drv = cert-manager;
+  name = "cert-manager-acmesolver";
+  tag = "v${version}";
+  entrypoint = [ "${cert-manager}/bin/cert-manager-acmesolver" ];
+  cmd = [ "--help" ];
+
+  extraPkgs = with pkgs; [ busybox tzdata ];
+
+  labels = {
+    "org.opencontainers.image.title" = "cert-manager ACME Solver";
+    "org.opencontainers.image.description" = "HTTP-01 challenge solver for cert-manager";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "cert-manager";
+  };
+}

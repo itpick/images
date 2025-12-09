@@ -1,4 +1,9 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+
+
+# Chainguard SBOM packages for reloader:
+# Packages NOT in nixpkgs:
+#   kube-logging-operator-config-reloader (6.2.1-r1)
 
 let
   version = "1.2.1";
@@ -32,7 +37,7 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   drv = reloader;
   name = "reloader";
   tag = "v${version}";

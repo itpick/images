@@ -1,5 +1,15 @@
 { nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
 
+
+# Chainguard SBOM packages for sops:
+# Packages available in nixpkgs:
+#   pkgs.glibc  # glibc (2.42-r4)
+#   pkgs.kustomize  # kustomize (5.8.0-r1)
+#   pkgs.libgcc  # libgcc (15.2.0-r6)
+# Packages NOT in nixpkgs:
+#   ksops (4.4.0-r3)
+#   ld-linux (2.42-r4)
+
 let
   # SOPS tools and dependencies
   sopsPackages = with pkgs; [

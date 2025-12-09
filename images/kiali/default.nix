@@ -13,4 +13,15 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for kiali:
+# Packages available in nixpkgs:
+#   pkgs.glibc  # glibc (2.42-r4)
+#   pkgs.libgcc  # libgcc (15.2.0-r6)
+# Packages NOT in nixpkgs:
+#   ca-certificates (20251003-r0)
+#   kiali (2.19.0-r1)
+#   ld-linux (2.42-r4)
+#   libcrypto3 (3.6.0-r4)
+
 throw "Image 'kiali' is not yet implemented. See default.nix for implementation notes."

@@ -1,6 +1,6 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-buildCLIImage {
+mkImage {
   drv = pkgs.prometheus-alertmanager;
   name = "alertmanager";
   tag = "v${pkgs.prometheus-alertmanager.version}";

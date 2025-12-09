@@ -1,4 +1,9 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+
+
+# Chainguard SBOM packages for vault-csi-provider:
+# Packages NOT in nixpkgs:
+#   vault-csi-provider (1.6.0-r3)
 
 let
   version = "1.4.2";
@@ -32,12 +37,14 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   drv = vault-csi-provider;
   name = "vault-csi-provider";
   tag = "v${version}";
   entrypoint = [ "${vault-csi-provider}/bin/vault-csi-provider" ];
   cmd = [ "--help" ];
+  # Chainguard runs vault-csi-provider as root
+  user = "0:0";
 
   labels = {
     "org.opencontainers.image.title" = "Vault CSI Provider";

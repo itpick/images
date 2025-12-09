@@ -1,6 +1,11 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-buildCLIImage {
+
+# Chainguard SBOM packages for redis-exporter:
+# Packages available in nixpkgs:
+#   pkgs.prometheus-redis-exporter  # prometheus-redis-exporter (1.80.1-r1)
+
+mkImage {
   drv = pkgs.prometheus-redis-exporter;
   name = "redis-exporter";
   tag = "v${pkgs.prometheus-redis-exporter.version}";

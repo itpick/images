@@ -1,4 +1,9 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+
+
+# Chainguard SBOM packages for external-dns:
+# Packages NOT in nixpkgs:
+#   external-dns-0.20 (0.20.0-r2)
 
 let
   version = "0.16.1";
@@ -33,7 +38,7 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   # The derivation containing our binary  
   drv = externalDns;
   

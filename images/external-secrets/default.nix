@@ -1,4 +1,9 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+
+
+# Chainguard SBOM packages for external-secrets:
+# Packages NOT in nixpkgs:
+#   external-secrets-operator-1.1 (1.1.1-r0)
 
 let
   version = "0.10.0";
@@ -38,7 +43,7 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   drv = external-secrets;
   name = "external-secrets";
   tag = "v${version}";

@@ -1,6 +1,11 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-buildCLIImage {
+
+# Chainguard SBOM packages for blackbox-exporter:
+# Packages available in nixpkgs:
+#   pkgs.prometheus-blackbox-exporter  # prometheus-blackbox-exporter (0.28.0-r0)
+
+mkImage {
   drv = pkgs.prometheus-blackbox-exporter;
   name = "blackbox-exporter";
   tag = "v${pkgs.prometheus-blackbox-exporter.version}";

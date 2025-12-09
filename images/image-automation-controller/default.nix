@@ -1,4 +1,9 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+
+
+# Chainguard SBOM packages for image-automation-controller:
+# Packages NOT in nixpkgs:
+#   flux-image-automation-controller (1.0.4-r3)
 
 let
   version = "1.0.4";
@@ -32,7 +37,7 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   drv = image-automation-controller;
   name = "image-automation-controller";
   tag = "v${version}";

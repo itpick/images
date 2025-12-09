@@ -8,4 +8,9 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for harbor-registry:
+# Packages NOT in nixpkgs:
+#   harbor-registry (3.0.0-r13)
+
 throw "Image 'harbor-registry' is not yet implemented. See default.nix for implementation notes."

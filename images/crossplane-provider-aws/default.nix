@@ -13,4 +13,9 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for crossplane-provider-aws:
+# Packages available in nixpkgs:
+#   pkgs.crossplane  # crossplane-2.1 (2.1.3-r1)
+
 throw "Image 'crossplane-provider-aws' is not yet implemented. See default.nix for implementation notes."

@@ -1,0 +1,24 @@
+{ lib, stdenv, fetchFromGitHub, ... }:
+
+# Package: calico-whisker-backend-fips-3.31
+# TODO: Find source and implement derivation
+
+stdenv.mkDerivation rec {
+  pname = "calico-whisker-backend-fips";
+  version = "0.0.0";  # TODO: Set version
+
+  src = fetchFromGitHub {
+    owner = "TODO";
+    repo = "calico-whisker-backend-fips";
+    rev = "v${version}";
+    sha256 = lib.fakeSha256;
+  };
+
+  meta = with lib; {
+    description = "TODO: Add description for calico-whisker-backend-fips";
+    homepage = "https://github.com/TODO/calico-whisker-backend-fips";
+    license = licenses.asl20;  # TODO: Verify license
+    maintainers = [ ];
+    platforms = platforms.linux;
+  };
+}

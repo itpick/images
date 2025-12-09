@@ -8,4 +8,9 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for policy-reporter-ui:
+# Packages NOT in nixpkgs:
+#   kyverno-policy-reporter-ui (2.5.0-r1)
+
 throw "Image 'policy-reporter-ui' is not yet implemented. See default.nix for implementation notes."

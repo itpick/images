@@ -13,4 +13,9 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for tempo-query:
+# Packages available in nixpkgs:
+#   pkgs.tempo  # tempo (2.9.0-r3)
+
 throw "Image 'tempo-query' is not yet implemented. See default.nix for implementation notes."

@@ -13,4 +13,9 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for katib-controller:
+# Packages NOT in nixpkgs:
+#   katib-controller (0.19.0-r2)
+
 throw "Image 'katib-controller' is not yet implemented. See default.nix for implementation notes."

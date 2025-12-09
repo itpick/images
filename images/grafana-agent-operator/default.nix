@@ -13,4 +13,9 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for grafana-agent-operator:
+# Packages NOT in nixpkgs:
+#   grafana-agent-operator (0.44.6-r1)
+
 throw "Image 'grafana-agent-operator' is not yet implemented. See default.nix for implementation notes."

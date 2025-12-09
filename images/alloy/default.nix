@@ -1,11 +1,17 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-buildCLIImage {
+mkImage {
   drv = pkgs.grafana-alloy;
   name = "alloy";
   tag = "v${pkgs.grafana-alloy.version}";
   entrypoint = [ "${pkgs.grafana-alloy}/bin/alloy" ];
   cmd = [ "--help" ];
+
+  # From Chainguard SBOM (ncurses omitted due to /bin/clear collision with busybox)
+  extraPkgs = with pkgs; [
+    bash
+    libcap
+  ];
 
   labels = {
     "org.opencontainers.image.title" = "Grafana Alloy";

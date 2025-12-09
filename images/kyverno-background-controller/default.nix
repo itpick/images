@@ -1,4 +1,4 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
 
 let
   version = "1.13.0";
@@ -38,7 +38,7 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   drv = kyverno-background-controller;
   name = "kyverno-background-controller";
   tag = "v${version}";

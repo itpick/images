@@ -1,7 +1,15 @@
-{ buildCLIImage, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
+
+
+# Chainguard SBOM packages for kyverno-cli:
+# Packages available in nixpkgs:
+#   pkgs.kubectl  # kubectl-1.34 (1.34.2-r3)
+# Packages NOT in nixpkgs:
+#   kubectl-latest (0-r11)
+#   kyverno-cli-1.16 (1.16.1-r0)
 
 # kyverno-cli uses the same package as kyverno, but different binary
-buildCLIImage {
+mkImage {
   drv = pkgs.kyverno;
   name = "kyverno-cli";
   tag = "v${pkgs.kyverno.version}";

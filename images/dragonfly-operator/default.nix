@@ -1,4 +1,9 @@
-{ buildCLIImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+
+
+# Chainguard SBOM packages for dragonfly-operator:
+# Packages NOT in nixpkgs:
+#   dragonfly-operator (1.3.1-r1)
 
 let
   version = "1.1.11";
@@ -33,7 +38,7 @@ let
   };
 
 in
-buildCLIImage {
+mkImage {
   # The derivation containing our binary
   drv = operator;
   

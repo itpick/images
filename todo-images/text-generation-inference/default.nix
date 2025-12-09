@@ -1,0 +1,135 @@
+{ buildCLIImage, pkgs, lib, ... }:
+
+# Image: text-generation-inference
+# Reference: https://images.chainguard.dev/directory/image/text-generation-inference/overview
+
+# Packages available in nixpkgs:
+#   pkgs.bash  # bash (5.3-r3)
+#   pkgs.binutils  # binutils (2.45.1-r2)
+#   pkgs.busybox  # busybox (1.37.0-r50)
+#   pkgs.cudatoolkit  # cuda-toolkit-12.8 (12.8-r4)
+#   pkgs.freetype  # freetype (2.14.1-r0)
+#   pkgs.gcc  # gcc-13 (13.4.0-r0)
+#   pkgs.gdbm  # gdbm (1.26-r1)
+#   pkgs.glibc  # glibc (2.42-r4)
+#   pkgs.gmp  # gmp (6.3.0-r8)
+#   pkgs.isl  # isl (0.27-r4)
+#   pkgs.lcms2  # lcms2 (2.17-r5)
+#   pkgs.libffi  # libffi (3.5.2-r1)
+#   pkgs.libgcc  # libgcc (15.2.0-r6)
+#   pkgs.libjpeg_turbo  # libjpeg-turbo (3.1.2-r1)
+#   pkgs.libllvm  # libllvm-17 (17.0.6-r10)
+#   pkgs.libpng  # libpng (1.6.52-r0)
+#   pkgs.libwebp  # libwebp (1.6.0-r1)
+#   pkgs.libxau  # libxau (1.0.12-r3)
+#   pkgs.libxcb  # libxcb (1.17.0-r8)
+#   pkgs.libxcrypt  # libxcrypt (4.5.2-r0)
+#   pkgs.libxdmcp  # libxdmcp (1.1.5-r9)
+#   pkgs.libxml2  # libxml2-16 (2.15.1-r2)
+#   pkgs.linuxheaders  # linux-headers (6.18-r0)
+#   pkgs.mpc  # mpc (1.3.1-r7)
+#   pkgs.mpdecimal  # mpdecimal (4.0.1-r3)
+#   pkgs.mpfr  # mpfr (4.2.2-r2)
+#   pkgs.ncurses  # ncurses (6.5_p20251025-r1)
+#   pkgs.openblas  # openblas (0.3.30-r4)
+#   pkgs.openjpeg  # openjpeg (2.5.4-r0)
+#   pkgs.python  # python-3.11 (3.11.14-r3)
+#   pkgs.readline  # readline (8.3-r1)
+#   pkgs.xz  # xz (5.8.1-r6)
+#   pkgs.yaml-language-server  # yaml (0.2.5-r7)
+#   pkgs.zlib  # zlib (1.3.1-r51)
+
+# Packages NOT in nixpkgs (need custom derivations):
+#   gcc-13-default (13.4.0-r0)
+#   glibc-dev (2.42-r4)
+#   ld-linux (2.42-r4)
+#   libbrotlicommon1 (1.2.0-r1)
+#   libbrotlidec1 (1.2.0-r1)
+#   libbz2-1 (1.0.8-r21)
+#   libcrypt1 (2.42-r4)
+#   libcrypto3 (3.6.0-r4)
+#   libexpat1 (2.7.3-r0)
+#   libgfortran (15.2.0-r6)
+#   libssl3 (3.6.0-r4)
+#   libstdc++ (15.2.0-r6)
+#   libstdc++-13 (13.4.0-r0)
+#   libstdc++-13-dev (13.4.0-r0)
+#   libtorch-cuda-12.8 (2.7.1-r6)
+#   libxcrypt-dev (4.5.2-r0)
+#   libzstd1 (1.5.7-r5)
+#   ncurses-terminfo-base (6.5_p20251025-r1)
+#   nss-db (2.42-r4)
+#   nss-hesiod (2.42-r4)
+#   nvidia-cuda-cudart-12.8 (12.8.90-r3)
+#   nvidia-cuda-cupti-12.8 (12.8.90-r2)
+#   nvidia-cuda-ld-config-12.8 (1-r7)
+#   nvidia-cuda-nvcc-12.8 (12.8.93-r5)
+#   nvidia-cuda-nvml-dev-12.8 (12.8.90-r4)
+#   nvidia-cuda-nvrtc-12.8 (12.8.93-r2)
+#   nvidia-cuda-nvtx-12.8 (12.8.90-r2)
+#   nvidia-cudnn-8-cuda-12 (8.9.7.29-r11)
+#   nvidia-cudnn-8-ld-config (8.9.7.29-r11)
+#   nvidia-cudnn-9-cuda-12 (9.14.0.64-r1)
+#   nvidia-cudnn-9-ld-config (9.16.0.29-r0)
+#   nvidia-libcublas-12.8 (12.8.4.1-r1)
+#   nvidia-libcufft-12.8 (11.3.3.83-r2)
+#   nvidia-libcufile-12.8 (1.13.1.3-r1)
+#   nvidia-libcurand-12.8 (10.3.9.90-r2)
+#   nvidia-libcusolver-12.8 (11.7.3.90-r2)
+#   nvidia-libcusparse-12.8 (12.5.8.93-r3)
+#   nvidia-libnvjitlink-12.8 (12.8.93-r2)
+#   nvidia-nccl-cuda-12.8 (2.28.9-r0)
+#   openmp-17 (17.0.6-r9)
+#   openssf-compiler-options (20250904-r1)
+#   posix-cc-wrappers (2-r7)
+#   py3-pip-wheel (25.3-r2)
+#   py3-setuptools-wheel (80.9.0-r3)
+#   py3.11-astunparse (1.6.3-r9)
+#   py3.11-certifi (2025.11.12-r0)
+#   py3.11-charset-normalizer (3.4.4-r2)
+#   py3.11-filelock (3.20.0-r0)
+#   py3.11-fsspec (2025.12.0-r0)
+#   py3.11-idna (3.11-r0)
+#   py3.11-jinja2 (3.1.6-r1)
+#   py3.11-markupsafe (3.0.3-r0)
+#   py3.11-mpmath (1.3.0-r6)
+#   py3.11-networkx (3.6-r0)
+#   py3.11-numpy-2.2 (2.2.6-r4)
+#   py3.11-packaging (25.0-r2)
+#   py3.11-pillow (12.0.0-r0)
+#   py3.11-pygments (2.19.2-r3)
+#   py3.11-pyparsing (3.2.5-r0)
+#   py3.11-pyyaml (6.0.3-r0)
+#   py3.11-requests (2.32.5-r0)
+#   py3.11-setuptools (80.9.0-r4)
+#   py3.11-six (1.17.0-r2)
+#   py3.11-sympy (1.14.0-r2)
+#   py3.11-text-generation-inference (3.3.6-r3)
+#   py3.11-torch-cuda-12.8 (2.7.1-r6)
+#   py3.11-torchvision-cuda-12.8 (0.22.1-r0)
+#   py3.11-typing-extensions (4.15.0-r0)
+#   py3.11-urllib3 (2.5.0-r2)
+#   py3.11-wheel (0.46.1-r5)
+#   python-3.11-base (3.11.14-r3)
+#   python-3.11-base-dev (3.11.14-r3)
+#   python-3.11-dev (3.11.14-r3)
+#   sqlite-libs (3.51.1-r0)
+#   tiff (4.7.1-r0)
+
+# TODO: Implement text-generation-inference image
+throw "Image 'text-generation-inference' is not yet implemented"
+
+# Suggested implementation:
+# buildCLIImage {
+#   drv = pkgs.binutils;
+#   name = "text-generation-inference";
+#   tag = "v${pkgs.binutils.version}";
+#   entrypoint = [ "${pkgs.binutils}/bin/BINARY" ];
+#   cmd = [ "--help" ];
+#   user = "65532";
+#
+#   labels = {
+#     "org.opencontainers.image.title" = "text-generation-inference";
+#     "org.opencontainers.image.description" = "TODO: Add description";
+#   };
+# }

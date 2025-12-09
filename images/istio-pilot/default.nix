@@ -13,4 +13,9 @@
 
 { ... }:
 
+
+# Chainguard SBOM packages for istio-pilot:
+# Packages NOT in nixpkgs:
+#   istio-pilot-discovery-1.28 (1.28.1-r0)
+
 throw "Image 'istio-pilot' is not yet implemented. See default.nix for implementation notes."

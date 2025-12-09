@@ -1,5 +1,16 @@
 { nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
 
+
+# Chainguard SBOM packages for busybox:
+# Packages available in nixpkgs:
+#   pkgs.busybox  # busybox (1.37.0-r50)
+#   pkgs.glibc  # glibc (2.42-r4)
+#   pkgs.libgcc  # libgcc (15.2.0-r6)
+#   pkgs.libxcrypt  # libxcrypt (4.5.2-r0)
+# Packages NOT in nixpkgs:
+#   ld-linux (2.42-r4)
+#   libcrypt1 (2.42-r4)
+
 let
   # BusyBox packages
   busyboxPackages = with pkgs; [
