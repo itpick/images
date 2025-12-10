@@ -62,10 +62,12 @@ let
       owner = "fluxcd";
       repo = "kustomize-controller";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-ep3SHPUYbG/BoRaQXtluM7eu/Lcga/+4ojBfoubEEUc=";
     };
 
-    vendorHash = null;  # TODO: Update after first build
+    vendorHash = "sha256-0qpZzrKlCkCApm5OD5lDR+/Fe8630qXXrPuHa1I4ecs=";
+
+    subPackages = [ "." ];
 
     env.CGO_ENABLED = 0;
 

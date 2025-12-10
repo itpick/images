@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "data": {
+    "apache-nifi": {
+      "version": "2.7.0",
+      "gitref": "refs/tags/rel/nifi-2.7.0",
+      "revision": "52e65077785ff5fe55b59e65ac056afabd072426",
+      "url": "https://github.com/apache/nifi/releases/tag/rel/nifi-2.7.0"
+    },
+    "cert-manager": {
+      "version": "1.19.2",
+      "gitref": "refs/tags/v1.19.2",
+      "url": "https://github.com/cert-manager/cert-manager/releases/tag/v1.19.2"
+    },
+    "cilium": {
+      "version": "1.18.4",
+      "gitref": "refs/tags/v1.18.4",
+      "url": "https://github.com/cilium/cilium/releases/tag/v1.18.4"
+    },
+    "cloudnative-pg": {
+      "version": "1.28.0",
+      "gitref": "refs/tags/v1.28.0",
+      "url": "https://github.com/cloudnative-pg/cloudnative-pg/releases/tag/v1.28.0"
+    },
+    "configmap-reload": {
+      "version": "0.15.0",
+      "gitref": "refs/tags/v0.15.0",
+      "url": "https://github.com/jimmidyson/configmap-reload/releases/tag/v0.15.0"
+    },
+    "hubble-ui": {
+      "version": "0.13.3",
+      "gitref": "refs/tags/v0.13.3",
+      "url": "https://github.com/cilium/hubble-ui/releases/tag/v0.13.3"
+    },
+    "keda": {
+      "version": "2.18.2",
+      "gitref": "refs/tags/v2.18.2",
+      "url": "https://github.com/kedacore/keda/releases/tag/v2.18.2"
+    },
+    "kube-rbac-proxy": {
+      "version": "0.20.1",
+      "gitref": "refs/tags/v0.20.1",
+      "url": "https://github.com/brancz/kube-rbac-proxy/releases/tag/v0.20.1"
+    }
+  }
+}

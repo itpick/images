@@ -19,10 +19,13 @@ let
       owner = "fluxcd";
       repo = "image-reflector-controller";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-jFra0B5bmm3+5x8nOuQgidv/9GovwDX9T5c8vsfRg9g=";
     };
 
-    vendorHash = null;  # TODO: Update after first build
+    proxyVendor = true;
+    vendorHash = "sha256-E2albrOHzEuvIMXhcpOVWvyRusXi3dJ422qIheD0vvE=";
+
+    subPackages = [ "." ];
 
     env.CGO_ENABLED = 0;
 

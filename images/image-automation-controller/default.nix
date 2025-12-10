@@ -15,10 +15,12 @@ let
       owner = "fluxcd";
       repo = "image-automation-controller";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-G4/RXdLcZ5Cijf/x66bf/3ItzgieYGSHxkkCTMX5uwA=";
     };
 
-    vendorHash = null;  # TODO: Update after first build
+    vendorHash = "sha256-rEUCojsek+784M1OyxCRP23usRwvYQRpLezjKD3/4AY=";
+
+    subPackages = [ "." ];
 
     env.CGO_ENABLED = 0;
 

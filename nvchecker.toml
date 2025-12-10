@@ -1,0 +1,57 @@
+# nvchecker configuration for tracking upstream package versions
+# Run: nix-shell -p nvchecker --run "nvchecker -c nvchecker.toml"
+# Compare: nix-shell -p nvchecker --run "nvcmp -c nvchecker.toml"
+
+[__config__]
+oldver = "old_versions.json"
+newver = "new_versions.json"
+
+[apache-nifi]
+source = "github"
+github = "apache/nifi"
+use_max_tag = true
+prefix = "rel/nifi-"
+include_regex = "^rel/nifi-\\d+\\.\\d+\\.\\d+$"
+sort_version_key = "parse_version"
+
+[cert-manager]
+source = "github"
+github = "cert-manager/cert-manager"
+use_latest_release = true
+prefix = "v"
+
+[cilium]
+source = "github"
+github = "cilium/cilium"
+use_latest_release = true
+prefix = "v"
+
+[cloudnative-pg]
+source = "github"
+github = "cloudnative-pg/cloudnative-pg"
+use_latest_release = true
+prefix = "v"
+
+[configmap-reload]
+source = "github"
+github = "jimmidyson/configmap-reload"
+use_latest_release = true
+prefix = "v"
+
+[hubble-ui]
+source = "github"
+github = "cilium/hubble-ui"
+use_latest_release = true
+prefix = "v"
+
+[keda]
+source = "github"
+github = "kedacore/keda"
+use_latest_release = true
+prefix = "v"
+
+[kube-rbac-proxy]
+source = "github"
+github = "brancz/kube-rbac-proxy"
+use_latest_release = true
+prefix = "v"

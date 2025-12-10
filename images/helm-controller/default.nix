@@ -19,10 +19,12 @@ let
       owner = "fluxcd";
       repo = "helm-controller";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-kt5aASNpODEeQO9nJpULg8YLo8ZaanS++rL4luPF/b8=";
     };
 
-    vendorHash = null;  # TODO: Update after first build
+    vendorHash = "sha256-W9TfC2KIa2foarw4utRqQl+6jZG7jMoowBPUhBZfVFc=";
+
+    subPackages = [ "." ];
 
     env.CGO_ENABLED = 0;
 

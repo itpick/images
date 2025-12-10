@@ -222,7 +222,7 @@
     };
   };
 
-  # Backup Charts
+  # Backup Chartsc
   backup = {
     velero = {
       url = "https://vmware-tanzu.github.io/helm-charts";

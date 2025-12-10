@@ -15,10 +15,12 @@ let
       owner = "fluxcd";
       repo = "source-controller";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-k1UkxJ+rfin+6jUv3lCH1UN2JuGbmh3Fzv/GkJKOCjs=";
     };
 
-    vendorHash = null;  # TODO: Update after first build
+    vendorHash = "sha256-MLdVPqGsamzjKQgBhy8MXnJsq1jXbZQ0xU1XJaFVg2I=";
+
+    subPackages = [ "." ];
 
     env.CGO_ENABLED = 0;
 

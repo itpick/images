@@ -10,10 +10,10 @@ let
       owner = "argoproj-labs";
       repo = "argocd-extension-installer";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-dExoVcy9v4PtkAOkzj2vMWBvyDoxid9+AmwJWi5QoO8=";
     };
 
-    vendorHash = null;  # TODO: Update after first build
+    vendorHash = null;
 
     env.CGO_ENABLED = 0;
 
@@ -36,7 +36,6 @@ mkImage {
   drv = argocd-extension-installer;
   name = "argocd-extension-installer";
   tag = "v${version}";
-  entrypoint = [ "${argocd-extension-installer}/bin/argocd-extension-installer" ];
   cmd = [ "--help" ];
 
   labels = {

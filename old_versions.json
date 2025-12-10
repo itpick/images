@@ -1,0 +1,10 @@
+{
+  "apache-nifi": "2.6.0",
+  "cert-manager": "1.16.2",
+  "cilium": "1.18.4",
+  "cloudnative-pg": "1.27.1",
+  "configmap-reload": "0.15.0",
+  "hubble-ui": "0.13.3",
+  "keda": "2.18.1",
+  "kube-rbac-proxy": "0.20.1"
+}

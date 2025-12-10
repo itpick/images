@@ -19,10 +19,12 @@ let
       owner = "fluxcd";
       repo = "notification-controller";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-IQuhu6p9NBfa4lGJA2eAKNYjqf/ioeNasKezoB4ZOn4=";
     };
 
-    vendorHash = null;  # TODO: Update after first build
+    vendorHash = "sha256-+xsR9hNBa3APAeVV2SjEvHnCmXbzJPh3V7dP23cHCSo=";
+
+    subPackages = [ "." ];
 
     env.CGO_ENABLED = 0;
 

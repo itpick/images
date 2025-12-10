@@ -259,6 +259,17 @@ for image in "${IMAGES[@]}"; do
 done
 ```
 
+## Checking for Package Updates
+
+Use `nvchecker` to check for upstream version updates:
+
+```bash
+# Check for updates to custom packages in pkgs/
+nix-shell -p nvchecker --run "nvchecker -c nvchecker.toml && nvcmp -c nvchecker.toml"
+```
+
+This compares versions in `old_versions.json` against the latest GitHub releases for packages like cilium, cert-manager, cloudnative-pg, keda, etc.
+
 ## Development Environment
 
 ```bash
