@@ -9,7 +9,7 @@
 #   kyverno-init-container-1.16 (1.16.1-r0)
 
 let
-  version = "1.13.0";
+  version = "1.16.1";
   kyvernopre = buildGoModule {
     pname = "kyvernopre";
     inherit version;
@@ -18,11 +18,11 @@ let
       owner = "kyverno";
       repo = "kyverno";
       rev = "v${version}";
-      hash = "sha256-l9UAPXBSRQJJtPMpyRkVsKWKFrvNiP8nEBfXMo+cvzE=";
+      hash = "sha256-frLuq91CWjyNSj5HFvYIsyR6NFvZqXLil3YQL5Tli6o=";
     };
 
     proxyVendor = true;
-    vendorHash = "sha256-oh0Rw2ApnIF52jBd0l/SuMUbM6t6XdVHZpwHFU8P6nY=";
+    vendorHash = "sha256-gdv3QReFGDhVjaJgtSCYlYuDoJwDx9FNPDn1hl0brp8=";
 
     env.CGO_ENABLED = 0;
 
@@ -52,7 +52,7 @@ mkImage {
   name = "kyvernopre";
   tag = "v${version}";
   entrypoint = [ "${kyvernopre}/bin/kyvernopre" ];
-  cmd = [ "--help" ];
+  cmd = [];
 
   labels = {
     "org.opencontainers.image.title" = "Kyverno Pre";

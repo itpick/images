@@ -15,10 +15,11 @@ let
       owner = "stakater";
       repo = "Reloader";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-tRHHDw09PxjjKPoEDsyJw7ZNSvNb2xk7zYqJJe4d/MI=";
     };
 
-    vendorHash = null;  # TODO: Update after first build
+    proxyVendor = true;
+    vendorHash = "sha256-Ueu3rFpOpUUZWvu6TYwFU3sdJBxEzc4wuMFTOR24xfo=";
 
     env.CGO_ENABLED = 0;
 

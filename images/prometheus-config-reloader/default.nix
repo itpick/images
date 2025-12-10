@@ -15,10 +15,11 @@ let
       owner = "prometheus-operator";
       repo = "prometheus-operator";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-MgeisPFjNIIAU65MY0p2yS+3Gdfvorv1Jun139otOpc=";
     };
 
-    vendorHash = null;  # TODO: Update after first build
+    proxyVendor = true;
+    vendorHash = "sha256-IX/67JWLqG7jHtYoX/Ufw+ZeQvZ6w/xYDdbVVLcIztI=";
 
     subPackages = [ "cmd/prometheus-config-reloader" ];
 

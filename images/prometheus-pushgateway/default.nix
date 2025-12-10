@@ -9,7 +9,7 @@ mkImage {
   name = "prometheus-pushgateway";
   tag = "v${pkgs.prometheus-pushgateway.version}";
   entrypoint = [ "${pkgs.prometheus-pushgateway}/bin/pushgateway" ];
-  cmd = [ "--help" ];
+  cmd = [];
 
   labels = {
     "org.opencontainers.image.title" = "Prometheus Pushgateway";

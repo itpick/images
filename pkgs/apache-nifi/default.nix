@@ -11,7 +11,10 @@ stdenvNoCC.mkDerivation rec {
   version = "2.6.0";
 
   src = fetchurl {
-    url = "https://downloads.apache.org/nifi/${version}/nifi-${version}-bin.zip";
+    urls = [
+      "https://archive.apache.org/dist/nifi/${version}/nifi-${version}-bin.zip"
+      "https://downloads.apache.org/nifi/${version}/nifi-${version}-bin.zip"
+    ];
     # SHA512 hash from https://downloads.apache.org/nifi/${version}/nifi-${version}-bin.zip.sha512
     hash = "sha512-y3HU6b9434SBv3n971np7jfqKqIv5Eaeadp2Dp7R3/M0QZF583eIc+Op8dIp1m53eVTYC03B5ZhI2/bBipEgvg==";
   };

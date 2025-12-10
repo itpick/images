@@ -15,10 +15,11 @@ let
       owner = "spegel-org";
       repo = "spegel";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-tQqsDgaguLAqMYJQ0+bcnJP/2BRNLcsKJLE+j3P5g3Q=";
     };
 
-    vendorHash = null;  # TODO: Update after first build
+    proxyVendor = true;
+    vendorHash = "sha256-FX+nwKeEP1Q7+iVJ5QOpG0AcKvQpdRS3uj3DdKXSc+A=";
 
     env.CGO_ENABLED = 0;
 
