@@ -13,14 +13,22 @@
 #   libcrypt1 (2.42-r4)
 #   velero-restore-helper (1.17.1-r2)
 
+let
+  # Create symlink at /velero for helm chart compatibility
+  veleroSymlink = pkgs.runCommand "velero-symlink" {} ''
+    mkdir -p $out
+    ln -s ${pkgs.velero}/bin/velero $out/velero
+  '';
+in
 mkImage {
   drv = pkgs.velero;
   name = "velero";
-  tag = "v${pkgs.velero.version}";
-  entrypoint = [ "${pkgs.velero}/bin/velero" ];
-  cmd = [ "--help" ];
+  tag = pkgs.velero.version;
+  entrypoint = [ "/velero" ];
+  cmd = [ "server" ];
 
   extraPkgs = with pkgs; [ restic ];
+  extraContents = [ veleroSymlink ];
 
   labels = {
     "org.opencontainers.image.title" = "Velero";

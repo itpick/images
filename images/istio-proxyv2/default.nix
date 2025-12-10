@@ -1,33 +1,42 @@
-# istio-proxyv2
-# =============
-# Placeholder for istio-proxyv2 container image.
-# This image is referenced in Helm charts but not yet implemented.
+# istio-proxyv2 (Envoy sidecar proxy)
+# https://istio.io/
 #
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
+# This image contains:
+# - pilot-agent: Manages Envoy configuration (from pre-built binary)
+# - envoy: The actual proxy (from pre-built binary)
 #
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+# Note: We use pre-built binaries from the official Istio Docker image
+# because Envoy doesn't build on aarch64-linux in nixpkgs (bazel issues)
 
-{ ... }:
+{ mkImage, pkgs, lib, ... }:
 
+let
+  istio = pkgs.istio;
+  version = istio.version;
+in
+mkImage {
+  drv = istio.proxyv2-bin;
+  name = "istio-proxyv2";
+  tag = version;
+  entrypoint = [ "${istio.proxyv2-bin}/bin/pilot-agent" ];
+  cmd = [ "proxy" "sidecar" ];
 
-# Chainguard SBOM packages for istio-proxyv2:
-# Packages available in nixpkgs:
-#   pkgs.glibc  # glibc (2.42-r4)
-#   pkgs.iptables  # iptables (1.8.11-r29)
-#   pkgs.libgcc  # libgcc (15.2.0-r6)
-#   pkgs.libmnl  # libmnl (1.0.5-r6)
-#   pkgs.libnetfilter_conntrack  # libnetfilter_conntrack (1.1.0-r4)
-#   pkgs.libnfnetlink  # libnfnetlink (1.0.2-r6)
-#   pkgs.libnftnl  # libnftnl (1.3.1-r0)
-# Packages NOT in nixpkgs:
-#   ip6tables (1.8.11-r29)
-#   istio-envoy-1.28 (1.28.1-r0)
-#   istio-pilot-agent-1.28 (1.28.1-r0)
-#   ld-linux (2.42-r4)
-#   xtables (1.8.11-r29)
+  extraPkgs = with pkgs; [
+    cacert
+    iptables
+    iproute2
+  ];
 
-throw "Image 'istio-proxyv2' is not yet implemented. See default.nix for implementation notes."
+  noBusybox = true;  # iproute2 conflicts with busybox
+
+  env = {
+    PATH = "/bin:${pkgs.iptables}/bin:${pkgs.iproute2}/bin";
+  };
+
+  labels = {
+    "org.opencontainers.image.title" = "Istio Proxy";
+    "org.opencontainers.image.description" = "Istio sidecar proxy (Envoy)";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "istio";
+  };
+}

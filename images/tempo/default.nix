@@ -10,7 +10,11 @@ mkImage {
   name = "tempo";
   tag = pkgs.tempo.version;
   entrypoint = [ "${pkgs.tempo}/bin/tempo" ];
-  cmd = [ "--help" ];
+  cmd = [ ];
+
+  extraPkgs = with pkgs; [
+    cacert
+  ];
 
   labels = {
     "org.opencontainers.image.title" = "Grafana Tempo";

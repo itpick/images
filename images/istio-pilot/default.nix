@@ -1,21 +1,34 @@
-# istio-pilot
-# =============
-# Placeholder for istio-pilot container image.
-# This image is referenced in Helm charts but not yet implemented.
-#
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+# istio-pilot (istiod control plane)
+# https://istio.io/
 
-{ ... }:
+{ mkImage, pkgs, lib, ... }:
 
+let
+  istio = pkgs.istio;
+  version = istio.version;
+in
+mkImage {
+  drv = istio.pilot-discovery;
+  name = "istio-pilot";
+  tag = version;
+  entrypoint = [ "${istio.pilot-discovery}/bin/pilot-discovery" ];
+  cmd = [ "discovery" ];
 
-# Chainguard SBOM packages for istio-pilot:
-# Packages NOT in nixpkgs:
-#   istio-pilot-discovery-1.28 (1.28.1-r0)
+  extraPkgs = with pkgs; [
+    busybox
+    cacert
+    iptables
+  ];
 
-throw "Image 'istio-pilot' is not yet implemented. See default.nix for implementation notes."
+  env = {
+    # Istio configuration
+    PILOT_TRACE_SAMPLING = "1.0";
+  };
+
+  labels = {
+    "org.opencontainers.image.title" = "Istio Pilot";
+    "org.opencontainers.image.description" = "Istio control plane (istiod)";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "istio";
+  };
+}
