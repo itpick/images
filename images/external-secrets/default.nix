@@ -30,9 +30,7 @@ let
 
     subPackages = [ "." ];
 
-    postInstall = ''
-      mv $out/bin/external-secrets $out/bin/external-secrets
-    '';
+    # No postInstall needed - binary is already named external-secrets
 
     doCheck = false;
 

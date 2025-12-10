@@ -600,34 +600,82 @@ Images tested locally with `docker run` to verify basic functionality:
 - [ ] zig
 - [ ] zookeeper
 
+## Verified Working in Kubernetes
+
+The following images have been tested and verified running in a Kind cluster with Helm chart deployments:
+
+| Namespace | Image | Version | Status |
+|-----------|-------|---------|--------|
+| cert-manager | cert-manager-controller | v1.16.2 | ✅ Running |
+| cert-manager | cert-manager-cainjector | v1.16.2 | ✅ Running |
+| cert-manager | cert-manager-webhook | v1.16.2 | ✅ Running |
+| istio-system | istio-pilot | 1.24.0 | ✅ Running |
+| istio-system | istio-proxyv2 | 1.24.0 | ✅ Running |
+| kube-system | cilium-agent | v1.18.4 | ✅ Running |
+| kube-system | cilium-operator-generic | v1.18.4 | ✅ Running |
+| kyverno | kyverno | 1.16.1 | ✅ Running |
+| kyverno | kyverno-background-controller | 1.16.1 | ✅ Running |
+| kyverno | kyverno-cleanup-controller | 1.16.1 | ✅ Running |
+| kyverno | kyverno-reports-controller | 1.16.1 | ✅ Running |
+| monitoring | prometheus | 3.8.0 | ✅ Running |
+| monitoring | alertmanager | 0.29.0 | ✅ Running |
+| monitoring | grafana | 12.3.0 | ✅ Running |
+| monitoring | loki | 3.6.2 | ✅ Running |
+| monitoring | tempo | 2.9.0 | ✅ Running |
+| monitoring | kube-state-metrics | 2.17.0 | ✅ Running |
+| monitoring | node-exporter | 1.10.2 | ✅ Running |
+| monitoring | prometheus-pushgateway | 1.11.2 | ✅ Running |
+| vault | vault | 1.20.4 | ✅ Running |
+| velero | velero | 1.17.1 | ✅ Running |
+
 ## Helm Chart Deploy Testing
 
-Images tested via Helm chart deployments in Kubernetes:
+Images tested via Helm chart deployments in Kubernetes (Kind cluster):
 
-- [ ] cert-manager (cert-manager-acmesolver, cert-manager-cainjector, cert-manager-controller, cert-manager-startupapicheck, cert-manager-webhook)
-- [ ] cilium (cilium-agent, cilium-cli, cilium-operator, hubble, hubble-certgen, hubble-relay, hubble-ui, hubble-ui-backend)
-- [ ] argocd (argocd, argocd-cli, argocd-extension-installer)
-- [ ] prometheus-stack (prometheus, prometheus-adapter, prometheus-config-reloader, prometheus-operator, prometheus-pushgateway, alertmanager, node-exporter, kube-state-metrics, grafana)
-- [ ] loki-stack (loki, loki-canary, loki-helm-test)
-- [ ] tempo (tempo, tempo-query)
+### Tested and Working
+
+- [x] cert-manager (cert-manager-cainjector, cert-manager-controller, cert-manager-webhook) - v1.16.2
+- [x] cilium (cilium-agent, cilium-operator) - v1.18.4
+- [x] argocd (argocd) - v3.1.9
+- [x] prometheus-stack (prometheus, alertmanager, node-exporter, kube-state-metrics, prometheus-pushgateway, grafana) - multiple versions
+- [x] loki (loki) - v3.6.2
+- [x] tempo (tempo) - v2.9.0
+- [x] vault (vault) - v1.20.4 (manual deployment, not Helm - missing entrypoint script)
+- [x] istio (istio-pilot, istio-proxyv2) - v1.24.0
+- [x] velero (velero) - v1.17.1
+- [x] kyverno (kyverno, kyverno-background-controller, kyverno-cleanup-controller, kyverno-reports-controller, kyvernopre) - v1.16.1
+
+### Has Issues (See Known Issues)
+
+- [ ] crossplane (crossplane) - CLI binary instead of server mode
+- [ ] reflector (kubernetes-reflector) - Missing deps.nix for dotnet build
+
+### Not Yet Tested
+
+- [ ] cert-manager-acmesolver, cert-manager-startupapicheck
+- [ ] hubble, hubble-certgen, hubble-relay, hubble-ui, hubble-ui-backend
+- [ ] argocd-cli, argocd-extension-installer
+- [ ] prometheus-adapter, prometheus-config-reloader, prometheus-operator
+- [ ] loki-canary, loki-helm-test
+- [ ] tempo-query
 - [ ] mimir (mimir)
-- [ ] vault (vault, vault-csi-provider, vault-k8s)
+- [ ] vault-csi-provider, vault-k8s
 - [ ] consul (consul)
 - [ ] traefik (traefik)
 - [ ] ingress-nginx (ingress-nginx, kube-webhook-certgen)
 - [ ] external-dns (external-dns)
 - [ ] external-secrets (external-secrets)
 - [ ] flux (flux, flux-cli, flux-operator, helm-controller, source-controller, kustomize-controller, notification-controller, image-automation-controller, image-reflector-controller)
-- [ ] kyverno (kyverno, kyverno-background-controller, kyverno-cleanup-controller, kyverno-cli, kyverno-plugin, kyverno-reports-controller, kyvernopre)
+- [ ] kyverno-cli, kyverno-plugin
 - [ ] harbor (harbor-core, harbor-exporter, harbor-jobservice, harbor-portal, harbor-registry, harbor-registryctl)
 - [ ] gitlab (gitlab-base, gitlab-certificates, gitlab-container-registry, gitlab-exporter, gitlab-mailroom, gitlab-pages, gitlab-runner, gitlab-runner-helper, gitlab-shell, gitlab-sidekiq, gitlab-toolbox, gitlab-webservice, gitlab-workhorse, gitaly)
 - [ ] minio (minio, minio-client, minio-operator, minio-operator-sidecar)
 - [ ] postgres (postgres, postgres-exporter, cloudnative-pg)
 - [ ] redis (redis, redis-exporter)
 - [ ] elasticsearch (elasticsearch, elasticsearch-exporter, kibana)
-- [ ] istio (istio-install-cni, istio-pilot, istio-proxyv2, kiali, kiali-operator)
-- [ ] velero (velero, velero-plugin-aws, velero-plugin-azure, velero-plugin-csi)
-- [ ] crossplane (crossplane, crossplane-provider-aws, crossplane-provider-azure, crossplane-provider-gcp)
+- [ ] istio-install-cni, kiali, kiali-operator
+- [ ] velero-plugin-aws, velero-plugin-azure, velero-plugin-csi
+- [ ] crossplane-provider-aws, crossplane-provider-azure, crossplane-provider-gcp
 - [ ] rook-ceph (rook-ceph, rook-ceph-operator, ceph, cephcsi)
 - [ ] neuvector (neuvector-controller, neuvector-enforcer, neuvector-manager, neuvector-prometheus-exporter, neuvector-registry-adapter, neuvector-scanner)
 - [ ] keda (keda, keda-admission-webhooks, keda-metrics-apiserver)
@@ -649,6 +697,117 @@ Images tested via Helm chart deployments in Kubernetes:
 - [ ] dex (dex)
 - [ ] headlamp (headlamp)
 - [ ] gitea (gitea)
+- [ ] spark-operator (spark-operator)
+- [ ] kubeflow-trainer (kubeflow-trainer)
+- [ ] mlflow (mlflow)
+- [ ] apache-nifi (apache-nifi)
+
+## Known Issues
+
+The following images have known issues that prevent them from working correctly in Kubernetes deployments:
+
+| Image | Issue | Status | Workaround |
+|-------|-------|--------|------------|
+| crossplane | Image contains CLI binary, not server mode. Pod fails with `error: unexpected argument core` | Needs fix | Use upstream crossplane image |
+| reflector | Missing `deps.nix` for dotnet build | Needs fix | Use upstream reflector image |
+| kyverno | Chart/image version mismatch causes CRD errors | Documented | Use matching chart version (see below) |
+
+### kyverno
+
+Kyverno images v1.16.1 require helm chart version 3.6.1 (not 3.3.7). Using older chart versions will cause:
+- Missing CRDs: `ImageValidatingPolicy`, `ValidatingPolicy`, `MutatingPolicy`, etc.
+- RBAC errors: Cannot list `policyexceptions`, `generatingpolicies`
+- Pod CrashLoopBackOff with "failed to wait for cache sync" errors
+
+The kyverno chart also uses `bitnami/kubectl` for init jobs. Override this with the nix kubectl image.
+
+**Step 1: Install with values file:**
+Create `/tmp/kyverno-values.yaml`:
+```yaml
+global:
+  image:
+    registry: ""
+admissionController:
+  container:
+    image:
+      registry: docker.io
+      repository: nix-containers/kyverno
+      tag: "1.16.1"
+      pullPolicy: IfNotPresent
+  initContainer:
+    image:
+      registry: docker.io
+      repository: nix-containers/kyvernopre
+      tag: "1.16.1"
+      pullPolicy: IfNotPresent
+webhooksCleanup:
+  image:
+    registry: docker.io
+    repository: nix-containers/kubectl
+    tag: "1.34.2"
+    pullPolicy: IfNotPresent
+```
+
+Then install:
+```bash
+helm upgrade --install kyverno kyverno/kyverno \
+  --namespace kyverno --create-namespace \
+  --version 3.6.1 \
+  -f /tmp/kyverno-values.yaml
+```
+
+**Step 2: Patch controllers to use nix images:**
+The background/cleanup/reports controllers use `defaultRegistry: reg.kyverno.io` fallback that can't be overridden via helm values. Patch them after install:
+```bash
+kubectl set image deployment/kyverno-background-controller controller=docker.io/nix-containers/kyverno-background-controller:1.16.1 -n kyverno
+kubectl set image deployment/kyverno-cleanup-controller controller=docker.io/nix-containers/kyverno-cleanup-controller:1.16.1 -n kyverno
+kubectl set image deployment/kyverno-reports-controller controller=docker.io/nix-containers/kyverno-reports-controller:1.16.1 -n kyverno
+```
+
+**Verification:**
+```bash
+kubectl get pods -n kyverno -o jsonpath='{range .items[*]}{.metadata.name}{": "}{.spec.containers[*].image}{"\n"}{end}'
+```
+All pods should show `nix-containers/*` images
+
+### crossplane
+
+The crossplane image is built from the CLI binary which expects different arguments than the Helm chart provides.
+The Helm chart passes arguments like `core start` but the CLI expects subcommands differently.
+
+Error: `crossplane: error: unexpected argument core`
+
+Resolution needed: Build crossplane server mode binary instead of CLI.
+
+### reflector
+
+The kubernetes-reflector (emberstack/reflector) is a .NET application that requires `deps.nix` to be generated
+for the buildDotnetModule derivation.
+
+Resolution needed: Generate deps.nix using `nix-shell -p dotnetCorePackages.sdk_8_0 --run "dotnet restore && nuget2nix > deps.nix"`
+
+## High-Memory Builds
+
+The following images require significantly more memory to build due to large Go SDK dependencies.
+These will fail with OOM (Out of Memory) errors if the build VM has less than 24GB RAM allocated.
+
+| Image | Version | Memory Required | Notes |
+|-------|---------|-----------------|-------|
+| vault | 1.20.4 | 24GB+ | Uses AWS SDK, Azure SDK, Okta SDK, MS Graph SDK |
+| external-secrets | 0.10.0 | 24GB+ | Large cloud provider SDK dependencies |
+
+### Build Environment Setup
+
+For Lima VM users, increase memory in `~/.lima/default/lima.yaml`:
+```yaml
+memory: "24GiB"
+```
+
+Then restart the VM:
+```bash
+limactl stop default
+limactl start default
+```
 
 ## Notes
 

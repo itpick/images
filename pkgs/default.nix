@@ -10,6 +10,7 @@
   cilium-certgen = pkgs.callPackage ./certgen { };
   cloudnative-pg = pkgs.callPackage ./cloudnative-pg { };
   configmap-reload = pkgs.callPackage ./configmap-reload { };
+  crossplane-server = pkgs.callPackage ./crossplane { };
   hubble-ui = pkgs.callPackage ./hubble-ui { };
   istio = pkgs.callPackage ./istio { };
   keda = pkgs.callPackage ./keda { };
