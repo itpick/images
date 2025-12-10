@@ -1,5 +1,5 @@
 # mkImage - Simple image builder for single-derivation container images
-{ nix2container, busybox, lib, base, ... }:
+{ nix2container, busybox, lib, base, pkgs, ... }:
 
 { drv
 , name ? drv.name or drv.pname or "image"
@@ -11,6 +11,7 @@
 , user ? "65534:65534"  # nobody by default
 , extraContents ? []
 , extraPkgs ? []  # Additional packages from SBOM (alias for extraContents)
+, noBusybox ? false  # Skip busybox when packages conflict (e.g., iproute2)
 , ...
 }@args:
 
@@ -22,10 +23,18 @@ let
   envList = lib.mapAttrsToList (k: v: "${k}=${toString v}") env;
 
   # Path environment (application-specific)
-  pathEnv = [ "PATH=${busybox}/bin:${drv}/bin" ];
+  pathEnv = if noBusybox then [ "PATH=${drv}/bin" ] else [ "PATH=${busybox}/bin:${drv}/bin" ];
 
   # Combine extraContents and extraPkgs
   allExtraContents = extraContents ++ extraPkgs;
+
+  # Base packages for system layer (optionally exclude busybox)
+  baseLayerPkgs = (if noBusybox then [] else [ busybox ]) ++ base.basePackages ++ allExtraContents;
+
+  # Create /tmp directory
+  tmpDir = pkgs.runCommand "tmp-dir" {} ''
+    mkdir -p $out/tmp
+  '';
 
 in
 nix2container.buildImage ({
@@ -35,7 +44,14 @@ nix2container.buildImage ({
   layers = [
     # Base system layer
     (nix2container.buildLayer {
-      copyToRoot = [ busybox ] ++ base.basePackages ++ allExtraContents;
+      copyToRoot = baseLayerPkgs ++ [ tmpDir ];
+      perms = [
+        {
+          path = tmpDir;
+          regex = "/tmp";
+          mode = "1777";
+        }
+      ];
     })
     
     # Application layer
@@ -59,4 +75,4 @@ nix2container.buildImage ({
   } // lib.optionalAttrs (cmd != null) {
     Cmd = cmd;
   };
-} // (builtins.removeAttrs args [ "drv" "entrypoint" "cmd" "env" "labels" "user" "extraContents" "extraPkgs" ]))
+} // (builtins.removeAttrs args [ "drv" "entrypoint" "cmd" "env" "labels" "user" "extraContents" "extraPkgs" "noBusybox" ]))

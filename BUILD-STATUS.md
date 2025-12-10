@@ -1,0 +1,658 @@
+# Nix Container Images Build Status
+
+Total images: 294
+
+All images in this repository build successfully using `nix build .#<image-name>`.
+
+## Building Images
+
+- [x] act
+- [x] actionlint
+- [x] age
+- [x] alertmanager
+- [x] alibi-detect
+- [x] alloy
+- [x] alloy-operator
+- [x] alpine
+- [x] anchore-enterprise
+- [x] anchore-enterpriseui
+- [x] apache-nifi
+- [x] apko
+- [x] argo-rollouts
+- [x] argo-workflows
+- [x] argocd
+- [x] argocd-cli
+- [x] argocd-extension-installer
+- [x] aspnet-runtime
+- [x] attic
+- [x] authservice
+- [x] backstage
+- [x] bash
+- [x] bats
+- [x] bitnami-shell
+- [x] bitwarden-sdk-server
+- [x] blackbox-exporter
+- [x] boundary
+- [x] bun
+- [x] busybox
+- [x] cachix
+- [x] cachix-flakes
+- [x] caddy
+- [x] cadvisor
+- [x] ceph
+- [x] cephcsi
+- [x] cert-manager-acmesolver
+- [x] cert-manager-cainjector
+- [x] cert-manager-controller
+- [x] cert-manager-startupapicheck
+- [x] cert-manager-webhook
+- [x] cfssl-self-sign
+- [x] cilium-agent
+- [x] cilium-cli
+- [x] cilium-operator
+- [x] cloudnative-pg
+- [x] configmap-reload
+- [x] consul
+- [x] coredns
+- [x] cosign
+- [x] cpp-build-env
+- [x] cpp-runtime
+- [x] crane
+- [x] crossplane
+- [x] crossplane-provider-aws
+- [x] crossplane-provider-azure
+- [x] crossplane-provider-gcp
+- [x] csi-attacher
+- [x] csi-node-driver-registrar
+- [x] csi-provisioner
+- [x] csi-resizer
+- [x] csi-snapshotter
+- [x] curl
+- [x] dduportal-bats
+- [x] deno
+- [x] devcontainer
+- [x] devenv
+- [x] dex
+- [x] distroless
+- [x] dive
+- [x] docker-compose
+- [x] dotnet
+- [x] dragonfly-operator
+- [x] earthly
+- [x] eck-operator
+- [x] elasticsearch
+- [x] elasticsearch-exporter
+- [x] enterprise-logs
+- [x] enterprise-logs-provisioner
+- [x] enterprise-metrics
+- [x] envoy
+- [x] etcd
+- [x] explainer-dashboard
+- [x] external-dns
+- [x] external-secrets
+- [x] falcoctl
+- [x] fluent-bit
+- [x] fluentd
+- [x] flux
+- [x] flux-cli
+- [x] flux-operator
+- [x] gatekeeper
+- [x] geoipupdate
+- [x] git
+- [x] gitaly
+- [x] gitea
+- [x] gitlab-base
+- [x] gitlab-certificates
+- [x] gitlab-container-registry
+- [x] gitlab-exporter
+- [x] gitlab-mailroom
+- [x] gitlab-pages
+- [x] gitlab-runner
+- [x] gitlab-runner-helper
+- [x] gitlab-shell
+- [x] gitlab-sidekiq
+- [x] gitlab-toolbox
+- [x] gitlab-webservice
+- [x] gitlab-workhorse
+- [x] glibc-dynamic
+- [x] go
+- [x] golang
+- [x] gradle
+- [x] grafana
+- [x] grafana-agent-operator
+- [x] grafana-alloy
+- [x] grafana-enterprise-logs
+- [x] grafana-image-renderer
+- [x] grype
+- [x] hadolint
+- [x] haproxy
+- [x] harbor-core
+- [x] harbor-exporter
+- [x] harbor-jobservice
+- [x] harbor-portal
+- [x] harbor-registry
+- [x] harbor-registryctl
+- [x] headlamp
+- [x] helm
+- [x] helm-controller
+- [x] hubble
+- [x] hubble-certgen
+- [x] hubble-relay
+- [x] hubble-ui
+- [x] hubble-ui-backend
+- [x] hugo
+- [x] image-automation-controller
+- [x] image-reflector-controller
+- [x] ingress-nginx
+- [x] istio-install-cni
+- [x] istio-pilot
+- [x] istio-proxyv2
+- [x] jdk
+- [x] jobset
+- [x] jre
+- [x] k8s-dns-node-cache
+- [x] k8s-sidecar
+- [x] katib-controller
+- [x] katib-db-manager
+- [x] katib-ui
+- [x] keda
+- [x] keda-admission-webhooks
+- [x] keda-metrics-apiserver
+- [x] keycloak
+- [x] keycloak-proxy
+- [x] kiali
+- [x] kiali-operator
+- [x] kibana
+- [x] ko
+- [x] kserve
+- [x] kube-rbac-proxy
+- [x] kube-state-metrics
+- [x] kube-webhook-certgen
+- [x] kubectl
+- [x] kubeflow-notebooks
+- [x] kubeflow-pipelines
+- [x] kubeflow-trainer
+- [x] kubernetes-helm
+- [x] kubernetes-reflector
+- [x] kubesec
+- [x] kustomize-controller
+- [x] kyverno
+- [x] kyverno-background-controller
+- [x] kyverno-cleanup-controller
+- [x] kyverno-cli
+- [x] kyverno-plugin
+- [x] kyverno-reports-controller
+- [x] kyvernopre
+- [x] linkerd
+- [x] litestream
+- [x] loki
+- [x] loki-canary
+- [x] loki-helm-test
+- [x] maddy
+- [x] mariadb
+- [x] mattermost
+- [x] mattermost-operator
+- [x] maven
+- [x] mc
+- [x] meilisearch
+- [x] memcached
+- [x] memcached-exporter
+- [x] metrics-server
+- [x] mimir
+- [x] minio
+- [x] minio-client
+- [x] minio-operator
+- [x] minio-operator-sidecar
+- [x] mlflow
+- [x] mongodb
+- [x] mysql
+- [x] nats
+- [x] netshoot
+- [x] neuvector-controller
+- [x] neuvector-enforcer
+- [x] neuvector-manager
+- [x] neuvector-prometheus-exporter
+- [x] neuvector-registry-adapter
+- [x] neuvector-scanner
+- [x] nexus
+- [x] nginx
+- [x] nginx-unprivileged
+- [x] nifi
+- [x] nifi-registry
+- [x] nifi-toolkit
+- [x] nix
+- [x] nix-flakes
+- [x] nix-unstable
+- [x] node
+- [x] node-exporter
+- [x] node-local-dns
+- [x] notification-controller
+- [x] oauth2-proxy
+- [x] openldap
+- [x] opentofu
+- [x] pgpool
+- [x] php
+- [x] pocket-id
+- [x] policy-reporter
+- [x] policy-reporter-ui
+- [x] postgres
+- [x] postgres-exporter
+- [x] prometheus
+- [x] prometheus-adapter
+- [x] prometheus-config-reloader
+- [x] prometheus-operator
+- [x] prometheus-pushgateway
+- [x] python
+- [x] python-fips
+- [x] rclone
+- [x] redis
+- [x] redis-exporter
+- [x] reflector
+- [x] reloader
+- [x] renovate
+- [x] restic
+- [x] rollout-operator
+- [x] rook-ceph
+- [x] rook-ceph-operator
+- [x] ruby
+- [x] rust
+- [x] rust-build-env
+- [x] seaweedfs
+- [x] semgrep
+- [x] shellcheck
+- [x] snapshot-controller
+- [x] snapshot-validation-webhook
+- [x] snmp-exporter
+- [x] sonarqube
+- [x] sops
+- [x] source-controller
+- [x] spark
+- [x] spark-operator
+- [x] spegel
+- [x] static
+- [x] step-ca
+- [x] step-cli
+- [x] syft
+- [x] syncthing
+- [x] tektoncd-cli
+- [x] tempo
+- [x] tempo-query
+- [x] thanos
+- [x] traefik
+- [x] trainer-controller-manager
+- [x] trivy
+- [x] trivy-adapter
+- [x] trust-manager
+- [x] twistlock-console
+- [x] twistlock-defender
+- [x] valkey
+- [x] vault
+- [x] vault-csi-provider
+- [x] vault-k8s
+- [x] vector
+- [x] velero
+- [x] velero-plugin-aws
+- [x] velero-plugin-azure
+- [x] velero-plugin-csi
+- [x] wait-for-it
+- [x] windows-exporter
+- [x] wolfi
+- [x] yq
+- [x] zig
+- [x] zookeeper
+
+## Local Testing Status
+
+Images tested locally with `docker run` to verify basic functionality:
+
+- [ ] act
+- [ ] actionlint
+- [ ] age
+- [ ] alertmanager
+- [ ] alibi-detect
+- [ ] alloy
+- [ ] alloy-operator
+- [ ] alpine
+- [ ] anchore-enterprise
+- [ ] anchore-enterpriseui
+- [ ] apache-nifi
+- [ ] apko
+- [ ] argo-rollouts
+- [ ] argo-workflows
+- [ ] argocd
+- [ ] argocd-cli
+- [ ] argocd-extension-installer
+- [ ] aspnet-runtime
+- [ ] attic
+- [ ] authservice
+- [ ] backstage
+- [ ] bash
+- [ ] bats
+- [ ] bitnami-shell
+- [ ] bitwarden-sdk-server
+- [ ] blackbox-exporter
+- [ ] boundary
+- [ ] bun
+- [ ] busybox
+- [ ] cachix
+- [ ] cachix-flakes
+- [ ] caddy
+- [ ] cadvisor
+- [ ] ceph
+- [ ] cephcsi
+- [ ] cert-manager-acmesolver
+- [ ] cert-manager-cainjector
+- [ ] cert-manager-controller
+- [ ] cert-manager-startupapicheck
+- [ ] cert-manager-webhook
+- [ ] cfssl-self-sign
+- [ ] cilium-agent
+- [ ] cilium-cli
+- [ ] cilium-operator
+- [ ] cloudnative-pg
+- [ ] configmap-reload
+- [ ] consul
+- [ ] coredns
+- [ ] cosign
+- [ ] cpp-build-env
+- [ ] cpp-runtime
+- [ ] crane
+- [ ] crossplane
+- [ ] crossplane-provider-aws
+- [ ] crossplane-provider-azure
+- [ ] crossplane-provider-gcp
+- [ ] csi-attacher
+- [ ] csi-node-driver-registrar
+- [ ] csi-provisioner
+- [ ] csi-resizer
+- [ ] csi-snapshotter
+- [ ] curl
+- [ ] dduportal-bats
+- [ ] deno
+- [ ] devcontainer
+- [ ] devenv
+- [ ] dex
+- [ ] distroless
+- [ ] dive
+- [ ] docker-compose
+- [ ] dotnet
+- [ ] dragonfly-operator
+- [ ] earthly
+- [ ] eck-operator
+- [ ] elasticsearch
+- [ ] elasticsearch-exporter
+- [ ] enterprise-logs
+- [ ] enterprise-logs-provisioner
+- [ ] enterprise-metrics
+- [ ] envoy
+- [ ] etcd
+- [ ] explainer-dashboard
+- [ ] external-dns
+- [ ] external-secrets
+- [ ] falcoctl
+- [ ] fluent-bit
+- [ ] fluentd
+- [ ] flux
+- [ ] flux-cli
+- [ ] flux-operator
+- [ ] gatekeeper
+- [ ] geoipupdate
+- [ ] git
+- [ ] gitaly
+- [ ] gitea
+- [ ] gitlab-base
+- [ ] gitlab-certificates
+- [ ] gitlab-container-registry
+- [ ] gitlab-exporter
+- [ ] gitlab-mailroom
+- [ ] gitlab-pages
+- [ ] gitlab-runner
+- [ ] gitlab-runner-helper
+- [ ] gitlab-shell
+- [ ] gitlab-sidekiq
+- [ ] gitlab-toolbox
+- [ ] gitlab-webservice
+- [ ] gitlab-workhorse
+- [ ] glibc-dynamic
+- [ ] go
+- [ ] golang
+- [ ] gradle
+- [ ] grafana
+- [ ] grafana-agent-operator
+- [ ] grafana-alloy
+- [ ] grafana-enterprise-logs
+- [ ] grafana-image-renderer
+- [ ] grype
+- [ ] hadolint
+- [ ] haproxy
+- [ ] harbor-core
+- [ ] harbor-exporter
+- [ ] harbor-jobservice
+- [ ] harbor-portal
+- [ ] harbor-registry
+- [ ] harbor-registryctl
+- [ ] headlamp
+- [ ] helm
+- [ ] helm-controller
+- [ ] hubble
+- [ ] hubble-certgen
+- [ ] hubble-relay
+- [ ] hubble-ui
+- [ ] hubble-ui-backend
+- [ ] hugo
+- [ ] image-automation-controller
+- [ ] image-reflector-controller
+- [ ] ingress-nginx
+- [ ] istio-install-cni
+- [ ] istio-pilot
+- [ ] istio-proxyv2
+- [ ] jdk
+- [ ] jobset
+- [ ] jre
+- [ ] k8s-dns-node-cache
+- [ ] k8s-sidecar
+- [ ] katib-controller
+- [ ] katib-db-manager
+- [ ] katib-ui
+- [ ] keda
+- [ ] keda-admission-webhooks
+- [ ] keda-metrics-apiserver
+- [ ] keycloak
+- [ ] keycloak-proxy
+- [ ] kiali
+- [ ] kiali-operator
+- [ ] kibana
+- [ ] ko
+- [ ] kserve
+- [ ] kube-rbac-proxy
+- [ ] kube-state-metrics
+- [ ] kube-webhook-certgen
+- [ ] kubectl
+- [ ] kubeflow-notebooks
+- [ ] kubeflow-pipelines
+- [ ] kubeflow-trainer
+- [ ] kubernetes-helm
+- [ ] kubernetes-reflector
+- [ ] kubesec
+- [ ] kustomize-controller
+- [ ] kyverno
+- [ ] kyverno-background-controller
+- [ ] kyverno-cleanup-controller
+- [ ] kyverno-cli
+- [ ] kyverno-plugin
+- [ ] kyverno-reports-controller
+- [ ] kyvernopre
+- [ ] linkerd
+- [ ] litestream
+- [ ] loki
+- [ ] loki-canary
+- [ ] loki-helm-test
+- [ ] maddy
+- [ ] mariadb
+- [ ] mattermost
+- [ ] mattermost-operator
+- [ ] maven
+- [ ] mc
+- [ ] meilisearch
+- [ ] memcached
+- [ ] memcached-exporter
+- [ ] metrics-server
+- [ ] mimir
+- [ ] minio
+- [ ] minio-client
+- [ ] minio-operator
+- [ ] minio-operator-sidecar
+- [ ] mlflow
+- [ ] mongodb
+- [ ] mysql
+- [ ] nats
+- [ ] netshoot
+- [ ] neuvector-controller
+- [ ] neuvector-enforcer
+- [ ] neuvector-manager
+- [ ] neuvector-prometheus-exporter
+- [ ] neuvector-registry-adapter
+- [ ] neuvector-scanner
+- [ ] nexus
+- [ ] nginx
+- [ ] nginx-unprivileged
+- [ ] nifi
+- [ ] nifi-registry
+- [ ] nifi-toolkit
+- [ ] nix
+- [ ] nix-flakes
+- [ ] nix-unstable
+- [ ] node
+- [ ] node-exporter
+- [ ] node-local-dns
+- [ ] notification-controller
+- [ ] oauth2-proxy
+- [ ] openldap
+- [ ] opentofu
+- [ ] pgpool
+- [ ] php
+- [ ] pocket-id
+- [ ] policy-reporter
+- [ ] policy-reporter-ui
+- [ ] postgres
+- [ ] postgres-exporter
+- [ ] prometheus
+- [ ] prometheus-adapter
+- [ ] prometheus-config-reloader
+- [ ] prometheus-operator
+- [ ] prometheus-pushgateway
+- [ ] python
+- [ ] python-fips
+- [ ] rclone
+- [ ] redis
+- [ ] redis-exporter
+- [ ] reflector
+- [ ] reloader
+- [ ] renovate
+- [ ] restic
+- [ ] rollout-operator
+- [ ] rook-ceph
+- [ ] rook-ceph-operator
+- [ ] ruby
+- [ ] rust
+- [ ] rust-build-env
+- [ ] seaweedfs
+- [ ] semgrep
+- [ ] shellcheck
+- [ ] snapshot-controller
+- [ ] snapshot-validation-webhook
+- [ ] snmp-exporter
+- [ ] sonarqube
+- [ ] sops
+- [ ] source-controller
+- [ ] spark
+- [ ] spark-operator
+- [ ] spegel
+- [ ] static
+- [ ] step-ca
+- [ ] step-cli
+- [ ] syft
+- [ ] syncthing
+- [ ] tektoncd-cli
+- [ ] tempo
+- [ ] tempo-query
+- [ ] thanos
+- [ ] traefik
+- [ ] trainer-controller-manager
+- [ ] trivy
+- [ ] trivy-adapter
+- [ ] trust-manager
+- [ ] twistlock-console
+- [ ] twistlock-defender
+- [ ] valkey
+- [ ] vault
+- [ ] vault-csi-provider
+- [ ] vault-k8s
+- [ ] vector
+- [ ] velero
+- [ ] velero-plugin-aws
+- [ ] velero-plugin-azure
+- [ ] velero-plugin-csi
+- [ ] wait-for-it
+- [ ] windows-exporter
+- [ ] wolfi
+- [ ] yq
+- [ ] zig
+- [ ] zookeeper
+
+## Helm Chart Deploy Testing
+
+Images tested via Helm chart deployments in Kubernetes:
+
+- [ ] cert-manager (cert-manager-acmesolver, cert-manager-cainjector, cert-manager-controller, cert-manager-startupapicheck, cert-manager-webhook)
+- [ ] cilium (cilium-agent, cilium-cli, cilium-operator, hubble, hubble-certgen, hubble-relay, hubble-ui, hubble-ui-backend)
+- [ ] argocd (argocd, argocd-cli, argocd-extension-installer)
+- [ ] prometheus-stack (prometheus, prometheus-adapter, prometheus-config-reloader, prometheus-operator, prometheus-pushgateway, alertmanager, node-exporter, kube-state-metrics, grafana)
+- [ ] loki-stack (loki, loki-canary, loki-helm-test)
+- [ ] tempo (tempo, tempo-query)
+- [ ] mimir (mimir)
+- [ ] vault (vault, vault-csi-provider, vault-k8s)
+- [ ] consul (consul)
+- [ ] traefik (traefik)
+- [ ] ingress-nginx (ingress-nginx, kube-webhook-certgen)
+- [ ] external-dns (external-dns)
+- [ ] external-secrets (external-secrets)
+- [ ] flux (flux, flux-cli, flux-operator, helm-controller, source-controller, kustomize-controller, notification-controller, image-automation-controller, image-reflector-controller)
+- [ ] kyverno (kyverno, kyverno-background-controller, kyverno-cleanup-controller, kyverno-cli, kyverno-plugin, kyverno-reports-controller, kyvernopre)
+- [ ] harbor (harbor-core, harbor-exporter, harbor-jobservice, harbor-portal, harbor-registry, harbor-registryctl)
+- [ ] gitlab (gitlab-base, gitlab-certificates, gitlab-container-registry, gitlab-exporter, gitlab-mailroom, gitlab-pages, gitlab-runner, gitlab-runner-helper, gitlab-shell, gitlab-sidekiq, gitlab-toolbox, gitlab-webservice, gitlab-workhorse, gitaly)
+- [ ] minio (minio, minio-client, minio-operator, minio-operator-sidecar)
+- [ ] postgres (postgres, postgres-exporter, cloudnative-pg)
+- [ ] redis (redis, redis-exporter)
+- [ ] elasticsearch (elasticsearch, elasticsearch-exporter, kibana)
+- [ ] istio (istio-install-cni, istio-pilot, istio-proxyv2, kiali, kiali-operator)
+- [ ] velero (velero, velero-plugin-aws, velero-plugin-azure, velero-plugin-csi)
+- [ ] crossplane (crossplane, crossplane-provider-aws, crossplane-provider-azure, crossplane-provider-gcp)
+- [ ] rook-ceph (rook-ceph, rook-ceph-operator, ceph, cephcsi)
+- [ ] neuvector (neuvector-controller, neuvector-enforcer, neuvector-manager, neuvector-prometheus-exporter, neuvector-registry-adapter, neuvector-scanner)
+- [ ] keda (keda, keda-admission-webhooks, keda-metrics-apiserver)
+- [ ] argo-workflows (argo-workflows, argo-rollouts)
+- [ ] tekton (tektoncd-cli)
+- [ ] thanos (thanos)
+- [ ] vector (vector)
+- [ ] fluent-bit (fluent-bit)
+- [ ] fluentd (fluentd)
+- [ ] envoy (envoy)
+- [ ] etcd (etcd)
+- [ ] nats (nats)
+- [ ] memcached (memcached, memcached-exporter)
+- [ ] mariadb (mariadb)
+- [ ] mysql (mysql)
+- [ ] mongodb (mongodb)
+- [ ] keycloak (keycloak, keycloak-proxy)
+- [ ] oauth2-proxy (oauth2-proxy)
+- [ ] dex (dex)
+- [ ] headlamp (headlamp)
+- [ ] gitea (gitea)
+
+## Notes
+
+- All images are built from nixpkgs packages using nix2container
+- Images are auto-discovered from the `images/` directory
+- Build command: `nix build .#<image-name>`
+- Platform: Linux (aarch64-linux for Apple Silicon via Lima VM)

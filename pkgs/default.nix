@@ -6,8 +6,11 @@
 {
   apache-nifi = pkgs.callPackage ./apache-nifi { };
   cert-manager = pkgs.callPackage ./cert-manager { };
+  cilium = pkgs.callPackage ./cilium { };
+  cilium-certgen = pkgs.callPackage ./certgen { };
   cloudnative-pg = pkgs.callPackage ./cloudnative-pg { };
   configmap-reload = pkgs.callPackage ./configmap-reload { };
+  hubble-ui = pkgs.callPackage ./hubble-ui { };
   keda = pkgs.callPackage ./keda { };
   kube-rbac-proxy = pkgs.callPackage ./kube-rbac-proxy { };
 }

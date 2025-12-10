@@ -15,10 +15,11 @@ let
       owner = "external-secrets";
       repo = "external-secrets";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-Yz4MOQ9qf72QlwksrM69mHTMOYBXCkIRrklegOTQb7E=";
     };
 
-    vendorHash = null;  # TODO: Update after first build
+    proxyVendor = true;
+    vendorHash = "sha256-B1oG/IfG/QZipK4PIPNOm1G9nYpZT9lHhKoDDfHwswU=";
 
     env.CGO_ENABLED = 0;
 

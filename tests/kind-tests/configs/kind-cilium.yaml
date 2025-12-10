@@ -1,0 +1,26 @@
+# Kind cluster configuration for Cilium CNI testing
+# Disables the default CNI so Cilium can be installed
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  # Disable default CNI - Cilium will provide networking
+  disableDefaultCNI: true
+  # Disable kube-proxy - Cilium will replace it
+  kubeProxyMode: none
+nodes:
+  - role: control-plane
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+    extraPortMappings:
+      - containerPort: 80
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 443
+        protocol: TCP
+  - role: worker
+  - role: worker

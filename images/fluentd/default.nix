@@ -5,10 +5,14 @@
 #   pkgs.fluentd  # Data collector
 # Note: Many Ruby-based fluentd plugins are not packaged in nixpkgs
 
+let
+  # Extract version from package name (fluentd-1.18.0 -> 1.18.0)
+  version = builtins.elemAt (lib.splitString "-" pkgs.fluentd.name) 1;
+in
 mkImage {
   drv = pkgs.fluentd;
   name = "fluentd";
-  tag = "v${pkgs.fluentd.version}";
+  tag = "v${version}";
   entrypoint = [ "${pkgs.fluentd}/bin/fluentd" ];
   cmd = [ "-c" "/fluentd/etc/fluent.conf" ];
 
@@ -20,7 +24,7 @@ mkImage {
   labels = {
     "org.opencontainers.image.title" = "Fluentd";
     "org.opencontainers.image.description" = "Unified logging layer data collector";
-    "org.opencontainers.image.version" = pkgs.fluentd.version;
+    "org.opencontainers.image.version" = version;
     "io.nix-containers.chart" = "fluentd";
   };
 }

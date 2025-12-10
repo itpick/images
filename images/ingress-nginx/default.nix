@@ -1,4 +1,4 @@
-{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, pkgs, busybox, libcap, ... }:
 
 
 # Chainguard SBOM packages for ingress-nginx:
@@ -67,10 +67,11 @@ let
       owner = "kubernetes";
       repo = "ingress-nginx";
       rev = "controller-v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-4/mh5xRgRDwJbRX4PUySR/j7x1YP1m3GzsOw2GJIYuo=";
     };
 
-    vendorHash = null;  # TODO: Update after first build
+    proxyVendor = true;
+    vendorHash = "sha256-ibmHPsclanHVby62uhrWPIFYzqiYiINDvkaNyUsCJ9U=";
 
     subPackages = [ "cmd/nginx" ];
 
@@ -98,7 +99,7 @@ mkImage {
   entrypoint = [ "${ingress-nginx}/bin/nginx" ];
   cmd = [];
 
-  extraPkgs = with pkgs; [ busybox libcap ];
+  extraPkgs = [ busybox libcap ];
 
   labels = {
     "org.opencontainers.image.title" = "NGINX Ingress Controller";
