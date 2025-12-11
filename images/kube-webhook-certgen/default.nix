@@ -1,21 +1,59 @@
 # kube-webhook-certgen
 # =============
-# Placeholder for kube-webhook-certgen container image.
-# This image is referenced in Helm charts but not yet implemented.
-#
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+# Kubernetes webhook certificate generator
+# Tools to help with self-signed cert generation for Kubernetes test environment
+# https://github.com/jet/kube-webhook-certgen
 
-{ ... }:
-
+{ mkImage, fetchFromGitHub, buildGoModule, pkgs, lib, ... }:
 
 # Chainguard SBOM packages for kube-webhook-certgen:
-# Packages NOT in nixpkgs:
-#   kube-webhook-certgen-1.14 (1.14.1-r0)
+# This is a Go binary that generates and manages webhook certificates
 
-throw "Image 'kube-webhook-certgen' is not yet implemented. See default.nix for implementation notes."
+let
+  version = "1.5.2";
+  kube-webhook-certgen = buildGoModule {
+    pname = "kube-webhook-certgen";
+    inherit version;
+
+    src = fetchFromGitHub {
+      owner = "jet";
+      repo = "kube-webhook-certgen";
+      rev = "v${version}";
+      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    };
+
+    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+
+    env.CGO_ENABLED = 0;
+
+    ldflags = [
+      "-s" "-w"
+      "-X github.com/jet/kube-webhook-certgen/core.Version=${version}"
+    ];
+
+    doCheck = false;
+
+    meta = with lib; {
+      description = "Kubernetes webhook certificate generator for self-signed certs";
+      homepage = "https://github.com/jet/kube-webhook-certgen";
+      license = licenses.asl20;
+    };
+  };
+
+in
+mkImage {
+  drv = kube-webhook-certgen;
+  name = "kube-webhook-certgen";
+  tag = "v${version}";
+  entrypoint = [ "${kube-webhook-certgen}/bin/kube-webhook-certgen" ];
+  cmd = [];
+
+  extraPkgs = with pkgs; [ cacert ];
+
+  labels = {
+    "org.opencontainers.image.title" = "Kube Webhook Certgen";
+    "org.opencontainers.image.description" = "Kubernetes webhook certificate generator for self-signed certs";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "ingress-nginx";
+  };
+}

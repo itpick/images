@@ -1,9 +1,5 @@
 { mkImage, pkgs, lib, ... }:
 
-# Chainguard SBOM packages for act:
-# Packages available in nixpkgs:
-#   pkgs.act  # Run your GitHub Actions locally
-
 mkImage {
   drv = pkgs.act;
   name = "act";

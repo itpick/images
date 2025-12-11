@@ -1,38 +1,72 @@
 # headlamp
 # =============
-# Placeholder for headlamp container image.
-# Referenced in BigBang/IronBank deployments.
-#
-# TODO: Implement this image
-# Reference: Check BigBang documentation for source details
+# Headlamp - Kubernetes web UI dashboard
+# https://github.com/kubernetes-sigs/headlamp
 
-{ ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, pkgs, lib, ... }:
 
+# Headlamp is an easy-to-use and extensible Kubernetes web UI
 
-# Chainguard SBOM packages for headlamp:
-# Packages available in nixpkgs:
-#   pkgs.busybox  # busybox (1.37.0-r50)
-#   pkgs.c-ares  # c-ares (1.34.5-r3)
-#   pkgs.glibc  # glibc (2.42-r4)
-#   pkgs.gnutar  # gnutar (1.35-r6)
-#   pkgs.libgcc  # libgcc (15.2.0-r6)
-#   pkgs.libnghttp2  # libnghttp2-14 (1.68.0-r0)
-#   pkgs.libuv  # libuv (1.51.0-r2)
-#   pkgs.libxcrypt  # libxcrypt (4.5.2-r0)
-#   pkgs.nodejs  # nodejs-18 (18.20.8-r5)
-#   pkgs.zlib  # zlib (1.3.1-r51)
-# Packages NOT in nixpkgs:
-#   gnutar-rmt (1.35-r6)
-#   headlamp (0.38.0-r2)
-#   icu78-data-full (78.1-r0)
-#   ld-linux (2.42-r4)
-#   libbrotlicommon1 (1.2.0-r1)
-#   libbrotlidec1 (1.2.0-r1)
-#   libbrotlienc1 (1.2.0-r1)
-#   libcrypt1 (2.42-r4)
-#   libcrypto3 (3.6.0-r4)
-#   libicu78 (78.1-r0)
-#   libssl3 (3.6.0-r4)
-#   libstdc++ (15.2.0-r6)
+let
+  version = "0.37.0";
+  headlamp-server = buildGoModule {
+    pname = "headlamp-server";
+    inherit version;
 
-throw "Image 'headlamp' is not yet implemented. See default.nix for implementation notes."
+    src = fetchFromGitHub {
+      owner = "kubernetes-sigs";
+      repo = "headlamp";
+      rev = "v${version}";
+      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    };
+
+    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+
+    sourceRoot = "source/backend";
+
+    subPackages = [ "cmd/server" ];
+
+    env.CGO_ENABLED = 0;
+
+    ldflags = [
+      "-s" "-w"
+      "-X main.version=${version}"
+    ];
+
+    doCheck = false;
+
+    postInstall = ''
+      mv $out/bin/server $out/bin/headlamp-server
+    '';
+
+    meta = with lib; {
+      description = "Headlamp - Kubernetes web UI dashboard";
+      homepage = "https://github.com/kubernetes-sigs/headlamp";
+      license = licenses.asl20;
+    };
+  };
+
+in
+mkImage {
+  drv = headlamp-server;
+  name = "headlamp";
+  tag = "v${version}";
+  entrypoint = [ "${headlamp-server}/bin/headlamp-server" ];
+  cmd = [];
+
+  extraPkgs = with pkgs; [
+    cacert
+    nodejs  # For frontend serving
+  ];
+
+  env = {
+    HEADLAMP_CONFIG_HOME = "/headlamp";
+  };
+
+  labels = {
+    "org.opencontainers.image.title" = "Headlamp";
+    "org.opencontainers.image.description" = "Headlamp - Kubernetes web UI dashboard";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "headlamp";
+  };
+}

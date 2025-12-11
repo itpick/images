@@ -1,10 +1,5 @@
 { mkImage, pkgs, lib, ... }:
 
-
-# Chainguard SBOM packages for tempo:
-# Packages available in nixpkgs:
-#   pkgs.tempo  # tempo (2.9.0-r3)
-
 mkImage {
   drv = pkgs.tempo;
   name = "tempo";

@@ -1,9 +1,5 @@
 { mkImage, pkgs, lib, ... }:
 
-# Chainguard SBOM packages for semgrep:
-# Packages available in nixpkgs:
-#   pkgs.semgrep  # Lightweight static analysis for many languages
-
 mkImage {
   drv = pkgs.semgrep;
   name = "semgrep";

@@ -1,16 +1,50 @@
-# csi-attacher
-# =============
-# Placeholder for csi-attacher container image.
-# This image is referenced in Helm charts but not yet implemented.
-#
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
 
-{ ... }:
+let
+  version = "4.8.1";
+  csi-attacher = buildGoModule {
+    pname = "csi-attacher";
+    inherit version;
 
-throw "Image 'csi-attacher' is not yet implemented. See default.nix for implementation notes."
+    src = fetchFromGitHub {
+      owner = "kubernetes-csi";
+      repo = "external-attacher";
+      rev = "v${version}";
+      hash = "sha256-0000000000000000000000000000000000000000000=";
+    };
+
+    vendorHash = null;
+
+    subPackages = [ "cmd/csi-attacher" ];
+
+    env.CGO_ENABLED = 0;
+
+    ldflags = [
+      "-s" "-w"
+      "-X main.version=v${version}"
+    ];
+
+    doCheck = false;
+
+    meta = with lib; {
+      description = "Sidecar container that watches Kubernetes VolumeAttachment objects and triggers ControllerPublish/Unpublish operations against a CSI endpoint";
+      homepage = "https://github.com/kubernetes-csi/external-attacher";
+      license = licenses.asl20;
+    };
+  };
+
+in
+mkImage {
+  drv = csi-attacher;
+  name = "csi-attacher";
+  tag = "v${version}";
+  entrypoint = [ "${csi-attacher}/bin/csi-attacher" ];
+  cmd = [];
+
+  labels = {
+    "org.opencontainers.image.title" = "CSI Attacher";
+    "org.opencontainers.image.description" = "Kubernetes CSI external attacher sidecar";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "csi-driver";
+  };
+}

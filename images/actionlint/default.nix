@@ -1,9 +1,5 @@
 { mkImage, pkgs, lib, ... }:
 
-# Chainguard SBOM packages for actionlint:
-# Packages available in nixpkgs:
-#   pkgs.actionlint  # Static checker for GitHub Actions workflow files
-
 mkImage {
   drv = pkgs.actionlint;
   name = "actionlint";

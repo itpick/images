@@ -1,9 +1,5 @@
 { mkImage, pkgs, lib, ... }:
 
-# Chainguard SBOM packages for bun:
-# Packages available in nixpkgs:
-#   pkgs.bun  # Fast all-in-one JavaScript runtime
-
 mkImage {
   drv = pkgs.bun;
   name = "bun";

@@ -1,16 +1,50 @@
-# csi-provisioner
-# =============
-# Placeholder for csi-provisioner container image.
-# This image is referenced in Helm charts but not yet implemented.
-#
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
 
-{ ... }:
+let
+  version = "5.1.0";
+  csi-provisioner = buildGoModule {
+    pname = "csi-provisioner";
+    inherit version;
 
-throw "Image 'csi-provisioner' is not yet implemented. See default.nix for implementation notes."
+    src = fetchFromGitHub {
+      owner = "kubernetes-csi";
+      repo = "external-provisioner";
+      rev = "v${version}";
+      hash = "sha256-0000000000000000000000000000000000000000000=";
+    };
+
+    vendorHash = null;
+
+    subPackages = [ "cmd/csi-provisioner" ];
+
+    env.CGO_ENABLED = 0;
+
+    ldflags = [
+      "-s" "-w"
+      "-X main.version=v${version}"
+    ];
+
+    doCheck = false;
+
+    meta = with lib; {
+      description = "Sidecar container that watches Kubernetes PersistentVolumeClaim objects and triggers CreateVolume/DeleteVolume operations against a CSI endpoint";
+      homepage = "https://github.com/kubernetes-csi/external-provisioner";
+      license = licenses.asl20;
+    };
+  };
+
+in
+mkImage {
+  drv = csi-provisioner;
+  name = "csi-provisioner";
+  tag = "v${version}";
+  entrypoint = [ "${csi-provisioner}/bin/csi-provisioner" ];
+  cmd = [];
+
+  labels = {
+    "org.opencontainers.image.title" = "CSI Provisioner";
+    "org.opencontainers.image.description" = "Kubernetes CSI external provisioner sidecar";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "csi-driver";
+  };
+}

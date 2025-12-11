@@ -1,9 +1,5 @@
 { mkImage, pkgs, lib, ... }:
 
-# Chainguard SBOM packages for zig:
-# Packages available in nixpkgs:
-#   pkgs.zig  # General-purpose programming language and target platform
-
 mkImage {
   drv = pkgs.zig;
   name = "zig";

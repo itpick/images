@@ -1,9 +1,5 @@
 { mkImage, pkgs, lib, ... }:
 
-# Chainguard SBOM packages for prometheus-pushgateway:
-# Packages available in nixpkgs:
-#   pkgs.prometheus-pushgateway  # prometheus-pushgateway (1.11.2-r2)
-
 mkImage {
   drv = pkgs.prometheus-pushgateway;
   name = "prometheus-pushgateway";

@@ -1,21 +1,63 @@
 # minio-operator
 # =============
-# Placeholder for minio-operator container image.
-# This image is referenced in Helm charts but not yet implemented.
-#
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+# MinIO Operator - Kubernetes Operator for MinIO object storage
+# https://github.com/minio/operator
 
-{ ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, pkgs, lib, ... }:
 
+# MinIO Operator for deploying and managing MinIO clusters on Kubernetes
 
-# Chainguard SBOM packages for minio-operator:
-# Packages NOT in nixpkgs:
-#   minio-operator (7.1.1-r6)
+let
+  version = "7.1.0";
+  minio-operator = buildGoModule {
+    pname = "minio-operator";
+    inherit version;
 
-throw "Image 'minio-operator' is not yet implemented. See default.nix for implementation notes."
+    src = fetchFromGitHub {
+      owner = "minio";
+      repo = "operator";
+      rev = "v${version}";
+      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    };
+
+    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+
+    subPackages = [ "cmd/operator" ];
+
+    env.CGO_ENABLED = 0;
+
+    ldflags = [
+      "-s" "-w"
+      "-X github.com/minio/operator/pkg/version.Version=${version}"
+    ];
+
+    doCheck = false;
+
+    postInstall = ''
+      mv $out/bin/operator $out/bin/minio-operator
+    '';
+
+    meta = with lib; {
+      description = "MinIO Operator for Kubernetes";
+      homepage = "https://github.com/minio/operator";
+      license = licenses.agpl3Only;
+    };
+  };
+
+in
+mkImage {
+  drv = minio-operator;
+  name = "minio-operator";
+  tag = "v${version}";
+  entrypoint = [ "${minio-operator}/bin/minio-operator" ];
+  cmd = [];
+
+  extraPkgs = with pkgs; [ cacert ];
+
+  labels = {
+    "org.opencontainers.image.title" = "MinIO Operator";
+    "org.opencontainers.image.description" = "Kubernetes Operator for MinIO object storage";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "minio-operator";
+  };
+}

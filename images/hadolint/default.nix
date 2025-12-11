@@ -1,9 +1,5 @@
 { mkImage, pkgs, lib, ... }:
 
-# Chainguard SBOM packages for hadolint:
-# Packages available in nixpkgs:
-#   pkgs.hadolint  # Dockerfile Linter
-
 mkImage {
   drv = pkgs.hadolint;
   name = "hadolint";

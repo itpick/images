@@ -1,9 +1,5 @@
 { mkImage, pkgs, lib, ... }:
 
-# Chainguard SBOM packages for deno:
-# Packages available in nixpkgs:
-#   pkgs.deno  # Secure runtime for JavaScript and TypeScript
-
 mkImage {
   drv = pkgs.deno;
   name = "deno";

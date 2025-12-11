@@ -1,21 +1,50 @@
-# csi-node-driver-registrar
-# =============
-# Placeholder for csi-node-driver-registrar container image.
-# This image is referenced in Helm charts but not yet implemented.
-#
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
 
-{ ... }:
+let
+  version = "2.12.0";
+  csi-node-driver-registrar = buildGoModule {
+    pname = "csi-node-driver-registrar";
+    inherit version;
 
+    src = fetchFromGitHub {
+      owner = "kubernetes-csi";
+      repo = "node-driver-registrar";
+      rev = "v${version}";
+      hash = "sha256-0000000000000000000000000000000000000000000=";
+    };
 
-# Chainguard SBOM packages for csi-node-driver-registrar:
-# Packages NOT in nixpkgs:
-#   kubernetes-csi-node-driver-registrar-2.15 (2.15.0-r2)
+    vendorHash = null;
 
-throw "Image 'csi-node-driver-registrar' is not yet implemented. See default.nix for implementation notes."
+    subPackages = [ "cmd/csi-node-driver-registrar" ];
+
+    env.CGO_ENABLED = 0;
+
+    ldflags = [
+      "-s" "-w"
+      "-X main.version=v${version}"
+    ];
+
+    doCheck = false;
+
+    meta = with lib; {
+      description = "Sidecar container that fetches driver info from a CSI endpoint and registers it with the kubelet";
+      homepage = "https://github.com/kubernetes-csi/node-driver-registrar";
+      license = licenses.asl20;
+    };
+  };
+
+in
+mkImage {
+  drv = csi-node-driver-registrar;
+  name = "csi-node-driver-registrar";
+  tag = "v${version}";
+  entrypoint = [ "${csi-node-driver-registrar}/bin/csi-node-driver-registrar" ];
+  cmd = [];
+
+  labels = {
+    "org.opencontainers.image.title" = "CSI Node Driver Registrar";
+    "org.opencontainers.image.description" = "Kubernetes CSI node driver registrar sidecar";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "csi-driver";
+  };
+}

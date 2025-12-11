@@ -1,16 +1,52 @@
 # bitnami-shell
 # =============
-# Placeholder for bitnami-shell container image.
-# This image is referenced in Helm charts but not yet implemented.
-#
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+# Shell utility image used by Bitnami Helm charts for init containers and debugging.
+# Provides a minimal shell environment with common utilities.
 
-{ ... }:
+{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
 
-throw "Image 'bitnami-shell' is not yet implemented. See default.nix for implementation notes."
+let
+  shellPackages = with pkgs; [
+    bash
+    busybox
+    coreutils
+    findutils
+    gnugrep
+    gnused
+    gawk
+    curl
+    wget
+    netcat-gnu
+    procps
+    which
+  ];
+
+  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+
+in
+nix2container.buildImage {
+  name = "bitnami-shell";
+  tag = "latest";
+
+  copyToRoot = [
+    (buildEnv {
+      name = "bitnami-shell-root";
+      paths = base.basePackages ++ shellPackages ++ [ userEnv ];
+    })
+  ];
+
+  config = nonRoot.defaultConfig // {
+    Env = base.defaultEnv ++ nonRoot.userEnv ++ [
+      "PATH=${lib.makeBinPath shellPackages}"
+    ];
+    Entrypoint = [ "${pkgs.bash}/bin/bash" ];
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.description" = "Shell utility image for Bitnami Helm charts";
+      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
+      "org.opencontainers.image.vendor" = "nix-containers";
+      "io.nix-containers.image.category" = "utility";
+      "io.nix-containers.image.aliases" = "bitnami-shell,shell,utility";
+    };
+  };
+}

@@ -1,21 +1,45 @@
 # loki-helm-test
 # =============
-# Placeholder for loki-helm-test container image.
-# This image is referenced in Helm charts but not yet implemented.
-#
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+# Test image for Loki Helm chart that includes tools for testing Loki deployments
+# Used in Helm chart test hooks
 
-{ ... }:
-
+{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
 
 # Chainguard SBOM packages for loki-helm-test:
 # Packages available in nixpkgs:
 #   pkgs.helm  # helm-4 (4.0.1-r2)
 
-throw "Image 'loki-helm-test' is not yet implemented. See default.nix for implementation notes."
+let
+  testPackages = with pkgs; [
+    grafana-loki  # Includes logcli for testing
+    curl
+    bash
+    coreutils
+  ];
+
+  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+
+in
+nix2container.buildImage {
+  name = "loki-helm-test";
+  tag = pkgs.grafana-loki.version;
+
+  copyToRoot = [
+    (buildEnv {
+      name = "loki-helm-test-root";
+      paths = base.basePackages ++ testPackages ++ [ userEnv ];
+    })
+  ];
+
+  config = nonRoot.defaultConfig // {
+    Env = base.defaultEnv ++ nonRoot.userEnv ++ [
+      "PATH=${lib.makeBinPath testPackages}"
+    ];
+    Entrypoint = [ "${pkgs.bash}/bin/bash" ];
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.description" = "Test image for Loki Helm chart";
+      "org.opencontainers.image.version" = pkgs.grafana-loki.version;
+      "io.nix-containers.chart" = "loki";
+    };
+  };
+}
