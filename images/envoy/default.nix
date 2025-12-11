@@ -1,30 +1,107 @@
-{ mkImage, pkgs, lib, ... }:
+# envoy
+# =====
+# Envoy Proxy - Cloud-native edge and service proxy
+# https://www.envoyproxy.io/
+#
+# Uses pre-built binary from tetratelabs/archive-envoy to avoid 14+ minute compile time.
+# Envoy is compiled via Bazel (C++) which takes extremely long.
 
-# Chainguard SBOM packages for envoy:
-# Packages available in nixpkgs:
-#   pkgs.busybox  # busybox (1.37.0-r50)
-#   pkgs.envoy  # envoy-1.36 (1.36.3-r0)
-#   pkgs.glibc  # glibc (2.42-r4)
-#   pkgs.libgcc  # libgcc (15.2.0-r6)
-#   pkgs.libxcrypt  # libxcrypt (4.5.2-r0)
-#   pkgs.su-exec  # su-exec (0.3-r0)
-# Packages NOT in nixpkgs:
-#   envoy-1.36-config (1.36.3-r0)
-#   envoy-1.36-oci-entrypoint (1.36.3-r0)
-#   ld-linux (2.42-r4)
-#   libcrypt1 (2.42-r4)
+{ nix2container, pkgs, lib, ... }:
 
-mkImage {
-  drv = pkgs.envoy;
+let
+  version = "1.36.3";
+
+  # Download Envoy binary from tetratelabs archive
+  # This provides stable permalinks for Envoy releases
+  envoyBin = pkgs.fetchurl {
+    url = "https://github.com/tetratelabs/archive-envoy/releases/download/v${version}/envoy-v${version}-linux-amd64.tar.xz";
+    hash = "sha256-TBlwEnf1AKm2vt0gCcYadRvH055c5yJmyGcOTMu54Vc=";
+  };
+
+in
+nix2container.buildImage {
   name = "envoy";
-  tag = "v${pkgs.envoy.version}";
-  entrypoint = [ "${pkgs.envoy}/bin/envoy" ];
-  cmd = [ "-c" "/etc/envoy/envoy.yaml" ];
+  tag = "v${version}";
 
-  labels = {
-    "org.opencontainers.image.title" = "Envoy";
-    "org.opencontainers.image.description" = "Cloud-native edge and service proxy";
-    "org.opencontainers.image.version" = pkgs.envoy.version;
-    "io.nix-containers.chart" = "envoy";
+  copyToRoot = pkgs.buildEnv {
+    name = "envoy-root";
+    paths = [
+      # Runtime dependencies
+      pkgs.bash
+      pkgs.coreutils
+      pkgs.cacert
+
+      # Install Envoy binary
+      (pkgs.runCommand "envoy-install" {
+        nativeBuildInputs = [ pkgs.xz ];
+      } ''
+        mkdir -p $out/bin $out/etc/envoy $out/tmp
+
+        # Extract Envoy (archive has directory structure: envoy-v$version-linux-amd64/bin/envoy)
+        tar -xJf ${envoyBin} --strip-components=2 -C $out/bin
+        chmod +x $out/bin/envoy
+
+        # Create default config
+        cat > $out/etc/envoy/envoy.yaml << 'EOF'
+static_resources:
+  listeners:
+  - name: listener_0
+    address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 10000
+    filter_chains:
+    - filters:
+      - name: envoy.filters.network.http_connection_manager
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+          stat_prefix: ingress_http
+          route_config:
+            name: local_route
+            virtual_hosts:
+            - name: local_service
+              domains: ["*"]
+              routes:
+              - match:
+                  prefix: "/"
+                direct_response:
+                  status: 200
+                  body:
+                    inline_string: "Hello from Envoy!"
+          http_filters:
+          - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+admin:
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 9901
+EOF
+      '')
+    ];
+    pathsToLink = [ "/bin" "/etc" "/tmp" ];
+  };
+
+  config = {
+    Entrypoint = [ "/bin/envoy" ];
+    Cmd = [ "-c" "/etc/envoy/envoy.yaml" ];
+    User = "65532:65532";
+    Env = [
+      "PATH=/bin"
+      "SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt"
+    ];
+    ExposedPorts = {
+      "10000/tcp" = {};
+      "9901/tcp" = {};
+    };
+    Labels = {
+      "org.opencontainers.image.title" = "Envoy";
+      "org.opencontainers.image.description" = "Cloud-native edge and service proxy (binary download)";
+      "org.opencontainers.image.version" = version;
+      "org.opencontainers.image.url" = "https://www.envoyproxy.io/";
+      "io.nix-containers.binary-download" = "true";
+      "io.nix-containers.chart" = "envoy";
+    };
   };
 }

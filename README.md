@@ -2,6 +2,23 @@
 
 A collection of container images built with nix2container, featuring dynamic discovery and multi-layer architecture.
 
+## Build Times
+
+*Generated: 2025-12-11 on x86_64-linux (NixOS)*
+
+| Build Time | Images |
+|-----------|--------|
+| **>5 min** | vault (5m 11s) |
+| **2-5 min** | nifi (2m 34s), cilium-agent (2m 19s), kyverno (2m 15s), cert-manager-acmesolver (2m 13s), crossplane (2m 11s), kyverno-cleanup-controller (2m 5s), kyverno-background-controller (2m 4s), apache-nifi (2m 2s), kyvernopre (2m 0s), kyverno-reports-controller (1m 52s), external-dns (1m 47s), spark (1m 44s), external-secrets (1m 38s), keda (1m 33s), istio-pilot (1m 32s), source-controller (1m 28s), cilium-operator-aws (1m 21s), kustomize-controller (1m 20s), ingress-nginx (1m 10s), notification-controller (1m 10s), cilium-operator (1m 8s), helm-controller (1m 5s), hubble-ui (1m 3s), nifi-registry (1m 2s), image-reflector-controller (1m 1s) |
+| **30s-2 min** | kubeflow-trainer (59s), image-automation-controller (59s), spegel (56s), prometheus-config-reloader (54s), prometheus-adapter (52s), metrics-server (51s), cloudnative-pg (50s), hubble-relay (49s), spark-operator (46s), dragonfly-operator (43s), reloader (40s), ceph (39s), hubble-certgen (33s), static (33s) |
+| **<30s** | 218 images build in under 30 seconds |
+
+**Total: 327 images, 192m 27s total build time**
+
+**Images requiring binary download (>5 min or complex builds):**
+- `mongodb` - 90+ minutes to compile from source (C++ via scons)
+- `envoy` - 14+ minutes to compile from source (C++ via Bazel)
+
 ## Architecture
 
 - **Auto-build latest images** - Multiple patterns to build latest images securely (nix pipeline and github actions) 

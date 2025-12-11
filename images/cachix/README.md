@@ -1,48 +1,18 @@
-# Cachix
+# cachix
 
-A minimal container image with Cachix for binary cache management.
+## Build Information
 
-## Description
+| Metric | Value |
+|--------|-------|
+| Build Time | 4s |
+| Build Status | success |
 
-This image provides Cachix, a binary cache service for Nix packages, enabling efficient sharing and reuse of build results. Built on a non-root user setup (UID 1000) for enhanced security.
-
-## Quick Start
-
-### Pull and Run
-
-```bash
-# Pull the image
-docker pull ghcr.io/nix-containers/images/cachix:latest
-
-# Run interactively
-docker run -it ghcr.io/nix-containers/images/cachix:latest
-
-# Use Cachix commands
-docker run --rm ghcr.io/nix-containers/images/cachix:latest cachix --help
-```
-
-### Build Locally with Nix
+## Usage
 
 ```bash
 # Build the image
 nix build .#cachix
 
-# Load to Docker
-nix run .#cachix.copyTo -- docker-daemon:cachix:latest
-
-# Run tests
-nix run .#cachix-test
+# Load into Docker
+nix build .#load-cachix-to-docker && ./result/bin/load-cachix-to-docker
 ```
-
-## What's Included
-
-- Cachix binary cache client
-- GNU Bash shell
-- Core utilities (coreutils)
-- Non-root user environment (UID 1000)
-- Minimal base system
-
-## Upstream
-
-- **Cachix**: https://www.cachix.org/
-- **Documentation**: https://docs.cachix.org/

@@ -1,81 +1,78 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+# mongodb
+# =======
+# MongoDB Community Server - Document database
+# https://www.mongodb.com/
+#
+# Uses pre-built binary from MongoDB to avoid 90+ minute compile time.
+# MongoDB is compiled via scons (C++) which takes extremely long.
 
-
-# Chainguard SBOM packages for mongodb:
-# Packages available in nixpkgs:
-#   pkgs.cyrus_sasl  # cyrus-sasl (2.1.28-r45)
-#   pkgs.gdbm  # gdbm (1.26-r1)
-#   pkgs.glibc  # glibc (2.42-r4)
-#   pkgs.libgcc  # libgcc (15.2.0-r6)
-#   pkgs.libidn2  # libidn2 (2.3.8-r3)
-#   pkgs.libnghttp2  # libnghttp2-14 (1.68.0-r0)
-#   pkgs.libpsl  # libpsl (0.21.5-r6)
-#   pkgs.libunistring  # libunistring (1.4.1-r1)
-#   pkgs.libverto  # libverto (0.3.2-r6)
-#   pkgs.libxcrypt  # libxcrypt (4.5.2-r0)
-#   pkgs.vi-mongo  # mongo-8.0 (8.0.12-r1)
-#   pkgs.ncurses  # ncurses (6.5_p20251025-r1)
-#   pkgs.nghttp3  # nghttp3 (1.13.1-r0)
-#   pkgs.procps  # procps (4.0.5-r42)
-#   pkgs.readline  # readline (8.3-r1)
-#   pkgs.zlib  # zlib (1.3.1-r51)
-# Packages NOT in nixpkgs:
-#   heimdal-libs (7.8.0-r42)
-#   keyutils-libs (1.6.3-r37)
-#   krb5-conf (1.0-r7)
-#   krb5-libs (1.22.1-r1)
-#   ld-linux (2.42-r4)
-#   libbrotlicommon1 (1.2.0-r1)
-#   libbrotlidec1 (1.2.0-r1)
-#   libcom_err (1.47.3-r1)
-#   libcrypt1 (2.42-r4)
-#   libcrypto3 (3.6.0-r4)
-#   libcurl-openssl4 (8.17.0-r0)
-#   libldap-2.6 (2.6.10-r7)
-#   libproc-2-0 (4.0.5-r42)
-#   libssl3 (3.6.0-r4)
-#   libstdc++ (15.2.0-r6)
-#   mongod-8.0 (8.0.12-r1)
-#   ncurses-terminfo-base (6.5_p20251025-r1)
-#   sqlite-libs (3.51.1-r0)
+{ nix2container, pkgs, lib, base, nonRoot, ... }:
 
 let
-  mongoPackages = with pkgs; [
-    mongodb
-    bash
-    coreutils
-  ];
+  version = "8.0.16";
+
+  # Download MongoDB Community Server binary
+  # Using Ubuntu 22.04 build which works well with glibc
+  mongodbBin = pkgs.fetchurl {
+    url = "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2204-${version}.tgz";
+    hash = "sha256-XLE25XkwaDntbp2ZFHy/b4tJBxmMyrGi+Ch70S+pXNg=";
+  };
 
   userEnv = nonRoot.mkDefaultUserEnv pkgs [];
 
 in
 nix2container.buildImage {
   name = "mongodb";
-  tag = "latest";
+  tag = "v${version}";
 
-  copyToRoot = [
-    (buildEnv {
-      name = "mongodb-root";
-      paths = base.basePackages ++ mongoPackages ++ [ userEnv ];
-    })
-  ];
+  copyToRoot = pkgs.buildEnv {
+    name = "mongodb-root";
+    paths = base.basePackages ++ [
+      # Runtime dependencies
+      pkgs.bash
+      pkgs.coreutils
+      pkgs.openssl
+      pkgs.curl
+      pkgs.cacert
+
+      userEnv
+
+      # Install MongoDB binary
+      (pkgs.runCommand "mongodb-install" {} ''
+        mkdir -p $out/opt/mongodb $out/bin $out/data/db $out/tmp
+
+        # Extract MongoDB
+        tar -xzf ${mongodbBin} --strip-components=1 -C $out/opt/mongodb
+
+        # Create symlinks
+        ln -sf $out/opt/mongodb/bin/mongod $out/bin/mongod
+        ln -sf $out/opt/mongodb/bin/mongos $out/bin/mongos
+
+        # Create data directory
+        chmod 777 $out/data/db
+      '')
+    ];
+    pathsToLink = [ "/bin" "/etc" "/lib" "/share" "/opt" "/data" "/tmp" ];
+  };
 
   config = nonRoot.defaultConfig // {
+    Entrypoint = [ "/bin/mongod" ];
+    Cmd = [ "--bind_ip_all" ];
+    WorkingDir = "/data/db";
     Env = base.defaultEnv ++ nonRoot.userEnv ++ [
-      "PATH=${lib.makeBinPath mongoPackages}"
+      "PATH=/opt/mongodb/bin:/bin"
+      "MONGO_HOME=/opt/mongodb"
     ];
     ExposedPorts = {
       "27017/tcp" = {};
     };
     Labels = base.defaultLabels // {
-      "org.opencontainers.image.description" = "MongoDB document database";
-      "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
-      "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
-      "org.opencontainers.image.vendor" = "nix-containers";
-      "org.opencontainers.image.version" = pkgs.mongodb.version;
-      "io.nix-containers.image.upstream" = "https://www.mongodb.com/";
+      "org.opencontainers.image.title" = "MongoDB";
+      "org.opencontainers.image.description" = "MongoDB document database (binary download)";
+      "org.opencontainers.image.version" = version;
+      "org.opencontainers.image.url" = "https://www.mongodb.com/";
+      "io.nix-containers.binary-download" = "true";
       "io.nix-containers.image.category" = "database";
-      "io.nix-containers.image.aliases" = "mongodb,mongo,nosql";
     };
   };
 }

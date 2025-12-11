@@ -6,6 +6,28 @@
 oldver = "old_versions.json"
 newver = "new_versions.json"
 
+# ============================================
+# Infrastructure & Orchestration
+# ============================================
+
+[act]
+source = "github"
+github = "nektos/act"
+use_latest_release = true
+prefix = "v"
+
+[alertmanager]
+source = "github"
+github = "prometheus/alertmanager"
+use_latest_release = true
+prefix = "v"
+
+[alloy]
+source = "github"
+github = "grafana/alloy"
+use_latest_release = true
+prefix = "v"
+
 [apache-nifi]
 source = "github"
 github = "apache/nifi"
@@ -13,6 +35,34 @@ use_max_tag = true
 prefix = "rel/nifi-"
 include_regex = "^rel/nifi-\\d+\\.\\d+\\.\\d+$"
 sort_version_key = "parse_version"
+
+[argocd]
+source = "github"
+github = "argoproj/argo-cd"
+use_latest_release = true
+prefix = "v"
+
+[argo-rollouts]
+source = "github"
+github = "argoproj/argo-rollouts"
+use_latest_release = true
+prefix = "v"
+
+[argo-workflows]
+source = "github"
+github = "argoproj/argo-workflows"
+use_latest_release = true
+prefix = "v"
+
+[atlantis]
+source = "github"
+github = "runatlantis/atlantis"
+use_latest_release = true
+prefix = "v"
+
+# ============================================
+# Kubernetes Components
+# ============================================
 
 [cert-manager]
 source = "github"
@@ -38,11 +88,100 @@ github = "jimmidyson/configmap-reload"
 use_latest_release = true
 prefix = "v"
 
+[consul]
+source = "github"
+github = "hashicorp/consul"
+use_latest_release = true
+prefix = "v"
+
+[contour]
+source = "github"
+github = "projectcontour/contour"
+use_latest_release = true
+prefix = "v"
+
+[coredns]
+source = "github"
+github = "coredns/coredns"
+use_latest_release = true
+prefix = "v"
+
+[crossplane]
+source = "github"
+github = "crossplane/crossplane"
+use_latest_release = true
+prefix = "v"
+
+[dragonfly-operator]
+source = "github"
+github = "dragonflydb/dragonfly-operator"
+use_latest_release = true
+prefix = "v"
+
+[envoy]
+source = "github"
+github = "envoyproxy/envoy"
+use_latest_release = true
+prefix = "v"
+
+[etcd]
+source = "github"
+github = "etcd-io/etcd"
+use_latest_release = true
+prefix = "v"
+
+[external-dns]
+source = "github"
+github = "kubernetes-sigs/external-dns"
+use_latest_release = true
+prefix = "v"
+
+[external-secrets]
+source = "github"
+github = "external-secrets/external-secrets"
+use_latest_release = true
+prefix = "v"
+
+[flux]
+source = "github"
+github = "fluxcd/flux2"
+use_latest_release = true
+prefix = "v"
+
+[gatekeeper]
+source = "github"
+github = "open-policy-agent/gatekeeper"
+use_latest_release = true
+prefix = "v"
+
+[haproxy]
+source = "github"
+github = "haproxy/haproxy"
+use_latest_release = true
+prefix = "v"
+
+[helm]
+source = "github"
+github = "helm/helm"
+use_latest_release = true
+prefix = "v"
+
 [hubble-ui]
 source = "github"
 github = "cilium/hubble-ui"
 use_latest_release = true
 prefix = "v"
+
+[ingress-nginx]
+source = "github"
+github = "kubernetes/ingress-nginx"
+use_latest_release = true
+prefix = "controller-v"
+
+[istio]
+source = "github"
+github = "istio/istio"
+use_latest_release = true
 
 [keda]
 source = "github"
@@ -53,5 +192,689 @@ prefix = "v"
 [kube-rbac-proxy]
 source = "github"
 github = "brancz/kube-rbac-proxy"
+use_latest_release = true
+prefix = "v"
+
+[kube-state-metrics]
+source = "github"
+github = "kubernetes/kube-state-metrics"
+use_latest_release = true
+prefix = "v"
+
+[kubectl]
+source = "github"
+github = "kubernetes/kubernetes"
+use_latest_release = true
+prefix = "v"
+
+[kubernetes-reflector]
+source = "github"
+github = "emberstack/kubernetes-reflector"
+use_latest_release = true
+prefix = "v"
+
+[kustomize-controller]
+source = "github"
+github = "fluxcd/kustomize-controller"
+use_latest_release = true
+prefix = "v"
+
+[kyverno]
+source = "github"
+github = "kyverno/kyverno"
+use_latest_release = true
+prefix = "v"
+
+[linkerd]
+source = "github"
+github = "linkerd/linkerd2"
+use_latest_release = true
+prefix = "stable-"
+
+[loki]
+source = "github"
+github = "grafana/loki"
+use_latest_release = true
+prefix = "v"
+
+[metrics-server]
+source = "github"
+github = "kubernetes-sigs/metrics-server"
+use_latest_release = true
+prefix = "v"
+
+[mimir]
+source = "github"
+github = "grafana/mimir"
+use_latest_release = true
+prefix = "mimir-"
+
+[nginx]
+source = "github"
+github = "nginx/nginx"
+use_latest_release = true
+prefix = "release-"
+
+[oauth2-proxy]
+source = "github"
+github = "oauth2-proxy/oauth2-proxy"
+use_latest_release = true
+prefix = "v"
+
+[prometheus]
+source = "github"
+github = "prometheus/prometheus"
+use_latest_release = true
+prefix = "v"
+
+[prometheus-operator]
+source = "github"
+github = "prometheus-operator/prometheus-operator"
+use_latest_release = true
+prefix = "v"
+
+[reloader]
+source = "github"
+github = "stakater/Reloader"
+use_latest_release = true
+prefix = "v"
+
+[tempo]
+source = "github"
+github = "grafana/tempo"
+use_latest_release = true
+prefix = "v"
+
+[thanos]
+source = "github"
+github = "thanos-io/thanos"
+use_latest_release = true
+prefix = "v"
+
+[traefik]
+source = "github"
+github = "traefik/traefik"
+use_latest_release = true
+prefix = "v"
+
+[trust-manager]
+source = "github"
+github = "cert-manager/trust-manager"
+use_latest_release = true
+prefix = "v"
+
+[vault]
+source = "github"
+github = "hashicorp/vault"
+use_latest_release = true
+prefix = "v"
+
+[vector]
+source = "github"
+github = "vectordotdev/vector"
+use_latest_release = true
+prefix = "v"
+
+[velero]
+source = "github"
+github = "vmware-tanzu/velero"
+use_latest_release = true
+prefix = "v"
+
+# ============================================
+# Databases & Storage
+# ============================================
+
+[ceph]
+source = "github"
+github = "ceph/ceph"
+use_latest_release = true
+prefix = "v"
+
+[elasticsearch]
+source = "github"
+github = "elastic/elasticsearch"
+use_latest_release = true
+prefix = "v"
+
+[mariadb]
+source = "github"
+github = "MariaDB/server"
+use_latest_release = true
+prefix = "mariadb-"
+
+[meilisearch]
+source = "github"
+github = "meilisearch/meilisearch"
+use_latest_release = true
+prefix = "v"
+
+[memcached]
+source = "github"
+github = "memcached/memcached"
+use_latest_release = true
+
+[minio]
+source = "github"
+github = "minio/minio"
+use_latest_release = true
+prefix = "RELEASE."
+
+[mongodb]
+source = "github"
+github = "mongodb/mongo"
+use_latest_release = true
+prefix = "r"
+
+[mysql]
+source = "github"
+github = "mysql/mysql-server"
+use_latest_release = true
+prefix = "mysql-"
+
+[nats]
+source = "github"
+github = "nats-io/nats-server"
+use_latest_release = true
+prefix = "v"
+
+[postgres]
+source = "github"
+github = "postgres/postgres"
+use_latest_release = true
+prefix = "REL_"
+
+[qdrant]
+source = "github"
+github = "qdrant/qdrant"
+use_latest_release = true
+prefix = "v"
+
+[rabbitmq]
+source = "github"
+github = "rabbitmq/rabbitmq-server"
+use_latest_release = true
+prefix = "v"
+
+[redis]
+source = "github"
+github = "redis/redis"
+use_latest_release = true
+
+[seaweedfs]
+source = "github"
+github = "seaweedfs/seaweedfs"
+use_latest_release = true
+
+[valkey]
+source = "github"
+github = "valkey-io/valkey"
+use_latest_release = true
+
+[weaviate]
+source = "github"
+github = "weaviate/weaviate"
+use_latest_release = true
+prefix = "v"
+
+[zookeeper]
+source = "github"
+github = "apache/zookeeper"
+use_latest_release = true
+prefix = "release-"
+
+# ============================================
+# Security Tools
+# ============================================
+
+[cosign]
+source = "github"
+github = "sigstore/cosign"
+use_latest_release = true
+prefix = "v"
+
+[dex]
+source = "github"
+github = "dexidp/dex"
+use_latest_release = true
+prefix = "v"
+
+[falcoctl]
+source = "github"
+github = "falcosecurity/falcoctl"
+use_latest_release = true
+prefix = "v"
+
+[fulcio]
+source = "github"
+github = "sigstore/fulcio"
+use_latest_release = true
+prefix = "v"
+
+[grype]
+source = "github"
+github = "anchore/grype"
+use_latest_release = true
+prefix = "v"
+
+[keycloak]
+source = "github"
+github = "keycloak/keycloak"
+use_latest_release = true
+
+[kube-bench]
+source = "github"
+github = "aquasecurity/kube-bench"
+use_latest_release = true
+prefix = "v"
+
+[kubesec]
+source = "github"
+github = "controlplaneio/kubesec"
+use_latest_release = true
+prefix = "v"
+
+[rekor-server]
+source = "github"
+github = "sigstore/rekor"
+use_latest_release = true
+prefix = "v"
+
+[sops]
+source = "github"
+github = "getsops/sops"
+use_latest_release = true
+prefix = "v"
+
+[step-ca]
+source = "github"
+github = "smallstep/certificates"
+use_latest_release = true
+prefix = "v"
+
+[step-cli]
+source = "github"
+github = "smallstep/cli"
+use_latest_release = true
+prefix = "v"
+
+[syft]
+source = "github"
+github = "anchore/syft"
+use_latest_release = true
+prefix = "v"
+
+[trivy]
+source = "github"
+github = "aquasecurity/trivy"
+use_latest_release = true
+prefix = "v"
+
+# ============================================
+# Development Tools & Runtimes
+# ============================================
+
+[actionlint]
+source = "github"
+github = "rhysd/actionlint"
+use_latest_release = true
+prefix = "v"
+
+[age]
+source = "github"
+github = "FiloSottile/age"
+use_latest_release = true
+prefix = "v"
+
+[bun]
+source = "github"
+github = "oven-sh/bun"
+use_latest_release = true
+prefix = "bun-v"
+
+[deno]
+source = "github"
+github = "denoland/deno"
+use_latest_release = true
+prefix = "v"
+
+[earthly]
+source = "github"
+github = "earthly/earthly"
+use_latest_release = true
+prefix = "v"
+
+[git]
+source = "github"
+github = "git/git"
+use_latest_release = true
+prefix = "v"
+
+[go]
+source = "github"
+github = "golang/go"
+use_latest_release = true
+prefix = "go"
+
+[gradle]
+source = "github"
+github = "gradle/gradle"
+use_latest_release = true
+prefix = "v"
+
+[hadolint]
+source = "github"
+github = "hadolint/hadolint"
+use_latest_release = true
+prefix = "v"
+
+[hugo]
+source = "github"
+github = "gohugoio/hugo"
+use_latest_release = true
+prefix = "v"
+
+[k6]
+source = "github"
+github = "grafana/k6"
+use_latest_release = true
+prefix = "v"
+
+[kaniko]
+source = "github"
+github = "GoogleContainerTools/kaniko"
+use_latest_release = true
+prefix = "v"
+
+[ko]
+source = "github"
+github = "ko-build/ko"
+use_latest_release = true
+prefix = "v"
+
+[maven]
+source = "github"
+github = "apache/maven"
+use_latest_release = true
+prefix = "maven-"
+
+[mlflow]
+source = "github"
+github = "mlflow/mlflow"
+use_latest_release = true
+prefix = "v"
+
+[node]
+source = "github"
+github = "nodejs/node"
+use_latest_release = true
+prefix = "v"
+
+[opentofu]
+source = "github"
+github = "opentofu/opentofu"
+use_latest_release = true
+prefix = "v"
+
+[php]
+source = "github"
+github = "php/php-src"
+use_latest_release = true
+prefix = "php-"
+
+[python]
+source = "github"
+github = "python/cpython"
+use_latest_release = true
+prefix = "v"
+
+[renovate]
+source = "github"
+github = "renovatebot/renovate"
+use_latest_release = true
+
+[restic]
+source = "github"
+github = "restic/restic"
+use_latest_release = true
+prefix = "v"
+
+[ruby]
+source = "github"
+github = "ruby/ruby"
+use_latest_release = true
+prefix = "v"
+
+[rust]
+source = "github"
+github = "rust-lang/rust"
+use_latest_release = true
+
+[semgrep]
+source = "github"
+github = "semgrep/semgrep"
+use_latest_release = true
+prefix = "v"
+
+[shellcheck]
+source = "github"
+github = "koalaman/shellcheck"
+use_latest_release = true
+prefix = "v"
+
+[terraform]
+source = "github"
+github = "hashicorp/terraform"
+use_latest_release = true
+prefix = "v"
+
+[zig]
+source = "github"
+github = "ziglang/zig"
+use_latest_release = true
+
+# ============================================
+# Container & Image Tools
+# ============================================
+
+[apko]
+source = "github"
+github = "chainguard-dev/apko"
+use_latest_release = true
+prefix = "v"
+
+[crane]
+source = "github"
+github = "google/go-containerregistry"
+use_latest_release = true
+prefix = "v"
+
+[dive]
+source = "github"
+github = "wagoodman/dive"
+use_latest_release = true
+prefix = "v"
+
+[skopeo]
+source = "github"
+github = "containers/skopeo"
+use_latest_release = true
+prefix = "v"
+
+# ============================================
+# Observability & Monitoring
+# ============================================
+
+[backstage]
+source = "github"
+github = "backstage/backstage"
+use_latest_release = true
+prefix = "v"
+
+[cadvisor]
+source = "github"
+github = "google/cadvisor"
+use_latest_release = true
+prefix = "v"
+
+[fluent-bit]
+source = "github"
+github = "fluent/fluent-bit"
+use_latest_release = true
+prefix = "v"
+
+[fluentd]
+source = "github"
+github = "fluent/fluentd"
+use_latest_release = true
+prefix = "v"
+
+[gatus]
+source = "github"
+github = "TwiN/gatus"
+use_latest_release = true
+prefix = "v"
+
+[grafana]
+source = "github"
+github = "grafana/grafana"
+use_latest_release = true
+prefix = "v"
+
+[opentelemetry-collector]
+source = "github"
+github = "open-telemetry/opentelemetry-collector"
+use_latest_release = true
+prefix = "v"
+
+[opentelemetry-collector-contrib]
+source = "github"
+github = "open-telemetry/opentelemetry-collector-contrib"
+use_latest_release = true
+prefix = "v"
+
+# ============================================
+# Web Servers & Proxies
+# ============================================
+
+[caddy]
+source = "github"
+github = "caddyserver/caddy"
+use_latest_release = true
+prefix = "v"
+
+[chisel]
+source = "github"
+github = "jpillora/chisel"
+use_latest_release = true
+prefix = "v"
+
+[cloudflared]
+source = "github"
+github = "cloudflare/cloudflared"
+use_latest_release = true
+
+# ============================================
+# CI/CD & GitOps
+# ============================================
+
+[gitea]
+source = "github"
+github = "go-gitea/gitea"
+use_latest_release = true
+prefix = "v"
+
+[gitlab-runner]
+source = "gitlab"
+gitlab = "gitlab-org/gitlab-runner"
+host = "gitlab.com"
+use_latest_release = true
+prefix = "v"
+
+[harbor-core]
+source = "github"
+github = "goharbor/harbor"
+use_latest_release = true
+prefix = "v"
+
+[tektoncd-cli]
+source = "github"
+github = "tektoncd/cli"
+use_latest_release = true
+prefix = "v"
+
+# ============================================
+# Misc Tools
+# ============================================
+
+[attic]
+source = "github"
+github = "zhaofengli/attic"
+use_latest_release = true
+prefix = "v"
+
+[bats]
+source = "github"
+github = "bats-core/bats-core"
+use_latest_release = true
+prefix = "v"
+
+[boundary]
+source = "github"
+github = "hashicorp/boundary"
+use_latest_release = true
+prefix = "v"
+
+[curl]
+source = "github"
+github = "curl/curl"
+use_latest_release = true
+prefix = "curl-"
+
+[ffmpeg]
+source = "github"
+github = "FFmpeg/FFmpeg"
+use_latest_release = true
+prefix = "n"
+
+[grpc-health-probe]
+source = "github"
+github = "grpc-ecosystem/grpc-health-probe"
+use_latest_release = true
+prefix = "v"
+
+[litestream]
+source = "github"
+github = "benbjohnson/litestream"
+use_latest_release = true
+prefix = "v"
+
+[mc]
+source = "github"
+github = "minio/mc"
+use_latest_release = true
+prefix = "RELEASE."
+
+[rclone]
+source = "github"
+github = "rclone/rclone"
+use_latest_release = true
+prefix = "v"
+
+[syncthing]
+source = "github"
+github = "syncthing/syncthing"
+use_latest_release = true
+prefix = "v"
+
+[tailscale]
+source = "github"
+github = "tailscale/tailscale"
+use_latest_release = true
+prefix = "v"
+
+[yq]
+source = "github"
+github = "mikefarah/yq"
 use_latest_release = true
 prefix = "v"

@@ -1,47 +1,20 @@
-# Bash
+# bash
 
-A minimal container image with GNU Bash shell and core utilities.
+Container image with only Bash and libc. Suitable for running any small scripts or binaries that need Bash instead of the BusyBox shell
 
-## Description
+## Build Information
 
-This image provides a secure, minimal environment with GNU Bash and essential command-line utilities. Built on a non-root user setup (UID 1000) for enhanced security.
+| Metric | Value |
+|--------|-------|
+| Build Time | 2s |
+| Build Status | success |
 
-## Quick Start
-
-### Pull and Run
-
-```bash
-# Pull the image
-docker pull ghcr.io/nix-containers/images/bash:latest
-
-# Run interactively
-docker run -it ghcr.io/nix-containers/images/bash:latest
-
-# Run a command
-docker run --rm ghcr.io/nix-containers/images/bash:latest echo "Hello World"
-```
-
-### Build Locally with Nix
+## Usage
 
 ```bash
 # Build the image
 nix build .#bash
 
-# Load to Docker
-nix run .#bash.copyTo -- docker-daemon:bash:latest
-
-# Run tests
-nix run .#bash-test
+# Load into Docker
+nix build .#load-bash-to-docker && ./result/bin/load-bash-to-docker
 ```
-
-## What's Included
-
-- GNU Bash shell
-- Core utilities (coreutils)
-- Non-root user environment (UID 1000)
-- Minimal base system
-
-## Upstream
-
-- **Bash**: https://www.gnu.org/software/bash/
-- **Coreutils**: https://www.gnu.org/software/coreutils/
