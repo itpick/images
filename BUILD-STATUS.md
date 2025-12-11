@@ -1,6 +1,6 @@
 # Nix Container Images Build Status
 
-Total images: 340
+Total images: 374
 
 All images in this repository build successfully using `nix build .#<image-name>`.
 
@@ -42,7 +42,10 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] cachix-flakes
 - [x] caddy
 - [x] cadvisor
+- [x] calico-apiserver
 - [x] calico-calicoctl
+- [x] calico-kube-controllers
+- [x] calico-typha
 - [x] ceph
 - [x] cephcsi
 - [x] cert-manager-acmesolver
@@ -74,6 +77,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] csi-resizer
 - [x] csi-snapshotter
 - [x] curl
+- [x] dbgate
 - [x] dduportal-bats
 - [x] deno
 - [x] deck
@@ -110,6 +114,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] git
 - [x] git-sync
 - [x] google-cloud-sdk
+- [x] gptscript
 - [x] gitaly
 - [x] gitea
 - [x] gitlab-base
@@ -137,6 +142,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] grype
 - [x] hadolint
 - [x] haproxy
+- [x] heartbeat
 - [x] harbor-core
 - [x] harbor-exporter
 - [x] harbor-jobservice
@@ -175,6 +181,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] kratos
 - [x] kuma-cp
 - [x] kuma-dp
+- [x] kubo
 - [x] kumactl
 - [x] keycloak-proxy
 - [x] kiali
@@ -203,6 +210,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] kyvernopre
 - [x] linkerd
 - [x] litestream
+- [x] logstash
 - [x] loki
 - [x] loki-canary
 - [x] loki-helm-test
@@ -217,6 +225,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] meilisearch
 - [x] memcached
 - [x] memcached-exporter
+- [x] metricbeat
 - [x] metrics-server
 - [x] mimir
 - [x] minio
@@ -249,6 +258,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] node-exporter
 - [x] node-problem-detector
 - [x] ntpd-rs
+- [x] nvidia-container-toolkit
 - [x] node-local-dns
 - [x] notification-controller
 - [x] oauth2-proxy
@@ -257,7 +267,10 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] openbao
 - [x] openfga
 - [x] openldap
+- [x] openresty
+- [x] opensearch
 - [x] opentofu
+- [x] pgadmin4
 - [x] pgpool
 - [x] php
 - [x] pocket-id
@@ -269,6 +282,9 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] prometheus-adapter
 - [x] prometheus-blackbox-exporter
 - [x] prometheus-config-reloader
+- [x] prometheus-elasticsearch-exporter
+- [x] prometheus-mysqld-exporter
+- [x] prometheus-postgres-exporter
 - [x] prometheus-mongodb-exporter
 - [x] prometheus-operator
 - [x] prometheus-pgbouncer-exporter
@@ -278,6 +294,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] prometheus-snmp-exporter
 - [x] prometheus-statsd-exporter
 - [x] promtail
+- [x] pypiserver
 - [x] python
 - [x] python-fips
 - [x] rclone
@@ -291,6 +308,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] rollout-operator
 - [x] rook-ceph
 - [x] rook-ceph-operator
+- [x] rsyslog
 - [x] ruby
 - [x] rust
 - [x] rust-build-env
@@ -301,11 +319,13 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] snapshot-controller
 - [x] snapshot-validation-webhook
 - [x] snmp-exporter
+- [x] sonar-scanner-cli
 - [x] sonarqube
 - [x] sonobuoy
 - [x] sops
 - [x] source-controller
 - [x] spicedb
+- [x] spiffe-helper
 - [x] spire-agent
 - [x] spire-server
 - [x] spark
@@ -313,10 +333,13 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] spegel
 - [x] static
 - [x] step-ca
+- [x] strongswan
+- [x] stunnel
 - [x] step-cli
 - [x] syft
 - [x] syncthing
 - [x] tektoncd-cli
+- [x] temporal-ui-server
 - [x] tetragon
 - [x] tempo
 - [x] timoni
