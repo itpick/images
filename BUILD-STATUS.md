@@ -1,6 +1,6 @@
 # Nix Container Images Build Status
 
-Total images: 374
+Total images: 394
 
 All images in this repository build successfully using `nix build .#<image-name>`.
 
@@ -21,6 +21,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] argo-rollouts
 - [x] argo-workflows
 - [x] argocd
+- [x] authentik
 - [x] aws-cli
 - [x] az
 - [x] argocd-cli
@@ -87,7 +88,9 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] dex
 - [x] distroless
 - [x] dive
+- [x] dnsdist
 - [x] docker-compose
+- [x] druid
 - [x] dotnet
 - [x] dragonfly-operator
 - [x] earthly
@@ -109,7 +112,9 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] flux
 - [x] flux-cli
 - [x] flux-operator
+- [x] frr
 - [x] gatekeeper
+- [x] ghidra
 - [x] geoipupdate
 - [x] git
 - [x] git-sync
@@ -164,7 +169,9 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] istio-install-cni
 - [x] istio-pilot
 - [x] istio-proxyv2
+- [x] it-tools
 - [x] jdk
+- [x] jetty
 - [x] jobset
 - [x] jre
 - [x] k8s-dns-node-cache
@@ -176,6 +183,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] keda
 - [x] keda-admission-webhooks
 - [x] keda-metrics-apiserver
+- [x] kepler
 - [x] keycloak
 - [x] kor
 - [x] kratos
@@ -202,6 +210,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] kubesec
 - [x] kustomize-controller
 - [x] kyverno
+- [x] laravel
 - [x] kyverno-background-controller
 - [x] kyverno-cleanup-controller
 - [x] kyverno-cli
@@ -228,6 +237,8 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] metricbeat
 - [x] metrics-server
 - [x] mimir
+- [x] nemo
+- [x] nextflow
 - [x] minio
 - [x] minio-client
 - [x] minio-operator
@@ -265,11 +276,16 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] omnictl
 - [x] opa
 - [x] openbao
+- [x] open-webui
+- [x] opencv
 - [x] openfga
 - [x] openldap
 - [x] openresty
 - [x] opensearch
 - [x] opentofu
+- [x] orthanc
+- [x] pdns-recursor
+- [x] percona-server
 - [x] pgadmin4
 - [x] pgpool
 - [x] php
@@ -294,7 +310,9 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] prometheus-snmp-exporter
 - [x] prometheus-statsd-exporter
 - [x] promtail
+- [x] proxysql
 - [x] pypiserver
+- [x] pypy
 - [x] python
 - [x] python-fips
 - [x] rclone
@@ -331,6 +349,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] spark
 - [x] spark-operator
 - [x] spegel
+- [x] squid
 - [x] static
 - [x] step-ca
 - [x] strongswan
@@ -362,6 +381,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] velero-plugin-aws
 - [x] velero-plugin-azure
 - [x] velero-plugin-csi
+- [x] vitess
 - [x] wait-for-it
 - [x] wazero
 - [x] windows-exporter
