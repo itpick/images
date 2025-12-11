@@ -15,10 +15,11 @@ let
       owner = "kubernetes-sigs";
       repo = "prometheus-adapter";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-GNAfrDWVyl0SiIJ+cHYxaLGAwvsHpwhVp4ieGGleXWk=";
     };
 
-    vendorHash = null;  # TODO: Update after first build
+    proxyVendor = true;
+    vendorHash = "sha256-k6nWWe6anWVD40pv/mF6CNqWgJDhD1ttXOuWk3pAUto=";
 
     env.CGO_ENABLED = 0;
 

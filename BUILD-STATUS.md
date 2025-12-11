@@ -809,6 +809,156 @@ limactl stop default
 limactl start default
 ```
 
+## Exported Images Inventory
+
+**109 images** exported to `~/Downloads/nix-images/` (13GB compressed)
+
+Images are exported from nix store to docker-archive format using skopeo with nix2container support, then compressed with gzip (~70% size reduction).
+
+### Infrastructure Images
+- alloy:1.11.3
+- cert-manager-acmesolver, cert-manager-cainjector, cert-manager-controller, cert-manager-startupapicheck, cert-manager-webhook (v1.16.2)
+- cloudnative-pg:1.27.1
+- crossplane
+- dragonfly-operator:1.1.11
+- external-dns:0.16.1
+- keda:2.18.1, keda-admission-webhooks, keda-metrics-apiserver
+- prometheus-adapter:0.12.0
+- reloader:1.2.1
+- spegel:0.0.27
+
+### Observability Images
+- alertmanager:0.29.0
+- blackbox-exporter
+- configmap-reload
+- grafana
+- kube-state-metrics
+- loki
+- node-exporter
+- prometheus
+- prometheus-config-reloader
+- prometheus-pushgateway
+- tempo
+
+### Security Images
+- cosign
+- external-secrets:0.10.0
+- falcoctl
+- gatekeeper
+- grype
+- kyverno:1.16.1, kyverno-background-controller, kyverno-cleanup-controller, kyverno-reports-controller, kyvernopre (all 1.16.1)
+- kubesec
+- semgrep
+- sops
+- syft
+- trivy
+- vault:1.20.4
+
+### GitOps Images
+- argocd:3.1.9, argocd-cli
+- argo-rollouts, argo-workflows
+- flux, flux-cli
+- helm-controller, kustomize-controller, source-controller, notification-controller, image-automation-controller, image-reflector-controller
+
+### Service Mesh Images
+- istio-pilot
+
+### Backup Images
+- velero:1.17.1
+
+### ML Platform Images
+- kubeflow-trainer:2.1.0
+- mlflow:2.21.3
+- spark-operator:2.4.0
+
+### Database Images
+- consul
+- etcd
+- minio
+- postgres
+- redis
+
+### Language Runtimes
+- bun, deno, go, node, python, rust
+
+### Utility Images
+- busybox, caddy, crane, curl, dex, dive, git, haproxy, helm, ko, kubectl:1.34.2, maven, nginx
+
+## Helm Chart Image Coverage
+
+The following table shows which images from `charts.nix` are available in the exported inventory:
+
+### Infrastructure Charts (15)
+
+| Chart | Required Images | Status |
+|-------|-----------------|--------|
+| alloy | alloy | ✅ Exported |
+| cert-manager | cert-manager-controller, cert-manager-cainjector, cert-manager-webhook, cert-manager-acmesolver, cert-manager-startupapicheck | ✅ Exported |
+| cloudnative-pg | cloudnative-pg | ✅ Exported |
+| crossplane | crossplane | ⚠️ Exported (CLI mode issue) |
+| dragonfly-operator | dragonfly-operator | ✅ Exported |
+| external-dns | external-dns | ✅ Exported |
+| keda | keda, keda-admission-webhooks, keda-metrics-apiserver | ✅ Exported |
+| node-local-dns | k8s-dns-node-cache | ❌ Not exported |
+| prometheus-adapter | prometheus-adapter | ✅ Exported |
+| reflector | kubernetes-reflector | ⚠️ Build issue (missing deps.nix) |
+| reloader | reloader | ✅ Exported |
+| rook-ceph | rook-ceph, rook-ceph-operator | ❌ Not implemented |
+| rook-ceph-cluster | ceph, cephcsi | ❌ Not exported |
+| snapshot-controller | snapshot-controller, snapshot-validation-webhook | ❌ Not exported |
+| spegel | spegel | ✅ Exported |
+
+### ML Platform Charts (4)
+
+| Chart | Required Images | Status |
+|-------|-----------------|--------|
+| spark-operator | spark-operator | ✅ Exported |
+| kubeflow-trainer | kubeflow-trainer | ✅ Exported |
+| apache-nifi | apache-nifi | ❌ Not exported |
+| mlflow | mlflow | ✅ Exported |
+
+### GitOps Charts (1)
+
+| Chart | Required Images | Status |
+|-------|-----------------|--------|
+| argocd | argocd, argocd-cli | ✅ Exported |
+
+### Security Charts (3)
+
+| Chart | Required Images | Status |
+|-------|-----------------|--------|
+| vault | vault, vault-csi-provider, vault-k8s | ⚠️ Partial (vault only) |
+| kyverno | kyverno, kyvernopre, kyverno-background-controller, kyverno-cleanup-controller, kyverno-reports-controller | ✅ Exported |
+| external-secrets | external-secrets | ✅ Exported |
+
+### Observability Charts (3)
+
+| Chart | Required Images | Status |
+|-------|-----------------|--------|
+| kube-prometheus-stack | prometheus, alertmanager, grafana, prometheus-operator, prometheus-config-reloader, kube-state-metrics, node-exporter | ⚠️ Partial (missing prometheus-operator) |
+| loki | loki, loki-canary | ✅ Exported |
+| tempo | tempo, tempo-query | ⚠️ Partial (missing tempo-query) |
+
+### Service Mesh Charts (2)
+
+| Chart | Required Images | Status |
+|-------|-----------------|--------|
+| istio-base | (no images) | ✅ N/A |
+| istiod | istio-pilot, istio-proxyv2 | ⚠️ Partial (missing istio-proxyv2) |
+
+### Backup Charts (1)
+
+| Chart | Required Images | Status |
+|-------|-----------------|--------|
+| velero | velero, velero-plugin-aws, velero-plugin-azure, velero-plugin-csi | ⚠️ Partial (velero only) |
+
+### Summary
+
+- **Fully covered**: 15 charts
+- **Partially covered**: 9 charts
+- **Not covered**: 5 charts
+- **Total**: 29 charts (excluding istio-base which requires no images)
+
 ## Notes
 
 - All images are built from nixpkgs packages using nix2container

@@ -15,7 +15,7 @@ let
       owner = "prometheus-operator";
       repo = "prometheus-operator";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash - vendor directory inconsistent
     };
 
     vendorHash = null;  # TODO: Update after first build

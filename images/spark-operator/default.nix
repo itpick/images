@@ -23,6 +23,12 @@ let
       "-X main.version=${version}"
     ];
 
+    subPackages = [ "cmd/operator" ];
+
+    postInstall = ''
+      mv $out/bin/operator $out/bin/spark-operator
+    '';
+
     doCheck = false;
 
     meta = with lib; {
