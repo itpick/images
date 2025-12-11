@@ -1,6 +1,6 @@
 # Nix Container Images Build Status
 
-Total images: 313
+Total images: 340
 
 All images in this repository build successfully using `nix build .#<image-name>`.
 
@@ -21,6 +21,8 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] argo-rollouts
 - [x] argo-workflows
 - [x] argocd
+- [x] aws-cli
+- [x] az
 - [x] argocd-cli
 - [x] argocd-extension-installer
 - [x] aspnet-runtime
@@ -33,6 +35,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] bitwarden-sdk-server
 - [x] blackbox-exporter
 - [x] boundary
+- [x] buck2
 - [x] bun
 - [x] busybox
 - [x] cachix
@@ -48,6 +51,8 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] cert-manager-startupapicheck
 - [x] cert-manager-webhook
 - [x] cfssl-self-sign
+- [x] chart-testing
+- [x] cloudprober
 - [x] cilium-agent
 - [x] cilium-cli
 - [x] cilium-operator
@@ -71,6 +76,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] curl
 - [x] dduportal-bats
 - [x] deno
+- [x] deck
 - [x] dfc
 - [x] devcontainer
 - [x] devenv
@@ -93,6 +99,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] external-dns
 - [x] external-secrets
 - [x] falcoctl
+- [x] flannel
 - [x] fluent-bit
 - [x] fluentd
 - [x] flux
@@ -101,6 +108,8 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] gatekeeper
 - [x] geoipupdate
 - [x] git
+- [x] git-sync
+- [x] google-cloud-sdk
 - [x] gitaly
 - [x] gitea
 - [x] gitlab-base
@@ -162,6 +171,11 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] keda-admission-webhooks
 - [x] keda-metrics-apiserver
 - [x] keycloak
+- [x] kor
+- [x] kratos
+- [x] kuma-cp
+- [x] kuma-dp
+- [x] kumactl
 - [x] keycloak-proxy
 - [x] kiali
 - [x] kiali-operator
@@ -193,11 +207,13 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] loki-canary
 - [x] loki-helm-test
 - [x] maddy
+- [x] malcontent
 - [x] mariadb
 - [x] mattermost
 - [x] mattermost-operator
 - [x] maven
 - [x] mc
+- [x] melange
 - [x] meilisearch
 - [x] memcached
 - [x] memcached-exporter
@@ -209,6 +225,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] minio-operator-sidecar
 - [x] mlflow
 - [x] mongodb
+- [x] multus-cni
 - [x] mysql
 - [x] nats
 - [x] netshoot
@@ -230,11 +247,14 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] nix-unstable
 - [x] node
 - [x] node-exporter
+- [x] node-problem-detector
+- [x] ntpd-rs
 - [x] node-local-dns
 - [x] notification-controller
 - [x] oauth2-proxy
 - [x] omnictl
 - [x] opa
+- [x] openbao
 - [x] openfga
 - [x] openldap
 - [x] opentofu
@@ -257,6 +277,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] prometheus-redis-exporter
 - [x] prometheus-snmp-exporter
 - [x] prometheus-statsd-exporter
+- [x] promtail
 - [x] python
 - [x] python-fips
 - [x] rclone
@@ -273,6 +294,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] ruby
 - [x] rust
 - [x] rust-build-env
+- [x] sbt
 - [x] seaweedfs
 - [x] semgrep
 - [x] shellcheck
@@ -281,9 +303,11 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] snmp-exporter
 - [x] sonarqube
 - [x] sonobuoy
-- [x] spicedb
 - [x] sops
 - [x] source-controller
+- [x] spicedb
+- [x] spire-agent
+- [x] spire-server
 - [x] spark
 - [x] spark-operator
 - [x] spegel
@@ -293,13 +317,16 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] syft
 - [x] syncthing
 - [x] tektoncd-cli
+- [x] tetragon
 - [x] tempo
+- [x] timoni
 - [x] tempo-query
 - [x] thanos
 - [x] traefik
 - [x] trainer-controller-manager
 - [x] trivy
 - [x] trivy-adapter
+- [x] trufflehog
 - [x] trust-manager
 - [x] twistlock-console
 - [x] twistlock-defender
@@ -316,6 +343,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] wazero
 - [x] windows-exporter
 - [x] wolfi
+- [x] xeol
 - [x] yq
 - [x] zig
 - [x] zookeeper
