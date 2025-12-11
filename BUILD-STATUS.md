@@ -1,6 +1,6 @@
 # Nix Container Images Build Status
 
-Total images: 294
+Total images: 313
 
 All images in this repository build successfully using `nix build .#<image-name>`.
 
@@ -39,6 +39,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] cachix-flakes
 - [x] caddy
 - [x] cadvisor
+- [x] calico-calicoctl
 - [x] ceph
 - [x] cephcsi
 - [x] cert-manager-acmesolver
@@ -70,6 +71,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] curl
 - [x] dduportal-bats
 - [x] deno
+- [x] dfc
 - [x] devcontainer
 - [x] devenv
 - [x] dex
@@ -152,6 +154,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] jre
 - [x] k8s-dns-node-cache
 - [x] k8s-sidecar
+- [x] karma
 - [x] katib-controller
 - [x] katib-db-manager
 - [x] katib-ui
@@ -169,6 +172,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] kube-state-metrics
 - [x] kube-webhook-certgen
 - [x] kubectl
+- [x] kuma-cp
 - [x] kubeflow-notebooks
 - [x] kubeflow-pipelines
 - [x] kubeflow-trainer
@@ -208,6 +212,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] mysql
 - [x] nats
 - [x] netshoot
+- [x] nfpm
 - [x] neuvector-controller
 - [x] neuvector-enforcer
 - [x] neuvector-manager
@@ -228,6 +233,9 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] node-local-dns
 - [x] notification-controller
 - [x] oauth2-proxy
+- [x] omnictl
+- [x] opa
+- [x] openfga
 - [x] openldap
 - [x] opentofu
 - [x] pgpool
@@ -239,15 +247,23 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] postgres-exporter
 - [x] prometheus
 - [x] prometheus-adapter
+- [x] prometheus-blackbox-exporter
 - [x] prometheus-config-reloader
+- [x] prometheus-mongodb-exporter
 - [x] prometheus-operator
+- [x] prometheus-pgbouncer-exporter
+- [x] prometheus-process-exporter
 - [x] prometheus-pushgateway
+- [x] prometheus-redis-exporter
+- [x] prometheus-snmp-exporter
+- [x] prometheus-statsd-exporter
 - [x] python
 - [x] python-fips
 - [x] rclone
 - [x] redis
 - [x] redis-exporter
 - [x] reflector
+- [x] rekor-cli
 - [x] reloader
 - [x] renovate
 - [x] restic
@@ -264,6 +280,8 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] snapshot-validation-webhook
 - [x] snmp-exporter
 - [x] sonarqube
+- [x] sonobuoy
+- [x] spicedb
 - [x] sops
 - [x] source-controller
 - [x] spark
@@ -295,6 +313,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] velero-plugin-azure
 - [x] velero-plugin-csi
 - [x] wait-for-it
+- [x] wazero
 - [x] windows-exporter
 - [x] wolfi
 - [x] yq
