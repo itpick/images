@@ -1,33 +1,106 @@
 # harbor-portal
 # =============
-# Placeholder for harbor-portal container image.
-# This image is referenced in Helm charts but not yet implemented.
-#
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+# Harbor Portal - Web UI for Harbor registry
+# https://github.com/goharbor/harbor
 
-{ ... }:
+{ mkImage, nix2container, pkgs, lib, ... }:
 
+# Harbor Portal is an nginx-based web frontend serving the Harbor UI
 
-# Chainguard SBOM packages for harbor-portal:
-# Packages available in nixpkgs:
-#   pkgs.glibc  # glibc (2.42-r4)
-#   pkgs.libgcc  # libgcc (15.2.0-r6)
-#   pkgs.libxcrypt  # libxcrypt (4.5.2-r0)
-#   pkgs.nginxmainline  # nginx-mainline (1.29.3-r0)
-#   pkgs.zlib  # zlib (1.3.1-r51)
-# Packages NOT in nixpkgs:
-#   harbor-2.14-portal (2.14.1-r1)
-#   harbor-2.14-portal-nginx-config (2.14.1-r1)
-#   ld-linux (2.42-r4)
-#   libcrypt1 (2.42-r4)
-#   libcrypto3 (3.6.0-r4)
-#   libpcre2-8-0 (10.47-r0)
-#   libssl3 (3.6.0-r4)
+let
+  version = "2.14.1";
 
-throw "Image 'harbor-portal' is not yet implemented. See default.nix for implementation notes."
+  # Create a minimal nginx config for Harbor Portal
+  nginxConfig = pkgs.writeText "nginx.conf" ''
+    worker_processes auto;
+    error_log /dev/stderr warn;
+    pid /tmp/nginx.pid;
+
+    events {
+        worker_connections 1024;
+    }
+
+    http {
+        include ${pkgs.nginx}/conf/mime.types;
+        default_type application/octet-stream;
+
+        log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                        '$status $body_bytes_sent "$http_referer" '
+                        '"$http_user_agent"';
+
+        access_log /dev/stdout main;
+
+        sendfile on;
+        keepalive_timeout 65;
+
+        server {
+            listen 8080;
+            server_name localhost;
+            root /usr/share/nginx/html;
+
+            location / {
+                try_files $uri $uri/ /index.html;
+            }
+
+            location /api/ {
+                proxy_pass http://core:8080/api/;
+            }
+
+            location /service/ {
+                proxy_pass http://core:8080/service/;
+            }
+
+            location /v2/ {
+                proxy_pass http://core:8080/v2/;
+            }
+
+            location /chartrepo/ {
+                proxy_pass http://core:8080/chartrepo/;
+            }
+
+            location /c/ {
+                proxy_pass http://core:8080/c/;
+            }
+        }
+    }
+  '';
+
+in
+nix2container.buildImage {
+  name = "harbor-portal";
+  tag = "v${version}";
+
+  copyToRoot = pkgs.buildEnv {
+    name = "harbor-portal-root";
+    paths = with pkgs; [
+      nginx
+      cacert
+      # Create directory structure
+      (pkgs.runCommand "harbor-portal-dirs" {} ''
+        mkdir -p $out/tmp
+        mkdir -p $out/var/cache/nginx
+        mkdir -p $out/var/log/nginx
+        mkdir -p $out/usr/share/nginx/html
+        mkdir -p $out/etc/nginx
+        cp ${nginxConfig} $out/etc/nginx/nginx.conf
+        # Placeholder index.html - in production, Harbor UI assets would be here
+        echo '<!DOCTYPE html><html><head><title>Harbor</title></head><body><h1>Harbor Portal</h1><p>Harbor UI placeholder</p></body></html>' > $out/usr/share/nginx/html/index.html
+      '')
+    ];
+    pathsToLink = [ "/bin" "/etc" "/lib" "/share" "/tmp" "/var" "/usr" ];
+  };
+
+  config = {
+    entrypoint = [ "${pkgs.nginx}/bin/nginx" ];
+    cmd = [ "-g" "daemon off;" "-c" "/etc/nginx/nginx.conf" ];
+    exposedPorts = {
+      "8080/tcp" = {};
+    };
+    labels = {
+      "org.opencontainers.image.title" = "Harbor Portal";
+      "org.opencontainers.image.description" = "Web UI for Harbor registry";
+      "org.opencontainers.image.version" = version;
+      "io.nix-containers.chart" = "harbor";
+    };
+  };
+}

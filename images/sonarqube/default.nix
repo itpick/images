@@ -1,64 +1,111 @@
 # sonarqube
 # =============
-# Placeholder for sonarqube container image.
-# Referenced in BigBang/IronBank deployments.
+# SonarQube - Code quality and security analysis platform
+# https://github.com/SonarSource/sonarqube
 #
-# TODO: Implement this image
-# Reference: Check BigBang documentation for source details
+# SonarQube is a Java application for continuous code quality inspection.
+# We download the official distribution and run it with Java from nixpkgs.
 
-{ ... }:
+{ nix2container, pkgs, lib, fetchzip, ... }:
 
+let
+  version = "10.7.0.96327";
+  majorVersion = builtins.head (lib.splitString "." version);
 
-# Chainguard SBOM packages for sonarqube:
-# Packages available in nixpkgs:
-#   pkgs.alsa-lib  # alsa-lib (1.2.14-r2)
-#   pkgs.bash  # bash (5.3-r3)
-#   pkgs.freetype  # freetype (2.14.1-r0)
-#   pkgs.giflib  # giflib (5.2.2-r11)
-#   pkgs.glibc  # glibc (2.42-r4)
-#   pkgs.rep-grep  # grep (3.12-r3)
-#   pkgs.lcms2  # lcms2 (2.17-r5)
-#   pkgs.libcap  # libcap (2.77-r0)
-#   pkgs.libffi  # libffi (3.5.2-r1)
-#   pkgs.libgcc  # libgcc (15.2.0-r6)
-#   pkgs.libjpeg_turbo  # libjpeg-turbo (3.1.2-r1)
-#   pkgs.libpng  # libpng (1.6.53-r0)
-#   pkgs.libtasn1  # libtasn1 (4.20.0-r5)
-#   pkgs.libudev-zero  # libudev (258.2-r3)
-#   pkgs.libx11  # libx11 (1.8.12-r3)
-#   pkgs.libxau  # libxau (1.0.12-r3)
-#   pkgs.libxcb  # libxcb (1.17.0-r8)
-#   pkgs.libxdmcp  # libxdmcp (1.1.5-r9)
-#   pkgs.libxext  # libxext (1.3.6-r7)
-#   pkgs.libxi  # libxi (1.8.2-r4)
-#   pkgs.libxrender  # libxrender (0.9.12-r4)
-#   pkgs.libxtst  # libxtst (1.2.5-r4)
-#   pkgs.ncurses  # ncurses (6.5_p20251025-r1)
-#   pkgs.p11-kit  # p11-kit (0.25.10-r0)
-#   pkgs.procps  # procps (4.0.5-r42)
-#   pkgs.wget  # wget (1.25.0-r6)
-#   pkgs.zlib  # zlib (1.3.1-r51)
-# Packages NOT in nixpkgs:
-#   bash-binsh (5.3-r3)
-#   ca-certificates (20251003-r0)
-#   fontconfig-config (2.17.1-r1)
-#   java-cacerts (20251003-r0)
-#   java-common-jre (0.2-r2)
-#   ld-linux (2.42-r4)
-#   libbrotlicommon1 (1.2.0-r1)
-#   libbrotlidec1 (1.2.0-r1)
-#   libbz2-1 (1.0.8-r21)
-#   libcap-dev (2.77-r0)
-#   libcap-utils (2.77-r0)
-#   libcrypto3 (3.6.0-r4)
-#   libexpat1 (2.7.3-r0)
-#   libfontconfig1 (2.17.1-r1)
-#   libpcre2-8-0 (10.47-r0)
-#   libproc-2-0 (4.0.5-r42)
-#   libssl3 (3.6.0-r4)
-#   libstdc++ (15.2.0-r6)
-#   libsystemd (258.2-r3)
-#   libudev-dev (258.2-r3)
-#   ... and 9 more
+  # Download SonarQube distribution
+  sonarqube = pkgs.fetchzip {
+    url = "https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-${version}.zip";
+    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+  };
 
-throw "Image 'sonarqube' is not yet implemented. See default.nix for implementation notes."
+  # Wrapper script for SonarQube
+  sonarqubeWrapper = pkgs.writeShellScript "sonarqube-wrapper" ''
+    #!/bin/bash
+    set -e
+
+    export SONAR_HOME=/opt/sonarqube
+    export SONAR_JAVA_PATH=${pkgs.openjdk17}/bin/java
+
+    # Ensure data directories exist
+    mkdir -p /opt/sonarqube/data
+    mkdir -p /opt/sonarqube/logs
+    mkdir -p /opt/sonarqube/temp
+    mkdir -p /opt/sonarqube/extensions
+
+    # Start SonarQube
+    exec ${pkgs.openjdk17}/bin/java \
+      -server \
+      -Xms512m -Xmx512m \
+      -XX:+HeapDumpOnOutOfMemoryError \
+      -Djava.net.preferIPv4Stack=true \
+      -Dsonar.path.home=/opt/sonarqube \
+      -Dsonar.path.data=/opt/sonarqube/data \
+      -Dsonar.path.logs=/opt/sonarqube/logs \
+      -Dsonar.path.temp=/opt/sonarqube/temp \
+      -jar /opt/sonarqube/lib/sonarqube.jar \
+      "$@"
+  '';
+
+in
+nix2container.buildImage {
+  name = "sonarqube";
+  tag = "v${version}";
+
+  copyToRoot = pkgs.buildEnv {
+    name = "sonarqube-root";
+    paths = [
+      # Java runtime
+      pkgs.openjdk17
+
+      # Shell and utilities
+      pkgs.bash
+      pkgs.coreutils
+      pkgs.gnugrep
+      pkgs.procps
+      pkgs.curl
+      pkgs.wget
+
+      # SSL/TLS
+      pkgs.cacert
+
+      # Create directories and copy SonarQube
+      (pkgs.runCommand "sonarqube-install" {} ''
+        mkdir -p $out/opt/sonarqube
+        cp -r ${sonarqube}/* $out/opt/sonarqube/
+        chmod -R u+w $out/opt/sonarqube
+
+        mkdir -p $out/opt/sonarqube/data
+        mkdir -p $out/opt/sonarqube/logs
+        mkdir -p $out/opt/sonarqube/temp
+        mkdir -p $out/opt/sonarqube/extensions/plugins
+
+        mkdir -p $out/bin
+        cp ${sonarqubeWrapper} $out/bin/sonarqube
+        chmod +x $out/bin/sonarqube
+
+        mkdir -p $out/tmp
+      '')
+    ];
+    pathsToLink = [ "/bin" "/etc" "/lib" "/share" "/opt" "/tmp" ];
+  };
+
+  config = {
+    entrypoint = [ "/opt/sonarqube/bin/linux-x86-64/sonar.sh" ];
+    cmd = [ "console" ];
+    workingDir = "/opt/sonarqube";
+    exposedPorts = {
+      "9000/tcp" = {};
+    };
+    env = [
+      "JAVA_HOME=${pkgs.openjdk17}"
+      "SONAR_HOME=/opt/sonarqube"
+      "SONARQUBE_HOME=/opt/sonarqube"
+    ];
+    labels = {
+      "org.opencontainers.image.title" = "SonarQube";
+      "org.opencontainers.image.description" = "Code quality and security analysis platform";
+      "org.opencontainers.image.version" = version;
+      "io.nix-containers.chart" = "sonarqube";
+    };
+  };
+}

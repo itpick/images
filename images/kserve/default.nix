@@ -1,21 +1,70 @@
 # kserve
 # =============
-# Placeholder for kserve container image.
-# This image is referenced in Helm charts but not yet implemented.
-#
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+# KServe - Serverless ML Inference Platform on Kubernetes
+# https://github.com/kserve/kserve
 
-{ ... }:
+{ nix2container, pkgs, lib, ... }:
 
+# KServe is a standardized serverless ML inference platform on Kubernetes
 
-# Chainguard SBOM packages for kserve:
-# Packages NOT in nixpkgs:
-#   kserve-agent (0.16.0-r2)
+let
+  version = "0.16.0";
 
-throw "Image 'kserve' is not yet implemented. See default.nix for implementation notes."
+  pythonEnv = pkgs.python312.withPackages (ps: with ps; [
+    kserve
+    numpy
+    pandas
+    scikit-learn
+    requests
+    grpcio
+    protobuf
+    uvicorn
+    fastapi
+  ]);
+
+in
+nix2container.buildImage {
+  name = "kserve";
+  tag = "v${version}";
+
+  copyToRoot = pkgs.buildEnv {
+    name = "kserve-root";
+    paths = [
+      pythonEnv
+
+      # Additional tools
+      pkgs.cacert
+      pkgs.curl
+      pkgs.bash
+      pkgs.coreutils
+
+      # Create directories
+      (pkgs.runCommand "kserve-dirs" {} ''
+        mkdir -p $out/kserve
+        mkdir -p $out/mnt/models
+        mkdir -p $out/tmp
+      '')
+    ];
+    pathsToLink = [ "/bin" "/etc" "/lib" "/share" "/kserve" "/mnt" "/tmp" ];
+  };
+
+  config = {
+    entrypoint = [ "${pythonEnv}/bin/python" ];
+    cmd = [ "-m" "kserve" ];
+    workingDir = "/kserve";
+    exposedPorts = {
+      "8080/tcp" = {};
+      "8081/tcp" = {};
+    };
+    env = [
+      "MODEL_DIR=/mnt/models"
+      "PYTHONUNBUFFERED=1"
+    ];
+    labels = {
+      "org.opencontainers.image.title" = "KServe";
+      "org.opencontainers.image.description" = "Serverless ML Inference Platform on Kubernetes";
+      "org.opencontainers.image.version" = version;
+      "io.nix-containers.chart" = "kserve";
+    };
+  };
+}

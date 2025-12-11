@@ -1,16 +1,59 @@
 # authservice
 # =============
-# Placeholder for authservice container image.
-# Referenced in BigBang/IronBank deployments.
-#
-# TODO: Implement this image
-# Reference: Check BigBang documentation for source details
+# Istio Authservice - OIDC authentication for Istio/Envoy
+# https://github.com/istio-ecosystem/authservice
 
-{ ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, pkgs, lib, ... }:
 
+# Authservice implements Envoy External Authorization for OIDC authentication
 
-# Chainguard SBOM packages for authservice:
-# Packages NOT in nixpkgs:
-#   authservice (1.1.4-r1)
+let
+  version = "1.1.4";
+  authservice = buildGoModule {
+    pname = "authservice";
+    inherit version;
 
-throw "Image 'authservice' is not yet implemented. See default.nix for implementation notes."
+    src = fetchFromGitHub {
+      owner = "istio-ecosystem";
+      repo = "authservice";
+      rev = "v${version}";
+      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    };
+
+    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+
+    subPackages = [ "cmd/authservice" ];
+
+    env.CGO_ENABLED = 0;
+
+    ldflags = [
+      "-s" "-w"
+      "-X main.version=${version}"
+    ];
+
+    doCheck = false;
+
+    meta = with lib; {
+      description = "Istio Authservice - OIDC authentication for Istio/Envoy";
+      homepage = "https://github.com/istio-ecosystem/authservice";
+      license = licenses.asl20;
+    };
+  };
+
+in
+mkImage {
+  drv = authservice;
+  name = "authservice";
+  tag = "v${version}";
+  entrypoint = [ "${authservice}/bin/authservice" ];
+  cmd = [];
+
+  extraPkgs = with pkgs; [ cacert ];
+
+  labels = {
+    "org.opencontainers.image.title" = "Authservice";
+    "org.opencontainers.image.description" = "OIDC authentication service for Istio/Envoy";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "authservice";
+  };
+}

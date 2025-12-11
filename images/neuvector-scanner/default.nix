@@ -1,16 +1,59 @@
 # neuvector-scanner
 # =============
-# Placeholder for neuvector-scanner container image.
-# This image is referenced in Helm charts but not yet implemented.
+# NeuVector Scanner - Vulnerability scanner for containers
+# https://github.com/neuvector/scanner
 #
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+# NeuVector Scanner performs vulnerability scanning of container images.
 
-{ ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, pkgs, lib, ... }:
 
-throw "Image 'neuvector-scanner' is not yet implemented. See default.nix for implementation notes."
+let
+  version = "5.4.7";
+  neuvector-scanner = buildGoModule {
+    pname = "neuvector-scanner";
+    inherit version;
+
+    src = fetchFromGitHub {
+      owner = "neuvector";
+      repo = "scanner";
+      rev = "v${version}";
+      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    };
+
+    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+
+    subPackages = [ "." ];
+
+    env.CGO_ENABLED = 0;
+
+    ldflags = [
+      "-s" "-w"
+      "-X main.Version=${version}"
+    ];
+
+    doCheck = false;
+
+    meta = with lib; {
+      description = "NeuVector Scanner - Container vulnerability scanner";
+      homepage = "https://github.com/neuvector/scanner";
+      license = licenses.asl20;
+    };
+  };
+
+in
+mkImage {
+  drv = neuvector-scanner;
+  name = "neuvector-scanner";
+  tag = "v${version}";
+  entrypoint = [ "${neuvector-scanner}/bin/scanner" ];
+  cmd = [];
+
+  extraPkgs = with pkgs; [ cacert ];
+
+  labels = {
+    "org.opencontainers.image.title" = "NeuVector Scanner";
+    "org.opencontainers.image.description" = "Container vulnerability scanner";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "neuvector";
+  };
+}

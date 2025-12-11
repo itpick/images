@@ -1,22 +1,65 @@
 # harbor-registryctl
 # =============
-# Placeholder for harbor-registryctl container image.
-# This image is referenced in Helm charts but not yet implemented.
-#
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+# Harbor Registry Controller - Registry management for Harbor
+# https://github.com/goharbor/harbor
 
-{ ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, pkgs, lib, ... }:
 
+# Harbor Registryctl manages the registry component lifecycle
 
-# Chainguard SBOM packages for harbor-registryctl:
-# Packages NOT in nixpkgs:
-#   harbor-2.14-registryctl (2.14.1-r1)
-#   harbor-registry (3.0.0-r13)
+let
+  version = "2.14.1";
+  harbor-registryctl = buildGoModule {
+    pname = "harbor-registryctl";
+    inherit version;
 
-throw "Image 'harbor-registryctl' is not yet implemented. See default.nix for implementation notes."
+    src = fetchFromGitHub {
+      owner = "goharbor";
+      repo = "harbor";
+      rev = "v${version}";
+      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    };
+
+    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+
+    sourceRoot = "source/src";
+
+    subPackages = [ "registryctl" ];
+
+    env.CGO_ENABLED = 0;
+
+    ldflags = [
+      "-s" "-w"
+      "-X github.com/goharbor/harbor/src/common/utils.ReleaseVersion=v${version}"
+    ];
+
+    doCheck = false;
+
+    postInstall = ''
+      mv $out/bin/registryctl $out/bin/harbor-registryctl
+    '';
+
+    meta = with lib; {
+      description = "Harbor Registry Controller - Registry management";
+      homepage = "https://github.com/goharbor/harbor";
+      license = licenses.asl20;
+    };
+  };
+
+in
+mkImage {
+  drv = harbor-registryctl;
+  name = "harbor-registryctl";
+  tag = "v${version}";
+  entrypoint = [ "${harbor-registryctl}/bin/harbor-registryctl" ];
+  cmd = [];
+
+  extraPkgs = with pkgs; [ cacert tzdata ];
+
+  labels = {
+    "org.opencontainers.image.title" = "Harbor Registry Controller";
+    "org.opencontainers.image.description" = "Registry management component for Harbor";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "harbor";
+  };
+}

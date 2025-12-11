@@ -1,29 +1,59 @@
 # mattermost-operator
 # =============
-# Placeholder for mattermost-operator container image.
-# This image is referenced in Helm charts but not yet implemented.
-#
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+# Mattermost Operator - Kubernetes Operator for Mattermost
+# https://github.com/mattermost/mattermost-operator
 
-{ ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, pkgs, lib, ... }:
 
+# Mattermost Operator manages Mattermost deployments on Kubernetes
 
-# Chainguard SBOM packages for mattermost-operator:
-# Packages available in nixpkgs:
-#   pkgs.bash  # bash (5.3-r3)
-#   pkgs.glibc  # glibc (2.42-r4)
-#   pkgs.libgcc  # libgcc (15.2.0-r6)
-#   pkgs.mattermost  # mattermost-11.1 (11.1.1-r1)
-#   pkgs.ncurses  # ncurses (6.5_p20251025-r1)
-#   pkgs.tzdata  # tzdata (2025b-r2)
-# Packages NOT in nixpkgs:
-#   ld-linux (2.42-r4)
-#   ncurses-terminfo-base (6.5_p20251025-r1)
+let
+  version = "1.21.0";
+  mattermost-operator = buildGoModule {
+    pname = "mattermost-operator";
+    inherit version;
 
-throw "Image 'mattermost-operator' is not yet implemented. See default.nix for implementation notes."
+    src = fetchFromGitHub {
+      owner = "mattermost";
+      repo = "mattermost-operator";
+      rev = "v${version}";
+      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    };
+
+    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+
+    subPackages = [ "." ];
+
+    env.CGO_ENABLED = 0;
+
+    ldflags = [
+      "-s" "-w"
+      "-X github.com/mattermost/mattermost-operator/version.Version=${version}"
+    ];
+
+    doCheck = false;
+
+    meta = with lib; {
+      description = "Mattermost Operator for Kubernetes";
+      homepage = "https://github.com/mattermost/mattermost-operator";
+      license = licenses.asl20;
+    };
+  };
+
+in
+mkImage {
+  drv = mattermost-operator;
+  name = "mattermost-operator";
+  tag = "v${version}";
+  entrypoint = [ "${mattermost-operator}/bin/mattermost-operator" ];
+  cmd = [];
+
+  extraPkgs = with pkgs; [ cacert tzdata ];
+
+  labels = {
+    "org.opencontainers.image.title" = "Mattermost Operator";
+    "org.opencontainers.image.description" = "Kubernetes Operator for managing Mattermost deployments";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "mattermost-operator";
+  };
+}

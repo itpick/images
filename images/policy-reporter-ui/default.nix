@@ -1,16 +1,63 @@
 # policy-reporter-ui
 # =============
-# Placeholder for policy-reporter-ui container image.
-# Referenced in BigBang/IronBank deployments.
-#
-# TODO: Implement this image
-# Reference: Check BigBang documentation for source details
+# Policy Reporter UI - Web dashboard for Policy Reporter
+# https://github.com/kyverno/policy-reporter-ui
 
-{ ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, pkgs, lib, ... }:
 
+# Policy Reporter UI provides a web dashboard for viewing policy reports
 
-# Chainguard SBOM packages for policy-reporter-ui:
-# Packages NOT in nixpkgs:
-#   kyverno-policy-reporter-ui (2.5.0-r1)
+let
+  version = "2.5.0";
+  policy-reporter-ui = buildGoModule {
+    pname = "policy-reporter-ui";
+    inherit version;
 
-throw "Image 'policy-reporter-ui' is not yet implemented. See default.nix for implementation notes."
+    src = fetchFromGitHub {
+      owner = "kyverno";
+      repo = "policy-reporter-ui";
+      rev = "v${version}";
+      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    };
+
+    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+
+    subPackages = [ "." ];
+
+    env.CGO_ENABLED = 0;
+
+    ldflags = [
+      "-s" "-w"
+      "-X main.Version=${version}"
+    ];
+
+    doCheck = false;
+
+    meta = with lib; {
+      description = "Policy Reporter UI - Web dashboard for policy reports";
+      homepage = "https://github.com/kyverno/policy-reporter-ui";
+      license = licenses.asl20;
+    };
+  };
+
+in
+mkImage {
+  drv = policy-reporter-ui;
+  name = "policy-reporter-ui";
+  tag = "v${version}";
+  entrypoint = [ "${policy-reporter-ui}/bin/policy-reporter-ui" ];
+  cmd = [];
+
+  extraPkgs = with pkgs; [ cacert ];
+
+  env = {
+    PORT = "8080";
+  };
+
+  labels = {
+    "org.opencontainers.image.title" = "Policy Reporter UI";
+    "org.opencontainers.image.description" = "Web dashboard for Policy Reporter";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "policy-reporter";
+  };
+}

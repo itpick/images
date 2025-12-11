@@ -1,16 +1,74 @@
 # nifi-toolkit
 # =============
-# Placeholder for nifi-toolkit container image.
-# This image is referenced in Helm charts but not yet implemented.
+# Apache NiFi Toolkit - Command-line utilities for NiFi
+# https://nifi.apache.org/
 #
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+# The NiFi Toolkit contains several command-line utilities to help
+# administrators manage NiFi deployments.
 
-{ ... }:
+{ nix2container, pkgs, lib, ... }:
 
-throw "Image 'nifi-toolkit' is not yet implemented. See default.nix for implementation notes."
+let
+  version = "2.6.0";
+
+  # Download NiFi Toolkit distribution
+  nifiToolkit = pkgs.fetchzip {
+    url = "https://archive.apache.org/dist/nifi/${version}/nifi-toolkit-${version}-bin.zip";
+    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+  };
+
+in
+nix2container.buildImage {
+  name = "nifi-toolkit";
+  tag = "v${version}";
+
+  copyToRoot = pkgs.buildEnv {
+    name = "nifi-toolkit-root";
+    paths = [
+      # Java runtime
+      pkgs.openjdk21_headless
+
+      # Shell and utilities
+      pkgs.bash
+      pkgs.coreutils
+      pkgs.gnugrep
+
+      # SSL/TLS
+      pkgs.cacert
+
+      # Create directories and install NiFi Toolkit
+      (pkgs.runCommand "nifi-toolkit-install" {} ''
+        mkdir -p $out/opt/nifi-toolkit
+        cp -r ${nifiToolkit}/* $out/opt/nifi-toolkit/
+        chmod -R u+w $out/opt/nifi-toolkit
+
+        # Create symlinks to common tools
+        mkdir -p $out/bin
+        for script in $out/opt/nifi-toolkit/bin/*.sh; do
+          name=$(basename "$script" .sh)
+          ln -sf "$script" "$out/bin/$name"
+        done
+
+        mkdir -p $out/tmp
+      '')
+    ];
+    pathsToLink = [ "/bin" "/etc" "/lib" "/share" "/opt" "/tmp" ];
+  };
+
+  config = {
+    entrypoint = [ "/bin/bash" ];
+    cmd = [];
+    workingDir = "/opt/nifi-toolkit";
+    env = [
+      "NIFI_TOOLKIT_HOME=/opt/nifi-toolkit"
+      "JAVA_HOME=${pkgs.openjdk21_headless}"
+      "PATH=/opt/nifi-toolkit/bin:/bin"
+    ];
+    labels = {
+      "org.opencontainers.image.title" = "Apache NiFi Toolkit";
+      "org.opencontainers.image.description" = "Command-line utilities for Apache NiFi";
+      "org.opencontainers.image.version" = version;
+      "io.nix-containers.chart" = "nifi";
+    };
+  };
+}

@@ -1,26 +1,69 @@
 # harbor-exporter
 # =============
-# Placeholder for harbor-exporter container image.
-# Referenced in BigBang/IronBank deployments.
-#
-# TODO: Implement this image
-# Reference: Check BigBang documentation for source details
+# Harbor Exporter - Prometheus metrics exporter for Harbor
+# https://github.com/goharbor/harbor
 
-{ ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, pkgs, lib, ... }:
 
+# Harbor Exporter exposes Prometheus metrics for Harbor components
 
-# Chainguard SBOM packages for harbor-exporter:
-# Packages available in nixpkgs:
-#   pkgs.bash  # bash (5.3-r3)
-#   pkgs.glibc  # glibc (2.42-r4)
-#   pkgs.rep-grep  # grep (3.12-r3)
-#   pkgs.libgcc  # libgcc (15.2.0-r6)
-#   pkgs.ncurses  # ncurses (6.5_p20251025-r1)
-# Packages NOT in nixpkgs:
-#   bash-binsh (5.3-r3)
-#   harbor-2.14-exporter (2.14.1-r1)
-#   ld-linux (2.42-r4)
-#   libpcre2-8-0 (10.47-r0)
-#   ncurses-terminfo-base (6.5_p20251025-r1)
+let
+  version = "2.14.1";
+  harbor-exporter = buildGoModule {
+    pname = "harbor-exporter";
+    inherit version;
 
-throw "Image 'harbor-exporter' is not yet implemented. See default.nix for implementation notes."
+    src = fetchFromGitHub {
+      owner = "goharbor";
+      repo = "harbor";
+      rev = "v${version}";
+      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    };
+
+    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+
+    sourceRoot = "source/src";
+
+    subPackages = [ "cmd/exporter" ];
+
+    env.CGO_ENABLED = 0;
+
+    ldflags = [
+      "-s" "-w"
+      "-X github.com/goharbor/harbor/src/common/utils.ReleaseVersion=v${version}"
+    ];
+
+    doCheck = false;
+
+    postInstall = ''
+      mv $out/bin/exporter $out/bin/harbor-exporter
+    '';
+
+    meta = with lib; {
+      description = "Harbor Exporter - Prometheus metrics for Harbor";
+      homepage = "https://github.com/goharbor/harbor";
+      license = licenses.asl20;
+    };
+  };
+
+in
+mkImage {
+  drv = harbor-exporter;
+  name = "harbor-exporter";
+  tag = "v${version}";
+  entrypoint = [ "${harbor-exporter}/bin/harbor-exporter" ];
+  cmd = [];
+
+  extraPkgs = with pkgs; [ cacert tzdata ];
+
+  env = {
+    HARBOR_EXPORTER_PORT = "8001";
+  };
+
+  labels = {
+    "org.opencontainers.image.title" = "Harbor Exporter";
+    "org.opencontainers.image.description" = "Prometheus metrics exporter for Harbor";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "harbor";
+  };
+}

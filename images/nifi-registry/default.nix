@@ -1,73 +1,80 @@
 # nifi-registry
 # =============
-# Placeholder for nifi-registry container image.
-# This image is referenced in Helm charts but not yet implemented.
+# Apache NiFi Registry - Flow registry for NiFi
+# https://nifi.apache.org/registry.html
 #
-# TODO: Implement this image
-# Reference: Check chart-images.json for source image details
-#
-# Example patterns to follow:
-#   - Go binary: See images/external-dns/default.nix
-#   - nixpkgs package: See images/kubectl/default.nix
-#   - Java app: See images/jdk/default.nix
+# NiFi Registry is a complementary application that provides a central location
+# for storage and management of shared resources across one or more instances of NiFi.
 
-{ ... }:
+{ nix2container, pkgs, lib, ... }:
 
+let
+  version = "2.6.0";
 
-# Chainguard SBOM packages for nifi-registry:
-# Packages available in nixpkgs:
-#   pkgs.alsa-lib  # alsa-lib (1.2.14-r2)
-#   pkgs.bash  # bash (5.3-r3)
-#   pkgs.coreutils  # coreutils (9.9-r0)
-#   pkgs.dash  # dash (0.5.13-r2)
-#   pkgs.freetype  # freetype (2.14.1-r0)
-#   pkgs.giflib  # giflib (5.2.2-r11)
-#   pkgs.glibc  # glibc (2.42-r4)
-#   pkgs.lcms2  # lcms2 (2.17-r5)
-#   pkgs.libffi  # libffi (3.5.2-r1)
-#   pkgs.libgcc  # libgcc (15.2.0-r6)
-#   pkgs.libjpeg_turbo  # libjpeg-turbo (3.1.2-r1)
-#   pkgs.libpng  # libpng (1.6.53-r0)
-#   pkgs.libselinux  # libselinux (3.9-r1)
-#   pkgs.libsepol  # libsepol (3.9-r1)
-#   pkgs.libtasn1  # libtasn1 (4.20.0-r5)
-#   pkgs.libx11  # libx11 (1.8.12-r3)
-#   pkgs.libxau  # libxau (1.0.12-r3)
-#   pkgs.libxcb  # libxcb (1.17.0-r8)
-#   pkgs.libxdmcp  # libxdmcp (1.1.5-r9)
-#   pkgs.libxext  # libxext (1.3.6-r7)
-#   pkgs.libxi  # libxi (1.8.2-r4)
-#   pkgs.libxml2  # libxml2-16 (2.15.1-r2)
-#   pkgs.libxrender  # libxrender (0.9.12-r4)
-#   pkgs.libxslt  # libxslt (1.1.45-r0)
-#   pkgs.libxtst  # libxtst (1.2.5-r4)
-#   pkgs.ncurses  # ncurses (6.5_p20251025-r1)
-#   pkgs.net-tools  # net-tools (2.10-r31)
-#   pkgs.openjdk  # openjdk-21 (21.0.9-r2)
-#   pkgs.p11-kit  # p11-kit (0.25.10-r0)
-#   pkgs.xmlstarlet  # xmlstarlet (1.6.1-r9)
-#   ... and 1 more
-# Packages NOT in nixpkgs:
-#   apache-nifi-registry (2.6.0-r5)
-#   apache-nifi-registry-toolkit (2.6.0-r5)
-#   ca-certificates (20251003-r0)
-#   dash-binsh (0.5.13-r2)
-#   fontconfig-config (2.17.1-r1)
-#   java-cacerts (20251003-r0)
-#   java-common (0.2-r2)
-#   java-common-jre (0.2-r2)
-#   ld-linux (2.42-r4)
-#   libacl1 (2.3.2-r54)
-#   libattr1 (2.5.2-r54)
-#   libbrotlicommon1 (1.2.0-r1)
-#   libbrotlidec1 (1.2.0-r1)
-#   libbz2-1 (1.0.8-r21)
-#   libcrypto3 (3.6.0-r4)
-#   libexpat1 (2.7.3-r0)
-#   libfontconfig1 (2.17.1-r1)
-#   libpcre2-8-0 (10.47-r0)
-#   ncurses-terminfo-base (6.5_p20251025-r1)
-#   openjdk-21-default-jdk (21.0.9-r2)
-#   ... and 3 more
+  # Download NiFi Registry distribution
+  nifiRegistry = pkgs.fetchzip {
+    url = "https://archive.apache.org/dist/nifi/${version}/nifi-registry-${version}-bin.zip";
+    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+  };
 
-throw "Image 'nifi-registry' is not yet implemented. See default.nix for implementation notes."
+in
+nix2container.buildImage {
+  name = "nifi-registry";
+  tag = "v${version}";
+
+  copyToRoot = pkgs.buildEnv {
+    name = "nifi-registry-root";
+    paths = [
+      # Java runtime
+      pkgs.openjdk21_headless
+
+      # Shell and utilities
+      pkgs.bash
+      pkgs.dash
+      pkgs.coreutils
+      pkgs.gnugrep
+      pkgs.procps
+      pkgs.nettools
+
+      # XML tools
+      pkgs.xmlstarlet
+
+      # SSL/TLS
+      pkgs.cacert
+
+      # Create directories and install NiFi Registry
+      (pkgs.runCommand "nifi-registry-install" {} ''
+        mkdir -p $out/opt/nifi-registry
+        cp -r ${nifiRegistry}/* $out/opt/nifi-registry/
+        chmod -R u+w $out/opt/nifi-registry
+
+        mkdir -p $out/opt/nifi-registry/logs
+        mkdir -p $out/opt/nifi-registry/database
+        mkdir -p $out/opt/nifi-registry/flow_storage
+        mkdir -p $out/tmp
+      '')
+    ];
+    pathsToLink = [ "/bin" "/etc" "/lib" "/share" "/opt" "/tmp" ];
+  };
+
+  config = {
+    entrypoint = [ "/opt/nifi-registry/bin/nifi-registry.sh" ];
+    cmd = [ "run" ];
+    workingDir = "/opt/nifi-registry";
+    exposedPorts = {
+      "18080/tcp" = {};  # HTTP
+      "18443/tcp" = {};  # HTTPS
+    };
+    env = [
+      "NIFI_REGISTRY_HOME=/opt/nifi-registry"
+      "NIFI_REGISTRY_LOG_DIR=/opt/nifi-registry/logs"
+      "JAVA_HOME=${pkgs.openjdk21_headless}"
+    ];
+    labels = {
+      "org.opencontainers.image.title" = "Apache NiFi Registry";
+      "org.opencontainers.image.description" = "Flow registry for Apache NiFi";
+      "org.opencontainers.image.version" = version;
+      "io.nix-containers.chart" = "nifi";
+    };
+  };
+}
