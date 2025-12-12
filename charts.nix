@@ -203,6 +203,55 @@
       version = "1.10.0";
       description = "Distributed tracing";
     };
+
+    victoria-metrics-agent = {
+      url = "https://victoriametrics.github.io/helm-charts";
+      chart = "victoria-metrics-agent";
+      version = "0.27.1";
+      description = "VictoriaMetrics vmagent - metrics scraper";
+    };
+
+    victoria-metrics-alert = {
+      url = "https://victoriametrics.github.io/helm-charts";
+      chart = "victoria-metrics-alert";
+      version = "0.27.0";
+      description = "VictoriaMetrics vmalert - alerting rules";
+    };
+
+    victoria-metrics-auth = {
+      url = "https://victoriametrics.github.io/helm-charts";
+      chart = "victoria-metrics-auth";
+      version = "0.20.0";
+      description = "VictoriaMetrics vmauth - auth proxy";
+    };
+
+    victoria-metrics-cluster = {
+      url = "https://victoriametrics.github.io/helm-charts";
+      chart = "victoria-metrics-cluster";
+      version = "0.30.1";
+      description = "VictoriaMetrics cluster deployment";
+    };
+
+    victoria-metrics-k8s-stack = {
+      url = "https://victoriametrics.github.io/helm-charts";
+      chart = "victoria-metrics-k8s-stack";
+      version = "0.65.1";
+      description = "VictoriaMetrics full stack for Kubernetes";
+    };
+
+    victoria-metrics-operator = {
+      url = "https://victoriametrics.github.io/helm-charts";
+      chart = "victoria-metrics-operator";
+      version = "0.57.1";
+      description = "VictoriaMetrics Kubernetes operator";
+    };
+
+    victoria-metrics-single = {
+      url = "https://victoriametrics.github.io/helm-charts";
+      chart = "victoria-metrics-single";
+      version = "0.26.0";
+      description = "VictoriaMetrics single-node deployment";
+    };
   };
 
   # Service Mesh Charts
