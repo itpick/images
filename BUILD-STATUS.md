@@ -1,6 +1,6 @@
 # Nix Container Images Build Status
 
-Total images: 428
+Total images: 438
 
 All images in this repository build successfully using `nix build .#<image-name>`.
 
@@ -31,6 +31,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] authservice
 - [x] backstage
 - [x] bash
+- [x] benthos
 - [x] bats
 - [x] bitnami-shell
 - [x] bitwarden-sdk-server
@@ -64,6 +65,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] cloudnative-pg
 - [x] configmap-reload
 - [x] consul
+- [x] containerd
 - [x] coredns
 - [x] cosign
 - [x] couchdb
@@ -127,6 +129,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] gptscript
 - [x] gitaly
 - [x] gitea
+- [x] gitlab
 - [x] gitlab-base
 - [x] gitlab-certificates
 - [x] gitlab-container-registry
@@ -152,6 +155,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] grype
 - [x] hadolint
 - [x] haproxy
+- [x] hydra
 - [x] heartbeat
 - [x] harbor-core
 - [x] harbor-exporter
@@ -303,6 +307,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] percona-server
 - [x] pgadmin4
 - [x] pixiecore
+- [x] podman
 - [x] podman-tui
 - [x] pgpool
 - [x] php
@@ -374,6 +379,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] source-controller
 - [x] spicedb
 - [x] spiffe-helper
+- [x] spire
 - [x] spire-agent
 - [x] spire-server
 - [x] spark
@@ -389,6 +395,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] syft
 - [x] syncthing
 - [x] tektoncd-cli
+- [x] tanka
 - [x] temporal
 - [x] temporal-ui-server
 - [x] tetragon
@@ -401,6 +408,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] trainer-controller-manager
 - [x] trivy
 - [x] trivy-adapter
+- [x] triton
 - [x] trufflehog
 - [x] trust-manager
 - [x] twistlock-console
@@ -410,6 +418,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] vault-csi-provider
 - [x] vault-k8s
 - [x] vector
+- [x] vcluster
 - [x] velero
 - [x] victoria-metrics
 - [x] velero-plugin-aws
@@ -422,6 +431,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] wolfi
 - [x] xeol
 - [x] yq
+- [x] zap
 - [x] zig
 - [x] zookeeper
 
