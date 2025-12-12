@@ -30,11 +30,16 @@ kind create cluster \
     --config "$CONFIG_DIR/kind-config.yaml" \
     --wait 5m
 
-# Set kubeconfig
+# Set kubeconfig and make it the default context
 export KUBECONFIG="${HOME}/.kube/kind-${CLUSTER_NAME}"
 kind get kubeconfig --name "$CLUSTER_NAME" > "$KUBECONFIG"
 
+# Also merge into default kubeconfig and set as current context
+kind export kubeconfig --name "$CLUSTER_NAME"
+kubectl config use-context "kind-${CLUSTER_NAME}"
+
 echo "Cluster created. Kubeconfig: $KUBECONFIG"
+echo "Current context set to: kind-${CLUSTER_NAME}"
 
 # Wait for nodes to be ready
 echo "Waiting for nodes to be ready..."
@@ -69,6 +74,7 @@ helm repo add vmware-tanzu https://vmware-tanzu.github.io/helm-charts 2>/dev/nul
 helm repo add crossplane https://charts.crossplane.io/stable 2>/dev/null || true
 helm repo add keda https://kedacore.github.io/charts 2>/dev/null || true
 helm repo add rook https://charts.rook.io/release 2>/dev/null || true
+helm repo add vm https://victoriametrics.github.io/helm-charts 2>/dev/null || true
 helm repo update
 
 echo ""
