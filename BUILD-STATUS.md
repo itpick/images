@@ -1,6 +1,6 @@
 # Nix Container Images Build Status
 
-Total images: 508
+Total images: 518
 
 All images in this repository build successfully using `nix build .#<image-name>`.
 
@@ -319,7 +319,9 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] multus-cni
 - [x] mysql
 - [x] nats
+- [x] netcat-openbsd
 - [x] netdata
+- [x] nftables
 - [x] nmap
 - [x] netshoot
 - [x] nushell
@@ -337,8 +339,12 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] nifi-registry
 - [x] nifi-toolkit
 - [x] nix
+- [x] nix-diff
 - [x] nix-flakes
+- [x] nix-tree
 - [x] nix-unstable
+- [x] nixpkgs-fmt
+- [x] nnn
 - [x] node
 - [x] node-exporter
 - [x] node-problem-detector
@@ -347,7 +353,9 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] node-local-dns
 - [x] notification-controller
 - [x] oauth2-proxy
+- [x] onefetch
 - [x] omnictl
+- [x] openfortivpn
 - [x] opa
 - [x] openbao
 - [x] openvscode-server
@@ -396,6 +404,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] prom2json
 - [x] promtail
 - [x] proxysql
+- [x] pv
 - [x] pypiserver
 - [x] pypy
 - [x] python

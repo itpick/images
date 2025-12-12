@@ -12,7 +12,7 @@ mkImage {
 
   labels = {
     "org.opencontainers.image.title" = "Nushell";
-    "org.opencontainers.image.description" = "Modern shell with structured data";
+    "org.opencontainers.image.description" = "Modern shell for the GitHub era";
     "org.opencontainers.image.version" = pkgs.nushell.version;
   };
 }
