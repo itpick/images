@@ -1,6 +1,6 @@
 # Nix Container Images Build Status
 
-Total images: 448
+Total images: 458
 
 All images in this repository build successfully using `nix build .#<image-name>`.
 
@@ -28,6 +28,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] argocd-extension-installer
 - [x] aspnet-runtime
 - [x] attic
+- [x] atuin
 - [x] authservice
 - [x] backstage
 - [x] bash
@@ -233,6 +234,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] kustomize-controller
 - [x] kyverno
 - [x] laravel
+- [x] lazygit
 - [x] kyverno-background-controller
 - [x] kyverno-cleanup-controller
 - [x] kyverno-cli
@@ -259,7 +261,9 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] metricbeat
 - [x] metrics-server
 - [x] mimir
+- [x] nano
 - [x] nemo
+- [x] neovim
 - [x] nextflow
 - [x] minio
 - [x] minio-client
@@ -354,6 +358,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] rancher
 - [x] rclone
 - [x] readarr
+- [x] ripgrep
 - [x] redis
 - [x] restic-rest-server
 - [x] rtorrent
@@ -403,6 +408,8 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] step-cli
 - [x] step-kms-plugin
 - [x] syft
+- [x] screen
+- [x] starship
 - [x] syncthing
 - [x] tektoncd-cli
 - [x] tanka
@@ -412,6 +419,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] tempo
 - [x] tigerbeetle
 - [x] timoni
+- [x] tmux
 - [x] tempo-query
 - [x] thanos
 - [x] traefik
@@ -434,6 +442,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] velero-plugin-aws
 - [x] velero-plugin-azure
 - [x] velero-plugin-csi
+- [x] vim
 - [x] vitess
 - [x] wait-for-it
 - [x] wazero
@@ -444,6 +453,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] zap
 - [x] zig
 - [x] zookeeper
+- [x] zoxide
 
 ## Local Testing Status
 
