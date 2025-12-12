@@ -1,6 +1,6 @@
 # Nix Container Images Build Status
 
-Total images: 498
+Total images: 508
 
 All images in this repository build successfully using `nix build .#<image-name>`.
 
@@ -260,13 +260,20 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] kubeflow-trainer
 - [x] kubernetes-helm
 - [x] kubernetes-reflector
+- [x] kubeseal
 - [x] kubesec
 - [x] kubevirt
 - [x] kustomize
 - [x] kustomize-controller
 - [x] kyverno
 - [x] laravel
+- [x] lazydocker
 - [x] lazygit
+- [x] lazysql
+- [x] litecli
+- [x] lnav
+- [x] lsd
+- [x] lsof
 - [x] kyverno-background-controller
 - [x] kyverno-cleanup-controller
 - [x] kyverno-cli
@@ -292,7 +299,10 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] memcached-exporter
 - [x] metricbeat
 - [x] metrics-server
+- [x] mcfly
+- [x] miller
 - [x] mimir
+- [x] mosh
 - [x] nano
 - [x] nemo
 - [x] neovim
