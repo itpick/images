@@ -1,6 +1,6 @@
 # Nix Container Images Build Status
 
-Total images: 488
+Total images: 498
 
 All images in this repository build successfully using `nix build .#<image-name>`.
 
@@ -210,15 +210,23 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] httpie
 - [x] htop
 - [x] iperf3
+- [x] inetutils
+- [x] iproute2
+- [x] iptables
+- [x] irssi
 - [x] it-tools
 - [x] jdk
 - [x] jq
+- [x] jo
 - [x] jetty
 - [x] jobset
+- [x] just
 - [x] jre
 - [x] k8s-dns-node-cache
 - [x] k8s-sidecar
+- [x] k9s
 - [x] kafka
+- [x] kcat
 - [x] karma
 - [x] katib-controller
 - [x] katib-db-manager
@@ -238,6 +246,8 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] kiali
 - [x] kiali-operator
 - [x] kibana
+- [x] kind
+- [x] kopia
 - [x] ko
 - [x] kserve
 - [x] kube-rbac-proxy
