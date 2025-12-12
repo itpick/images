@@ -1,6 +1,6 @@
 # Nix Container Images Build Status
 
-Total images: 478
+Total images: 488
 
 All images in this repository build successfully using `nix build .#<image-name>`.
 
@@ -121,15 +121,19 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] enterprise-logs-provisioner
 - [x] enterprise-metrics
 - [x] envoy
+- [x] envsubst
 - [x] etcd
+- [x] exim
 - [x] explainer-dashboard
 - [x] external-dns
 - [x] external-secrets
 - [x] eza
 - [x] falcoctl
 - [x] fd
+- [x] fio
 - [x] flannel
 - [x] flink
+- [x] fping
 - [x] fluent-bit
 - [x] fluentd
 - [x] flux
@@ -138,12 +142,17 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] frr
 - [x] fzf
 - [x] gatekeeper
+- [x] gdb
 - [x] ghidra
 - [x] geoipupdate
 - [x] git
 - [x] git-sync
 - [x] gitui
+- [x] glances
+- [x] gnupg
+- [x] gopass
 - [x] google-cloud-sdk
+- [x] grpcurl
 - [x] gptscript
 - [x] gitaly
 - [x] gitea
@@ -174,6 +183,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] hadolint
 - [x] haproxy
 - [x] hydra
+- [x] hyperfine
 - [x] heartbeat
 - [x] harbor-core
 - [x] harbor-exporter
