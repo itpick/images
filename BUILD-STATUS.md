@@ -1,6 +1,6 @@
 # Nix Container Images Build Status
 
-Total images: 458
+Total images: 468
 
 All images in this repository build successfully using `nix build .#<image-name>`.
 
@@ -187,7 +187,9 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] istio-install-cni
 - [x] istio-pilot
 - [x] istio-proxyv2
+- [x] httpie
 - [x] htop
+- [x] iperf3
 - [x] it-tools
 - [x] jdk
 - [x] jq
@@ -273,10 +275,12 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] mlflow
 - [x] mongodb
 - [x] mosquitto
+- [x] mtr
 - [x] multus-cni
 - [x] mysql
 - [x] nats
 - [x] netdata
+- [x] nmap
 - [x] netshoot
 - [x] nushell
 - [x] nfpm
@@ -314,6 +318,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] openldap
 - [x] openresty
 - [x] opensearch
+- [x] openssh
 - [x] opentofu
 - [x] orthanc
 - [x] packer
@@ -330,6 +335,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] policy-reporter-ui
 - [x] postgres
 - [x] postgres-exporter
+- [x] postgresql
 - [x] prometheus
 - [x] prometheus-adapter
 - [x] prometheus-blackbox-exporter
@@ -388,6 +394,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] snapshot-validation-webhook
 - [x] snmp-exporter
 - [x] sonar-scanner-cli
+- [x] socat
 - [x] sonarqube
 - [x] sonobuoy
 - [x] sops
@@ -413,6 +420,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] syncthing
 - [x] tektoncd-cli
 - [x] tanka
+- [x] tcpdump
 - [x] temporal
 - [x] temporal-ui-server
 - [x] tetragon
@@ -446,7 +454,9 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] vitess
 - [x] wait-for-it
 - [x] wazero
+- [x] wget
 - [x] windows-exporter
+- [x] wireshark
 - [x] wolfi
 - [x] xeol
 - [x] yq
