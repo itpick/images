@@ -1,6 +1,6 @@
 # Nix Container Images Build Status
 
-Total images: 438
+Total images: 448
 
 All images in this repository build successfully using `nix build .#<image-name>`.
 
@@ -32,11 +32,13 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] backstage
 - [x] bash
 - [x] benthos
+- [x] bat
 - [x] bats
 - [x] bitnami-shell
 - [x] bitwarden-sdk-server
 - [x] blackbox-exporter
 - [x] boundary
+- [x] btop
 - [x] buck2
 - [x] bun
 - [x] busybox
@@ -84,6 +86,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] curl
 - [x] dbgate
 - [x] dduportal-bats
+- [x] delta
 - [x] deno
 - [x] deck
 - [x] dfc
@@ -111,7 +114,9 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] explainer-dashboard
 - [x] external-dns
 - [x] external-secrets
+- [x] eza
 - [x] falcoctl
+- [x] fd
 - [x] flannel
 - [x] flink
 - [x] fluent-bit
@@ -120,11 +125,13 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] flux-cli
 - [x] flux-operator
 - [x] frr
+- [x] fzf
 - [x] gatekeeper
 - [x] ghidra
 - [x] geoipupdate
 - [x] git
 - [x] git-sync
+- [x] gitui
 - [x] google-cloud-sdk
 - [x] gptscript
 - [x] gitaly
@@ -164,6 +171,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] harbor-registry
 - [x] harbor-registryctl
 - [x] headlamp
+- [x] helix
 - [x] helm
 - [x] helm-controller
 - [x] hubble
@@ -178,8 +186,10 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] istio-install-cni
 - [x] istio-pilot
 - [x] istio-proxyv2
+- [x] htop
 - [x] it-tools
 - [x] jdk
+- [x] jq
 - [x] jetty
 - [x] jobset
 - [x] jre
