@@ -1,6 +1,6 @@
 # Nix Container Images Build Status
 
-Total images: 468
+Total images: 478
 
 All images in this repository build successfully using `nix build .#<image-name>`.
 
@@ -14,6 +14,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] alloy
 - [x] alloy-operator
 - [x] alpine
+- [x] amazon-cloudwatch-agent
 - [x] anchore-enterprise
 - [x] anchore-enterpriseui
 - [x] apache-nifi
@@ -41,6 +42,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] boundary
 - [x] btop
 - [x] buck2
+- [x] buf
 - [x] bun
 - [x] busybox
 - [x] cachix
@@ -60,12 +62,16 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] cert-manager-webhook
 - [x] cfssl-self-sign
 - [x] chart-testing
+- [x] chrony
 - [x] cloudprober
 - [x] cilium-agent
 - [x] cilium-cli
 - [x] cilium-operator
 - [x] clang
+- [x] cni-plugins
 - [x] cloudnative-pg
+- [x] coder
+- [x] conduit
 - [x] configmap-reload
 - [x] consul
 - [x] containerd
@@ -75,6 +81,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] cpp-build-env
 - [x] cpp-runtime
 - [x] crane
+- [x] cri-tools
 - [x] crossplane
 - [x] crossplane-provider-aws
 - [x] crossplane-provider-azure
@@ -94,11 +101,14 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] devcontainer
 - [x] devenv
 - [x] dex
+- [x] dgraph
+- [x] direnv
 - [x] distroless
 - [x] dive
 - [x] dnsdist
 - [x] docker-compose
 - [x] druid
+- [x] dust
 - [x] dotnet
 - [x] dotnet-sdk
 - [x] dragonfly
