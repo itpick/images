@@ -24,6 +24,12 @@ github = "argoproj/argo-rollouts"
 use_max_tag = true
 prefix = "v"
 
+[argo-workflows]
+source = "github"
+github = "argoproj/argo-workflows"
+use_max_tag = true
+prefix = "v"
+
 [argocd-image-updater]
 source = "github"
 github = "argoproj-labs/argocd-image-updater"

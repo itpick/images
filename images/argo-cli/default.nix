@@ -1,7 +1,6 @@
 { mkImage, pkgs, lib, ... }:
 
-# Argo Workflows - Container native workflow engine for Kubernetes
-# This image provides the Argo CLI for interacting with Argo Workflows
+# Argo CLI - Command line interface for Argo Workflows
 # Uses custom package from pkgs/argo-workflows
 
 let
@@ -10,7 +9,7 @@ let
 in
 mkImage {
   drv = argo-workflows.argo-cli;
-  name = "argo-workflows";
+  name = "argo-cli";
   tag = "v${version}";
   entrypoint = [ "${argo-workflows.argo-cli}/bin/argo" ];
   cmd = [ "help" ];
@@ -18,8 +17,8 @@ mkImage {
   extraPkgs = with pkgs; [ cacert tzdata git ];
 
   labels = {
-    "org.opencontainers.image.title" = "Argo Workflows CLI";
-    "org.opencontainers.image.description" = "Container native workflow engine for Kubernetes - CLI";
+    "org.opencontainers.image.title" = "Argo CLI";
+    "org.opencontainers.image.description" = "Command line interface for Argo Workflows";
     "org.opencontainers.image.version" = version;
     "io.nix-containers.chart" = "argo-workflows";
   };
