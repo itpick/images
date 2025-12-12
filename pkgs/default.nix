@@ -65,6 +65,12 @@
   trust-manager = pkgs.callPackage ./trust-manager { };
   velero = pkgs.callPackage ./velero { };
   vertical-pod-autoscaler = pkgs.callPackage ./vertical-pod-autoscaler { };
+  victoriametrics-cluster = pkgs.callPackage ./victoriametrics-cluster { };
+  victoriametrics-cluster-fips = pkgs.callPackage ./victoriametrics-cluster-fips { };
+  victoriametrics-fips = pkgs.callPackage ./victoriametrics-fips { };
+  victoriametrics-operator = pkgs.callPackage ./victoriametrics-operator { };
+  victoriametrics-operator-fips = pkgs.callPackage ./victoriametrics-operator-fips { };
+  victoriametrics-utils-fips = pkgs.callPackage ./victoriametrics-utils-fips { };
 
   # Font packages - aliases to nixpkgs fonts
   font-abyssinica = pkgs.sil-abyssinica;

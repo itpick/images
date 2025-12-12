@@ -878,3 +878,197 @@ source = "github"
 github = "mikefarah/yq"
 use_latest_release = true
 prefix = "v"
+
+# ============================================
+# AWS & Cloud Provider Components
+# ============================================
+
+[amazon-vpc-cni]
+source = "github"
+github = "aws/amazon-vpc-cni-k8s"
+use_latest_release = true
+prefix = "v"
+
+[aws-ebs-csi-driver]
+source = "github"
+github = "kubernetes-sigs/aws-ebs-csi-driver"
+use_latest_release = true
+prefix = "v"
+
+[aws-efs-csi-driver]
+source = "github"
+github = "kubernetes-sigs/aws-efs-csi-driver"
+use_latest_release = true
+prefix = "v"
+
+[aws-load-balancer-controller]
+source = "github"
+github = "kubernetes-sigs/aws-load-balancer-controller"
+use_latest_release = true
+prefix = "v"
+
+[aws-node-termination-handler]
+source = "github"
+github = "aws/aws-node-termination-handler"
+use_latest_release = true
+prefix = "v"
+
+[karpenter]
+source = "github"
+github = "aws/karpenter-provider-aws"
+use_latest_release = true
+prefix = "v"
+
+# ============================================
+# CSI Drivers & Storage
+# ============================================
+
+[csi-attacher]
+source = "github"
+github = "kubernetes-csi/external-attacher"
+use_latest_release = true
+prefix = "v"
+
+[csi-driver-nfs]
+source = "github"
+github = "kubernetes-csi/csi-driver-nfs"
+use_latest_release = true
+prefix = "v"
+
+[csi-driver-smb]
+source = "github"
+github = "kubernetes-csi/csi-driver-smb"
+use_latest_release = true
+prefix = "v"
+
+[csi-node-driver-registrar]
+source = "github"
+github = "kubernetes-csi/node-driver-registrar"
+use_latest_release = true
+prefix = "v"
+
+[csi-provisioner]
+source = "github"
+github = "kubernetes-csi/external-provisioner"
+use_latest_release = true
+prefix = "v"
+
+[csi-resizer]
+source = "github"
+github = "kubernetes-csi/external-resizer"
+use_latest_release = true
+prefix = "v"
+
+[livenessprobe]
+source = "github"
+github = "kubernetes-csi/livenessprobe"
+use_latest_release = true
+prefix = "v"
+
+[sig-storage-local-static-provisioner]
+source = "github"
+github = "kubernetes-sigs/sig-storage-local-static-provisioner"
+use_latest_release = true
+prefix = "v"
+
+[snapshot-controller]
+source = "github"
+github = "kubernetes-csi/external-snapshotter"
+use_latest_release = true
+prefix = "v"
+
+# ============================================
+# Additional Kubernetes Components
+# ============================================
+
+[argo-events]
+source = "github"
+github = "argoproj/argo-events"
+use_latest_release = true
+prefix = "v"
+
+[argocd-image-updater]
+source = "github"
+github = "argoproj-labs/argocd-image-updater"
+use_latest_release = true
+prefix = "v"
+
+[bank-vaults]
+source = "github"
+github = "bank-vaults/bank-vaults"
+use_latest_release = true
+prefix = "v"
+
+[cluster-autoscaler]
+source = "github"
+github = "kubernetes/autoscaler"
+use_max_tag = true
+include_regex = "^cluster-autoscaler-\\d+\\.\\d+\\.\\d+$"
+prefix = "cluster-autoscaler-"
+sort_version_key = "parse_version"
+
+[cluster-proportional-autoscaler]
+source = "github"
+github = "kubernetes-sigs/cluster-proportional-autoscaler"
+use_latest_release = true
+prefix = "v"
+
+[kubernetes-dashboard]
+source = "github"
+github = "kubernetes/dashboard"
+use_latest_release = true
+prefix = "kubernetes-dashboard-"
+
+[metallb]
+source = "github"
+github = "metallb/metallb"
+use_latest_release = true
+prefix = "v"
+
+[node-feature-discovery]
+source = "github"
+github = "kubernetes-sigs/node-feature-discovery"
+use_latest_release = true
+prefix = "v"
+
+[prometheus-adapter]
+source = "github"
+github = "kubernetes-sigs/prometheus-adapter"
+use_latest_release = true
+prefix = "v"
+
+[sealed-secrets]
+source = "github"
+github = "bitnami-labs/sealed-secrets"
+use_latest_release = true
+prefix = "v"
+
+[spire]
+source = "github"
+github = "spiffe/spire"
+use_latest_release = true
+prefix = "v"
+
+[vertical-pod-autoscaler]
+source = "github"
+github = "kubernetes/autoscaler"
+use_max_tag = true
+include_regex = "^vertical-pod-autoscaler-\\d+\\.\\d+\\.\\d+$"
+prefix = "vertical-pod-autoscaler-"
+sort_version_key = "parse_version"
+
+# ============================================
+# VictoriaMetrics
+# ============================================
+
+[victoriametrics]
+source = "github"
+github = "VictoriaMetrics/VictoriaMetrics"
+use_latest_release = true
+prefix = "v"
+
+[victoriametrics-operator]
+source = "github"
+github = "VictoriaMetrics/operator"
+use_latest_release = true
+prefix = "v"
