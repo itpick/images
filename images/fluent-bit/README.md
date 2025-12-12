@@ -9,6 +9,13 @@ Fluent Bit is a lightweight and high performance log processor
 | Build Time | 4s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 309.52 MB |
+| Uncompressed | ~773.81 MB |
+
 ## Usage
 
 ```bash

@@ -9,6 +9,13 @@ GitLab is a complete DevOps platform that provides source code management, CI/CD
 | Build Time | 4s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 325.14 MB |
+| Uncompressed | ~812.85 MB |
+
 ## Usage
 
 ```bash

@@ -9,6 +9,13 @@ Fetches secrets from external systems and exposes them as Kubernetes Secrets
 | Build Time | 1m 38s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 271.85 MB |
+| Uncompressed | ~679.63 MB |
+
 ## Usage
 
 ```bash

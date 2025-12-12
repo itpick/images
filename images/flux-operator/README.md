@@ -9,6 +9,13 @@ Flux Operator is a Kubernetes controller for managing the lifecycle of Flux CD
 | Build Time | 4s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 136.34 MB |
+| Uncompressed | ~340.85 MB |
+
 ## Usage
 
 ```bash

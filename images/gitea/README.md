@@ -9,6 +9,13 @@ A painless self-hosted all-in-one software development service, including Git ho
 | Build Time | 13s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 1.02 GB |
+| Uncompressed | ~2.57 GB |
+
 ## Usage
 
 ```bash

@@ -9,6 +9,13 @@ Minimal image that contains ffmpeg
 | Build Time | 8s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 1.13 GB |
+| Uncompressed | ~2.83 GB |
+
 ## Usage
 
 ```bash

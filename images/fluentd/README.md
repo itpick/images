@@ -9,6 +9,13 @@ Fluentd: Unified Logging Layer (project under CNCF)
 | Build Time | 7s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 207.56 MB |
+| Uncompressed | ~518.92 MB |
+
 ## Usage
 
 ```bash

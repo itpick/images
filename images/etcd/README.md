@@ -9,6 +9,13 @@ etcd Distributed reliable key-value store for the most critical data of a distri
 | Build Time | 4s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 113.43 MB |
+| Uncompressed | ~283.58 MB |
+
 ## Usage
 
 ```bash

@@ -9,6 +9,13 @@ flux cli to interact with the Flux gitops toolkit components in a running cluste
 | Build Time | 4s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 306.07 MB |
+| Uncompressed | ~765.18 MB |
+
 ## Usage
 
 ```bash
