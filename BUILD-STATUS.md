@@ -1,6 +1,6 @@
 # Nix Container Images Build Status
 
-Total images: 418
+Total images: 428
 
 All images in this repository build successfully using `nix build .#<image-name>`.
 
@@ -60,11 +60,13 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] cilium-agent
 - [x] cilium-cli
 - [x] cilium-operator
+- [x] clang
 - [x] cloudnative-pg
 - [x] configmap-reload
 - [x] consul
 - [x] coredns
 - [x] cosign
+- [x] couchdb
 - [x] cpp-build-env
 - [x] cpp-runtime
 - [x] crane
@@ -92,6 +94,8 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] docker-compose
 - [x] druid
 - [x] dotnet
+- [x] dotnet-sdk
+- [x] dragonfly
 - [x] dragonfly-operator
 - [x] earthly
 - [x] eck-operator
@@ -107,6 +111,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] external-secrets
 - [x] falcoctl
 - [x] flannel
+- [x] flink
 - [x] fluent-bit
 - [x] fluentd
 - [x] flux
@@ -209,6 +214,8 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] kubernetes-helm
 - [x] kubernetes-reflector
 - [x] kubesec
+- [x] kubevirt
+- [x] kustomize
 - [x] kustomize-controller
 - [x] kyverno
 - [x] laravel
@@ -247,6 +254,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] minio-warp
 - [x] mlflow
 - [x] mongodb
+- [x] mosquitto
 - [x] multus-cni
 - [x] mysql
 - [x] nats
@@ -328,6 +336,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] python
 - [x] python-fips
 - [x] radarr
+- [x] rancher
 - [x] rclone
 - [x] readarr
 - [x] redis
@@ -343,6 +352,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] rook-ceph
 - [x] rook-ceph-operator
 - [x] rsyslog
+- [x] rstudio
 - [x] ruby
 - [x] rust
 - [x] sabnzbd
