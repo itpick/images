@@ -43,7 +43,7 @@ A collection of container images built with nix2container, featuring dynamic dis
 
 | Provider | <img src="https://nixos.org/favicon.ico" width="20" height="20"> Nix Containers | <img src="https://images.chainguard.dev/favicon.svg" width="20" height="20"> Chainguard | <img src="https://securebuild.com/favicon.ico" width="20" height="20"> Replicated SecureBuild |
 |----------|:-----------:|:-----------:|:-----------:|
-| **Public Images** | **54** | **51** | **31 (zero public)** |
+| **Public Images** | **3,118** | **51** | **31 (zero public)** |
 | **Build System** | Nix + nix2container | apko + melange | Buildpacks |
 | **Base** | NixOS/nixpkgs | Alpine/glibc | Various |
 | **Security Focus** | Reproducible builds & minimal attack surface | Minimal attack surface | Supply chain security |
@@ -51,7 +51,36 @@ A collection of container images built with nix2container, featuring dynamic dis
 
 </div>
 
-*Last updated: 2025-08-31*
+*Last updated: 2025-12-12*
+
+### Image Breakdown by Category
+
+| Category | Count | Description |
+|----------|------:|-------------|
+| **FIPS-140-2 Compliant** | 955 | BoringCrypto-enabled Go binaries |
+| **Kubernetes** | 236 | Core k8s components, kubectl, operators |
+| **Crossplane** | 129 | Crossplane providers and controllers |
+| **Prometheus/Exporters** | 123 | Monitoring and metrics exporters |
+| **Flux Controllers** | 108 | GitOps controllers and components |
+| **GitLab** | 49 | GitLab runner, shell, pages, registry |
+| **Grafana Stack** | 42 | Grafana, Loki, Tempo, Mimir |
+| **Cilium/Hubble** | 39 | CNI networking and observability |
+| **AWS** | 38 | EBS/EFS CSI drivers, load balancer |
+| **Argo** | 32 | ArgoCD, Rollouts, Workflows, Events |
+| **Kyverno** | 32 | Policy engine and controllers |
+| **Calico** | 30 | CNI networking components |
+| **Harbor** | 26 | Container registry components |
+| **cert-manager** | 25 | Certificate management |
+| **NeuVector** | 15 | Container security platform |
+| **OpenTelemetry** | 13 | Tracing and observability |
+| **Istio** | 13 | Service mesh components |
+| **Keycloak** | 13 | Identity and access management |
+| **Velero** | 11 | Backup and disaster recovery |
+| **Thanos** | 10 | Long-term Prometheus storage |
+| **Vault** | 7 | Secrets management |
+| **External (DNS/Secrets)** | 7 | External integrations |
+| **Trivy** | 5 | Vulnerability scanning |
+| **Other** | ~1,100+ | Base images, runtimes, databases, tools |
 
 ---
 ## Available Images
@@ -340,14 +369,15 @@ in {
 }
 ```
 
-TODO
-Simplify root readme with maximum valuable info
-Add more chart tests
-Add full chart tests instead of image chart tests that are triggered by the main image of a chart set of images.
-Finish all to-do packages
-Finish all to-do images
-Cleanup old scripts
-Document image updates
-Document time to every build of every image
-Add way to develop list of input images from a config file - and add a bigbang image input as example
-still need to add full trivy/grype results
+## TODO
+
+- [ ] Simplify root readme with maximum valuable info
+- [ ] Add more chart tests
+- [ ] Add full chart tests instead of image chart tests that are triggered by the main image of a chart set of images
+- [x] ~~Finish all to-do packages~~ (completed: 0 remaining)
+- [x] ~~Finish all to-do images~~ (completed: 3,118 images)
+- [ ] Cleanup old scripts
+- [ ] Document image updates
+- [ ] Document time to every build of every image
+- [ ] Add way to develop list of input images from a config file - and add a bigbang image input as example
+- [ ] Add full trivy/grype results
