@@ -1,6 +1,6 @@
 # Nix Container Images Build Status
 
-Total images: 518
+Total images: 528
 
 All images in this repository build successfully using `nix build .#<image-name>`.
 
@@ -383,8 +383,11 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] policy-reporter-ui
 - [x] postgres
 - [x] postgres-exporter
+- [x] plocate
 - [x] postgresql
+- [x] procs
 - [x] prometheus
+- [x] pssh
 - [x] prometheus-adapter
 - [x] prometheus-blackbox-exporter
 - [x] prometheus-config-reloader
@@ -410,11 +413,14 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] python
 - [x] python-fips
 - [x] radarr
+- [x] rage
 - [x] rancher
+- [x] rav1e
 - [x] rclone
 - [x] readarr
 - [x] ripgrep
 - [x] redis
+- [x] rke2
 - [x] restic-rest-server
 - [x] rtorrent
 - [x] redis-exporter
@@ -436,9 +442,11 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] sonarr
 - [x] rust-build-env
 - [x] sbt
+- [x] sd
 - [x] seaweedfs
 - [x] semgrep
 - [x] shellcheck
+- [x] silver-searcher
 - [x] snapshot-controller
 - [x] snapshot-validation-webhook
 - [x] snmp-exporter
@@ -459,6 +467,8 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] squid
 - [x] static
 - [x] step-ca
+- [x] strace
+- [x] stress-ng
 - [x] strongswan
 - [x] stunnel
 - [x] step-cli
