@@ -1,0 +1,343 @@
+# nvchecker configuration for custom packages
+# Run with: nvchecker -c nvchecker.toml
+# Update versions with: nvcheckerUpdate -c nvchecker.toml
+
+[__config__]
+oldver = "oldver.json"
+newver = "newver.json"
+
+[amazon-vpc-cni]
+source = "github"
+github = "aws/amazon-vpc-cni-k8s"
+use_max_tag = true
+prefix = "v"
+
+[argo-events]
+source = "github"
+github = "argoproj/argo-events"
+use_max_tag = true
+prefix = "v"
+
+[argo-rollouts]
+source = "github"
+github = "argoproj/argo-rollouts"
+use_max_tag = true
+prefix = "v"
+
+[argocd-image-updater]
+source = "github"
+github = "argoproj-labs/argocd-image-updater"
+use_max_tag = true
+prefix = "v"
+
+[aws-ebs-csi-driver]
+source = "github"
+github = "kubernetes-sigs/aws-ebs-csi-driver"
+use_max_tag = true
+prefix = "v"
+
+[aws-efs-csi-driver]
+source = "github"
+github = "kubernetes-sigs/aws-efs-csi-driver"
+use_max_tag = true
+prefix = "v"
+
+[aws-load-balancer-controller]
+source = "github"
+github = "kubernetes-sigs/aws-load-balancer-controller"
+use_max_tag = true
+prefix = "v"
+
+[aws-node-termination-handler]
+source = "github"
+github = "aws/aws-node-termination-handler"
+use_max_tag = true
+prefix = "v"
+
+[bank-vaults]
+source = "github"
+github = "bank-vaults/bank-vaults"
+use_max_tag = true
+prefix = "v"
+
+[cert-manager]
+source = "github"
+github = "cert-manager/cert-manager"
+use_max_tag = true
+prefix = "v"
+
+[cilium]
+source = "github"
+github = "cilium/cilium"
+use_max_tag = true
+prefix = "v"
+
+[cloudnative-pg]
+source = "github"
+github = "cloudnative-pg/cloudnative-pg"
+use_max_tag = true
+prefix = "v"
+
+[cluster-autoscaler]
+source = "github"
+github = "kubernetes/autoscaler"
+use_max_tag = true
+prefix = "cluster-autoscaler-"
+
+[cluster-proportional-autoscaler]
+source = "github"
+github = "kubernetes-sigs/cluster-proportional-autoscaler"
+use_max_tag = true
+prefix = "v"
+
+[configmap-reload]
+source = "github"
+github = "jimmidyson/configmap-reload"
+use_max_tag = true
+prefix = "v"
+
+[contour]
+source = "github"
+github = "projectcontour/contour"
+use_max_tag = true
+prefix = "v"
+
+[coredns]
+source = "github"
+github = "coredns/coredns"
+use_max_tag = true
+prefix = "v"
+
+[crossplane]
+source = "github"
+github = "crossplane/crossplane"
+use_max_tag = true
+prefix = "v"
+
+[csi-attacher]
+source = "github"
+github = "kubernetes-csi/external-attacher"
+use_max_tag = true
+prefix = "v"
+
+[csi-driver-nfs]
+source = "github"
+github = "kubernetes-csi/csi-driver-nfs"
+use_max_tag = true
+prefix = "v"
+
+[csi-driver-smb]
+source = "github"
+github = "kubernetes-csi/csi-driver-smb"
+use_max_tag = true
+prefix = "v"
+
+[csi-node-driver-registrar]
+source = "github"
+github = "kubernetes-csi/node-driver-registrar"
+use_max_tag = true
+prefix = "v"
+
+[csi-provisioner]
+source = "github"
+github = "kubernetes-csi/external-provisioner"
+use_max_tag = true
+prefix = "v"
+
+[csi-resizer]
+source = "github"
+github = "kubernetes-csi/external-resizer"
+use_max_tag = true
+prefix = "v"
+
+[dex]
+source = "github"
+github = "dexidp/dex"
+use_max_tag = true
+prefix = "v"
+
+[external-secrets]
+source = "github"
+github = "external-secrets/external-secrets"
+use_max_tag = true
+prefix = "v"
+
+[flux]
+source = "github"
+github = "fluxcd/flux2"
+use_max_tag = true
+prefix = "v"
+
+[ingress-nginx-controller]
+source = "github"
+github = "kubernetes/ingress-nginx"
+use_max_tag = true
+prefix = "controller-v"
+
+[istio]
+source = "github"
+github = "istio/istio"
+use_max_tag = true
+exclude_regex = ".*-rc.*|.*-beta.*|.*-alpha.*"
+
+[karpenter]
+source = "github"
+github = "aws/karpenter-provider-aws"
+use_max_tag = true
+prefix = "v"
+
+[keda]
+source = "github"
+github = "kedacore/keda"
+use_max_tag = true
+prefix = "v"
+
+[kube-rbac-proxy]
+source = "github"
+github = "brancz/kube-rbac-proxy"
+use_max_tag = true
+prefix = "v"
+
+[kube-state-metrics]
+source = "github"
+github = "kubernetes/kube-state-metrics"
+use_max_tag = true
+prefix = "v"
+
+[kubernetes-dashboard]
+source = "github"
+github = "kubernetes/dashboard"
+use_max_tag = true
+prefix = "kubernetes-dashboard-"
+
+[kyverno]
+source = "github"
+github = "kyverno/kyverno"
+use_max_tag = true
+prefix = "v"
+
+[linkerd]
+source = "github"
+github = "linkerd/linkerd2"
+use_max_tag = true
+prefix = "stable-"
+
+[livenessprobe]
+source = "github"
+github = "kubernetes-csi/livenessprobe"
+use_max_tag = true
+prefix = "v"
+
+[loki]
+source = "github"
+github = "grafana/loki"
+use_max_tag = true
+prefix = "v"
+
+[metallb]
+source = "github"
+github = "metallb/metallb"
+use_max_tag = true
+prefix = "v"
+
+[metrics-server]
+source = "github"
+github = "kubernetes-sigs/metrics-server"
+use_max_tag = true
+prefix = "v"
+
+[mimir]
+source = "github"
+github = "grafana/mimir"
+use_max_tag = true
+prefix = "mimir-"
+
+[node-feature-discovery]
+source = "github"
+github = "kubernetes-sigs/node-feature-discovery"
+use_max_tag = true
+prefix = "v"
+
+[oauth2-proxy]
+source = "github"
+github = "oauth2-proxy/oauth2-proxy"
+use_max_tag = true
+prefix = "v"
+
+[prometheus-adapter]
+source = "github"
+github = "kubernetes-sigs/prometheus-adapter"
+use_max_tag = true
+prefix = "v"
+
+[reloader]
+source = "github"
+github = "stakater/Reloader"
+use_max_tag = true
+prefix = "v"
+
+[sealed-secrets]
+source = "github"
+github = "bitnami-labs/sealed-secrets"
+use_max_tag = true
+prefix = "v"
+
+[sig-storage-local-static-provisioner]
+source = "github"
+github = "kubernetes-sigs/sig-storage-local-static-provisioner"
+use_max_tag = true
+prefix = "v"
+
+[snapshot-controller]
+source = "github"
+github = "kubernetes-csi/external-snapshotter"
+use_max_tag = true
+prefix = "v"
+
+[spire]
+source = "github"
+github = "spiffe/spire"
+use_max_tag = true
+prefix = "v"
+
+[tempo]
+source = "github"
+github = "grafana/tempo"
+use_max_tag = true
+prefix = "v"
+
+[thanos]
+source = "github"
+github = "thanos-io/thanos"
+use_max_tag = true
+prefix = "v"
+
+[traefik]
+source = "github"
+github = "traefik/traefik"
+use_max_tag = true
+prefix = "v"
+
+[trivy]
+source = "github"
+github = "aquasecurity/trivy"
+use_max_tag = true
+prefix = "v"
+
+[trust-manager]
+source = "github"
+github = "cert-manager/trust-manager"
+use_max_tag = true
+prefix = "v"
+
+[velero]
+source = "github"
+github = "vmware-tanzu/velero"
+use_max_tag = true
+prefix = "v"
+
+[vertical-pod-autoscaler]
+source = "github"
+github = "kubernetes/autoscaler"
+use_max_tag = true
+prefix = "vertical-pod-autoscaler-"

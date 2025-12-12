@@ -4,17 +4,66 @@
 { pkgs }:
 
 {
+  # Kubernetes ecosystem packages
+  amazon-vpc-cni = pkgs.callPackage ./amazon-vpc-cni { };
   apache-nifi = pkgs.callPackage ./apache-nifi { };
+  argo-events = pkgs.callPackage ./argo-events { };
+  argo-rollouts = pkgs.callPackage ./argo-rollouts { };
+  argocd-image-updater = pkgs.callPackage ./argocd-image-updater { };
+  aws-ebs-csi-driver = pkgs.callPackage ./aws-ebs-csi-driver { };
+  aws-efs-csi-driver = pkgs.callPackage ./aws-efs-csi-driver { };
+  aws-load-balancer-controller = pkgs.callPackage ./aws-load-balancer-controller { };
+  aws-node-termination-handler = pkgs.callPackage ./aws-node-termination-handler { };
+  bank-vaults = pkgs.callPackage ./bank-vaults { };
   cert-manager = pkgs.callPackage ./cert-manager { };
   cilium = pkgs.callPackage ./cilium { };
   cilium-certgen = pkgs.callPackage ./certgen { };
   cloudnative-pg = pkgs.callPackage ./cloudnative-pg { };
+  cluster-autoscaler = pkgs.callPackage ./cluster-autoscaler { };
+  cluster-proportional-autoscaler = pkgs.callPackage ./cluster-proportional-autoscaler { };
   configmap-reload = pkgs.callPackage ./configmap-reload { };
+  contour = pkgs.callPackage ./contour { };
+  coredns = pkgs.callPackage ./coredns { };
   crossplane-server = pkgs.callPackage ./crossplane { };
+  csi-attacher = pkgs.callPackage ./csi-attacher { };
+  csi-driver-nfs = pkgs.callPackage ./csi-driver-nfs { };
+  csi-driver-smb = pkgs.callPackage ./csi-driver-smb { };
+  csi-node-driver-registrar = pkgs.callPackage ./csi-node-driver-registrar { };
+  csi-provisioner = pkgs.callPackage ./csi-provisioner { };
+  csi-resizer = pkgs.callPackage ./csi-resizer { };
+  dex = pkgs.callPackage ./dex { };
+  external-secrets = pkgs.callPackage ./external-secrets { };
+  flux = pkgs.callPackage ./flux { };
   hubble-ui = pkgs.callPackage ./hubble-ui { };
+  ingress-nginx-controller = pkgs.callPackage ./ingress-nginx-controller { };
   istio = pkgs.callPackage ./istio { };
+  karpenter = pkgs.callPackage ./karpenter { };
   keda = pkgs.callPackage ./keda { };
   kube-rbac-proxy = pkgs.callPackage ./kube-rbac-proxy { };
+  kube-state-metrics = pkgs.callPackage ./kube-state-metrics { };
+  kubernetes-dashboard = pkgs.callPackage ./kubernetes-dashboard { };
+  kyverno = pkgs.callPackage ./kyverno { };
+  linkerd = pkgs.callPackage ./linkerd { };
+  livenessprobe = pkgs.callPackage ./livenessprobe { };
+  loki = pkgs.callPackage ./loki { };
+  metallb = pkgs.callPackage ./metallb { };
+  metrics-server = pkgs.callPackage ./metrics-server { };
+  mimir = pkgs.callPackage ./mimir { };
+  node-feature-discovery = pkgs.callPackage ./node-feature-discovery { };
+  oauth2-proxy = pkgs.callPackage ./oauth2-proxy { };
+  prometheus-adapter = pkgs.callPackage ./prometheus-adapter { };
+  reloader = pkgs.callPackage ./reloader { };
+  sealed-secrets = pkgs.callPackage ./sealed-secrets { };
+  sig-storage-local-static-provisioner = pkgs.callPackage ./sig-storage-local-static-provisioner { };
+  snapshot-controller = pkgs.callPackage ./snapshot-controller { };
+  spire = pkgs.callPackage ./spire { };
+  tempo = pkgs.callPackage ./tempo { };
+  thanos = pkgs.callPackage ./thanos { };
+  traefik = pkgs.callPackage ./traefik { };
+  trivy = pkgs.callPackage ./trivy { };
+  trust-manager = pkgs.callPackage ./trust-manager { };
+  velero = pkgs.callPackage ./velero { };
+  vertical-pod-autoscaler = pkgs.callPackage ./vertical-pod-autoscaler { };
 
   # Font packages - aliases to nixpkgs fonts
   font-abyssinica = pkgs.sil-abyssinica;

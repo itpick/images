@@ -10,13 +10,13 @@
 { lib, fetchFromGitHub, buildGoModule, symlinkJoin, fetchurl, stdenv, autoPatchelfHook, glibc }:
 
 let
-  version = "1.24.0";
+  version = "1.28.1";
 
   src = fetchFromGitHub {
     owner = "istio";
     repo = "istio";
     rev = version;
-    hash = "sha256-Xlk+BChJ8jcazApSF8PIs6Ps8onG+2h9p6NCl0kyB/4=";
+    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
   };
 
   commonAttrs = {
@@ -45,7 +45,7 @@ let
     pname = "pilot-discovery";
     subPackages = [ "pilot/cmd/pilot-discovery" ];
     proxyVendor = true;
-    vendorHash = "sha256-FnafMz6kIea2Htjsa0OeBmjLA/UoLW0EDW3DNFlj9V4=";
+    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
     inherit ldflags;
   });
 
@@ -54,7 +54,7 @@ let
     pname = "pilot-agent";
     subPackages = [ "pilot/cmd/pilot-agent" ];
     proxyVendor = true;
-    vendorHash = "sha256-FnafMz6kIea2Htjsa0OeBmjLA/UoLW0EDW3DNFlj9V4=";
+    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
     inherit ldflags;
   });
 
