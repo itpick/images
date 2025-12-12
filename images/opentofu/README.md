@@ -9,6 +9,13 @@ OpenTofu is an open-source infrastructure as code tool that allows you to declar
 | Build Time | 4s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 590.48 MB |
+| Uncompressed | ~1.44 GB |
+
 ## Usage
 
 ```bash

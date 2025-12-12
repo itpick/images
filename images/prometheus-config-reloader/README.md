@@ -9,6 +9,13 @@ Minimalist image for Prometheus Config Reloader. It helps with config of Prometh
 | Build Time | 54s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 126.28 MB |
+| Uncompressed | ~315.71 MB |
+
 ## Usage
 
 ```bash

@@ -9,6 +9,13 @@ Minimal image with opentelemetry-collector
 | Build Time | 4s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 277.63 MB |
+| Uncompressed | ~694.07 MB |
+
 ## Usage
 
 ```bash

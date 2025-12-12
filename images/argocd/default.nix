@@ -1,4 +1,4 @@
-{ mkImage, pkgs, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, pkgs, ... }:
 
 
 # Chainguard SBOM packages for argocd:
@@ -57,11 +57,61 @@
 #   ncurses-terminfo-base (6.5_p20251025-r1)
 #   ... and 6 more
 
+let
+  version = "3.2.1";
+  argocd = buildGoModule {
+    pname = "argocd";
+    inherit version;
+
+    src = fetchFromGitHub {
+      owner = "argoproj";
+      repo = "argo-cd";
+      rev = "v${version}";
+      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    };
+
+    vendorHash = null;  # TODO: Update after first build
+
+    env.CGO_ENABLED = 0;
+
+    ldflags = [
+      "-s" "-w"
+      "-X github.com/argoproj/argo-cd/v2/common.version=${version}"
+      "-X github.com/argoproj/argo-cd/v2/common.buildDate=1970-01-01T00:00:00Z"
+      "-X github.com/argoproj/argo-cd/v2/common.gitCommit=${version}"
+      "-X github.com/argoproj/argo-cd/v2/common.gitTreeState=clean"
+    ];
+
+    # Build main CLI and all server components
+    subPackages = [
+      "cmd/argocd"
+      "cmd/argocd-server"
+      "cmd/argocd-application-controller"
+      "cmd/argocd-repo-server"
+      "cmd/argocd-dex"
+      "cmd/argocd-applicationset-controller"
+      "cmd/argocd-notification"
+      "cmd/argocd-k8s-auth"
+      "cmd/argocd-git-ask-pass"
+      "cmd/argocd-cmp-server"
+    ];
+
+    doCheck = false;
+
+    meta = with lib; {
+      description = "Declarative GitOps CD for Kubernetes";
+      homepage = "https://github.com/argoproj/argo-cd";
+      license = licenses.asl20;
+      maintainers = with maintainers; [ ];
+    };
+  };
+
+in
 mkImage {
-  drv = pkgs.argocd;
+  drv = argocd;
   name = "argocd";
-  tag = "v${pkgs.argocd.version}";
-  entrypoint = [ "${pkgs.argocd}/bin/argocd" ];
+  tag = "v${version}";
+  entrypoint = [ "${argocd}/bin/argocd" ];
   cmd = [ "--help" ];
   # Chainguard runs argocd as user 999
   user = "999:999";
@@ -80,7 +130,8 @@ mkImage {
   labels = {
     "org.opencontainers.image.title" = "Argo CD";
     "org.opencontainers.image.description" = "Declarative GitOps CD for Kubernetes";
-    "org.opencontainers.image.version" = pkgs.argocd.version;
+    "org.opencontainers.image.version" = version;
+    "org.opencontainers.image.source" = "https://github.com/argoproj/argo-cd";
     "io.nix-containers.chart" = "argocd";
   };
 }

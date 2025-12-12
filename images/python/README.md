@@ -9,6 +9,13 @@ Minimal Python image based on Wolfi
 | Build Time | 3s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 694.83 MB |
+| Uncompressed | ~1.69 GB |
+
 ## Usage
 
 ```bash

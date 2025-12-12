@@ -9,6 +9,13 @@ Minimal image for PostgreSQL, an advanced object-relational database management 
 | Build Time | 3s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 172.69 MB |
+| Uncompressed | ~431.74 MB |
+
 ## Usage
 
 ```bash
