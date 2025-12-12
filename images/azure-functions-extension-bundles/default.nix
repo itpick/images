@@ -1,0 +1,35 @@
+{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+
+# azure-functions-extension-bundles
+# Container image
+
+let
+  version = "latest";
+  
+  imagePkgs = with pkgs; [
+    bash
+    coreutils
+    cacert
+    tzdata
+  ];
+
+  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+
+in nix2container.buildImage {
+  name = "azure-functions-extension-bundles";
+  tag = version;
+  copyToRoot = [
+    (buildEnv {
+      name = "azure-functions-extension-bundles-root";
+      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
+    })
+  ];
+  config = nonRoot.defaultConfig // {
+    Env = base.defaultEnv ++ nonRoot.userEnv;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.title" = "azure functions extension uundles";
+      "org.opencontainers.image.description" = "azure-functions-extension-bundles container image";
+      "org.opencontainers.image.version" = version;
+    };
+  };
+}

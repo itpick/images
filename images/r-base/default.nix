@@ -1,0 +1,32 @@
+{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+
+# r-base
+# Container image
+
+let
+  imagePkgs = with pkgs; [
+    bash
+    coreutils
+    cacert
+    tzdata
+  ];
+
+  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+
+in nix2container.buildImage {
+  name = "r-base";
+  tag = "latest";
+  copyToRoot = [
+    (buildEnv {
+      name = "r-base-root";
+      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
+    })
+  ];
+  config = nonRoot.defaultConfig // {
+    Env = base.defaultEnv ++ nonRoot.userEnv;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.title" = "r-base";
+      "org.opencontainers.image.description" = "r-base container image";
+    };
+  };
+}

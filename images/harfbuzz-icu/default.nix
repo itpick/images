@@ -1,0 +1,35 @@
+{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+
+# harfbuzz-icu
+# Container image
+
+let
+  version = "latest";
+  
+  imagePkgs = with pkgs; [
+    bash
+    coreutils
+    cacert
+    tzdata
+  ];
+
+  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+
+in nix2container.buildImage {
+  name = "harfbuzz-icu";
+  tag = version;
+  copyToRoot = [
+    (buildEnv {
+      name = "harfbuzz-icu-root";
+      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
+    })
+  ];
+  config = nonRoot.defaultConfig // {
+    Env = base.defaultEnv ++ nonRoot.userEnv;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.title" = "harfuuzz icu";
+      "org.opencontainers.image.description" = "harfbuzz-icu container image";
+      "org.opencontainers.image.version" = version;
+    };
+  };
+}

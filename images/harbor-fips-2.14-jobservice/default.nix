@@ -1,0 +1,36 @@
+{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+
+# harbor-fips-2.14-jobservice
+# Container image
+
+let
+  version = "latest";
+  
+  imagePkgs = with pkgs; [
+    bash
+    coreutils
+    cacert
+    tzdata
+  ];
+
+  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+
+in nix2container.buildImage {
+  name = "harbor-fips-2.14-jobservice";
+  tag = version;
+  copyToRoot = [
+    (buildEnv {
+      name = "harbor-fips-2.14-jobservice-root";
+      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
+    })
+  ];
+  config = nonRoot.defaultConfig // {
+    Env = base.defaultEnv ++ nonRoot.userEnv;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.title" = "haruor fips 2.14 jouservice";
+      "org.opencontainers.image.description" = "harbor-fips-2.14-jobservice container image";
+      "org.opencontainers.image.version" = version;
+    "io.nix-containers.compliance" = "FIPS-140-2";
+    };
+  };
+}

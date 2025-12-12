@@ -1,0 +1,35 @@
+{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+
+# apache2-utils
+# Container image
+
+let
+  version = "latest";
+  
+  imagePkgs = with pkgs; [
+    bash
+    coreutils
+    cacert
+    tzdata
+  ];
+
+  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+
+in nix2container.buildImage {
+  name = "apache2-utils";
+  tag = version;
+  copyToRoot = [
+    (buildEnv {
+      name = "apache2-utils-root";
+      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
+    })
+  ];
+  config = nonRoot.defaultConfig // {
+    Env = base.defaultEnv ++ nonRoot.userEnv;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.title" = "apache2 utils";
+      "org.opencontainers.image.description" = "apache2-utils container image";
+      "org.opencontainers.image.version" = version;
+    };
+  };
+}

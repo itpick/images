@@ -1,0 +1,37 @@
+{ mkImage, fetchFromGitHub, buildGoModule, pkgs, lib, ... }:
+
+# kubernetes-autoscaler-addon-resizer
+# Kubernetes component
+
+let
+  version = "1.32.0";
+  component = buildGoModule {
+    pname = "kubernetes-autoscaler-addon-resizer";
+    inherit version;
+    src = fetchFromGitHub {
+      owner = "kubernetes";
+      repo = "kubernetes";
+      rev = "v${version}";
+      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    };
+    vendorHash = null;
+    subPackages = [ "." ];
+    env.CGO_ENABLED = 0;
+    ldflags = [ "-s" "-w" ];
+    doCheck = false;
+  };
+
+in mkImage {
+  drv = component;
+  name = "kubernetes-autoscaler-addon-resizer";
+  tag = "v${version}";
+  entrypoint = [ "${component}/bin/kubernetes-autoscaler-addon-resizer" ];
+  cmd = [];
+  extraPkgs = with pkgs; [ cacert tzdata ];
+  labels = {
+    "org.opencontainers.image.title" = "kubernetes-autoscaler-addon-resizer";
+    "org.opencontainers.image.description" = "Kubernetes kubernetes-autoscaler-addon-resizer";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "kubernetes";
+  };
+}

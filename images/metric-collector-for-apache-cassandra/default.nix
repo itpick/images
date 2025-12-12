@@ -1,0 +1,35 @@
+{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+
+# metric-collector-for-apache-cassandra
+# Container image
+
+let
+  version = "latest";
+  
+  imagePkgs = with pkgs; [
+    bash
+    coreutils
+    cacert
+    tzdata
+  ];
+
+  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+
+in nix2container.buildImage {
+  name = "metric-collector-for-apache-cassandra";
+  tag = version;
+  copyToRoot = [
+    (buildEnv {
+      name = "metric-collector-for-apache-cassandra-root";
+      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
+    })
+  ];
+  config = nonRoot.defaultConfig // {
+    Env = base.defaultEnv ++ nonRoot.userEnv;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.title" = "metric collector for apache cassandra";
+      "org.opencontainers.image.description" = "metric-collector-for-apache-cassandra container image";
+      "org.opencontainers.image.version" = version;
+    };
+  };
+}

@@ -1,0 +1,35 @@
+{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+
+# helm-mapkubeapis
+# Container image
+
+let
+  version = "latest";
+  
+  imagePkgs = with pkgs; [
+    bash
+    coreutils
+    cacert
+    tzdata
+  ];
+
+  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+
+in nix2container.buildImage {
+  name = "helm-mapkubeapis";
+  tag = version;
+  copyToRoot = [
+    (buildEnv {
+      name = "helm-mapkubeapis-root";
+      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
+    })
+  ];
+  config = nonRoot.defaultConfig // {
+    Env = base.defaultEnv ++ nonRoot.userEnv;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.title" = "helm mapkuueapis";
+      "org.opencontainers.image.description" = "helm-mapkubeapis container image";
+      "org.opencontainers.image.version" = version;
+    };
+  };
+}

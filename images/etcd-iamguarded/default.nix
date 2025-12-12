@@ -1,0 +1,32 @@
+{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+
+# etcd-iamguarded
+# Container image
+
+let
+  imagePkgs = with pkgs; [
+    bash
+    coreutils
+    cacert
+    tzdata
+  ];
+
+  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+
+in nix2container.buildImage {
+  name = "etcd-iamguarded";
+  tag = "latest";
+  copyToRoot = [
+    (buildEnv {
+      name = "etcd-iamguarded-root";
+      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
+    })
+  ];
+  config = nonRoot.defaultConfig // {
+    Env = base.defaultEnv ++ nonRoot.userEnv;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.title" = "etcd-iamguarded";
+      "org.opencontainers.image.description" = "etcd-iamguarded container image";
+    };
+  };
+}

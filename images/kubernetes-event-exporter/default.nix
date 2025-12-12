@@ -1,0 +1,44 @@
+{ mkImage, fetchFromGitHub, buildGoModule, pkgs, lib, ... }:
+
+# kubernetes-event-exporter
+# Kubernetes component
+
+let
+  version = "1.34.0";
+  kubernetes-event-exporter = buildGoModule {
+    pname = "kubernetes-event-exporter";
+    inherit version;
+
+    src = fetchFromGitHub {
+      owner = "kubernetes";
+      repo = "kubernetes";
+      rev = "v${version}";
+      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    };
+
+    vendorHash = null;
+    subPackages = [ "cmd/event-exporter" ];
+    
+    env.CGO_ENABLED = 0;
+
+    ldflags = [ "-s" "-w" ];
+    doCheck = false;
+  };
+
+in
+mkImage {
+  drv = kubernetes-event-exporter;
+  name = "kubernetes-event-exporter";
+  tag = "v${version}";
+  entrypoint = [ "${kubernetes-event-exporter}/bin/event-exporter" ];
+  cmd = [];
+
+  extraPkgs = with pkgs; [ cacert tzdata ];
+
+  labels = {
+    "org.opencontainers.image.title" = "kuuernetes event exporter";
+    "org.opencontainers.image.description" = "Kubernetes kubernetes-event-exporter";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "kubernetes";
+  };
+}

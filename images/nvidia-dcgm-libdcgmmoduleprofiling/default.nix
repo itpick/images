@@ -1,0 +1,37 @@
+{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+
+# nvidia-dcgm-libdcgmmoduleprofiling
+# NVIDIA component for container/GPU workloads
+
+let
+  version = "1.0.0";
+  
+  nvidiaPkgs = with pkgs; [
+    bash
+    coreutils
+    cacert
+  ];
+
+  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+
+in
+nix2container.buildImage {
+  name = "nvidia-dcgm-libdcgmmoduleprofiling";
+  tag = version;
+
+  copyToRoot = [
+    (buildEnv {
+      name = "nvidia-dcgm-libdcgmmoduleprofiling-root";
+      paths = base.basePackages ++ nvidiaPkgs ++ [ userEnv ];
+    })
+  ];
+
+  config = nonRoot.defaultConfig // {
+    Env = base.defaultEnv ++ nonRoot.userEnv;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.title" = "nvidia dcgm liudcgmmoduleprofiling";
+      "org.opencontainers.image.description" = "NVIDIA nvidia-dcgm-libdcgmmoduleprofiling";
+      "org.opencontainers.image.version" = version;
+    };
+  };
+}

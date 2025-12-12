@@ -1,0 +1,39 @@
+{ mkImage, fetchFromGitHub, buildGoModule, pkgs, lib, ... }:
+
+# sigstore-scaffolding-fips-trillian-createdb-fips
+# Sigstore signing component
+
+let
+  version = "1.0.0";
+  sigstore-component = buildGoModule {
+    pname = "sigstore-scaffolding-fips-trillian-createdb";
+    inherit version;
+    src = fetchFromGitHub {
+      owner = "sigstore";
+      repo = "scaffolding-fips-trillian-createdb";
+      rev = "v${version}";
+      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    };
+    vendorHash = null;
+    subPackages = [ "." ];
+    env.CGO_ENABLED = 1;
+    env.GOEXPERIMENT = "boringcrypto";
+    ldflags = [ "-s" "-w" ];
+    doCheck = false;
+  };
+
+in mkImage {
+  drv = sigstore-component;
+  name = "sigstore-scaffolding-fips-trillian-createdb";
+  tag = "v${version}";
+  entrypoint = [ "${sigstore-component}/bin/scaffolding-fips-trillian-createdb" ];
+  cmd = [];
+  extraPkgs = with pkgs; [ cacert ];
+  labels = {
+    "org.opencontainers.image.title" = "sigstore scaffolding fips trillian createdb";
+    "org.opencontainers.image.description" = "Sigstore sigstore-scaffolding-fips-trillian-createdb";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "sigstore";
+    "io.nix-containers.compliance" = "FIPS-140-2";
+  };
+}

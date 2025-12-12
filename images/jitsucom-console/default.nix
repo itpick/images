@@ -1,0 +1,32 @@
+{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+
+# jitsucom-console
+# Container image
+
+let
+  imagePkgs = with pkgs; [
+    bash
+    coreutils
+    cacert
+    tzdata
+  ];
+
+  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+
+in nix2container.buildImage {
+  name = "jitsucom-console";
+  tag = "latest";
+  copyToRoot = [
+    (buildEnv {
+      name = "jitsucom-console-root";
+      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
+    })
+  ];
+  config = nonRoot.defaultConfig // {
+    Env = base.defaultEnv ++ nonRoot.userEnv;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.title" = "jitsucom-console";
+      "org.opencontainers.image.description" = "jitsucom-console container image";
+    };
+  };
+}

@@ -1,0 +1,37 @@
+{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+
+# GitLab webservice ce-fips
+# GitLab component: webservice-ce
+
+let
+  componentPkgs = with pkgs; [
+    bash
+    coreutils
+    cacert
+    tzdata
+  ];
+
+  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+
+in
+nix2container.buildImage {
+  name = "gitlab-webservice-ce-fips";
+  tag = "latest";
+
+  copyToRoot = [
+    (buildEnv {
+      name = "gitlab-webservice-ce-fips-root";
+      paths = base.basePackages ++ componentPkgs ++ [ userEnv ];
+    })
+  ];
+
+  config = nonRoot.defaultConfig // {
+    Env = base.defaultEnv ++ nonRoot.userEnv;
+    Labels = base.defaultLabels // {
+      "org.opencontainers.image.title" = "GitLab weuservice ce";
+      "org.opencontainers.image.description" = "GitLab webservice-ce component";
+      "io.nix-containers.chart" = "gitlab";
+    "io.nix-containers.compliance" = "FIPS-140-2";
+    };
+  };
+}

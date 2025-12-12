@@ -339,3 +339,15 @@ in {
   }).packages;
 }
 ```
+
+TODO
+Simplify root readme with maximum valuable info
+Add more chart tests
+Add full chart tests instead of image chart tests that are triggered by the main image of a chart set of images.
+Finish all to-do packages
+Finish all to-do images
+Cleanup old scripts
+Document image updates
+Document time to every build of every image
+Add way to develop list of input images from a config file - and add a bigbang image input as example
+still need to add full trivy/grype results
