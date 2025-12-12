@@ -9,6 +9,13 @@ Minimalist Wolfi-based Keycloak image for identity and access management
 | Build Time | 15s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 1.58 GB |
+| Uncompressed | ~3.96 GB |
+
 ## Usage
 
 ```bash

@@ -15,12 +15,7 @@ buildGoModule rec {
 
   vendorHash = "sha256-7RAjNWCYN7LCK85yWx26rlBhkATExZQBoluVCgvmrM0=";
 
-  subPackages = [
-    "cmd/controller"
-    "cmd/eventsource-controller"
-    "cmd/sensor-controller"
-    "cmd/eventbus-controller"
-  ];
+  subPackages = [ "cmd" ];
 
   env.CGO_ENABLED = 0;
 

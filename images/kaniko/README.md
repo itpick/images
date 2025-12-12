@@ -9,6 +9,13 @@ Build Container Images In Kubernetes
 | Build Time | 3s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 209.53 MB |
+| Uncompressed | ~523.83 MB |
+
 ## Usage
 
 ```bash

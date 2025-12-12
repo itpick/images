@@ -9,6 +9,13 @@ MongoDB is a document-oriented database management system. MongoDB is a popular 
 | Build Time | 90m 15s |
 | Build Status | failed |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 473.16 MB |
+| Uncompressed | ~1.15 GB |
+
 ## Usage
 
 ```bash

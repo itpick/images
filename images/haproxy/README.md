@@ -9,6 +9,13 @@ A minimal haproxy base image rebuilt every night from source
 | Build Time | 3s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 95.48 MB |
+| Uncompressed | ~238.70 MB |
+
 ## Usage
 
 ```bash

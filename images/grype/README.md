@@ -9,6 +9,13 @@ A vulnerability scanner for container images and filesystems
 | Build Time | 2s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 150.68 MB |
+| Uncompressed | ~376.70 MB |
+
 ## Usage
 
 ```bash

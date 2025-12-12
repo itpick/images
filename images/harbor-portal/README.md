@@ -9,6 +9,13 @@ A Wolf-based image for Harbor - an open-source container registry with policies 
 | Build Time | 2s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 58.58 MB |
+| Uncompressed | ~146.46 MB |
+
 ## Usage
 
 ```bash

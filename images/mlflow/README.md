@@ -9,6 +9,13 @@ A minimal, Wolfi-based image for MLflow, an open source platform for the machine
 | Build Time | 20s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 1.66 GB |
+| Uncompressed | ~4.15 GB |
+
 ## Usage
 
 ```bash

@@ -9,6 +9,13 @@ Minimalist Wolfi-based Java JRE image using OpenJDK. Used for running Java appli
 | Build Time | 3s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 628.78 MB |
+| Uncompressed | ~1.53 GB |
+
 ## Usage
 
 ```bash

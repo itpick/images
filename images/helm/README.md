@@ -9,6 +9,13 @@ Minimal image with helm binary
 | Build Time | 4s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 203.65 MB |
+| Uncompressed | ~509.12 MB |
+
 ## Usage
 
 ```bash

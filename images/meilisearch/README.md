@@ -9,6 +9,13 @@ Minimal meilisearch image
 | Build Time | 3s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 198.46 MB |
+| Uncompressed | ~496.15 MB |
+
 ## Usage
 
 ```bash

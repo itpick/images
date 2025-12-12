@@ -9,6 +9,13 @@ Community edition of Mattermost, a self-hostable chat service with file sharing,
 | Build Time | 10s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 382.99 MB |
+| Uncompressed | ~957.49 MB |
+
 ## Usage
 
 ```bash

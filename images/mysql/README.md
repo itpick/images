@@ -9,6 +9,13 @@ MySQL is a widely used open-source relational database management system
 | Build Time | 8s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 814.26 MB |
+| Uncompressed | ~1.98 GB |
+
 ## Usage
 
 ```bash

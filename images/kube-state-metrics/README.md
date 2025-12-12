@@ -9,6 +9,13 @@ Minimal Kube State Metrics Image
 | Build Time | 4s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 162.84 MB |
+| Uncompressed | ~407.11 MB |
+
 ## Usage
 
 ```bash

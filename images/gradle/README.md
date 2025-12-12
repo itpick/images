@@ -9,6 +9,13 @@ Chainguard Image with Gradle, an open source build system for Java, Android, and
 | Build Time | 13s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 1.56 GB |
+| Uncompressed | ~3.90 GB |
+
 ## Usage
 
 ```bash

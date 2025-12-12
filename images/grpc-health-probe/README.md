@@ -9,6 +9,13 @@ A tool to perform health-checks for gRPC applications in Kubernetes and elsewher
 | Build Time | 2s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 75.23 MB |
+| Uncompressed | ~188.07 MB |
+
 ## Usage
 
 ```bash

@@ -9,6 +9,13 @@ Istio is a service mesh that extends Kubernetes to provide traffic management, t
 | Build Time | 1m 32s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 282.88 MB |
+| Uncompressed | ~707.21 MB |
+
 ## Usage
 
 ```bash

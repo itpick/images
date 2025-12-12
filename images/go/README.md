@@ -9,6 +9,13 @@ Container image for building Go applications
 | Build Time | 5s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 860.48 MB |
+| Uncompressed | ~2.10 GB |
+
 ## Usage
 
 ```bash
