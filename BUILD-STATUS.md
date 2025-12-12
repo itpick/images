@@ -1,6 +1,6 @@
 # Nix Container Images Build Status
 
-Total images: 394
+Total images: 418
 
 All images in this repository build successfully using `nix build .#<image-name>`.
 
@@ -176,6 +176,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] jre
 - [x] k8s-dns-node-cache
 - [x] k8s-sidecar
+- [x] kafka
 - [x] karma
 - [x] katib-controller
 - [x] katib-db-manager
@@ -243,12 +244,15 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] minio-client
 - [x] minio-operator
 - [x] minio-operator-sidecar
+- [x] minio-warp
 - [x] mlflow
 - [x] mongodb
 - [x] multus-cni
 - [x] mysql
 - [x] nats
+- [x] netdata
 - [x] netshoot
+- [x] nushell
 - [x] nfpm
 - [x] neuvector-controller
 - [x] neuvector-enforcer
@@ -276,6 +280,8 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] omnictl
 - [x] opa
 - [x] openbao
+- [x] openvscode-server
+- [x] osquery
 - [x] open-webui
 - [x] opencv
 - [x] openfga
@@ -284,9 +290,12 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] opensearch
 - [x] opentofu
 - [x] orthanc
+- [x] packer
 - [x] pdns-recursor
 - [x] percona-server
 - [x] pgadmin4
+- [x] pixiecore
+- [x] podman-tui
 - [x] pgpool
 - [x] php
 - [x] pocket-id
@@ -299,6 +308,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] prometheus-blackbox-exporter
 - [x] prometheus-config-reloader
 - [x] prometheus-elasticsearch-exporter
+- [x] prometheus-json-exporter
 - [x] prometheus-mysqld-exporter
 - [x] prometheus-postgres-exporter
 - [x] prometheus-mongodb-exporter
@@ -308,15 +318,21 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] prometheus-pushgateway
 - [x] prometheus-redis-exporter
 - [x] prometheus-snmp-exporter
+- [x] prometheus-sql-exporter
 - [x] prometheus-statsd-exporter
+- [x] prom2json
 - [x] promtail
 - [x] proxysql
 - [x] pypiserver
 - [x] pypy
 - [x] python
 - [x] python-fips
+- [x] radarr
 - [x] rclone
+- [x] readarr
 - [x] redis
+- [x] restic-rest-server
+- [x] rtorrent
 - [x] redis-exporter
 - [x] reflector
 - [x] rekor-cli
@@ -329,6 +345,10 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] rsyslog
 - [x] ruby
 - [x] rust
+- [x] sabnzbd
+- [x] signal-cli
+- [x] slirp4netns
+- [x] sonarr
 - [x] rust-build-env
 - [x] sbt
 - [x] seaweedfs
@@ -355,12 +375,15 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] strongswan
 - [x] stunnel
 - [x] step-cli
+- [x] step-kms-plugin
 - [x] syft
 - [x] syncthing
 - [x] tektoncd-cli
+- [x] temporal
 - [x] temporal-ui-server
 - [x] tetragon
 - [x] tempo
+- [x] tigerbeetle
 - [x] timoni
 - [x] tempo-query
 - [x] thanos
@@ -378,6 +401,7 @@ All images in this repository build successfully using `nix build .#<image-name>
 - [x] vault-k8s
 - [x] vector
 - [x] velero
+- [x] victoria-metrics
 - [x] velero-plugin-aws
 - [x] velero-plugin-azure
 - [x] velero-plugin-csi
