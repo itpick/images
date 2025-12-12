@@ -9,6 +9,13 @@ Ceph is a distributed object, block, and file storage platform
 | Build Time | 39s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 2.13 GB |
+| Uncompressed | ~5.34 GB |
+
 ## Usage
 
 ```bash

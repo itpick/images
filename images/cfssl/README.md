@@ -9,6 +9,13 @@ CFSSL is Cloudflare's PKI and TLS toolkit
 | Build Time | 2s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 243.05 MB |
+| Uncompressed | ~607.62 MB |
+
 ## Usage
 
 ```bash

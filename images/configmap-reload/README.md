@@ -9,6 +9,13 @@ configmap-reload is a simple binary to trigger a reload when Kubernetes ConfigMa
 | Build Time | 15s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 66.96 MB |
+| Uncompressed | ~167.41 MB |
+
 ## Usage
 
 ```bash

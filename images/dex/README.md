@@ -9,6 +9,13 @@ dex is a federated OpenID Connect provider
 | Build Time | 4s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 238.76 MB |
+| Uncompressed | ~596.90 MB |
+
 ## Usage
 
 ```bash

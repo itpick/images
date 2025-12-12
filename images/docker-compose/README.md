@@ -9,6 +9,13 @@ minimal docker-compose image with docker-compose binary
 | Build Time | 2s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 133.83 MB |
+| Uncompressed | ~334.57 MB |
+
 ## Usage
 
 ```bash

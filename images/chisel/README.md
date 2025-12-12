@@ -9,6 +9,13 @@ A fast TCP/UDP tunnel over HTTP
 | Build Time | 2s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 123.59 MB |
+| Uncompressed | ~308.98 MB |
+
 ## Usage
 
 ```bash

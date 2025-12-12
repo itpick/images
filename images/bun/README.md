@@ -9,6 +9,13 @@ Chainguard Containers are regularly-updated, secure-by-default container images
 | Build Time | 6s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 275.21 MB |
+| Uncompressed | ~688.02 MB |
+
 ## Usage
 
 ```bash

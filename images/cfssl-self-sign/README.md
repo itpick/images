@@ -7,6 +7,13 @@
 | Build Time | 3s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 166.81 MB |
+| Uncompressed | ~417.03 MB |
+
 ## Usage
 
 ```bash

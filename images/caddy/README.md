@@ -9,6 +9,13 @@ Open source web server with automatic HTTPS written in Go
 | Build Time | 2s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 114.08 MB |
+| Uncompressed | ~285.21 MB |
+
 ## Usage
 
 ```bash

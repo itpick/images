@@ -9,6 +9,13 @@ Minimal dive container image
 | Build Time | 2s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 85.37 MB |
+| Uncompressed | ~213.43 MB |
+
 ## Usage
 
 ```bash

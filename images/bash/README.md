@@ -9,6 +9,13 @@ Container image with only Bash and libc. Suitable for running any small scripts 
 | Build Time | 2s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 70.91 MB |
+| Uncompressed | ~177.29 MB |
+
 ## Usage
 
 ```bash

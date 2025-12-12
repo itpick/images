@@ -9,6 +9,13 @@ ClamAV® is an open source antivirus engine for detecting trojans, viruses, malw
 | Build Time | 4s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 431.16 MB |
+| Uncompressed | ~1.05 GB |
+
 ## Usage
 
 ```bash

@@ -9,6 +9,13 @@ Contour is an ingress controller for Kubernetes that works by deploying the Envo
 | Build Time | 3s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 156.75 MB |
+| Uncompressed | ~391.88 MB |
+
 ## Usage
 
 ```bash

@@ -9,6 +9,13 @@ Bento is a high performance and resilient stream processor, able to connect vari
 | Build Time | 11s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 786.45 MB |
+| Uncompressed | ~1.92 GB |
+
 ## Usage
 
 ```bash

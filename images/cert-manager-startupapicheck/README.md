@@ -9,6 +9,13 @@ Automatically provision and manage TLS certificates in Kubernetes
 | Build Time | 4s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 248.63 MB |
+| Uncompressed | ~621.59 MB |
+
 ## Usage
 
 ```bash

@@ -9,6 +9,13 @@ Crossplane lets you build a control plane with Kubernetes-style declarative and 
 | Build Time | 2m 11s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 180.83 MB |
+| Uncompressed | ~452.09 MB |
+
 ## Usage
 
 ```bash

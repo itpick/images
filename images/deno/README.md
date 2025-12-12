@@ -9,6 +9,13 @@ Minimal container image for running Deno apps
 | Build Time | 1s |
 | Build Status | success |
 
+## Image Size
+
+| Type | Size |
+|------|------|
+| Compressed | 381.32 MB |
+| Uncompressed | ~953.30 MB |
+
 ## Usage
 
 ```bash
