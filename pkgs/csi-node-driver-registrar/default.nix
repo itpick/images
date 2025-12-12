@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "kubernetes-csi";
     repo = "node-driver-registrar";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-5v3NNfd3/OU2DYDmWozT1epOY6oA3kU4TTpnNBB4OQA=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   subPackages = [ "cmd/csi-node-driver-registrar" ];
 

@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "aws";
     repo = "amazon-vpc-cni-k8s";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-2ZmUNygFBI7Aqpw9gL8Wc0SgbQDccTzeNLp3rGL89mo=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   subPackages = [
     "cmd/aws-k8s-agent"

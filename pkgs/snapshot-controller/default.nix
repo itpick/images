@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "kubernetes-csi";
     repo = "external-snapshotter";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-baAZd06rjLjS2KRIKS6i0rp+kCT0TdF1kSTArK44NMI=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   subPackages = [
     "cmd/snapshot-controller"

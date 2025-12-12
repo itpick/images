@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "kubernetes-csi";
     repo = "external-provisioner";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-cuLWhL/NteR2ESj8eWNwUVnJpq1Kx8hYkqac9313fKE=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   subPackages = [ "cmd/csi-provisioner" ];
 

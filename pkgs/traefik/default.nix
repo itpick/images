@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "traefik";
     repo = "traefik";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-qGm8MVbvwNroW87Z2lZ368Y6s3O0z0UjTumUdiawEXI=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = "sha256-pK6KUXPnbHeCXS+DGoNIoCfoPkBqaMZwOLW8Y4F3eOI=";
 
   subPackages = [ "cmd/traefik" ];
 

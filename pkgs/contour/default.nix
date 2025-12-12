@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "projectcontour";
     repo = "contour";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-SG7a7yywlyLwpxHCF5C1FWJNbwRkJYNfhDRqYm6U/i8=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = "sha256-jJZmUwlky+1CvRi/1jTUij7SYgu5sKX6Nu6ZUAcHqDY=";
 
   subPackages = [ "cmd/contour" ];
 

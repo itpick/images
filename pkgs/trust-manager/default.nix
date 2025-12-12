@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "cert-manager";
     repo = "trust-manager";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-gwcZsx0kM4kixugEQWmpqAgueuVd3Bgygs4VoBgjiF0=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = "sha256-TVVgzh1m5zc7csTeUev1IDX4MRySsrMbJtimPUj3hDw=";
 
   subPackages = [ "cmd/trust-manager" ];
 

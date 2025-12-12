@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "kubernetes-sigs";
     repo = "sig-storage-local-static-provisioner";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-0mDwkFuYqcqwBmyw6epricIOsUXB9SDDp+Awqt1Lvtg=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   subPackages = [ "cmd/local-volume-provisioner" ];
 

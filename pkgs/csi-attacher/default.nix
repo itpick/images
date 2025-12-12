@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "kubernetes-csi";
     repo = "external-attacher";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-2QglzhE5lQzVMwB+NKbeCIY6ONhUbf/jKQFXF6Z6H6Y=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   subPackages = [ "cmd/csi-attacher" ];
 

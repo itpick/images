@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "grafana";
     repo = "loki";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-bkB3VXpZIpVjvYF7b2lGNFQ5AbTdadPkLFMdOuzRalo=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   subPackages = [
     "cmd/loki"

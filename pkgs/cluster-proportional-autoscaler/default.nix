@@ -10,10 +10,12 @@ buildGoModule rec {
     owner = "kubernetes-sigs";
     repo = "cluster-proportional-autoscaler";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-vWEYypS1rAE79ldGJ9uVZ7jhAFwsLIHsXzKja+jx3oU=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
+
+  subPackages = [ "cmd/cluster-proportional-autoscaler" ];
 
   env.CGO_ENABLED = 0;
 

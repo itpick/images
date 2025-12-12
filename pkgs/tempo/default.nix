@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "grafana";
     repo = "tempo";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-uISQuI30q0BePBEKiRtul/rARPo8sy9kCHdHRJ+qKjw=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   subPackages = [
     "cmd/tempo"

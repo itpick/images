@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "aws";
     repo = "aws-node-termination-handler";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-oOkWynLQFUwdb6/fPC4d1zPQSwPuu4DN+YoqU6kD9PQ=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = "sha256-4qlqqdj9OdTA6Afeaf5TcQH9zuzX4L5tnG/4p6iDDlo=";
 
   subPackages = [ "cmd/node-termination-handler" ];
 

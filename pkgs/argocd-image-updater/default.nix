@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "argoproj-labs";
     repo = "argocd-image-updater";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-6GoNxKp2RdADihGfGezAIfdt8jYLM7yDNbYb7A3P/M4=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = "sha256-rpXDZDTKbMQ+s29jowNXiJWiGAUn+5ZB8HJwh6uvFGk=";
 
   subPackages = [ "cmd" ];
 

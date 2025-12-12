@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "linkerd";
     repo = "linkerd2";
     rev = "stable-${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-rEeRlwd7Cyg3R2c4BojpAAf96FpN1fmhBy94C27FRbk=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   subPackages = [
     "controller/cmd/destination"

@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "spiffe";
     repo = "spire";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-I5fNjOuij8A60pEPoq+iSfC5oGrTu4DizCd6OnLtJ2I=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   subPackages = [
     "cmd/spire-server"

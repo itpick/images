@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "kubernetes-csi";
     repo = "csi-driver-smb";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-eqJPap0rzos+D1G25IkqNbg4xLIHzsSI72UMz6SYUvU=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   subPackages = [ "cmd/smbplugin" ];
 

@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "kubernetes";
     repo = "ingress-nginx";
     rev = "controller-v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-iutz36zLnO6YwhYFkCrM7mKJMJEcQQ7MDsg9DRBb9Rw=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   subPackages = [
     "cmd/nginx"

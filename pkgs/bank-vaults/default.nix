@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "bank-vaults";
     repo = "bank-vaults";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-4N7CC111mrNxPpqAwg9JqA1RKYuooknkh0liIaUwYHU=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   subPackages = [ "cmd/bank-vaults" "cmd/vault-env" ];
 

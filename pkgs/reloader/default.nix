@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "stakater";
     repo = "Reloader";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-ca+D1z5fPdc8g8/koly//uKWK4u2lxMmmjsq+Llz/wg=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   env.CGO_ENABLED = 0;
 

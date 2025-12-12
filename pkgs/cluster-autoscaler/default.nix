@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "kubernetes";
     repo = "autoscaler";
     rev = "cluster-autoscaler-${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-yQE4SsEZuUWLWtMUK3WgVQfrKDwoxrk2JddbzUGyMkc=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   subPackages = [ "cluster-autoscaler" ];
 

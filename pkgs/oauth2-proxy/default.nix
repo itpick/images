@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "oauth2-proxy";
     repo = "oauth2-proxy";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-o5wJVi8TJ7Qfzn2JzoMSLNhDWSRC7HcrfrQOlMlQr/0=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   env.CGO_ENABLED = 0;
 

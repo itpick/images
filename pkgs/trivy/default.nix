@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "aquasecurity";
     repo = "trivy";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-EW8M5qEQlNohftMBaUs21/dr06/uKanXiDSduOJhplo=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = "sha256-IB3DbK6aHimYRMH+oBnY1AfGsMEDrR1jEr1uNAbhz50=";
 
   subPackages = [ "cmd/trivy" ];
 

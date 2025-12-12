@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "kubernetes-sigs";
     repo = "aws-load-balancer-controller";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-Aq2au9UPJgJIH7kDAydV20Od7hcZ1eMhMnyups8stR8=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = "sha256-40uVmv/kCfqKKM53jPJNcwmt6uLRul9hOyU81a1TmnM=";
 
   subPackages = [ "." ];
 

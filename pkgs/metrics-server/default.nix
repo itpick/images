@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "kubernetes-sigs";
     repo = "metrics-server";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-KyXQ2+CnOiohwu4YnzK6UUWwqpd+rgd8uXAExpe/new=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = "sha256-wMaEF1hkVUjubvv4RCFsUIfDTjCQsTvERlHV7EEp9cg=";
 
   subPackages = [ "cmd/metrics-server" ];
 

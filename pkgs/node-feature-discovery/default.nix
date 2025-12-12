@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "kubernetes-sigs";
     repo = "node-feature-discovery";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-3nDkhZYiG8ZYP0vnK+Xs6Fl3N93RRuuZYlTjRup6BQk=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = "sha256-sA9OukYpNEe0tDD/WTGFbWMvMKtk8F8oakFNAEwGG6M=";
 
   subPackages = [
     "cmd/nfd-master"

@@ -10,15 +10,14 @@ buildGoModule rec {
     owner = "metallb";
     repo = "metallb";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-yP7y2FqqpMxlZ8Zbvu5bQpf0PFrczNJ1PxBCJVIEM/c=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = "sha256-7DHURGK702xBQEEKhuwxaXdH2MXCA/SvDsvXu7LNcIA=";
 
   subPackages = [
     "controller"
     "speaker"
-    "frr-tools/reloader"
   ];
 
   env.CGO_ENABLED = 0;
@@ -28,10 +27,6 @@ buildGoModule rec {
     "-X go.universe.tf/metallb/internal/version.version=${version}"
     "-X go.universe.tf/metallb/internal/version.gitBranch=main"
   ];
-
-  postInstall = ''
-    mv $out/bin/reloader $out/bin/frr-reloader
-  '';
 
   doCheck = false;
 

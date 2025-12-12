@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "argoproj";
     repo = "argo-events";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-MmXtBez8OrSAIa5v4sYXJYN3retI4HxXiHrPA8j2u3Y=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = "sha256-7RAjNWCYN7LCK85yWx26rlBhkATExZQBoluVCgvmrM0=";
 
   subPackages = [
     "cmd/controller"

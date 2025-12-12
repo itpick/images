@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "kubernetes";
     repo = "dashboard";
     rev = "kubernetes-dashboard-${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-71jLs1jLdfyIQBtbXrVWsNJauO3OUzMLujLWtEhbuUI=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   subPackages = [
     "modules/api"

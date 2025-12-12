@@ -10,10 +10,10 @@ buildGoModule rec {
     owner = "kubernetes";
     repo = "autoscaler";
     rev = "vertical-pod-autoscaler-${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-avWknl7hNvLMa6HaJ3nh54o1sJ4GEkTA4cMqIpkdPKo=";
   };
 
-  vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  vendorHash = null;
 
   subPackages = [
     "vertical-pod-autoscaler/pkg/admission-controller"
