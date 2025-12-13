@@ -367,9 +367,10 @@ let
     "sonobuoy" = getVer "sonobuoy";
     "spicedb" = getVer "spicedb";
     "spiffe-helper" = getVer "spiffe-helper";
-    "spire-agent" = getVer "spire-agent";
-    "spire-server" = getVer "spire-server";
-    "spire" = getVer "spire";
+    # spire packages removed - nixpkgs alias is broken (spire.agent missing)
+    # "spire-agent" = getVer "spire-agent";
+    # "spire-server" = getVer "spire-server";
+    # "spire" = getVer "spire";
     "sqlite" = getVer "sqlite";
     "squid" = getVer "squid";
     "starship" = getVer "starship";
