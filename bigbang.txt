@@ -1,6 +1,5 @@
 alertmanager
 alloy
-alloy-operator
 anchore-enterprise
 anchore-enterpriseui
 argocd
