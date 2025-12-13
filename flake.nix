@@ -586,5 +586,19 @@
       getPackageVersion = import ./lib/versions.nix {
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
       };
+
+      # Image versions map for tracking updates
+      # Usage: nix eval --json .#imageVersions > versions.json
+      imageVersions = let
+        getVersion = import ./lib/versions.nix {
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        };
+      in builtins.listToAttrs (map (imageName: {
+        name = imageName;
+        value = getVersion imageName;
+      }) discoveredImages);
+
+      # Nixpkgs revision for tracking upstream updates
+      nixpkgsRevision = nixpkgs.rev or "unknown";
     };
 }

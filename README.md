@@ -381,3 +381,7 @@ in {
 - [ ] Document time to every build of every image
 - [ ] Add way to develop list of input images from a config file - and add a bigbang image input as example
 - [ ] Add full trivy/grype results
+- [ ] Determine top 400 images from public metrics on dockerhub, etc and build those.
+- [ ] Add feature to allow building a set of images given a yaml input file or a text file - example from bigbang images
+- [ ] track local cache of build images and trigger builds if packages or upstream nix packages change.
+- track nix package in this repo
