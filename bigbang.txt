@@ -55,7 +55,6 @@ metrics-server
 mimir
 minio
 mysql
-nexus
 nginx
 policy-reporter
 policy-reporter-ui
