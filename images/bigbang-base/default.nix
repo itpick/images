@@ -26,6 +26,7 @@ mkImage {
   tag = version;
 
   # Include all the essential tools matching upstream
+  # Note: 'which' is provided by busybox, so we don't include it separately
   extraPkgs = with pkgs; [
     curl
     kubectl
@@ -33,7 +34,7 @@ mkImage {
     jq
     pinentry-curses  # pinentry was removed, use pinentry-curses
     findutils
-    which
+    # which - provided by busybox
     gnutls
     cacert
     tzdata
