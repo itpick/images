@@ -20,11 +20,6 @@ gitlab-runner-helper
 gitlab-shell
 gitlab-workhorse
 grafana-enterprise-logs
-harbor-core
-harbor-exporter
-harbor-jobservice
-harbor-portal
-harbor-registryctl
 keycloak
 kube-state-metrics
 kubectl
