@@ -39,7 +39,6 @@ k8s-sidecar
 keycloak
 kiali
 kiali-operator
-kibana
 kube-state-metrics
 kube-webhook-certgen
 kubectl
