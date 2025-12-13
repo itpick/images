@@ -22,15 +22,10 @@ flux-notification-controller
 flux-source-controller
 gitlab-base
 gitlab-container-registry
-gitlab-exporter
-gitlab-mailroom
 gitlab-pages
 gitlab-runner
 gitlab-runner-helper
 gitlab-shell
-gitlab-sidekiq
-gitlab-toolbox
-gitlab-webservice
 gitlab-workhorse
 grafana-enterprise-logs
 grafana-image-renderer
