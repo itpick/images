@@ -130,8 +130,8 @@
           };
 
           # Read BigBang image list
-          bigbangImageList = if builtins.pathExists ./bigbang.txt
-            then lib.readImageList ./bigbang.txt
+          bigbangImageList = if builtins.pathExists ./bundler/bigbang.txt
+            then lib.readImageList ./bundler/bigbang.txt
             else [];
           bigbangImages = builtins.filter (n: images ? ${n}) bigbangImageList;
 
