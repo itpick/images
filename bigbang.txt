@@ -78,7 +78,6 @@ twistlock-console
 twistlock-defender
 vault
 vault-csi-provider
-vault-k8s
 velero
 velero-plugin-aws
 velero-plugin-azure
