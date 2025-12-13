@@ -377,6 +377,7 @@
           };
 
           # BigBang tarball bundle - single .tar.gz with all BigBang images
+          # This creates a bundle with image JSON definitions that can be used with nix2container tools
           bigbang-bundle = pkgs.stdenv.mkDerivation {
             name = "bigbang-bundle";
             buildCommand = ''
@@ -384,58 +385,32 @@
 
               echo "Creating BigBang image bundle with ${toString (builtins.length bigbangImages)} images..."
 
-              # Link each image's JSON and copyTo scripts
+              # Link each image's JSON definition
               ${pkgs.lib.concatStringsSep "\n" (map (name:
                 let img = images.${name};
                 in ''
                   echo "Adding ${name}..."
-                  mkdir -p $out/images/${name}
-                  # Link the image definition
-                  ln -s ${img} $out/images/${name}/image.json
-                  # Link the copyTo script
-                  ln -s ${img.copyTo}/bin/copy-to $out/images/${name}/copy-to
-                  # Link copyToDockerDaemon
-                  ln -s ${img.copyToDockerDaemon}/bin/copy-to-docker-daemon $out/images/${name}/copy-to-docker
+                  ln -s ${img} $out/images/${name}
                 ''
               ) bigbangImages)}
 
-              # Create a script to load all images
-              cat > $out/load-all.sh << 'SCRIPT'
-              #!/usr/bin/env bash
-              set -euo pipefail
-              SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-              for img_dir in "$SCRIPT_DIR/images"/*/; do
-                name=$(basename "$img_dir")
-                echo "Loading $name..."
-                "$img_dir/copy-to-docker"
-              done
-              echo "All images loaded!"
-              SCRIPT
-              chmod +x $out/load-all.sh
+              # Create manifest with image paths
+              cat > $out/manifest.json << EOF
+              {
+                "version": "1.0",
+                "images": [
+                  ${pkgs.lib.concatStringsSep ",\n  " (map (name:
+                    let img = images.${name};
+                    in ''"${name}": {"path": "${img}", "tag": "${img.imageTag or "latest"}"}'') bigbangImages)}
+                ],
+                "count": ${toString (builtins.length bigbangImages)}
+              }
+              EOF
 
-              # Create a script to push all images to a registry
-              cat > $out/push-all.sh << 'SCRIPT'
-              #!/usr/bin/env bash
-              set -euo pipefail
-              REGISTRY="''${1:-}"
-              if [[ -z "$REGISTRY" ]]; then
-                echo "Usage: $0 <registry-url>"
-                echo "Example: $0 docker://registry.example.com/bigbang"
-                exit 1
-              fi
-              SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-              for img_dir in "$SCRIPT_DIR/images"/*/; do
-                name=$(basename "$img_dir")
-                echo "Pushing $name to $REGISTRY/$name..."
-                "$img_dir/copy-to" "$REGISTRY/$name"
-              done
-              echo "All images pushed!"
-              SCRIPT
-              chmod +x $out/push-all.sh
-
-              # Create manifest
+              # Create human-readable manifest
               cat > $out/manifest.txt << EOF
               BigBang Images Bundle
+              ======================
               Images: ${toString (builtins.length bigbangImages)}
               Generated: $(date -Iseconds)
 
@@ -443,13 +418,16 @@
               ${pkgs.lib.concatStringsSep "\n" (map (name: "  - ${name}") bigbangImages)}
 
               Usage:
-                ./load-all.sh           - Load all images to local Docker
-                ./push-all.sh <registry> - Push all images to a registry
+                Each image in images/ is a nix2container image JSON.
+                Use nix2container tools or skopeo with nix: transport to copy images.
+
+              Example with skopeo:
+                skopeo copy nix:./images/alertmanager docker://registry.example.com/alertmanager:latest
               EOF
 
-              # Create tarball of this bundle
+              # Create tarball
               cd $out
-              tar -czvf bigbang-bundle.tar.gz images load-all.sh push-all.sh manifest.txt
+              tar -czvf bigbang-bundle.tar.gz images manifest.json manifest.txt
 
               echo "Bundle created: $out/bigbang-bundle.tar.gz"
             '';
