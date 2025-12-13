@@ -126,7 +126,14 @@
               inherit (pkgs) lib buildEnv;
               devShell = pkgs.callPackage ./lib/devShell.nix {};
             };
+            readImageList = import ./lib/readImageList.nix { lib = pkgs.lib; };
           };
+
+          # Read BigBang image list
+          bigbangImageList = if builtins.pathExists ./bigbang.txt
+            then lib.readImageList ./bigbang.txt
+            else [];
+          bigbangImages = builtins.filter (n: images ? ${n}) bigbangImageList;
 
           # Import version lookup function
           getPackageVersion = import ./lib/versions.nix { inherit pkgs; };
@@ -362,6 +369,92 @@
             name = "build-images";
             paths = map (name: images.${name}) (builtins.filter (n: images ? ${n}) imageCategories.build);
           };
+
+          # BigBang images (from bigbang.txt)
+          bigbang-images = pkgs.symlinkJoin {
+            name = "bigbang-images";
+            paths = map (name: images.${name}) bigbangImages;
+          };
+
+          # BigBang tarball bundle - single .tar.gz with all BigBang images
+          bigbang-bundle = pkgs.stdenv.mkDerivation {
+            name = "bigbang-bundle";
+            buildInputs = [ pkgs.skopeo ];
+            buildCommand = ''
+              mkdir -p $out images-dir
+
+              echo "Creating BigBang image bundle with ${toString (builtins.length bigbangImages)} images..."
+              echo "Images: ${pkgs.lib.concatStringsSep " " bigbangImages}"
+
+              # Copy each image to OCI directory layout
+              ${pkgs.lib.concatStringsSep "\n" (map (name:
+                let img = images.${name};
+                in ''
+                  echo "Adding ${name}..."
+                  mkdir -p images-dir/${name}
+                  ${pkgs.skopeo}/bin/skopeo copy \
+                    nix:${img} \
+                    oci:images-dir/${name}:${img.imageTag or "latest"} \
+                    --insecure-policy
+                ''
+              ) bigbangImages)}
+
+              # Create tarball
+              echo "Creating tarball..."
+              tar -czvf $out/bigbang-images.tar.gz -C images-dir .
+
+              # Create manifest
+              cat > $out/manifest.txt << EOF
+              BigBang Images Bundle
+              Images: ${toString (builtins.length bigbangImages)}
+              Generated: $(date -Iseconds)
+
+              Included images:
+              ${pkgs.lib.concatStringsSep "\n" (map (name: "  - ${name}") bigbangImages)}
+              EOF
+
+              echo "Bundle created: $out/bigbang-images.tar.gz"
+            '';
+          };
+
+          # Script to build BigBang bundle from any list file
+          build-image-list-bundle = pkgs.writeShellScriptBin "build-image-list-bundle" ''
+            set -euo pipefail
+            LIST_FILE="''${1:-bigbang.txt}"
+            OUTPUT_DIR="''${2:-.}"
+
+            if [[ ! -f "$LIST_FILE" ]]; then
+              echo "Error: List file not found: $LIST_FILE" >&2
+              exit 1
+            fi
+
+            echo "Building images from: $LIST_FILE"
+            mkdir -p "$OUTPUT_DIR/images-dir"
+
+            IMAGES_BUILT=0
+            while read -r IMAGE_NAME; do
+              [[ -z "$IMAGE_NAME" || "$IMAGE_NAME" =~ ^# ]] && continue
+
+              echo "Building and copying $IMAGE_NAME..."
+              if ${pkgs.nix}/bin/nix --extra-experimental-features "nix-command flakes" build ".#$IMAGE_NAME" -o "/tmp/img-$IMAGE_NAME" 2>/dev/null; then
+                mkdir -p "$OUTPUT_DIR/images-dir/$IMAGE_NAME"
+                ${pkgs.skopeo}/bin/skopeo copy \
+                  "nix:/tmp/img-$IMAGE_NAME" \
+                  "oci:$OUTPUT_DIR/images-dir/$IMAGE_NAME:latest" \
+                  --insecure-policy
+                IMAGES_BUILT=$((IMAGES_BUILT + 1))
+              else
+                echo "  Warning: Failed to build $IMAGE_NAME"
+              fi
+            done < "$LIST_FILE"
+
+            echo "Creating tarball..."
+            tar -czvf "$OUTPUT_DIR/images-bundle.tar.gz" -C "$OUTPUT_DIR/images-dir" .
+
+            echo ""
+            echo "Bundle created: $OUTPUT_DIR/images-bundle.tar.gz"
+            echo "Total images: $IMAGES_BUILT"
+          '';
 
           # List selected images script
           list-selected = pkgs.writeShellScriptBin "list-selected" ''
