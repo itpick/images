@@ -379,7 +379,6 @@
           # BigBang tarball bundle - single .tar.gz with all BigBang images
           bigbang-bundle = pkgs.stdenv.mkDerivation {
             name = "bigbang-bundle";
-            buildInputs = [ pkgs.skopeo ];
             buildCommand = ''
               mkdir -p $out/images
 
