@@ -45,9 +45,7 @@ postgres
 postgresql
 prometheus
 prometheus-blackbox-exporter
-prometheus-config-reloader
 prometheus-node-exporter
-prometheus-operator
 prometheus-redis-exporter
 prometheus-snmp-exporter
 redis
