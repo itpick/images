@@ -1,11 +1,11 @@
-{ mkImage, localPkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # Argo Workflow Executor FIPS (argoexec) - runs in workflow pods (FIPS 140-3 compliant)
 # https://github.com/argoproj/argo-workflows
 # Built with GOEXPERIMENT=boringcrypto for FIPS compliance
 
 let
-  argo-workflows-fips = localPkgs.argo-workflows-fips;
+  argo-workflows-fips = pkgs.argo-workflows-fips;
   argoexec-fips = argo-workflows-fips.argoexec;
 
 in mkImage {

@@ -9,8 +9,8 @@ let
   arch = if pkgs.stdenv.hostPlatform.isAarch64 then "arm64" else "x64";
 
   hashes = {
-    x64 = "16p786zy2fp3nsrwzpyswsbl3c566s8r6dvrx6w37k7kjkx36p5g";
-    arm64 = "0p0gcaaw81qbyc3qab9sz7bcpjwz803cn6a1zg4cg1i0j4kkbd4w";
+    x64 = "sha256-r1wz+pTzzDO46Xk3k5E2prBBl+ba38+ztuM64b9B55o=";
+    arm64 = "sha256-nLQ1J5EghsfI+0EZywZAn8vL1vk6LYUH8wsHxJViD1w=";
   };
 
   actions-runner = pkgs.stdenv.mkDerivation rec {
@@ -31,6 +31,7 @@ let
       curl
       libkrb5
       stdenv.cc.cc.lib
+      lttng-ust
     ];
 
     sourceRoot = ".";

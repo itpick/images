@@ -14,12 +14,13 @@ let
       owner = "kubernetes";
       repo = "autoscaler";
       rev = "addon-resizer-${version}";
-      sha256 = "1lafnkiqbhn6dgamac4xdlh5mkh3cd0pb9kbmg7qwkh8mkdhh0s0";
+      hash = "sha256-QAMI26wITo7Pq2umdUFjA85aIG2dMFXVa8bCheO0TtE=";
     };
 
+    modRoot = "addon-resizer";
     vendorHash = null;  # Uses vendor directory
 
-    subPackages = [ "addon-resizer" ];
+    subPackages = [ "." ];
 
     env.CGO_ENABLED = 0;
 

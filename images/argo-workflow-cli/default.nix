@@ -1,10 +1,10 @@
-{ mkImage, localPkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # Argo CLI - command line interface for Argo Workflows
 # https://github.com/argoproj/argo-workflows
 
 let
-  argo-workflows = localPkgs.argo-workflows;
+  argo-workflows = pkgs.argo-workflows;
   argo-cli = argo-workflows.argo-cli;
 
 in mkImage {

@@ -1,10 +1,10 @@
-{ mkImage, localPkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # Argo Workflow Controller - orchestrates workflows in Kubernetes
 # https://github.com/argoproj/argo-workflows
 
 let
-  argo-workflows = localPkgs.argo-workflows;
+  argo-workflows = pkgs.argo-workflows;
   workflow-controller = argo-workflows.workflow-controller;
 
 in mkImage {

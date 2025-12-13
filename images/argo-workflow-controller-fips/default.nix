@@ -1,11 +1,11 @@
-{ mkImage, localPkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # Argo Workflow Controller FIPS - orchestrates workflows in Kubernetes (FIPS 140-3 compliant)
 # https://github.com/argoproj/argo-workflows
 # Built with GOEXPERIMENT=boringcrypto for FIPS compliance
 
 let
-  argo-workflows-fips = localPkgs.argo-workflows-fips;
+  argo-workflows-fips = pkgs.argo-workflows-fips;
   workflow-controller-fips = argo-workflows-fips.workflow-controller;
 
 in mkImage {

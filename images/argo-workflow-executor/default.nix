@@ -1,10 +1,10 @@
-{ mkImage, localPkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # Argo Workflow Executor (argoexec) - runs in workflow pods
 # https://github.com/argoproj/argo-workflows
 
 let
-  argo-workflows = localPkgs.argo-workflows;
+  argo-workflows = pkgs.argo-workflows;
   argoexec = argo-workflows.argoexec;
 
 in mkImage {

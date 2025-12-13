@@ -1,11 +1,11 @@
-{ mkImage, localPkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # Argo CLI FIPS - command line interface for Argo Workflows (FIPS 140-3 compliant)
 # https://github.com/argoproj/argo-workflows
 # Built with GOEXPERIMENT=boringcrypto for FIPS compliance
 
 let
-  argo-workflows-fips = localPkgs.argo-workflows-fips;
+  argo-workflows-fips = pkgs.argo-workflows-fips;
   argo-cli-fips = argo-workflows-fips.argo-cli;
 
 in mkImage {

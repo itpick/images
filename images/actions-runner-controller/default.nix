@@ -14,10 +14,10 @@ let
       owner = "actions";
       repo = "actions-runner-controller";
       rev = "gha-runner-scale-set-${version}";
-      sha256 = "1hs47r7yhv0rh1pjfkcsarbwyl1yq4fy7yp2jfficp773h6cf5q2";
+      hash = "sha256-AhfHDBznXBadk+L64x3BPlDPV1aaTSdvgBls6E8+RMM=";
     };
 
-    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    vendorHash = "sha256-z2qNFYAeYSnsbGaWUpbGKhPZiP3TJPatB8JStpeNZBo=";
 
     subPackages = [ "." ];
 
