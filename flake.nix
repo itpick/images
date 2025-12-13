@@ -381,27 +381,58 @@
             name = "bigbang-bundle";
             buildInputs = [ pkgs.skopeo ];
             buildCommand = ''
-              mkdir -p $out images-dir
+              mkdir -p $out/images
 
               echo "Creating BigBang image bundle with ${toString (builtins.length bigbangImages)} images..."
-              echo "Images: ${pkgs.lib.concatStringsSep " " bigbangImages}"
 
-              # Copy each image to OCI directory layout
+              # Link each image's JSON and copyTo scripts
               ${pkgs.lib.concatStringsSep "\n" (map (name:
                 let img = images.${name};
                 in ''
                   echo "Adding ${name}..."
-                  mkdir -p images-dir/${name}
-                  ${pkgs.skopeo}/bin/skopeo copy \
-                    nix:${img} \
-                    oci:images-dir/${name}:${img.imageTag or "latest"} \
-                    --insecure-policy
+                  mkdir -p $out/images/${name}
+                  # Link the image definition
+                  ln -s ${img} $out/images/${name}/image.json
+                  # Link the copyTo script
+                  ln -s ${img.copyTo}/bin/copy-to $out/images/${name}/copy-to
+                  # Link copyToDockerDaemon
+                  ln -s ${img.copyToDockerDaemon}/bin/copy-to-docker-daemon $out/images/${name}/copy-to-docker
                 ''
               ) bigbangImages)}
 
-              # Create tarball
-              echo "Creating tarball..."
-              tar -czvf $out/bigbang-images.tar.gz -C images-dir .
+              # Create a script to load all images
+              cat > $out/load-all.sh << 'SCRIPT'
+              #!/usr/bin/env bash
+              set -euo pipefail
+              SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+              for img_dir in "$SCRIPT_DIR/images"/*/; do
+                name=$(basename "$img_dir")
+                echo "Loading $name..."
+                "$img_dir/copy-to-docker"
+              done
+              echo "All images loaded!"
+              SCRIPT
+              chmod +x $out/load-all.sh
+
+              # Create a script to push all images to a registry
+              cat > $out/push-all.sh << 'SCRIPT'
+              #!/usr/bin/env bash
+              set -euo pipefail
+              REGISTRY="''${1:-}"
+              if [[ -z "$REGISTRY" ]]; then
+                echo "Usage: $0 <registry-url>"
+                echo "Example: $0 docker://registry.example.com/bigbang"
+                exit 1
+              fi
+              SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+              for img_dir in "$SCRIPT_DIR/images"/*/; do
+                name=$(basename "$img_dir")
+                echo "Pushing $name to $REGISTRY/$name..."
+                "$img_dir/copy-to" "$REGISTRY/$name"
+              done
+              echo "All images pushed!"
+              SCRIPT
+              chmod +x $out/push-all.sh
 
               # Create manifest
               cat > $out/manifest.txt << EOF
@@ -411,9 +442,17 @@
 
               Included images:
               ${pkgs.lib.concatStringsSep "\n" (map (name: "  - ${name}") bigbangImages)}
+
+              Usage:
+                ./load-all.sh           - Load all images to local Docker
+                ./push-all.sh <registry> - Push all images to a registry
               EOF
 
-              echo "Bundle created: $out/bigbang-images.tar.gz"
+              # Create tarball of this bundle
+              cd $out
+              tar -czvf bigbang-bundle.tar.gz images load-all.sh push-all.sh manifest.txt
+
+              echo "Bundle created: $out/bigbang-bundle.tar.gz"
             '';
           };
 
