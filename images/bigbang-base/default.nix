@@ -26,7 +26,7 @@ mkImage {
   tag = version;
 
   # Include all the essential tools matching upstream
-  # Note: 'which' is provided by busybox, so we don't include it separately
+  # Using noBusybox to avoid conflicts and include full GNU tools
   extraPkgs = with pkgs; [
     curl
     kubectl
@@ -34,12 +34,15 @@ mkImage {
     jq
     pinentry-curses  # pinentry was removed, use pinentry-curses
     findutils
-    # which - provided by busybox
+    which
     gnutls
     cacert
     tzdata
     coreutils
   ];
+
+  # Don't use busybox to avoid conflicts with full tools
+  noBusybox = true;
 
   entrypoint = [ "${pkgs.bash}/bin/bash" ];
   cmd = [];
