@@ -420,7 +420,8 @@ prefix = "v"
 [zookeeper]
 source = "github"
 github = "apache/zookeeper"
-use_latest_release = true
+use_max_tag = true
+include_regex = "^release-\\d+\\.\\d+\\.\\d+$"
 prefix = "release-"
 
 # ============================================
@@ -547,13 +548,15 @@ prefix = "v"
 [git]
 source = "github"
 github = "git/git"
-use_latest_release = true
+use_max_tag = true
+include_regex = "^v\\d+\\.\\d+\\.\\d+$"
 prefix = "v"
 
 [go]
 source = "github"
 github = "golang/go"
-use_latest_release = true
+use_max_tag = true
+include_regex = "^go\\d+\\.\\d+(\\.\\d+)?$"
 prefix = "go"
 
 [gradle]
@@ -1070,5 +1073,162 @@ prefix = "v"
 [victoriametrics-operator]
 source = "github"
 github = "VictoriaMetrics/operator"
+use_latest_release = true
+prefix = "v"
+
+# ============================================
+# Additional Packages (auto-added)
+# ============================================
+
+[actions-runner]
+source = "github"
+github = "actions/runner"
+use_latest_release = true
+prefix = "v"
+
+[actions-runner-controller]
+source = "github"
+github = "actions/actions-runner-controller"
+use_latest_release = true
+prefix = "gha-runner-scale-set-"
+
+[authentik]
+source = "github"
+github = "goauthentik/authentik"
+use_latest_release = true
+prefix = "version/"
+
+[buildkit]
+source = "github"
+github = "moby/buildkit"
+use_latest_release = true
+prefix = "v"
+
+[calico]
+source = "github"
+github = "projectcalico/calico"
+use_latest_release = true
+prefix = "v"
+
+[containerd]
+source = "github"
+github = "containerd/containerd"
+use_latest_release = true
+prefix = "v"
+
+[datadog-agent]
+source = "github"
+github = "DataDog/datadog-agent"
+use_latest_release = true
+
+[dragonfly]
+source = "github"
+github = "dragonflydb/dragonfly"
+use_latest_release = true
+prefix = "v"
+
+[eck-operator]
+source = "github"
+github = "elastic/cloud-on-k8s"
+use_latest_release = true
+prefix = "v"
+
+[envoy-gateway]
+source = "github"
+github = "envoyproxy/gateway"
+use_latest_release = true
+prefix = "v"
+
+[flink]
+source = "github"
+github = "apache/flink"
+use_latest_release = true
+prefix = "release-"
+
+[fluent-operator]
+source = "github"
+github = "fluent/fluent-operator"
+use_latest_release = true
+prefix = "v"
+
+[gitlab]
+source = "gitlab"
+gitlab = "gitlab-org/gitlab"
+host = "gitlab.com"
+use_latest_release = true
+prefix = "v"
+
+[harbor]
+source = "github"
+github = "goharbor/harbor"
+use_latest_release = true
+prefix = "v"
+
+[jenkins]
+source = "github"
+github = "jenkinsci/jenkins"
+use_latest_release = true
+prefix = "jenkins-"
+
+[kafka]
+source = "github"
+github = "apache/kafka"
+use_latest_release = true
+
+[kubeflow]
+source = "github"
+github = "kubeflow/kubeflow"
+use_latest_release = true
+prefix = "v"
+
+[neuvector]
+source = "github"
+github = "neuvector/neuvector"
+use_latest_release = true
+prefix = "v"
+
+[ollama]
+source = "github"
+github = "ollama/ollama"
+use_latest_release = true
+prefix = "v"
+
+[opensearch]
+source = "github"
+github = "opensearch-project/OpenSearch"
+use_latest_release = true
+
+[pgbouncer]
+source = "github"
+github = "pgbouncer/pgbouncer"
+use_latest_release = true
+prefix = "pgbouncer_"
+
+[promtail]
+source = "github"
+github = "grafana/loki"
+use_latest_release = true
+prefix = "v"
+
+[sonarqube]
+source = "github"
+github = "SonarSource/sonarqube"
+use_latest_release = true
+
+[spegel]
+source = "github"
+github = "spegel-org/spegel"
+use_latest_release = true
+prefix = "v"
+
+[teleport]
+source = "github"
+github = "gravitational/teleport"
+use_latest_release = true
+prefix = "v"
+
+[vcluster]
+source = "github"
+github = "loft-sh/vcluster"
 use_latest_release = true
 prefix = "v"

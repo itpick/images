@@ -1,11 +1,60 @@
 {
   "version": 2,
   "data": {
-    "apache-nifi": {
-      "version": "2.7.0",
-      "gitref": "refs/tags/rel/nifi-2.7.0",
-      "revision": "52e65077785ff5fe55b59e65ac056afabd072426",
-      "url": "https://github.com/apache/nifi/releases/tag/rel/nifi-2.7.0"
+    "actions-runner": {
+      "version": "2.330.0",
+      "gitref": "refs/tags/v2.330.0",
+      "url": "https://github.com/actions/runner/releases/tag/v2.330.0"
+    },
+    "actions-runner-controller": {
+      "version": "0.13.0",
+      "gitref": "refs/tags/gha-runner-scale-set-0.13.0",
+      "url": "https://github.com/actions/actions-runner-controller/releases/tag/gha-runner-scale-set-0.13.0"
+    },
+    "authentik": {
+      "version": "2025.10.2",
+      "gitref": "refs/tags/version/2025.10.2",
+      "url": "https://github.com/goauthentik/authentik/releases/tag/version/2025.10.2"
+    },
+    "aws-ebs-csi-driver": {
+      "version": "1.53.0",
+      "gitref": "refs/tags/v1.53.0",
+      "url": "https://github.com/kubernetes-sigs/aws-ebs-csi-driver/releases/tag/v1.53.0"
+    },
+    "aws-efs-csi-driver": {
+      "version": "helm-chart-aws-efs-csi-driver-3.3.0",
+      "gitref": "refs/tags/helm-chart-aws-efs-csi-driver-3.3.0",
+      "url": "https://github.com/kubernetes-sigs/aws-efs-csi-driver/releases/tag/helm-chart-aws-efs-csi-driver-3.3.0"
+    },
+    "aws-load-balancer-controller": {
+      "version": "2.16.0",
+      "gitref": "refs/tags/v2.16.0",
+      "url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/tag/v2.16.0"
+    },
+    "aws-node-termination-handler": {
+      "version": "1.25.3",
+      "gitref": "refs/tags/v1.25.3",
+      "url": "https://github.com/aws/aws-node-termination-handler/releases/tag/v1.25.3"
+    },
+    "buildkit": {
+      "version": "0.26.2",
+      "gitref": "refs/tags/v0.26.2",
+      "url": "https://github.com/moby/buildkit/releases/tag/v0.26.2"
+    },
+    "caddy": {
+      "version": "2.10.2",
+      "gitref": "refs/tags/v2.10.2",
+      "url": "https://github.com/caddyserver/caddy/releases/tag/v2.10.2"
+    },
+    "cadvisor": {
+      "version": "0.54.1",
+      "gitref": "refs/tags/v0.54.1",
+      "url": "https://github.com/google/cadvisor/releases/tag/v0.54.1"
+    },
+    "calico": {
+      "version": "3.31.2",
+      "gitref": "refs/tags/v3.31.2",
+      "url": "https://github.com/projectcalico/calico/releases/tag/v3.31.2"
     },
     "cert-manager": {
       "version": "1.19.2",
@@ -27,20 +76,238 @@
       "gitref": "refs/tags/v0.15.0",
       "url": "https://github.com/jimmidyson/configmap-reload/releases/tag/v0.15.0"
     },
-    "hubble-ui": {
-      "version": "0.13.3",
-      "gitref": "refs/tags/v0.13.3",
-      "url": "https://github.com/cilium/hubble-ui/releases/tag/v0.13.3"
+    "consul": {
+      "version": "1.22.1",
+      "gitref": "refs/tags/v1.22.1",
+      "url": "https://github.com/hashicorp/consul/releases/tag/v1.22.1"
     },
-    "keda": {
-      "version": "2.18.2",
-      "gitref": "refs/tags/v2.18.2",
-      "url": "https://github.com/kedacore/keda/releases/tag/v2.18.2"
+    "containerd": {
+      "version": "2.2.0",
+      "gitref": "refs/tags/v2.2.0",
+      "url": "https://github.com/containerd/containerd/releases/tag/v2.2.0"
     },
-    "kube-rbac-proxy": {
-      "version": "0.20.1",
-      "gitref": "refs/tags/v0.20.1",
-      "url": "https://github.com/brancz/kube-rbac-proxy/releases/tag/v0.20.1"
+    "contour": {
+      "version": "1.33.0",
+      "gitref": "refs/tags/v1.33.0",
+      "url": "https://github.com/projectcontour/contour/releases/tag/v1.33.0"
+    },
+    "coredns": {
+      "version": "1.13.2",
+      "gitref": "refs/tags/v1.13.2",
+      "url": "https://github.com/coredns/coredns/releases/tag/v1.13.2"
+    },
+    "cosign": {
+      "version": "3.0.3",
+      "gitref": "refs/tags/v3.0.3",
+      "url": "https://github.com/sigstore/cosign/releases/tag/v3.0.3"
+    },
+    "crossplane": {
+      "version": "2.1.3",
+      "gitref": "refs/tags/v2.1.3",
+      "url": "https://github.com/crossplane/crossplane/releases/tag/v2.1.3"
+    },
+    "csi-attacher": {
+      "version": "4.10.0",
+      "gitref": "refs/tags/v4.10.0",
+      "url": "https://github.com/kubernetes-csi/external-attacher/releases/tag/v4.10.0"
+    },
+    "csi-driver-nfs": {
+      "version": "4.12.1",
+      "gitref": "refs/tags/v4.12.1",
+      "url": "https://github.com/kubernetes-csi/csi-driver-nfs/releases/tag/v4.12.1"
+    },
+    "csi-driver-smb": {
+      "version": "1.19.1",
+      "gitref": "refs/tags/v1.19.1",
+      "url": "https://github.com/kubernetes-csi/csi-driver-smb/releases/tag/v1.19.1"
+    },
+    "datadog-agent": {
+      "version": "7.73.0",
+      "gitref": "refs/tags/7.73.0",
+      "url": "https://github.com/DataDog/datadog-agent/releases/tag/7.73.0"
+    },
+    "dex": {
+      "version": "2.44.0",
+      "gitref": "refs/tags/v2.44.0",
+      "url": "https://github.com/dexidp/dex/releases/tag/v2.44.0"
+    },
+    "dragonfly-operator": {
+      "version": "1.3.1",
+      "gitref": "refs/tags/v1.3.1",
+      "url": "https://github.com/dragonflydb/dragonfly-operator/releases/tag/v1.3.1"
+    },
+    "fluent-bit": {
+      "version": "4.2.0",
+      "gitref": "refs/tags/v4.2.0",
+      "url": "https://github.com/fluent/fluent-bit/releases/tag/v4.2.0"
+    },
+    "fluentd": {
+      "version": "1.19.1",
+      "gitref": "refs/tags/v1.19.1",
+      "url": "https://github.com/fluent/fluentd/releases/tag/v1.19.1"
+    },
+    "gatus": {
+      "version": "5.33.1",
+      "gitref": "refs/tags/v5.33.1",
+      "url": "https://github.com/TwiN/gatus/releases/tag/v5.33.1"
+    },
+    "git": {
+      "version": "2.52.0",
+      "gitref": "refs/tags/v2.52.0",
+      "revision": "8273149fa7c8cbc30474b3d0028b62e2a474e152",
+      "url": "https://github.com/git/git/releases/tag/v2.52.0"
+    },
+    "gitlab": {
+      "version": "20251212",
+      "revision": "3d6c68f2d53bae95d9cfd1d1e017ee4a6b7fd655",
+      "url": "https://gitlab.com/gitlab-org/gitlab/-/commit/3d6c68f2d53bae95d9cfd1d1e017ee4a6b7fd655"
+    },
+    "gitlab-runner": {
+      "version": "20251212",
+      "revision": "0df309e15495c9683ac1066ff2f46c58d2282f0e",
+      "url": "https://gitlab.com/gitlab-org/gitlab-runner/-/commit/0df309e15495c9683ac1066ff2f46c58d2282f0e"
+    },
+    "go": {
+      "version": "1.25.5",
+      "gitref": "refs/tags/go1.25.5",
+      "revision": "fefb02adf45c4bcc879bd406a8d61f2a292c26a9",
+      "url": "https://github.com/golang/go/releases/tag/go1.25.5"
+    },
+    "gradle": {
+      "version": "9.2.1",
+      "gitref": "refs/tags/v9.2.1",
+      "url": "https://github.com/gradle/gradle/releases/tag/v9.2.1"
+    },
+    "grafana": {
+      "version": "12.3.0",
+      "gitref": "refs/tags/v12.3.0",
+      "url": "https://github.com/grafana/grafana/releases/tag/v12.3.0"
+    },
+    "hadolint": {
+      "version": "2.14.0",
+      "gitref": "refs/tags/v2.14.0",
+      "url": "https://github.com/hadolint/hadolint/releases/tag/v2.14.0"
+    },
+    "hugo": {
+      "version": "0.152.2",
+      "gitref": "refs/tags/v0.152.2",
+      "url": "https://github.com/gohugoio/hugo/releases/tag/v0.152.2"
+    },
+    "k6": {
+      "version": "1.4.2",
+      "gitref": "refs/tags/v1.4.2",
+      "url": "https://github.com/grafana/k6/releases/tag/v1.4.2"
+    },
+    "kaniko": {
+      "version": "1.24.0",
+      "gitref": "refs/tags/v1.24.0",
+      "url": "https://github.com/GoogleContainerTools/kaniko/releases/tag/v1.24.0"
+    },
+    "karpenter": {
+      "version": "1.8.3",
+      "gitref": "refs/tags/v1.8.3",
+      "url": "https://github.com/aws/karpenter-provider-aws/releases/tag/v1.8.3"
+    },
+    "ko": {
+      "version": "0.18.0",
+      "gitref": "refs/tags/v0.18.0",
+      "url": "https://github.com/ko-build/ko/releases/tag/v0.18.0"
+    },
+    "kyverno": {
+      "version": "1.16.1",
+      "gitref": "refs/tags/v1.16.1",
+      "url": "https://github.com/kyverno/kyverno/releases/tag/v1.16.1"
+    },
+    "linkerd": {
+      "version": "edge-25.12.2",
+      "gitref": "refs/tags/edge-25.12.2",
+      "url": "https://github.com/linkerd/linkerd2/releases/tag/edge-25.12.2"
+    },
+    "loki": {
+      "version": "3.6.3",
+      "gitref": "refs/tags/v3.6.3",
+      "url": "https://github.com/grafana/loki/releases/tag/v3.6.3"
+    },
+    "metrics-server": {
+      "version": "0.8.0",
+      "gitref": "refs/tags/v0.8.0",
+      "url": "https://github.com/kubernetes-sigs/metrics-server/releases/tag/v0.8.0"
+    },
+    "mimir": {
+      "version": "3.0.1",
+      "gitref": "refs/tags/mimir-3.0.1",
+      "url": "https://github.com/grafana/mimir/releases/tag/mimir-3.0.1"
+    },
+    "nginx": {
+      "version": "1.29.4",
+      "gitref": "refs/tags/release-1.29.4",
+      "url": "https://github.com/nginx/nginx/releases/tag/release-1.29.4"
+    },
+    "oauth2-proxy": {
+      "version": "7.13.0",
+      "gitref": "refs/tags/v7.13.0",
+      "url": "https://github.com/oauth2-proxy/oauth2-proxy/releases/tag/v7.13.0"
+    },
+    "opentelemetry-collector": {
+      "version": "0.141.0",
+      "gitref": "refs/tags/v0.141.0",
+      "url": "https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.141.0"
+    },
+    "opentelemetry-collector-contrib": {
+      "version": "0.141.0",
+      "gitref": "refs/tags/v0.141.0",
+      "url": "https://github.com/open-telemetry/opentelemetry-collector-contrib/releases/tag/v0.141.0"
+    },
+    "prometheus": {
+      "version": "3.8.0",
+      "gitref": "refs/tags/v3.8.0",
+      "url": "https://github.com/prometheus/prometheus/releases/tag/v3.8.0"
+    },
+    "prometheus-operator": {
+      "version": "0.87.1",
+      "gitref": "refs/tags/v0.87.1",
+      "url": "https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.87.1"
+    },
+    "qdrant": {
+      "version": "1.16.2",
+      "gitref": "refs/tags/v1.16.2",
+      "url": "https://github.com/qdrant/qdrant/releases/tag/v1.16.2"
+    },
+    "rabbitmq": {
+      "version": "4.2.1",
+      "gitref": "refs/tags/v4.2.1",
+      "url": "https://github.com/rabbitmq/rabbitmq-server/releases/tag/v4.2.1"
+    },
+    "redis": {
+      "version": "8.4.0",
+      "gitref": "refs/tags/8.4.0",
+      "url": "https://github.com/redis/redis/releases/tag/8.4.0"
+    },
+    "seaweedfs": {
+      "version": "4.02",
+      "gitref": "refs/tags/4.02",
+      "url": "https://github.com/seaweedfs/seaweedfs/releases/tag/4.02"
+    },
+    "valkey": {
+      "version": "9.0.1",
+      "gitref": "refs/tags/9.0.1",
+      "url": "https://github.com/valkey-io/valkey/releases/tag/9.0.1"
+    },
+    "victoriametrics-operator": {
+      "version": "0.66.1",
+      "gitref": "refs/tags/v0.66.1",
+      "url": "https://github.com/VictoriaMetrics/operator/releases/tag/v0.66.1"
+    },
+    "weaviate": {
+      "version": "1.34.5",
+      "gitref": "refs/tags/v1.34.5",
+      "url": "https://github.com/weaviate/weaviate/releases/tag/v1.34.5"
+    },
+    "zookeeper": {
+      "version": "3.9.4",
+      "gitref": "refs/tags/release-3.9.4",
+      "revision": "279db16b5b6b6ad1fc5b2a704ddf04f427c80b4a",
+      "url": "https://github.com/apache/zookeeper/releases/tag/release-3.9.4"
     }
   }
 }
