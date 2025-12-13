@@ -20,6 +20,8 @@ let
   version = "2.1.0";
 in
 mkImage {
+  # Use bash as the primary derivation
+  drv = pkgs.bash;
   name = "bigbang-base";
   tag = version;
 
@@ -36,10 +38,9 @@ mkImage {
     cacert
     tzdata
     coreutils
-    bash
   ];
 
-  entrypoint = [ "/bin/bash" ];
+  entrypoint = [ "${pkgs.bash}/bin/bash" ];
   cmd = [];
 
   env = {
