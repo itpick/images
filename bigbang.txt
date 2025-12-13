@@ -2,7 +2,6 @@ alertmanager
 alloy
 anchore-enterprise
 anchore-enterpriseui
-argocd
 bats
 bigbang-base
 busybox
