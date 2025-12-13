@@ -31,7 +31,7 @@ mkImage {
     kubectl
     yq-go
     jq
-    pinentry
+    pinentry-curses  # pinentry was removed, use pinentry-curses
     findutils
     which
     gnutls
