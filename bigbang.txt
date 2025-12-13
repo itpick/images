@@ -79,7 +79,4 @@ twistlock-defender
 vault
 vault-csi-provider
 velero
-velero-plugin-aws
-velero-plugin-azure
-velero-plugin-csi
 yq
