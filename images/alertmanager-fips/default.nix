@@ -23,7 +23,7 @@ let
       owner = "prometheus";
       repo = "alertmanager";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash
+      hash = "sha256-2HHQ7S1J/X4PVFnPbi8Oapsqf1MyNnsqfMMBJRItWf0=";
     };
 
     vendorHash = null;  # TODO: Update after first build

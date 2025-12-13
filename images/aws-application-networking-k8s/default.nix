@@ -11,9 +11,9 @@ let
 
     src = fetchFromGitHub {
       owner = "aws";
-      repo = "application-networking-k8s";
+      repo = "aws-application-networking-k8s";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-YtDZyjgtgYOAkdND7BUc70F5Z+Gw9fii7+ZMR5SB910=";
     };
 
     vendorHash = null;

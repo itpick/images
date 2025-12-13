@@ -17,10 +17,10 @@ let
       owner = "goharbor";
       repo = "harbor";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-j0Eps47o8OxWaWzvutVIvzj+hX9jmB9qRrPKYNIXfRs=";  # TODO: Fix hash after first build
     };
 
-    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    vendorHash = "sha256-j0Eps47o8OxWaWzvutVIvzj+hX9jmB9qRrPKYNIXfRs=";  # TODO: Fix hash after first build
 
     sourceRoot = "source/src";
 

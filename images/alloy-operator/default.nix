@@ -17,7 +17,7 @@ let
       owner = "grafana";
       repo = "alloy-operator";
       rev = "alloy-operator-${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-b6jrqRwiKlLiD9iKzUMaEbgkEjCwOGCVZ6C13t/jWWc=";
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build

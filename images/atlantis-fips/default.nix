@@ -15,7 +15,7 @@ let
       owner = "runatlantis";
       repo = "atlantis";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Update with actual hash
+      hash = "sha256-K7GLO7ZGWqJF1WajgEi88KP3EJ0kVPxws6GQ0KwxCIU=";  # TODO: Update with actual hash
     };
 
     vendorHash = null;  # Uses vendor directory - update if needed

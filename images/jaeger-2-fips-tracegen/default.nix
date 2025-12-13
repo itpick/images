@@ -12,7 +12,7 @@ let
       owner = "jaegertracing";
       repo = "jaeger";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-DQa/BlMC9RECwLVAZ0kN2O5w1ppJbg5NuDhQ/zXXGuc=";
     };
     vendorHash = null;
     subPackages = [ "cmd/2-fips-tracegen" ];

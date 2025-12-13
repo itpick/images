@@ -18,10 +18,10 @@ let
       owner = "neuvector";
       repo = "neuvector";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-I+U034mud+8AgSBsovXcNMEy7f6eTsJQWw+9wdQmkuc=";  # TODO: Fix hash after first build
     };
 
-    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    vendorHash = "sha256-I+U034mud+8AgSBsovXcNMEy7f6eTsJQWw+9wdQmkuc=";  # TODO: Fix hash after first build
 
     subPackages = [ "agent" ];
 

@@ -12,7 +12,7 @@ let
       owner = "kubernetes-sigs";
       repo = "cluster-api";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-ENbNgstu+YsNESJ2RsJri3B4zO8UI3Dt60/8AFgsxn8=";
     };
     vendorHash = null;
     subPackages = [ "." ];

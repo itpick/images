@@ -67,7 +67,7 @@ let
       owner = "argoproj";
       repo = "argo-cd";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-AkHGhRHd2ybGYdgy6rNGBdS5YaHZKL4M9oKdqPxWYO0=";
     };
 
     vendorHash = null;  # TODO: Update after first build

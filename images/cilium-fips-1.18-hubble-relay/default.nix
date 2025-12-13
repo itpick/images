@@ -12,7 +12,7 @@ let
       owner = "cilium";
       repo = "cilium";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-bSXOa8txx4AMpv0IWJ0Fy/4loAG3rBYPsGLsaxqPkSo=";
     };
     vendorHash = null;
     subPackages = [ "." ];

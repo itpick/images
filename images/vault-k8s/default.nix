@@ -20,7 +20,7 @@ let
       owner = "hashicorp";
       repo = "vault-k8s";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-SceGJCkO2fss7Xd3f9ufOznLH0WvINy26aih5YEDvZY=";  # TODO: Fix hash after first build
     };
 
     vendorHash = null;  # TODO: Update after first build

@@ -12,7 +12,7 @@ let
       owner = "tektoncd";
       repo = "pipeline";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-3nNACkp/YPeaSiMStg5aMrCKdWSaMg6XDbft/k3HANc=";
     };
     vendorHash = null;
     subPackages = [ "." ];

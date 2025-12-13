@@ -12,7 +12,7 @@ let
       owner = "projectcalico";
       repo = "calico";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-bgcY/unCLAtPOeEwRJGl8u1dHYdO3tSzMTg47DHOsJM=";
     };
     vendorHash = null;
     subPackages = [ "." ];

@@ -12,7 +12,7 @@ let
       owner = "knative";
       repo = "serving";
       rev = "knative-v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-cLr2T9FGLGistXpMbo2Nyjw9soJ7DXcNFLw5BaAYiEc=";
     };
     vendorHash = null;
     subPackages = [ "." ];

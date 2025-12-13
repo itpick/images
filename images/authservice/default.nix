@@ -17,7 +17,7 @@ let
       owner = "istio-ecosystem";
       repo = "authservice";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-6vB8SevG1RVxfcLtja41vS1u/6Srg9NTBv1PHVhzMqQ=";
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build

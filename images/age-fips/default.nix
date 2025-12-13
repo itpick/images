@@ -15,7 +15,7 @@ let
       owner = "FiloSottile";
       repo = "age";
       rev = "v${version}";
-      hash = "sha256-bWHYfpHtmWnPj6d/0JEcKHzevEabJhCVwcuwug3C+Xw=";
+      hash = "sha256-9ZJdrmqBj43zSvStt0r25wjSfnvitdx3GYtM3urHcaA=";
     };
 
     vendorHash = "sha256-OlDtiD4yP/vhoFZE5OQct0FOwdYp/E39+OJVxasDpfE=";
