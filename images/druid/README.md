@@ -1,11 +1,13 @@
 # druid
 
-## Image Size
+Apache Druid is a high performance real-time analytics database
 
-| Type | Size |
-|------|------|
-| Compressed | 1.45 GB |
-| Uncompressed | ~3.62 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

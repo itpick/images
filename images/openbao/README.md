@@ -1,11 +1,13 @@
 # openbao
 
-## Image Size
+Minimal image with OpenBao
 
-| Type | Size |
-|------|------|
-| Compressed | 336.91 MB |
-| Uncompressed | ~842.27 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 4s |
+| Build Status | success |
 
 ## Usage
 

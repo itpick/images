@@ -6,7 +6,7 @@ Traefik is a cloud native application proxy
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 4s |
+| Build Time | 2s |
 | Build Status | success |
 
 ## Usage

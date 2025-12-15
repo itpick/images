@@ -6,7 +6,7 @@ Minimal Thanos Image, a highly available Prometheus setup with long term storage
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 4s |
+| Build Time | 1s |
 | Build Status | success |
 
 ## Usage

@@ -1,11 +1,11 @@
 # envsubst
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 53.77 MB |
-| Uncompressed | ~134.43 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

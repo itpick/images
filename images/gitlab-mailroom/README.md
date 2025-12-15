@@ -6,7 +6,7 @@ GitLab Mailroom is a daemon that monitors IMAP and POP3 mailboxes for incoming e
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 2s |
+| Build Time | 1s |
 | Build Status | failed |
 
 ## Usage

@@ -1,11 +1,13 @@
 # chart-testing
 
-## Image Size
+Tool for testing Helm charts, used for linting and testing pull requests
 
-| Type | Size |
-|------|------|
-| Compressed | 1013.66 MB |
-| Uncompressed | ~2.47 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 5s |
+| Build Status | success |
 
 ## Usage
 

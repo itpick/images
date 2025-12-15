@@ -6,7 +6,7 @@ HashiCorp Vault Provider for Secret Store CSI Driver
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 4s |
+| Build Time | 2s |
 | Build Status | failed |
 
 ## Usage

@@ -1,11 +1,11 @@
 # mcfly
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 110.14 MB |
-| Uncompressed | ~275.36 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

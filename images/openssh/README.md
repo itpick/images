@@ -1,11 +1,11 @@
 # openssh
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 147.73 MB |
-| Uncompressed | ~369.33 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

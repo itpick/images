@@ -4,15 +4,8 @@
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 530.58 MB |
-| Uncompressed | ~1.29 GB |
 
 ## Usage
 

@@ -1,11 +1,13 @@
 # ntpd-rs
 
-## Image Size
+Minimal image with ntpd-rs
 
-| Type | Size |
-|------|------|
-| Compressed | 122.62 MB |
-| Uncompressed | ~306.57 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 4s |
+| Build Status | success |
 
 ## Usage
 

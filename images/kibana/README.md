@@ -6,7 +6,7 @@ Your window into the Elastic Stack
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 1s |
+| Build Time | 2s |
 | Build Status | failed |
 
 ## Usage

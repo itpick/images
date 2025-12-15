@@ -38,6 +38,8 @@ nix2container.buildImage {
       "PATH=${lib.makeBinPath hugoPackages}"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "Hugo static site generator for fast and flexible website development";
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source" = "https://github.com/nix-containers/images";

@@ -28,6 +28,8 @@ nix2container.buildImage {
       "PATH=${lib.makeBinPath maddyPackages}"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "Composable all-in-one mail server with SMTP and IMAP";
       "org.opencontainers.image.version" = "0.7.0";
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";

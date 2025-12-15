@@ -27,6 +27,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "nova fips";
       "org.opencontainers.image.description" = "nova-fips container image";
       "org.opencontainers.image.version" = version;

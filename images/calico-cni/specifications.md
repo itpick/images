@@ -1,0 +1,17 @@
+# calico-cni Specifications
+
+Container image specifications and configuration details.
+
+## Container Configuration
+
+| Setting | Value |
+|---------|-------|
+| Has apk? | no |
+| Has a shell? | yes |
+| User | 0 |
+| Working directory | - |
+| Entrypoint | /opt/cni/bin/install |
+| CMD | - |
+| Volumes | - |
+| Stop signal | - |
+| Environment variables | PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/cni/binSSL_CERT_FILE=/etc/... |

@@ -6,8 +6,8 @@ Minimal image with zig binary
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 13s |
-| Build Status | success |
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

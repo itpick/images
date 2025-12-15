@@ -67,6 +67,8 @@ nix2container.buildImage {
       "27017/tcp" = {};
     };
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "MongoDB";
       "org.opencontainers.image.description" = "MongoDB document database (binary download)";
       "org.opencontainers.image.version" = version;

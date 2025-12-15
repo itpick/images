@@ -28,6 +28,8 @@ nix2container.buildImage {
       "PATH=${lib.makeBinPath cachixPackages}"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "Cachix binary cache client for Nix packages";
       "org.opencontainers.image.version" = pkgs.cachix.version;
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";

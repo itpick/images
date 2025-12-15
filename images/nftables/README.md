@@ -1,11 +1,11 @@
 # nftables
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 117.92 MB |
-| Uncompressed | ~294.82 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

@@ -9,13 +9,6 @@ Cloudflare Tunnel client (formerly Argo Tunnel)
 | Build Time | 2s |
 | Build Status | success |
 
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 143.49 MB |
-| Uncompressed | ~358.73 MB |
-
 ## Usage
 
 ```bash

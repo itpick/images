@@ -1,11 +1,13 @@
 # opensearch
 
-## Image Size
+Minimal image with Opensearch
 
-| Type | Size |
-|------|------|
-| Compressed | 2.47 GB |
-| Uncompressed | ~6.19 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

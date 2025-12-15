@@ -1,0 +1,5 @@
+# plugin-barman-cloud-fips-sidecar Specifications
+
+Container image specifications and configuration details.
+
+*No specifications data available for this image.*

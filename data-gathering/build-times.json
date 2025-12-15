@@ -409,3 +409,5 @@
     "windows-exporter": {"time_seconds": 2, "time_human": "2s", "status": "success"},
     "wiremock": {"time_seconds": 2, "time_human": "2s", "status": "success"},
     "wolfi": {"time_seconds": 2, "time_human": "2s", "status": "success"}
+  }
+}

@@ -1,11 +1,11 @@
 # kubeseal
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 163.53 MB |
-| Uncompressed | ~408.84 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

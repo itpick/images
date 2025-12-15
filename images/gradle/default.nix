@@ -74,6 +74,8 @@ nix2container.buildImage {
       "GRADLE_USER_HOME=/home/nonroot/.gradle"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "binary";
+      "io.nix-containers.build-method" = "Pre-built binary packaged with Nix";
       "org.opencontainers.image.description" = "Gradle build automation tool";
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source" = "https://github.com/nix-containers/images";

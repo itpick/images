@@ -1,11 +1,11 @@
 # onefetch
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 134.33 MB |
-| Uncompressed | ~335.83 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

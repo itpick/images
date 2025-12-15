@@ -127,6 +127,7 @@
               devShell = pkgs.callPackage ./lib/devShell.nix {};
             };
             readImageList = import ./lib/readImageList.nix { lib = pkgs.lib; };
+            scanning = import ./lib/scanning.nix { inherit pkgs; lib = pkgs.lib; };
           };
 
           # Read BigBang image list
@@ -561,6 +562,11 @@
 
           # Expose the chart puller script
           pull-all-charts = pullAllChartsScript;
+
+          # Security scanning scripts
+          scan-image = lib.scanning.scanImageScript;
+          scan-all-bigbang = lib.scanning.scanAllBigbangScript;
+          scan-all = lib.scanning.scanAllToFoldersScript;
 
           # Package bundle: all images + chart puller
           platform-bundle = pkgs.symlinkJoin {

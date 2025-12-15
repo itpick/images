@@ -40,6 +40,8 @@ nix2container.buildImage {
     ];
     Entrypoint = [ "${pkgs.cfssl}/bin/cfssl" ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "CFSSL Self-Sign";
       "org.opencontainers.image.description" = "CFSSL toolkit for self-signed certificate generation";
       "org.opencontainers.image.version" = pkgs.cfssl.version;

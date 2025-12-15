@@ -1,11 +1,13 @@
 # calico-calicoctl
 
-## Image Size
+Calico is a networking and security solution that enables Kubernetes workloads and non-Kubernetes/legacy workloads to communicate seamlessly and securely
 
-| Type | Size |
-|------|------|
-| Compressed | 198.87 MB |
-| Uncompressed | ~497.19 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 2s |
+| Build Status | success |
 
 ## Usage
 

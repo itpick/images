@@ -6,13 +6,15 @@ Container image with only busybox and libc (available in both musl and glibc var
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 1s |
+| Build Time | 2s |
 | Build Status | success |
 
-## Image Size
+## Usage
 
-| Type | Size |
-|------|------|
-| Compressed | 45.19 MB |
-| Uncompressed | ~112.97 MB |
+```bash
+# Build the image
+nix build .#busybox
 
+# Load into Docker
+nix build .#load-busybox-to-docker && ./result/bin/load-busybox-to-docker
+```

@@ -1,11 +1,11 @@
 # dart
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 1.54 GB |
-| Uncompressed | ~3.85 GB |
+| Metric | Value |
+|--------|-------|
+| Build Time | 2s |
+| Build Status | success |
 
 ## Usage
 

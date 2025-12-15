@@ -1,11 +1,13 @@
 # dragonfly
 
-## Image Size
+Dragonfly is a modern drop-in replacement for Redis and Memcached, offering better performance, multithreading, and lower memory overhead
 
-| Type | Size |
-|------|------|
-| Compressed | 207.75 MB |
-| Uncompressed | ~519.38 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

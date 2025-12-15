@@ -6,7 +6,7 @@ Base images with the minimum contents needed to run static binaries
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 33s |
+| Build Time | 2s |
 | Build Status | success |
 
 ## Usage

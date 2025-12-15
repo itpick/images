@@ -1,11 +1,13 @@
 # percona-server
 
-## Image Size
+Percona Server for MySQL is a free, fully compatible, enhanced, and open source drop-in replacement for any MySQL database. It provides superior performance, scalability, and instrumentation.'
 
-| Type | Size |
-|------|------|
-| Compressed | 1.42 GB |
-| Uncompressed | ~3.57 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

@@ -1,11 +1,11 @@
 # direnv
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 124.85 MB |
-| Uncompressed | ~312.14 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

@@ -27,6 +27,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "binary";
+      "io.nix-containers.build-method" = "Pre-built binary packaged with Nix";
       "org.opencontainers.image.title" = "aspnet 9 targeting pack";
       "org.opencontainers.image.description" = "aspnet-9-targeting-pack container image";
       "org.opencontainers.image.version" = version;

@@ -1,11 +1,13 @@
 # google-cloud-sdk
 
-## Image Size
+Minimal image with the Google Cloud SDK
 
-| Type | Size |
-|------|------|
-| Compressed | 1.10 GB |
-| Uncompressed | ~2.76 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 4s |
+| Build Status | failed |
 
 ## Usage
 

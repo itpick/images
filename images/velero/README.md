@@ -6,7 +6,7 @@ Backup and migrate Kubernetes applications and their persistent volumes
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 4s |
+| Build Time | 1s |
 | Build Status | success |
 
 ## Usage

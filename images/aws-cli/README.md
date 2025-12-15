@@ -1,11 +1,13 @@
 # aws-cli
 
-## Image Size
+Minimal aws-cli container image
 
-| Type | Size |
-|------|------|
-| Compressed | 572.91 MB |
-| Uncompressed | ~1.39 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 6s |
+| Build Status | success |
 
 ## Usage
 

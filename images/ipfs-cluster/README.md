@@ -1,11 +1,13 @@
 # ipfs-cluster
 
-## Image Size
+Pinset orchestration for IPFS
 
-| Type | Size |
-|------|------|
-| Compressed | 433.19 MB |
-| Uncompressed | ~1.05 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

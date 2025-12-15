@@ -27,6 +27,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "pgpool2_exporter";
       "org.opencontainers.image.description" = "pgpool2_exporter container image";
       "org.opencontainers.image.version" = version;

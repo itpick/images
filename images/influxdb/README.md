@@ -1,11 +1,13 @@
 # influxdb
 
-## Image Size
+Minimal image with influxdb
 
-| Type | Size |
-|------|------|
-| Compressed | 435.80 MB |
-| Uncompressed | ~1.06 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 5s |
+| Build Status | success |
 
 ## Usage
 

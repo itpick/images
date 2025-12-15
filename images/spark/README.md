@@ -6,7 +6,7 @@ Spark provides high-level APIs in Scala, Java, Python, and R, and an optimized e
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 1m 44s |
+| Build Time | 2s |
 | Build Status | success |
 
 ## Usage

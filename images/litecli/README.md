@@ -1,11 +1,11 @@
 # litecli
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 262.97 MB |
-| Uncompressed | ~657.43 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

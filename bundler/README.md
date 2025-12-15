@@ -152,6 +152,88 @@ gitlab-runner
 gitlab-shell
 ```
 
+## Security Scanning
+
+All images can be scanned for vulnerabilities using **Grype** and have SBOMs generated with **Syft**.
+
+### Scan a Single Image
+
+```bash
+# Scan a single image and save results to ./scan-results/<image>/
+nix run .#scan-image -- alertmanager
+
+# Specify custom output directory
+nix run .#scan-image -- alertmanager /path/to/output
+```
+
+### Scan All BigBang Images
+
+```bash
+# Scan all images in bigbang.txt
+nix run .#scan-all-bigbang -- ./bigbang-scan-results
+```
+
+### Scan Output Files
+
+Each scanned image produces:
+
+| File | Description |
+|------|-------------|
+| `sbom.json` | Full SBOM in Syft JSON format |
+| `sbom-cyclonedx.json` | SBOM in CycloneDX format |
+| `sbom-spdx.json` | SBOM in SPDX format |
+| `sbom.txt` | Human-readable package list |
+| `vulnerabilities.json` | Grype vulnerability scan (JSON) |
+| `vulnerabilities.txt` | Human-readable vulnerability list |
+| `scan-summary.json` | Summary with counts |
+| `SCAN-SUMMARY.md` | Human-readable summary |
+| `<image>-scan-results.tar.gz` | Compressed archive of all results |
+
+### Scan Summary Format
+
+The `scan-summary.json` includes:
+
+```json
+{
+  "imageName": "alertmanager",
+  "scanTime": "2025-12-14T12:00:00Z",
+  "scanTimeDisplay": "Dec 14, 2025, 12:00:00 PM (GMT-0600)",
+  "packages": 42,
+  "vulnerabilities": {
+    "total": 5,
+    "critical": 0,
+    "high": 1,
+    "medium": 2,
+    "low": 2
+  }
+}
+```
+
+### Image Labels
+
+All images include build metadata labels:
+
+| Label | Description |
+|-------|-------------|
+| `io.nix-containers.build-type` | `source` or `binary` |
+| `io.nix-containers.build-method` | Human-readable description |
+
+- **source**: Built from source code using Nix
+- **binary**: Pre-built binary packaged with Nix
+
+### Adding Build Type to Images
+
+In your image's `default.nix`:
+
+```nix
+mkImage {
+  drv = pkgs.myApp;
+  name = "my-app";
+  buildType = "source";  # or "binary"
+  # ...
+}
+```
+
 ## Troubleshooting
 
 ### "nix: transport not available"
@@ -171,3 +253,6 @@ Each architecture needs ~50GB during export. Clean up with:
 ```bash
 nix-collect-garbage -d
 ```
+
+### Scan fails with OCI export error
+Make sure you're running on Linux or through a Linux builder. Scanning requires exporting images to OCI format.

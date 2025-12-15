@@ -6,15 +6,8 @@ Minimal image to build and deploy Go applications using ko
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 4s |
+| Build Time | 1s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 598.47 MB |
-| Uncompressed | ~1.46 GB |
 
 ## Usage
 

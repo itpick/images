@@ -1,11 +1,13 @@
 # perl
 
-## Image Size
+Container image for building Perl applications
 
-| Type | Size |
-|------|------|
-| Compressed | 222.40 MB |
-| Uncompressed | ~556.00 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 2s |
+| Build Status | success |
 
 ## Usage
 

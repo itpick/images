@@ -6,7 +6,7 @@ A Wolf-based image for Harbor Exporter - application for monitoring harbor deplo
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 7s |
+| Build Time | 5s |
 | Build Status | failed |
 
 ## Usage

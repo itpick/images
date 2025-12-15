@@ -6,7 +6,7 @@ Cortex provides horizontally scalable, highly available, multi-tenant, long term
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 1s |
+| Build Time | 2s |
 | Build Status | failed |
 
 ## Usage

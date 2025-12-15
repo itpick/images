@@ -6,7 +6,7 @@ SeaweedFS is a fast distributed storage system for blobs, objects, files, and da
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 5s |
+| Build Time | 2s |
 | Build Status | success |
 
 ## Usage

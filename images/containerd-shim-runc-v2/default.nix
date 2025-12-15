@@ -27,6 +27,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "containerd shim runc v2";
       "org.opencontainers.image.description" = "containerd-shim-runc-v2 container image";
       "org.opencontainers.image.version" = version;

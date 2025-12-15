@@ -6,15 +6,8 @@ Envoy Cloud-native high-performance edge/middle/service proxy
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 14m 47s |
-| Build Status | failed |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 153.12 MB |
-| Uncompressed | ~382.81 MB |
+| Build Time | 2s |
+| Build Status | success |
 
 ## Usage
 

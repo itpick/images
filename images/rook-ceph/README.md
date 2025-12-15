@@ -6,7 +6,7 @@ Storage Orchestration for Kubernetes. This is specifically for the Rook Ceph ope
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 13s |
+| Build Time | 4s |
 | Build Status | success |
 
 ## Usage

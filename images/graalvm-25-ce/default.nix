@@ -27,6 +27,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "binary";
+      "io.nix-containers.build-method" = "Pre-built binary packaged with Nix";
       "org.opencontainers.image.title" = "graalvm 25 ce";
       "org.opencontainers.image.description" = "graalvm-25-ce container image";
       "org.opencontainers.image.version" = version;

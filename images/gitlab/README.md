@@ -1,11 +1,11 @@
 # gitlab
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 4.17 GB |
-| Uncompressed | ~10.44 GB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

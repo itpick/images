@@ -6,15 +6,8 @@ Minimal container image for running NodeJS apps
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 5s |
+| Build Time | 1s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 812.40 MB |
-| Uncompressed | ~1.98 GB |
 
 ## Usage
 

@@ -6,7 +6,7 @@ A Wolf-based image for Harbor - an open-source container registry with policies 
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 7s |
+| Build Time | 5s |
 | Build Status | failed |
 
 ## Usage

@@ -1,11 +1,13 @@
 # jenkins
 
-## Image Size
+A minimal, Wolfi-based container image for Jenkins - an open-source CI/CD server that enables developers to build, test, and deploy their software
 
-| Type | Size |
-|------|------|
-| Compressed | 2.51 GB |
-| Uncompressed | ~6.29 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 12s |
+| Build Status | success |
 
 ## Usage
 

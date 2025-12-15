@@ -1,11 +1,11 @@
 # openfortivpn
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 303.97 MB |
-| Uncompressed | ~759.93 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

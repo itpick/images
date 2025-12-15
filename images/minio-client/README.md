@@ -9,13 +9,6 @@ Minimal image with Minio
 | Build Time | 2s |
 | Build Status | success |
 
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 154.29 MB |
-| Uncompressed | ~385.72 MB |
-
 ## Usage
 
 ```bash

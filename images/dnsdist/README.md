@@ -1,11 +1,13 @@
 # dnsdist
 
-## Image Size
+dnsdist is a highly DNS-, DoS- and abuse-aware loadbalancer
 
-| Type | Size |
-|------|------|
-| Compressed | 344.15 MB |
-| Uncompressed | ~860.38 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

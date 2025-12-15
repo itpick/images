@@ -1,0 +1,5 @@
+# nginx-mainline-mod-http_xslt_filter Specifications
+
+Container image specifications and configuration details.
+
+*No specifications data available for this image.*

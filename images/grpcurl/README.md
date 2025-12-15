@@ -1,11 +1,11 @@
 # grpcurl
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 141.68 MB |
-| Uncompressed | ~354.20 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

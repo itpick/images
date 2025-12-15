@@ -6,15 +6,8 @@ Kubernetes operator used to deploy and manage Dragonfly instances inside your Ku
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 43s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 156.27 MB |
-| Uncompressed | ~390.69 MB |
 
 ## Usage
 

@@ -6,15 +6,8 @@ Chainguard image for Prometheus, a systems and service monitoring system
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 364.72 MB |
-| Uncompressed | ~911.80 MB |
 
 ## Usage
 

@@ -6,7 +6,7 @@ Minimalist Wolfi-based trust-manager operator for distributing trust bundles acr
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 5s |
+| Build Time | 4s |
 | Build Status | failed |
 
 ## Usage

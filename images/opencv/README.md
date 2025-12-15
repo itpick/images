@@ -1,11 +1,13 @@
 # opencv
 
-## Image Size
+OpenCV is a C++ computer vision and machine learning software library for image/video processing, object detection, face recognition, and more
 
-| Type | Size |
-|------|------|
-| Compressed | 738.26 MB |
-| Uncompressed | ~1.80 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

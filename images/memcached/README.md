@@ -6,15 +6,8 @@ Memcached is an in-memory key-value store for small chunks of arbitrary data (st
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 72.44 MB |
-| Uncompressed | ~181.11 MB |
 
 ## Usage
 

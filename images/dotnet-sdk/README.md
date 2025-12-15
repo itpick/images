@@ -1,11 +1,13 @@
 # dotnet-sdk
 
-## Image Size
+Minimal container image for .NET and the .NET Tools
 
-| Type | Size |
-|------|------|
-| Compressed | 835.43 MB |
-| Uncompressed | ~2.03 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

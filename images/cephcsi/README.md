@@ -6,7 +6,7 @@ CephCSI is the Container Storage Interface (CSI) driver for Ceph, providing supp
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 5s |
+| Build Time | 4s |
 | Build Status | failed |
 
 ## Usage

@@ -1,11 +1,11 @@
 # iproute2
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 147.52 MB |
-| Uncompressed | ~368.82 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

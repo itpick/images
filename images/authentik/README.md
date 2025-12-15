@@ -1,11 +1,11 @@
 # authentik
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 1.55 GB |
-| Uncompressed | ~3.88 GB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

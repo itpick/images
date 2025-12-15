@@ -6,15 +6,8 @@ MariaDB is one of the most popular open source relational databases
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 6s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 811.12 MB |
-| Uncompressed | ~1.98 GB |
 
 ## Usage
 

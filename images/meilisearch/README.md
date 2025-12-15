@@ -6,15 +6,8 @@ Minimal meilisearch image
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 198.46 MB |
-| Uncompressed | ~496.15 MB |
 
 ## Usage
 

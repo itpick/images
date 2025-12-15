@@ -1,11 +1,11 @@
 # btop
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 103.30 MB |
-| Uncompressed | ~258.25 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

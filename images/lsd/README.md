@@ -1,11 +1,11 @@
 # lsd
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 107.98 MB |
-| Uncompressed | ~269.95 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

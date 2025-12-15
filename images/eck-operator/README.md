@@ -6,7 +6,7 @@ Elastic Cloud on Kubernetes
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 7s |
+| Build Time | 4s |
 | Build Status | failed |
 
 ## Usage

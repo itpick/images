@@ -65,6 +65,8 @@ nix2container.buildImage {
       "JAVA_HOME=${pkgs.openjdk21_headless}"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "binary";
+      "io.nix-containers.build-method" = "Pre-built binary packaged with Nix";
       "org.opencontainers.image.description" = "OpenJDK Java Runtime Environment";
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source" = "https://github.com/nix-containers/images";

@@ -1,11 +1,13 @@
 # cloudprober
 
-## Image Size
+Cloudprober is a monitoring software that makes it super-easy to monitor availability and performance of various components of your system
 
-| Type | Size |
-|------|------|
-| Compressed | 249.03 MB |
-| Uncompressed | ~622.59 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 4s |
+| Build Status | success |
 
 ## Usage
 

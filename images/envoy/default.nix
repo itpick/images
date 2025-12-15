@@ -96,6 +96,8 @@ EOF
       "9901/tcp" = {};
     };
     Labels = {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "Envoy";
       "org.opencontainers.image.description" = "Cloud-native edge and service proxy (binary download)";
       "org.opencontainers.image.version" = version;

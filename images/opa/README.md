@@ -1,11 +1,13 @@
 # opa
 
-## Image Size
+Open Policy Agent (OPA) is an open source, general-purpose policy engine
 
-| Type | Size |
-|------|------|
-| Compressed | 159.59 MB |
-| Uncompressed | ~398.99 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 2s |
+| Build Status | success |
 
 ## Usage
 

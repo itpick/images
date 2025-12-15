@@ -6,15 +6,8 @@ A painless self-hosted all-in-one software development service, including Git ho
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 13s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 1.02 GB |
-| Uncompressed | ~2.57 GB |
 
 ## Usage
 

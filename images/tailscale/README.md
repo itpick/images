@@ -6,7 +6,7 @@ Tailscale is a WireGuard-based mesh VPN
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | failed |
 
 ## Usage

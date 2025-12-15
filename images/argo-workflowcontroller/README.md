@@ -1,11 +1,11 @@
 # argo-workflowcontroller
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 171.03 MB |
-| Uncompressed | ~427.59 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

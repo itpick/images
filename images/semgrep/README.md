@@ -6,7 +6,7 @@ CLI for the Semgrep static analysis tool. Semgrep is a lightweight static analys
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 7s |
+| Build Time | 3s |
 | Build Status | success |
 
 ## Usage

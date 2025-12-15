@@ -1,11 +1,13 @@
 # flink
 
-## Image Size
+Apache Flink is an open source stream processing framework with powerful stream- and batch-processing capabilities
 
-| Type | Size |
-|------|------|
-| Compressed | 2.04 GB |
-| Uncompressed | ~5.11 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

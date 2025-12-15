@@ -1,11 +1,11 @@
 # nix-diff
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 109.88 MB |
-| Uncompressed | ~274.72 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

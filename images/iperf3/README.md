@@ -1,11 +1,11 @@
 # iperf3
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 104.43 MB |
-| Uncompressed | ~261.08 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

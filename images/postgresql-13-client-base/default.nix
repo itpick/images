@@ -28,6 +28,8 @@ in nix2container.buildImage {
       "PGDATA=/var/lib/postgresql/data"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "postgresql 13 client base";
       "org.opencontainers.image.description" = "PostgreSQL postgresql-13-client-base";
       "org.opencontainers.image.version" = pkgs.postgresql.version;

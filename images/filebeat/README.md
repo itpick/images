@@ -6,15 +6,8 @@ filebeat Tails and ships log files
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 4s |
+| Build Time | 3s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 448.27 MB |
-| Uncompressed | ~1.09 GB |
 
 ## Usage
 

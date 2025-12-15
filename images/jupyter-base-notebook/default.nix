@@ -77,6 +77,8 @@ nix2container.buildImage {
       "JUPYTER_PORT=8888"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "Jupyter Base Notebook";
       "org.opencontainers.image.description" = "Minimal Jupyter notebook with data science packages";
       "org.opencontainers.image.version" = "latest";

@@ -27,6 +27,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "tritonserver uackend vllm meta cuda";
       "org.opencontainers.image.description" = "tritonserver-backend-vllm-meta-cuda container image";
       "org.opencontainers.image.version" = version;

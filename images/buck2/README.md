@@ -1,11 +1,13 @@
 # buck2
 
-## Image Size
+Minimal image with buck2 build system binaries and toolchain
 
-| Type | Size |
-|------|------|
-| Compressed | 279.47 MB |
-| Uncompressed | ~698.69 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 6s |
+| Build Status | success |
 
 ## Usage
 

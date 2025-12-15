@@ -1,11 +1,11 @@
 # aws-load-balancer-controller
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 206.58 MB |
-| Uncompressed | ~516.47 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

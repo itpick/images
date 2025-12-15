@@ -49,6 +49,8 @@ nix2container.buildImage {
     ];
     Entrypoint = [ "${pkgs.tini}/bin/tini" "--" "${pkgs.bats}/bin/bats" ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "Bats";
       "org.opencontainers.image.description" = "Bash Automated Testing System for Helm chart testing";
       "org.opencontainers.image.version" = pkgs.bats.version;

@@ -85,6 +85,8 @@ nix2container.buildImage {
       "GOPATH=/home/nonroot/go"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "Build and deploy Go applications on Kubernetes";
       "org.opencontainers.image.version" = pkgs.ko.version;
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";

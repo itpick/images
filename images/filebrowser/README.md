@@ -1,11 +1,13 @@
 # filebrowser
 
-## Image Size
+Filebrowser provides a file managing interface within a specified directory and it can be used to upload, delete, preview, rename and edit your files
 
-| Type | Size |
-|------|------|
-| Compressed | 134.13 MB |
-| Uncompressed | ~335.33 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 1s |
+| Build Status | success |
 
 ## Usage
 

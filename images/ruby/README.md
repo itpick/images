@@ -6,7 +6,7 @@ Minimal Ruby base image
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 4s |
+| Build Time | 2s |
 | Build Status | success |
 
 ## Usage

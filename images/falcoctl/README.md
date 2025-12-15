@@ -6,15 +6,8 @@ Minimalist Wolfi-based image for falcoctl
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 6s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 370.39 MB |
-| Uncompressed | ~925.99 MB |
 
 ## Usage
 

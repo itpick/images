@@ -27,6 +27,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "binary";
+      "io.nix-containers.build-method" = "Pre-built binary packaged with Nix";
       "org.opencontainers.image.title" = "corretto 21 default jdk";
       "org.opencontainers.image.description" = "corretto-21-default-jdk container image";
       "org.opencontainers.image.version" = version;

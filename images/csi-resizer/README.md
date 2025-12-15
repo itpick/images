@@ -4,7 +4,7 @@
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 7s |
+| Build Time | 8s |
 | Build Status | failed |
 
 ## Usage

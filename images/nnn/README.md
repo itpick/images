@@ -1,11 +1,11 @@
 # nnn
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 110.36 MB |
-| Uncompressed | ~275.90 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

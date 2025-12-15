@@ -28,6 +28,8 @@ nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "openldap 2.6 clients";
       "org.opencontainers.image.description" = "OpenLDAP openldap-2.6-clients";
       "org.opencontainers.image.version" = pkgs.openldap.version;

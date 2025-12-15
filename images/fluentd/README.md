@@ -6,15 +6,8 @@ Fluentd: Unified Logging Layer (project under CNCF)
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 7s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 207.56 MB |
-| Uncompressed | ~518.92 MB |
 
 ## Usage
 

@@ -1,11 +1,11 @@
 # buf
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 267.68 MB |
-| Uncompressed | ~669.20 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

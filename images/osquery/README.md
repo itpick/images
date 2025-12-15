@@ -1,11 +1,11 @@
 # osquery
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 341.37 MB |
-| Uncompressed | ~853.42 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

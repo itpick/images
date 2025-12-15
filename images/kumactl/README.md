@@ -1,11 +1,13 @@
 # kumactl
 
-## Image Size
+The universal Envoy service mesh for distributed service connectivity
 
-| Type | Size |
-|------|------|
-| Compressed | 273.02 MB |
-| Uncompressed | ~682.57 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 5s |
+| Build Status | success |
 
 ## Usage
 

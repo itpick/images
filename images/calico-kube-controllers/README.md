@@ -1,11 +1,13 @@
 # calico-kube-controllers
 
-## Image Size
+Calico is a networking and security solution that enables Kubernetes workloads and non-Kubernetes/legacy workloads to communicate seamlessly and securely
 
-| Type | Size |
-|------|------|
-| Compressed | 243.07 MB |
-| Uncompressed | ~607.69 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

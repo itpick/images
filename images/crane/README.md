@@ -9,13 +9,6 @@ Minimalist Wolfi-based crane image to interact with container registries. Crane 
 | Build Time | 2s |
 | Build Status | success |
 
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 86.89 MB |
-| Uncompressed | ~217.23 MB |
-
 ## Usage
 
 ```bash

@@ -69,6 +69,8 @@ nix2container.buildImage {
     Entrypoint = [ "${pkgs.openldap}/libexec/slapd" ];
     Cmd = [ "-d" "256" "-h" "ldap:/// ldapi:///" "-F" "/etc/ldap/slapd.d" ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "OpenLDAP directory server";
       "org.opencontainers.image.version" = pkgs.openldap.version;
       "io.nix-containers.chart" = "nifi";

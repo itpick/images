@@ -47,6 +47,8 @@ nix2container.buildImage {
       "PATH=${lib.makeBinPath curlPackages}"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "Command-line tool for transferring data with URLs";
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source" = "https://github.com/nix-containers/images";

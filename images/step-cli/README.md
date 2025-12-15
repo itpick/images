@@ -6,7 +6,7 @@ step-cli is an easy-to-use CLI tool for building, operating, and automating Publ
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | success |
 
 ## Usage

@@ -1,11 +1,11 @@
 # gdb
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 409.59 MB |
-| Uncompressed | ~1023.99 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

@@ -1,11 +1,13 @@
 # kratos
 
-## Image Size
+A microservice-oriented governance framework written in Go
 
-| Type | Size |
-|------|------|
-| Compressed | 206.78 MB |
-| Uncompressed | ~516.96 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 5s |
+| Build Status | success |
 
 ## Usage
 

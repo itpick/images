@@ -1,0 +1,18 @@
+# crossplane-provider-aws-ec2-fips
+
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
+
+## Usage
+
+```bash
+# Build the image
+nix build .#crossplane-provider-aws-ec2-fips
+
+# Load into Docker
+nix build .#load-crossplane-provider-aws-ec2-fips-to-docker && ./result/bin/load-crossplane-provider-aws-ec2-fips-to-docker
+```

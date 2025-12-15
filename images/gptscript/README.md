@@ -1,11 +1,13 @@
 # gptscript
 
-## Image Size
+Minimal gptscript container image
 
-| Type | Size |
-|------|------|
-| Compressed | 254.30 MB |
-| Uncompressed | ~635.76 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

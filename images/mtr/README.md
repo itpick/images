@@ -1,11 +1,11 @@
 # mtr
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 96.47 MB |
-| Uncompressed | ~241.17 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

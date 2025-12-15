@@ -1,11 +1,11 @@
 # dust
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 106.37 MB |
-| Uncompressed | ~265.93 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

@@ -1,11 +1,13 @@
 # laravel
 
-## Image Size
+Minimalist Wolfi-based Laravel images for developing, building, and running Laravel applications
 
-| Type | Size |
-|------|------|
-| Compressed | 551.94 MB |
-| Uncompressed | ~1.34 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

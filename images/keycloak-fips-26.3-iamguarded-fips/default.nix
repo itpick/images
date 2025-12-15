@@ -27,6 +27,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "keycloak fips 26.3 iamguarded fips";
       "org.opencontainers.image.description" = "keycloak-fips-26.3-iamguarded-fips container image";
       "org.opencontainers.image.version" = version;

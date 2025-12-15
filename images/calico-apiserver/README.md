@@ -1,11 +1,13 @@
 # calico-apiserver
 
-## Image Size
+Calico is a networking and security solution that enables Kubernetes workloads and non-Kubernetes/legacy workloads to communicate seamlessly and securely
 
-| Type | Size |
-|------|------|
-| Compressed | 238.16 MB |
-| Uncompressed | ~595.41 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

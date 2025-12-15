@@ -52,6 +52,8 @@ nix2container.buildImage {
     ];
     Entrypoint = [ "${pkgs.bats}/bin/bats" ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "Bash Automated Testing System";
       "org.opencontainers.image.version" = pkgs.bats.version;
       "io.nix-containers.chart" = "kube-prometheus-stack,kyverno";

@@ -6,7 +6,7 @@ A Kubernetes Operator that automates the deployment, scaling, and management of 
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 7s |
+| Build Time | 3s |
 | Build Status | failed |
 
 ## Usage

@@ -6,7 +6,7 @@ Container image for Vault, a cross-platform secrets manager and authentication t
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 5m 11s |
+| Build Time | 2s |
 | Build Status | success |
 
 ## Usage

@@ -1,0 +1,20 @@
+{ mkImage, pkgs, nonRoot, ... }:
+
+# FIPS variant - uses same base package
+
+mkImage {
+  drv = pkgs.kubectl;
+  name = "kubectl-fips-1.33-default";
+  tag = "latest";
+  
+  entrypoint = [ "kubectl" ];
+  cmd = [ "--help" ];
+  
+  labels = {
+    "org.opencontainers.image.title" = "kubectl-fips-1.33-default";
+    "org.opencontainers.image.description" = "kubectl-fips-1.33-default container image";
+    "org.opencontainers.image.version" = pkgs.kubectl.version;
+  };
+  
+  user = nonRoot.userString;
+}

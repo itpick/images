@@ -6,7 +6,7 @@ Chainguard image for Redis, an in-memory database that persists on disk. Redis i
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | success |
 
 ## Usage

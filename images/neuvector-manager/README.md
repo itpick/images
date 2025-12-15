@@ -6,15 +6,8 @@ A Wolfi-based image for NeuVector - a full lifecycle container security platform
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 20s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 591.62 MB |
-| Uncompressed | ~1.44 GB |
 
 ## Usage
 

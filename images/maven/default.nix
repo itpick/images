@@ -74,6 +74,8 @@ nix2container.buildImage {
       "MAVEN_CONFIG=/home/nonroot/.m2"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "binary";
+      "io.nix-containers.build-method" = "Pre-built binary packaged with Nix";
       "org.opencontainers.image.description" = "Apache Maven build automation tool";
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source" = "https://github.com/nix-containers/images";

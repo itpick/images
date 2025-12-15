@@ -6,15 +6,8 @@ Container image for litestream, to replicate SQLite databases
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 4s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 150.05 MB |
-| Uncompressed | ~375.13 MB |
 
 ## Usage
 

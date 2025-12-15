@@ -1,11 +1,13 @@
 # amazon-cloudwatch-agent
 
-## Image Size
+CloudWatch Agent enables you to collect and export host-level metrics and logs on instances running Linux or Windows server
 
-| Type | Size |
-|------|------|
-| Compressed | 483.50 MB |
-| Uncompressed | ~1.18 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

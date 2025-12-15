@@ -6,15 +6,8 @@ Minimal Wolfi-based image for CloudNative PG, a comprehensive platform designed 
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 50s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 165.47 MB |
-| Uncompressed | ~413.68 MB |
 
 ## Usage
 

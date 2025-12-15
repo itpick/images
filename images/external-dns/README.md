@@ -6,15 +6,8 @@ Minimal image to configure external DNS servers (AWS Route53, Google CloudDNS an
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 1m 47s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 326.91 MB |
-| Uncompressed | ~817.28 MB |
 
 ## Usage
 

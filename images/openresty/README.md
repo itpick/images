@@ -1,11 +1,13 @@
 # openresty
 
-## Image Size
+OpenResty is a high Performance Web Platform Based on Nginx and LuaJIT
 
-| Type | Size |
-|------|------|
-| Compressed | 530.66 MB |
-| Uncompressed | ~1.29 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

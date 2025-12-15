@@ -1,11 +1,11 @@
 # minio-warp
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 134.31 MB |
-| Uncompressed | ~335.79 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

@@ -1,11 +1,13 @@
 # karma
 
-## Image Size
+A dashboard for managing alerts from Alertmanager
 
-| Type | Size |
-|------|------|
-| Compressed | 138.47 MB |
-| Uncompressed | ~346.18 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 2s |
+| Build Status | success |
 
 ## Usage
 

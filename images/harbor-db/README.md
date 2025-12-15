@@ -1,11 +1,13 @@
 # harbor-db
 
-## Image Size
+A Wolf-based image for Harbor - an open-source container registry with policies and RBAC, vulnerability scans, and provides trusted image signing
 
-| Type | Size |
-|------|------|
-| Compressed | 260.09 MB |
-| Uncompressed | ~650.22 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

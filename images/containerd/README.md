@@ -1,11 +1,11 @@
 # containerd
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 277.95 MB |
-| Uncompressed | ~694.89 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

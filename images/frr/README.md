@@ -1,11 +1,13 @@
 # frr
 
-## Image Size
+The FRRouting Protocol Suite
 
-| Type | Size |
-|------|------|
-| Compressed | 463.21 MB |
-| Uncompressed | ~1.13 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

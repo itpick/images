@@ -1,11 +1,11 @@
 # nano
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 109.59 MB |
-| Uncompressed | ~273.97 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

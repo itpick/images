@@ -1,9 +1,20 @@
 # victoria-metrics
 
-## Image Size
+VictoriaMetrics standalone image is a fast, cost-effective and scalable monitoring solution and time series database
 
-| Type | Size |
-|------|------|
-| Compressed | 390.20 MB |
-| Uncompressed | ~975.52 MB |
+## Build Information
 
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
+
+## Usage
+
+```bash
+# Build the image
+nix build .#victoria-metrics
+
+# Load into Docker
+nix build .#load-victoria-metrics-to-docker && ./result/bin/load-victoria-metrics-to-docker
+```

@@ -34,6 +34,8 @@ nix2container.buildImage {
       "JAVA_HOME=${jdk}"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "binary";
+      "io.nix-containers.build-method" = "Pre-built binary packaged with Nix";
       "org.opencontainers.image.title" = "openjdk 17 default jdk";
       "org.opencontainers.image.description" = "OpenJDK 17 Java runtime";
       "org.opencontainers.image.version" = jdk.version;

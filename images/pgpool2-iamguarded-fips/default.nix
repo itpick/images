@@ -25,6 +25,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "pgpool2-iamguarded-fips";
       "org.opencontainers.image.description" = "pgpool2-iamguarded-fips container image";
     "io.nix-containers.compliance" = "FIPS-140-2";

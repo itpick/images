@@ -47,6 +47,8 @@ nix2container.buildImage {
       "PATH=${lib.makeBinPath waitForItPackages}"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "Wait for service dependencies before starting";
       "org.opencontainers.image.version" = "1.0.0";
     };

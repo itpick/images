@@ -1,11 +1,13 @@
 # ant
 
-## Image Size
+Chainguard Containers are regularly-updated, secure-by-default container images
 
-| Type | Size |
-|------|------|
-| Compressed | 698.29 MB |
-| Uncompressed | ~1.70 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 2s |
+| Build Status | success |
 
 ## Usage
 

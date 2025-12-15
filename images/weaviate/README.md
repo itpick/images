@@ -6,7 +6,7 @@ Minimal container image for running the weaviate vector database
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 10s |
+| Build Time | 2s |
 | Build Status | success |
 
 ## Usage

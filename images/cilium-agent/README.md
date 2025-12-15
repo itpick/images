@@ -6,15 +6,8 @@ Cilium is an open source, cloud native solution for providing, securing, and obs
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 2m 19s |
+| Build Time | 3s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 2.22 GB |
-| Uncompressed | ~5.56 GB |
 
 ## Usage
 

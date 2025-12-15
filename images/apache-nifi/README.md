@@ -6,15 +6,8 @@ Apache NiFi was made for dataflow. It supports highly configurable directed grap
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 2m 2s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 1.73 GB |
-| Uncompressed | ~4.32 GB |
 
 ## Usage
 

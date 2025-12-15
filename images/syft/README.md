@@ -6,7 +6,7 @@ A tool for generating a Software Bill of Materials (SBOM) from container images 
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | success |
 
 ## Usage

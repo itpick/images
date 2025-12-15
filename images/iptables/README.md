@@ -1,11 +1,11 @@
 # iptables
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 118.94 MB |
-| Uncompressed | ~297.35 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

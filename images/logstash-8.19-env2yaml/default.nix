@@ -27,6 +27,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "logstash 8.19 env2yaml";
       "org.opencontainers.image.description" = "logstash-8.19-env2yaml container image";
       "org.opencontainers.image.version" = version;

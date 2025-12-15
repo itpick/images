@@ -6,7 +6,7 @@ A Grafana backend plugin that handles rendering of panels & dashboards to PNGs u
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 19s |
+| Build Time | 5s |
 | Build Status | failed |
 
 ## Usage

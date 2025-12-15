@@ -27,6 +27,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "plugin uarman cloud sidecar";
       "org.opencontainers.image.description" = "plugin-barman-cloud-sidecar container image";
       "org.opencontainers.image.version" = version;

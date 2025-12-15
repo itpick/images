@@ -1,11 +1,11 @@
 # kustomize
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 132.18 MB |
-| Uncompressed | ~330.46 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

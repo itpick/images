@@ -1,11 +1,13 @@
 # jetty
 
-## Image Size
+Eclipse Jetty is a lightweight, highly scalable, Java-based web server and Servlet engine
 
-| Type | Size |
-|------|------|
-| Compressed | 144.12 MB |
-| Uncompressed | ~360.31 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

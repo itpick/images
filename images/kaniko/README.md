@@ -6,15 +6,8 @@ Build Container Images In Kubernetes
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 1s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 209.53 MB |
-| Uncompressed | ~523.83 MB |
 
 ## Usage
 

@@ -1,11 +1,13 @@
 # nvidia-container-toolkit
 
-## Image Size
+The NVIDIA Container Toolkit allows users to build and run GPU accelerated containers
 
-| Type | Size |
-|------|------|
-| Compressed | 119.75 MB |
-| Uncompressed | ~299.39 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

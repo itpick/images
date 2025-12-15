@@ -1,11 +1,11 @@
 # openvscode-server
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 453.86 MB |
-| Uncompressed | ~1.10 GB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

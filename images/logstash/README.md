@@ -1,11 +1,13 @@
 # logstash
 
-## Image Size
+Logstash is a server-side data processing pipeline that ingests data from multiple sources, transforms it, and sends it to your chosen destination
 
-| Type | Size |
-|------|------|
-| Compressed | 1.15 GB |
-| Uncompressed | ~2.89 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

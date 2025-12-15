@@ -1,11 +1,13 @@
 # cassandra
 
-## Image Size
+Cassandra is a free and open-source, distributed, wide-column store, NoSQL database
 
-| Type | Size |
-|------|------|
-| Compressed | 1.44 GB |
-| Uncompressed | ~3.61 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 9s |
+| Build Status | success |
 
 ## Usage
 

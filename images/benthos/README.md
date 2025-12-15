@@ -1,11 +1,11 @@
 # benthos
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 134.27 MB |
-| Uncompressed | ~335.67 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

@@ -1,11 +1,13 @@
 # gh
 
-## Image Size
+The GitHub CLI, or gh, is a command-line interface to GitHub for use in your terminal or your scripts
 
-| Type | Size |
-|------|------|
-| Compressed | 522.17 MB |
-| Uncompressed | ~1.27 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 4s |
+| Build Status | success |
 
 ## Usage
 

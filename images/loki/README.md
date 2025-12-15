@@ -6,15 +6,8 @@ This image contains the loki application for log aggregation. loki can be used t
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 4s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 1.09 GB |
-| Uncompressed | ~2.73 GB |
 
 ## Usage
 

@@ -1,11 +1,11 @@
 # jellyfin
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 2.83 GB |
-| Uncompressed | ~7.08 GB |
+| Metric | Value |
+|--------|-------|
+| Build Time | 14s |
+| Build Status | success |
 
 ## Usage
 

@@ -1,11 +1,11 @@
 # bat
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 125.55 MB |
-| Uncompressed | ~313.87 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

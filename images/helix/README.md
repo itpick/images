@@ -1,11 +1,11 @@
 # helix
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 549.83 MB |
-| Uncompressed | ~1.34 GB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

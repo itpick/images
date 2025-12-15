@@ -1,0 +1,5 @@
+# rancher-helm Specifications
+
+Container image specifications and configuration details.
+
+*No specifications data available for this image.*

@@ -1,11 +1,13 @@
 # nfpm
 
-## Image Size
+nFPM is Not FPM - a simple deb, rpm, apk, ipk, and arch linux packager written in Go
 
-| Type | Size |
-|------|------|
-| Compressed | 118.81 MB |
-| Uncompressed | ~297.04 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 2s |
+| Build Status | success |
 
 ## Usage
 

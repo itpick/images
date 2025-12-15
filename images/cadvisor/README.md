@@ -6,15 +6,8 @@ cAdvisor (Container Advisor) provides container users an understanding of the re
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 154.00 MB |
-| Uncompressed | ~385.01 MB |
 
 ## Usage
 

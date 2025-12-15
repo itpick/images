@@ -1,11 +1,13 @@
 # melange
 
-## Image Size
+Container image for running melange workflows to build APK packages
 
-| Type | Size |
-|------|------|
-| Compressed | 153.60 MB |
-| Uncompressed | ~384.02 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 3s |
+| Build Status | success |
 
 ## Usage
 

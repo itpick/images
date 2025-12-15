@@ -6,15 +6,8 @@ Minimal dive container image
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 2s |
+| Build Time | 3s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 85.37 MB |
-| Uncompressed | ~213.43 MB |
 
 ## Usage
 

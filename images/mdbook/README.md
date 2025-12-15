@@ -1,11 +1,13 @@
 # mdbook
 
-## Image Size
+Minimal image that contains mdbook
 
-| Type | Size |
-|------|------|
-| Compressed | 126.11 MB |
-| Uncompressed | ~315.29 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 4s |
+| Build Status | success |
 
 ## Usage
 

@@ -1,11 +1,11 @@
 # cni-plugins
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 225.87 MB |
-| Uncompressed | ~564.68 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

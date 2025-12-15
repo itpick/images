@@ -1,11 +1,13 @@
 # kubo
 
-## Image Size
+Minimalist Wolfi-based container image for the IPFS Kubo (go-ipfs) node
 
-| Type | Size |
-|------|------|
-| Compressed | 280.67 MB |
-| Uncompressed | ~701.68 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

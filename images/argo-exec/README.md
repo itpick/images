@@ -1,11 +1,13 @@
 # argo-exec
 
-## Image Size
+Argo is a collection of tools for Kubernetes that help users to run workflows and manage clusters
 
-| Type | Size |
-|------|------|
-| Compressed | 534.06 MB |
-| Uncompressed | ~1.30 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

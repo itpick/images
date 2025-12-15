@@ -6,15 +6,8 @@ This is a minimal Hugo image
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 154.77 MB |
-| Uncompressed | ~386.93 MB |
 
 ## Usage
 

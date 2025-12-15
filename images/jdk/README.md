@@ -6,15 +6,8 @@ Minimal Wolfi-based Java JDK image using OpenJDK. Used for compiling Java applic
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 9s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 1.16 GB |
-| Uncompressed | ~2.90 GB |
 
 ## Usage
 

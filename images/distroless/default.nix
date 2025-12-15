@@ -37,6 +37,8 @@ nix2container.buildImage {
       "TZDIR=${pkgs.tzdata}/share/zoneinfo"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "Distroless";
       "org.opencontainers.image.description" = "Minimal distroless base image with no shell or package manager";
     };

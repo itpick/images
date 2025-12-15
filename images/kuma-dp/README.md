@@ -1,11 +1,13 @@
 # kuma-dp
 
-## Image Size
+The universal Envoy service mesh for distributed service connectivity
 
-| Type | Size |
-|------|------|
-| Compressed | 244.48 MB |
-| Uncompressed | ~611.21 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 4s |
+| Build Status | success |
 
 ## Usage
 

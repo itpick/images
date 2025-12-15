@@ -1,11 +1,13 @@
 # kepler
 
-## Image Size
+Kepler (Kubernetes-based Efficient Power Level Exporter) is a Prometheus exporter that measures energy consumption metrics at the container, pod, and node levels in Kubernetes clusters
 
-| Type | Size |
-|------|------|
-| Compressed | 143.89 MB |
-| Uncompressed | ~359.73 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

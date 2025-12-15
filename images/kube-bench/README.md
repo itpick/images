@@ -6,7 +6,7 @@ Minimal image with kube-bench
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | failed |
 
 ## Usage

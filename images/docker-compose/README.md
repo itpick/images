@@ -6,15 +6,8 @@ minimal docker-compose image with docker-compose binary
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 2s |
+| Build Time | 1s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 133.83 MB |
-| Uncompressed | ~334.57 MB |
 
 ## Usage
 

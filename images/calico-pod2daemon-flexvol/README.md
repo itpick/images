@@ -1,11 +1,13 @@
 # calico-pod2daemon-flexvol
 
-## Image Size
+Calico is a networking and security solution that enables Kubernetes workloads and non-Kubernetes/legacy workloads to communicate seamlessly and securely
 
-| Type | Size |
-|------|------|
-| Compressed | 140.53 MB |
-| Uncompressed | ~351.33 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

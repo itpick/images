@@ -1,11 +1,13 @@
 # flannel
 
-## Image Size
+Flannel is a network fabric for Kubernetes, providing a way to manage network configurations across a cluster
 
-| Type | Size |
-|------|------|
-| Compressed | 200.03 MB |
-| Uncompressed | ~500.07 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 3s |
+| Build Status | failed |
 
 ## Usage
 

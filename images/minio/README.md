@@ -6,15 +6,8 @@ Minimal image with Minio
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 4s |
+| Build Time | 1s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 173.36 MB |
-| Uncompressed | ~433.40 MB |
 
 ## Usage
 

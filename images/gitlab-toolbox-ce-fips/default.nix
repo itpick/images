@@ -28,6 +28,8 @@ nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "GitLab tooluox ce";
       "org.opencontainers.image.description" = "GitLab toolbox-ce component";
       "io.nix-containers.chart" = "gitlab";

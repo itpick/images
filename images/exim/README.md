@@ -1,11 +1,11 @@
 # exim
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 206.76 MB |
-| Uncompressed | ~516.91 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

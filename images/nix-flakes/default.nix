@@ -28,6 +28,8 @@ nix2container.buildImage {
       "PATH=${lib.makeBinPath nix_flakesPackages}"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "Nix package manager with Flakes support for reproducible builds";
       "org.opencontainers.image.version" = pkgs.nix.version;
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";

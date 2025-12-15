@@ -25,6 +25,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "cloud-provider-azure-node-manager";
       "org.opencontainers.image.description" = "cloud-provider-azure-node-manager container image";
     };

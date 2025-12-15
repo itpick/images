@@ -26,6 +26,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "rabbitmq-cluster-operator-iamguarded-fips";
       "org.opencontainers.image.description" = "RabbitMQ rabbitmq-cluster-operator-iamguarded";
       "org.opencontainers.image.version" = pkgs.rabbitmq-server.version;

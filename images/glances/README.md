@@ -1,11 +1,11 @@
 # glances
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 309.07 MB |
-| Uncompressed | ~772.69 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

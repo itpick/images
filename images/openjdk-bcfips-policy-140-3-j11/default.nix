@@ -34,6 +34,8 @@ nix2container.buildImage {
       "JAVA_HOME=${jdk}"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "openjdk ucfips policy 140 3 j11";
       "org.opencontainers.image.description" = "OpenJDK 140 Java runtime";
       "org.opencontainers.image.version" = jdk.version;

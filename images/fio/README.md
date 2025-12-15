@@ -1,11 +1,11 @@
 # fio
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 275.14 MB |
-| Uncompressed | ~687.86 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

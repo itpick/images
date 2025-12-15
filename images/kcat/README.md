@@ -1,11 +1,11 @@
 # kcat
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 351.43 MB |
-| Uncompressed | ~878.58 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

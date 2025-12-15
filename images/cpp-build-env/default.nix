@@ -57,6 +57,8 @@ nix2container.buildImage {
       "PKG_CONFIG_PATH=${pkgs.openssl.dev}/lib/pkgconfig:${pkgs.gtest.dev}/lib/pkgconfig:${lib.makeSearchPathOutput "dev" "lib/pkgconfig" buildPackages}"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "C++ development environment with GCC, CMake, and essential libraries";
       "org.opencontainers.image.version" = pkgs.gcc.version;
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";

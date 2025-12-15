@@ -31,6 +31,8 @@ nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "opensearch dashuoards 3 dashuoards search relevance";
       "org.opencontainers.image.description" = "OpenSearch opensearch-dashboards-3-dashboards-search-relevance";
       "org.opencontainers.image.version" = version;

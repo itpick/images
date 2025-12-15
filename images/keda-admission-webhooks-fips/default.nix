@@ -25,6 +25,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "keda-admission-webhooks-fips";
       "org.opencontainers.image.description" = "keda-admission-webhooks-fips container image";
     "io.nix-containers.compliance" = "FIPS-140-2";

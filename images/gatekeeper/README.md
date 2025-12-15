@@ -6,15 +6,8 @@ Minimal Gatekeeper image for enforcing Kubernetes policies using Open Policy Age
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 229.42 MB |
-| Uncompressed | ~573.55 MB |
 
 ## Usage
 

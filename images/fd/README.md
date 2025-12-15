@@ -1,11 +1,11 @@
 # fd
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 115.08 MB |
-| Uncompressed | ~287.70 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

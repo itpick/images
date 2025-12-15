@@ -1,11 +1,13 @@
 # duckdb
 
-## Image Size
+DuckDB is an analytical in-process SQL database management system
 
-| Type | Size |
-|------|------|
-| Compressed | 214.79 MB |
-| Uncompressed | ~536.99 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 2s |
+| Build Status | success |
 
 ## Usage
 

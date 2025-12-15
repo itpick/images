@@ -1,0 +1,18 @@
+# vertical-pod-autoscaler
+
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
+
+## Usage
+
+```bash
+# Build the image
+nix build .#vertical-pod-autoscaler
+
+# Load into Docker
+nix build .#load-vertical-pod-autoscaler-to-docker && ./result/bin/load-vertical-pod-autoscaler-to-docker
+```

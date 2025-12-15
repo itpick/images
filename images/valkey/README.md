@@ -6,7 +6,7 @@ Minimalist Wolfi-based Valkey image
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | success |
 
 ## Usage

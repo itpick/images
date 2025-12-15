@@ -1,11 +1,11 @@
 # gopass
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 456.51 MB |
-| Uncompressed | ~1.11 GB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

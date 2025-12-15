@@ -6,15 +6,8 @@ Minimal image that contains ffmpeg
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 8s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 1.13 GB |
-| Uncompressed | ~2.83 GB |
 
 ## Usage
 

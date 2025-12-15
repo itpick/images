@@ -6,7 +6,7 @@ Minimal image of step-ca, an online Certificate Authority (CA) for secure, autom
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | success |
 
 ## Usage

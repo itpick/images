@@ -1,11 +1,13 @@
 # nextflow
 
-## Image Size
+Nextflow is a domain-specific language (DSL) for data-driven computational pipelines
 
-| Type | Size |
-|------|------|
-| Compressed | 1013.16 MB |
-| Uncompressed | ~2.47 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

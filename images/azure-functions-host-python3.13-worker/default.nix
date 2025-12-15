@@ -27,6 +27,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "azure functions host python3.13 worker";
       "org.opencontainers.image.description" = "azure-functions-host-python3.13-worker container image";
       "org.opencontainers.image.version" = version;

@@ -6,15 +6,8 @@ Minimalist Wolfi-based PHP images for building and running PHP applications. Inc
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 12s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 605.71 MB |
-| Uncompressed | ~1.47 GB |
 
 ## Usage
 

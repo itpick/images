@@ -40,6 +40,8 @@ nix2container.buildImage {
     ];
     Entrypoint = [ "${pkgs.busybox}/bin/sh" ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "Wolfi Base";
       "org.opencontainers.image.description" = "Minimal Wolfi-compatible base image for containers";
     };

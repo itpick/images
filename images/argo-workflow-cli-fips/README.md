@@ -1,0 +1,18 @@
+# argo-workflow-cli-fips
+
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
+
+## Usage
+
+```bash
+# Build the image
+nix build .#argo-workflow-cli-fips
+
+# Load into Docker
+nix build .#load-argo-workflow-cli-fips-to-docker && ./result/bin/load-argo-workflow-cli-fips-to-docker
+```

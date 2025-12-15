@@ -1,11 +1,13 @@
 # node-problem-detector
 
-## Image Size
+Node-problem-detector aims to make various node problems visible to the upstream layers in the cluster management stack
 
-| Type | Size |
-|------|------|
-| Compressed | 221.93 MB |
-| Uncompressed | ~554.84 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 5s |
+| Build Status | success |
 
 ## Usage
 

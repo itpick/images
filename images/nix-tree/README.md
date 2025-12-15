@@ -1,11 +1,11 @@
 # nix-tree
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 118.24 MB |
-| Uncompressed | ~295.60 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

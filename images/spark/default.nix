@@ -42,6 +42,8 @@ nix2container.buildImage {
       "8081/tcp" = {};  # Spark worker web UI
     };
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "Apache Spark - Unified analytics engine for large-scale data processing";
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source" = "https://github.com/nix-containers/images";

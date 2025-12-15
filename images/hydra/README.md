@@ -1,11 +1,13 @@
 # hydra
 
-## Image Size
+Ory Hydra is a hardened, OpenID Certified OAuth 2.0 Server and OpenID Connect Provider optimized for low-latency, high throughput, and low resource consumption
 
-| Type | Size |
-|------|------|
-| Compressed | 1.40 GB |
-| Uncompressed | ~3.51 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

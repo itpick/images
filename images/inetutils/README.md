@@ -1,11 +1,11 @@
 # inetutils
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 114.53 MB |
-| Uncompressed | ~286.33 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

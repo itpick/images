@@ -47,6 +47,8 @@ nix2container.buildImage {
     ];
     Entrypoint = [ "${pkgs.ceph}/bin/ceph" ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "Ceph";
       "org.opencontainers.image.description" = "Ceph distributed storage system";
       "org.opencontainers.image.version" = pkgs.ceph.version;

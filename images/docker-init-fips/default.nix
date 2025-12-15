@@ -32,6 +32,8 @@ nix2container.buildImage {
       "DOCKER_HOST=unix:///var/run/docker.sock"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "docker init";
       "org.opencontainers.image.description" = "Docker docker-init";
       "org.opencontainers.image.version" = version;

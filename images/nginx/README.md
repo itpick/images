@@ -6,15 +6,8 @@ Minimal Wolfi-based nginx HTTP, reverse proxy, mail proxy, and a generic TCP/UDP
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 85.93 MB |
-| Uncompressed | ~214.82 MB |
 
 ## Usage
 

@@ -9,13 +9,6 @@ Minimalist Wolfi-based Cosign images for signing and verifying images using Sigs
 | Build Time | 2s |
 | Build Status | success |
 
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 177.50 MB |
-| Uncompressed | ~443.76 MB |
-
 ## Usage
 
 ```bash

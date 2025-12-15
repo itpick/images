@@ -53,6 +53,8 @@ nix2container.buildImage {
     Entrypoint = [ "${pkgs.memcached}/bin/memcached" ];
     Cmd = [ "-u" "nobody" ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "High performance distributed memory object caching system";
       "org.opencontainers.image.version" = pkgs.memcached.version;
       "io.nix-containers.chart" = "loki";

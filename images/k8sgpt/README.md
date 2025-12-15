@@ -6,15 +6,8 @@ Minimal k8sgpt container image
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 4s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 234.67 MB |
-| Uncompressed | ~586.69 MB |
 
 ## Usage
 

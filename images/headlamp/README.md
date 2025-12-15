@@ -6,7 +6,7 @@ Headlamp is an easy-to-use and extensible Kubernetes web UI designed for develop
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 9s |
+| Build Time | 5s |
 | Build Status | failed |
 
 ## Usage

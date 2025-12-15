@@ -72,6 +72,8 @@ nix2container.buildImage {
     ];
     Entrypoint = [ "${pkgs.bash}/bin/bash" ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "Netshoot";
       "org.opencontainers.image.description" = "Network troubleshooting Swiss-Army container with common debugging tools";
     };

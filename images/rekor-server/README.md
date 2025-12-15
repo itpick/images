@@ -6,7 +6,7 @@ Rekor is one of the core components of the sigstore stack
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 2s |
+| Build Time | 1s |
 | Build Status | failed |
 
 ## Usage

@@ -6,7 +6,7 @@ Chainguard Containers are regularly-updated, secure-by-default container images
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 7s |
+| Build Time | 5s |
 | Build Status | failed |
 
 ## Usage

@@ -6,15 +6,8 @@ Kyverno is a policy engine that allows you to write policies as Kubernetes resou
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 1m 52s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 268.18 MB |
-| Uncompressed | ~670.46 MB |
 
 ## Usage
 

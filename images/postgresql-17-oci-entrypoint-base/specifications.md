@@ -1,0 +1,5 @@
+# postgresql-17-oci-entrypoint-base Specifications
+
+Container image specifications and configuration details.
+
+*No specifications data available for this image.*

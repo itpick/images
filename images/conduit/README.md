@@ -1,11 +1,11 @@
 # conduit
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 415.84 MB |
-| Uncompressed | ~1.01 GB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

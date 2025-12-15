@@ -1,11 +1,11 @@
 # kopia
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 199.49 MB |
-| Uncompressed | ~498.74 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

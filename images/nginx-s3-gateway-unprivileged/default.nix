@@ -27,6 +27,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "nginx s3 gateway unprivileged";
       "org.opencontainers.image.description" = "nginx-s3-gateway-unprivileged container image";
       "org.opencontainers.image.version" = version;

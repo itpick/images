@@ -1,11 +1,11 @@
 # coder
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 705.55 MB |
-| Uncompressed | ~1.72 GB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

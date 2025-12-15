@@ -6,7 +6,7 @@ A minimal, Wolfi-based image for Spark Operator. Facilitates the deployment and 
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 46s |
+| Build Time | 2s |
 | Build Status | success |
 
 ## Usage

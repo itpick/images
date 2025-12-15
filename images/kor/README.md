@@ -1,11 +1,13 @@
 # kor
 
-## Image Size
+A Golang Tool to discover unused Kubernetes Resources
 
-| Type | Size |
-|------|------|
-| Compressed | 151.77 MB |
-| Uncompressed | ~379.42 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 4s |
+| Build Status | success |
 
 ## Usage
 

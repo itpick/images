@@ -1,11 +1,13 @@
 # couchdb
 
-## Image Size
+Apache CouchDB is an open-source, document-oriented NoSQL database implemented in Erlang
 
-| Type | Size |
-|------|------|
-| Compressed | 407.07 MB |
-| Uncompressed | ~1017.69 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

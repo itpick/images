@@ -1,11 +1,13 @@
 # distribution
 
-## Image Size
+The toolkit to pack, ship, store, and deliver container content
 
-| Type | Size |
-|------|------|
-| Compressed | 217.31 MB |
-| Uncompressed | ~543.28 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 2s |
+| Build Status | success |
 
 ## Usage
 

@@ -9,6 +9,7 @@ mkImage {
   tag = "v${pkgs.dotnet-sdk.version}";
   entrypoint = [ "${pkgs.dotnet-sdk}/bin/dotnet" ];
   cmd = [ "--info" ];
+  buildType = "binary";
 
   extraPkgs = with pkgs; [ cacert ];
 

@@ -1,11 +1,13 @@
 # erlang
 
-## Image Size
+Container image for building Erlang applications
 
-| Type | Size |
-|------|------|
-| Compressed | 1.25 GB |
-| Uncompressed | ~3.14 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 3s |
+| Build Status | success |
 
 ## Usage
 

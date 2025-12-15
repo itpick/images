@@ -1,11 +1,13 @@
 # heartbeat
 
-## Image Size
+Heartbeat periodically checks the status of your services and determine whether they are available
 
-| Type | Size |
-|------|------|
-| Compressed | 248.77 MB |
-| Uncompressed | ~621.93 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

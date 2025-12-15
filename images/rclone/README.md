@@ -6,7 +6,7 @@ Rclone syncs files and directories to and from different cloud storage providers
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 4s |
+| Build Time | 2s |
 | Build Status | success |
 
 ## Usage

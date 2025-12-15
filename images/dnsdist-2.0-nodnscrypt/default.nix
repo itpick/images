@@ -27,6 +27,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "dnsdist 2.0 nodnscrypt";
       "org.opencontainers.image.description" = "dnsdist-2.0-nodnscrypt container image";
       "org.opencontainers.image.version" = version;

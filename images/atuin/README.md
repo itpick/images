@@ -1,11 +1,11 @@
 # atuin
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 171.85 MB |
-| Uncompressed | ~429.64 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

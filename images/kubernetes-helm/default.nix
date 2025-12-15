@@ -33,6 +33,8 @@ nix2container.buildImage {
       "PATH=${lib.makeBinPath kubernetes_helmPackages}"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "The package manager for Kubernetes";
       "org.opencontainers.image.version" = pkgs.kubernetes-helm.version;
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";

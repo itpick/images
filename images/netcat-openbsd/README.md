@@ -1,11 +1,11 @@
 # netcat-openbsd
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 90.84 MB |
-| Uncompressed | ~227.10 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

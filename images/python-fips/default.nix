@@ -98,6 +98,8 @@ nix2container.buildImage {
       "FIPS_CONFIG_AVAILABLE=/etc/fips/openssl.cnf"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "Python 3.13 runtime with FIPS 140-2 validated cryptography";
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source" = "https://github.com/nix-containers/images";

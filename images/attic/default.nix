@@ -29,6 +29,8 @@ nix2container.buildImage {
       "PATH=${lib.makeBinPath atticPackages}"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "Attic client for multi-tenant Nix binary cache with S3 storage";
       "org.opencontainers.image.version" = pkgs.attic-client.version;
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";

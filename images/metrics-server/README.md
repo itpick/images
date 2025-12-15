@@ -6,15 +6,8 @@ Metrics Server is a Kubernetes component that collects and provides resource usa
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 51s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 154.66 MB |
-| Uncompressed | ~386.65 MB |
 
 ## Usage
 

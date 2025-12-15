@@ -6,7 +6,7 @@ Generates certificates and updates Kubernetes webhooks, integrating with Helm to
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 6s |
+| Build Time | 4s |
 | Build Status | failed |
 
 ## Usage

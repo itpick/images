@@ -6,7 +6,7 @@ RabbitMQ RabbitMQ is a message broker
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 4s |
 | Build Status | success |
 
 ## Usage

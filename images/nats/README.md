@@ -6,15 +6,8 @@ NATS is a flexible messaging system providing pub/sub, streaming, storage etc
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 124.23 MB |
-| Uncompressed | ~310.59 MB |
 
 ## Usage
 

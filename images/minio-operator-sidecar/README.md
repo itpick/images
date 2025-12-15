@@ -6,7 +6,7 @@ MinIO Operator - Operator for MinIO on Kubernetes
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 5s |
+| Build Time | 3s |
 | Build Status | failed |
 
 ## Usage

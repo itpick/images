@@ -1,11 +1,13 @@
 # multus-cni
 
-## Image Size
+A CNI meta-plugin for multi-homed pods in Kubernetes
 
-| Type | Size |
-|------|------|
-| Compressed | 278.55 MB |
-| Uncompressed | ~696.39 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 5s |
+| Build Status | success |
 
 ## Usage
 

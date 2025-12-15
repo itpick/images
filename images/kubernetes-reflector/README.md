@@ -9,13 +9,6 @@ Kubernetes controller for reflecting ConfigMaps, Secrets, and Certificates acros
 | Build Time | 2s |
 | Build Status | success |
 
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 185.95 MB |
-| Uncompressed | ~464.89 MB |
-
 ## Usage
 
 ```bash

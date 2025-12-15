@@ -1,11 +1,11 @@
 # mosquitto
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 259.99 MB |
-| Uncompressed | ~649.98 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

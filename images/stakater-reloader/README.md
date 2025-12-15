@@ -1,0 +1,20 @@
+# stakater-reloader
+
+Chainguard Containers are regularly-updated, secure-by-default container images
+
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
+
+## Usage
+
+```bash
+# Build the image
+nix build .#stakater-reloader
+
+# Load into Docker
+nix build .#load-stakater-reloader-to-docker && ./result/bin/load-stakater-reloader-to-docker
+```

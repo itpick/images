@@ -1,11 +1,11 @@
 # kafka
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 857.98 MB |
-| Uncompressed | ~2.09 GB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

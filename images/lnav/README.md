@@ -1,11 +1,11 @@
 # lnav
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 202.08 MB |
-| Uncompressed | ~505.21 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

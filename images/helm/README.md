@@ -6,15 +6,8 @@ Minimal image with helm binary
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 4s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 203.65 MB |
-| Uncompressed | ~509.12 MB |
 
 ## Usage
 

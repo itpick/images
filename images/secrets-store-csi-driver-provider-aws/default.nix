@@ -27,6 +27,8 @@ in nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "secrets store csi driver provider aws";
       "org.opencontainers.image.description" = "secrets-store-csi-driver-provider-aws container image";
       "org.opencontainers.image.version" = version;

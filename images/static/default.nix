@@ -32,6 +32,8 @@ nix2container.buildImage {
       "PATH=${lib.makeBinPath staticPackages}"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "Statically linked base image with essential tools";
       "org.opencontainers.image.version" = pkgs.busybox.version;
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";

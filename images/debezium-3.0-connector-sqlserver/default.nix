@@ -28,6 +28,8 @@ in nix2container.buildImage {
       "JAVA_HOME=${pkgs.jdk21}"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "debezium 3.0 connector sqlserver";
       "org.opencontainers.image.description" = "Debezium CDC debezium-3.0-connector-sqlserver";
       "org.opencontainers.image.version" = "3.0.0";

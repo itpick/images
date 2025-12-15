@@ -1,11 +1,13 @@
 # orthanc
 
-## Image Size
+Lightweight DICOM server for medical imaging with RESTful API and web interface
 
-| Type | Size |
-|------|------|
-| Compressed | 881.10 MB |
-| Uncompressed | ~2.15 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

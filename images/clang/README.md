@@ -1,11 +1,13 @@
 # clang
 
-## Image Size
+Clang is a compiler front end for the C, C++, Objective-C, and Objective-C++ programming languages, as well as the OpenMP, OpenCL, RenderScript, CUDA, SYCL, and HIP frameworks
 
-| Type | Size |
-|------|------|
-| Compressed | 1.80 GB |
-| Uncompressed | ~4.50 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

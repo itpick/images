@@ -1,11 +1,18 @@
 # az
 
-## Image Size
+Last changed 2 days ago
 
-| Type | Size |
-|------|------|
-| Compressed | 1.54 GB |
-| Uncompressed | ~3.85 GB |
+FIPS available
+Request a free trial
+
+Contact our team to test out this image for free.
+
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 15s |
+| Build Status | success |
 
 ## Usage
 

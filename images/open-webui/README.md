@@ -1,11 +1,13 @@
 # open-webui
 
-## Image Size
+Open WebUI is an extensible, feature-rich, and user-friendly self-hosted AI platform designed to operate entirely offline. It supports various LLM runners like Ollama and OpenAI-compatible APIs, with built-in inference engine for RAG, making it a powerful AI deployment solution
 
-| Type | Size |
-|------|------|
-| Compressed | 5.43 GB |
-| Uncompressed | ~13.59 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

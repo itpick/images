@@ -1,11 +1,13 @@
 # buildkit
 
-## Image Size
+Buildkit is a concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 
-| Type | Size |
-|------|------|
-| Compressed | 250.12 MB |
-| Uncompressed | ~625.30 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 3s |
+| Build Status | success |
 
 ## Usage
 

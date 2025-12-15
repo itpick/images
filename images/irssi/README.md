@@ -1,11 +1,11 @@
 # irssi
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 205.55 MB |
-| Uncompressed | ~513.88 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

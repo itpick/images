@@ -12,6 +12,7 @@
 , extraContents ? []
 , extraPkgs ? []  # Additional packages from SBOM (alias for extraContents)
 , noBusybox ? false  # Skip busybox when packages conflict (e.g., iproute2)
+, buildType ? "source"  # "source" = built from source, "binary" = pre-built binary
 , ...
 }@args:
 
@@ -67,12 +68,18 @@ nix2container.buildImage ({
     })
   ];
 
+  # Build type labels
+  buildTypeLabels = {
+    "io.nix-containers.build-type" = buildType;
+    "io.nix-containers.build-method" = if buildType == "source" then "Built from source using Nix" else "Pre-built binary packaged with Nix";
+  };
+
   config = {
     Entrypoint = if entrypoint != null then entrypoint else [ "${drv}/bin/${binName}" ];
     User = user;
     Env = base.defaultEnv ++ pathEnv ++ envList;
-    Labels = base.defaultLabels // labels;
+    Labels = base.defaultLabels // buildTypeLabels // labels;
   } // lib.optionalAttrs (cmd != null) {
     Cmd = cmd;
   };
-} // (builtins.removeAttrs args [ "drv" "entrypoint" "cmd" "env" "labels" "user" "extraContents" "extraPkgs" "noBusybox" ]))
+} // (builtins.removeAttrs args [ "drv" "entrypoint" "cmd" "env" "labels" "user" "extraContents" "extraPkgs" "noBusybox" "buildType" ]))

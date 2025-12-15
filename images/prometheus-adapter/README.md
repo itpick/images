@@ -6,15 +6,8 @@ prometheus-adapter is a Prometheus project used to collect Prometheus metrics in
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 52s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 159.81 MB |
-| Uncompressed | ~399.54 MB |
 
 ## Usage
 

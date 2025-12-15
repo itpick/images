@@ -37,6 +37,8 @@ nix2container.buildImage {
       "LD_LIBRARY_PATH=${pkgs.glibc}/lib:${pkgs.openssl.out}/lib:${pkgs.gcc.cc.lib}/lib"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "Minimal runtime environment for C++ and Rust applications";
       "org.opencontainers.image.version" = pkgs.glibc.version;
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";

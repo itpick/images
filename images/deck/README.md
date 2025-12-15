@@ -1,11 +1,13 @@
 # deck
 
-## Image Size
+deck is a command-line interface for managing Kong Gateway configurations declaratively
 
-| Type | Size |
-|------|------|
-| Compressed | 204.84 MB |
-| Uncompressed | ~512.11 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 5s |
+| Build Status | success |
 
 ## Usage
 

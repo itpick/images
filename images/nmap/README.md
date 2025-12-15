@@ -1,11 +1,11 @@
 # nmap
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 175.80 MB |
-| Uncompressed | ~439.51 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

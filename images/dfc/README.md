@@ -1,11 +1,13 @@
 # dfc
 
-## Image Size
+CLI to convert Dockerfiles to use Chainguard Images and APKs in FROM and RUN lines
 
-| Type | Size |
-|------|------|
-| Compressed | 90.64 MB |
-| Uncompressed | ~226.60 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 2s |
+| Build Status | success |
 
 ## Usage
 

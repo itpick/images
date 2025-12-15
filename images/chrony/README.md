@@ -1,11 +1,11 @@
 # chrony
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 120.03 MB |
-| Uncompressed | ~300.08 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

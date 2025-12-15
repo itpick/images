@@ -1,11 +1,11 @@
 # gitui
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 128.01 MB |
-| Uncompressed | ~320.03 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

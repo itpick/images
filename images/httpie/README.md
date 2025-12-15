@@ -1,11 +1,11 @@
 # httpie
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 279.33 MB |
-| Uncompressed | ~698.34 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

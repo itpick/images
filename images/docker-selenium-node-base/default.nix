@@ -32,6 +32,8 @@ nix2container.buildImage {
       "DOCKER_HOST=unix:///var/run/docker.sock"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "docker selenium node uase";
       "org.opencontainers.image.description" = "Docker docker-selenium-node-base";
       "org.opencontainers.image.version" = version;

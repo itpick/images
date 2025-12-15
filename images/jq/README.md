@@ -1,11 +1,11 @@
 # jq
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 91.64 MB |
-| Uncompressed | ~229.11 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

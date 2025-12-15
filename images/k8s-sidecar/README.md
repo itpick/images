@@ -6,7 +6,7 @@ Minimal image with the k8s-sidecar app
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 7s |
+| Build Time | 3s |
 | Build Status | failed |
 
 ## Usage

@@ -1,11 +1,13 @@
 # pgbouncer
 
-## Image Size
+This image contains the CLI for the pgbouncer connection pooler for PostgreSQL. This image contains the pgbouncer binary and can be used directly
 
-| Type | Size |
-|------|------|
-| Compressed | 258.64 MB |
-| Uncompressed | ~646.61 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 2s |
+| Build Status | success |
 
 ## Usage
 

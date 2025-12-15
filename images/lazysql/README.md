@@ -1,11 +1,11 @@
 # lazysql
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 120.58 MB |
-| Uncompressed | ~301.46 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

@@ -1,11 +1,13 @@
 # malcontent
 
-## Image Size
+Enumerate binary capabilities, including malicious behaviors
 
-| Type | Size |
-|------|------|
-| Compressed | 460.75 MB |
-| Uncompressed | ~1.12 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 3s |
+| Build Status | success |
 
 ## Usage
 

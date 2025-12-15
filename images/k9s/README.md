@@ -1,11 +1,11 @@
 # k9s
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 414.28 MB |
-| Uncompressed | ~1.01 GB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

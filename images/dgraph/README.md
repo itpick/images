@@ -1,11 +1,11 @@
 # dgraph
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 218.06 MB |
-| Uncompressed | ~545.15 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

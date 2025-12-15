@@ -1,11 +1,13 @@
 # chromium
 
-## Image Size
+Minimal Chromium container image
 
-| Type | Size |
-|------|------|
-| Compressed | 1.76 GB |
-| Uncompressed | ~4.41 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 7s |
+| Build Status | success |
 
 ## Usage
 

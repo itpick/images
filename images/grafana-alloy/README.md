@@ -6,15 +6,8 @@ OpenTelemetry Collector distribution with programmable pipelines
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 987.47 MB |
-| Uncompressed | ~2.41 GB |
 
 ## Usage
 

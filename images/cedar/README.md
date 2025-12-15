@@ -9,13 +9,6 @@ This image contains the CLI for the Cedar Policy Language. The binary can be use
 | Build Time | 2s |
 | Build Status | success |
 
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 132.52 MB |
-| Uncompressed | ~331.30 MB |
-
 ## Usage
 
 ```bash

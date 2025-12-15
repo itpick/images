@@ -6,7 +6,7 @@ Stateless cluster local OCI registry mirror
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 56s |
+| Build Time | 2s |
 | Build Status | success |
 
 ## Usage

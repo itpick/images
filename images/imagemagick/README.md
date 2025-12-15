@@ -1,11 +1,13 @@
 # imagemagick
 
-## Image Size
+ImageMagick® is a free and open-source software suite, used for editing and manipulating digital images
 
-| Type | Size |
-|------|------|
-| Compressed | 250.80 MB |
-| Uncompressed | ~627.01 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 4s |
+| Build Status | success |
 
 ## Usage
 

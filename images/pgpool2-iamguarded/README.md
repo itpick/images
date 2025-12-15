@@ -1,0 +1,20 @@
+# pgpool2-iamguarded
+
+open-source middleware that operates between PostgreSQL servers and clients, providing features such as connection pooling, load balancing, and replication to enhance database performance and availability
+
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
+
+## Usage
+
+```bash
+# Build the image
+nix build .#pgpool2-iamguarded
+
+# Load into Docker
+nix build .#load-pgpool2-iamguarded-to-docker && ./result/bin/load-pgpool2-iamguarded-to-docker
+```

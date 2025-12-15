@@ -34,6 +34,8 @@ nix2container.buildImage {
     Entrypoint = [ "${pkgs.minio}/bin/minio" ];
     Cmd = [ "server" "/data" "--console-address" ":9001" ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "High Performance Object Storage";
       "org.opencontainers.image.version" = pkgs.minio.version;
       "io.nix-containers.chart" = "loki,tempo";

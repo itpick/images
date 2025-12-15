@@ -1,11 +1,11 @@
 # nushell
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 190.67 MB |
-| Uncompressed | ~476.67 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

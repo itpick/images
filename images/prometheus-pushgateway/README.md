@@ -6,15 +6,8 @@ Minimal Prometheus Pushgateway Image
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 121.22 MB |
-| Uncompressed | ~303.06 MB |
 
 ## Usage
 

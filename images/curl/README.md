@@ -6,13 +6,15 @@ Minimal curl image base containing curl and ca-certificates
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 2s |
+| Build Time | 3s |
 | Build Status | success |
 
-## Image Size
+## Usage
 
-| Type | Size |
-|------|------|
-| Compressed | 92.79 MB |
-| Uncompressed | ~231.99 MB |
+```bash
+# Build the image
+nix build .#curl
 
+# Load into Docker
+nix build .#load-curl-to-docker && ./result/bin/load-curl-to-docker
+```

@@ -55,6 +55,8 @@ nix2container.buildImage {
       "DOTNET_CLI_HOME=/home/nonroot/.dotnet"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "binary";
+      "io.nix-containers.build-method" = "Pre-built binary packaged with Nix";
       "org.opencontainers.image.description" = ".NET SDK for building applications";
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source" = "https://github.com/nix-containers/images";

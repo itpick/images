@@ -28,6 +28,8 @@ in nix2container.buildImage {
     ExposedPorts = { "80/tcp" = {}; "443/tcp" = {}; };
     Env = base.defaultEnv ++ nonRoot.userEnv;
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "nginx-s3-gateway";
       "org.opencontainers.image.description" = "Nginx nginx-s3-gateway";
       "org.opencontainers.image.version" = pkgs.nginx.version;

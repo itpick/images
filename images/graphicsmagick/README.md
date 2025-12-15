@@ -1,11 +1,13 @@
 # graphicsmagick
 
-## Image Size
+Minimal container image with GraphicsMagick, a collection of tools allowing you to read, write, and manipulate images in a variety of formats
 
-| Type | Size |
-|------|------|
-| Compressed | 369.68 MB |
-| Uncompressed | ~924.20 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 4s |
+| Build Status | success |
 
 ## Usage
 

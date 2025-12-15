@@ -10,15 +10,8 @@ docker pull cgr.
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 3s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 449.92 MB |
-| Uncompressed | ~1.09 GB |
 
 ## Usage
 

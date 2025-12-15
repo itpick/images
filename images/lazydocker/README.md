@@ -1,11 +1,11 @@
 # lazydocker
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 116.87 MB |
-| Uncompressed | ~292.18 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

@@ -1,11 +1,11 @@
 # omnictl
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 174.91 MB |
-| Uncompressed | ~437.28 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | 2s |
+| Build Status | success |
 
 ## Usage
 

@@ -1,11 +1,13 @@
 # pdns-recursor
 
-## Image Size
+PowerDNS Recursor is a non authoritative/recursing DNS server
 
-| Type | Size |
-|------|------|
-| Compressed | 534.89 MB |
-| Uncompressed | ~1.30 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

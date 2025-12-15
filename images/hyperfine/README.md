@@ -1,11 +1,11 @@
 # hyperfine
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 102.98 MB |
-| Uncompressed | ~257.46 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

@@ -1,11 +1,13 @@
 # elixir
 
-## Image Size
+Elixir is a dynamic, functional language for building scalable and maintainable applications
 
-| Type | Size |
-|------|------|
-| Compressed | 2.32 GB |
-| Uncompressed | ~5.81 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 7s |
+| Build Status | success |
 
 ## Usage
 

@@ -1,11 +1,11 @@
 # htop
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 103.85 MB |
-| Uncompressed | ~259.63 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

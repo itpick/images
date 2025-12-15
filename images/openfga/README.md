@@ -1,11 +1,13 @@
 # openfga
 
-## Image Size
+A high performance and flexible authorization/permission engine built for developers and inspired by Google Zanzibar
 
-| Type | Size |
-|------|------|
-| Compressed | 223.06 MB |
-| Uncompressed | ~557.65 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 2s |
+| Build Status | success |
 
 ## Usage
 

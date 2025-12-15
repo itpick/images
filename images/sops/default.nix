@@ -44,6 +44,8 @@ nix2container.buildImage {
       "GNUPGHOME=~/.gnupg"
     ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "SOPS (Secrets OPerationS) for secure secrets management with encryption";
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source" = "https://github.com/nix-containers/images";

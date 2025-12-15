@@ -1,11 +1,11 @@
 # miller
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 162.16 MB |
-| Uncompressed | ~405.42 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

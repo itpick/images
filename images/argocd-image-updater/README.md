@@ -1,11 +1,11 @@
 # argocd-image-updater
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 533.09 MB |
-| Uncompressed | ~1.30 GB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

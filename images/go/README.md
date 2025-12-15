@@ -6,15 +6,8 @@ Container image for building Go applications
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 5s |
+| Build Time | 2s |
 | Build Status | success |
-
-## Image Size
-
-| Type | Size |
-|------|------|
-| Compressed | 860.48 MB |
-| Uncompressed | ~2.10 GB |
 
 ## Usage
 

@@ -1,11 +1,13 @@
 # ghidra
 
-## Image Size
+Ghidra application image offering both GUI and headless modes of operation
 
-| Type | Size |
-|------|------|
-| Compressed | 2.34 GB |
-| Uncompressed | ~5.86 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

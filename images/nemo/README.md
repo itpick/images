@@ -1,11 +1,13 @@
 # nemo
 
-## Image Size
+NVIDIA NeMo Framework is an end-to-end, cloud-native framework to build, customize, and deploy generative AI models anywhere
 
-| Type | Size |
-|------|------|
-| Compressed | 1.79 GB |
-| Uncompressed | ~4.49 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

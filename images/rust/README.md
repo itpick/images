@@ -6,7 +6,7 @@ Minimal Wolfi-based Rust image for building Rust applications
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 7s |
+| Build Time | 2s |
 | Build Status | success |
 
 ## Usage

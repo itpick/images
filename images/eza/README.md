@@ -1,11 +1,11 @@
 # eza
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 104.79 MB |
-| Uncompressed | ~261.97 MB |
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

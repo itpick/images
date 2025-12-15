@@ -1,11 +1,11 @@
 # git-sync
 
-## Image Size
+## Build Information
 
-| Type | Size |
-|------|------|
-| Compressed | 569.25 MB |
-| Uncompressed | ~1.38 GB |
+| Metric | Value |
+|--------|-------|
+| Build Time | 3s |
+| Build Status | success |
 
 ## Usage
 

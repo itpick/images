@@ -1,11 +1,13 @@
 # metricbeat
 
-## Image Size
+Metricbeat fetches a set of metrics on a predefined interval from the operating system and services such as Apache web server, Redis, and more and ships them to Elasticsearch or Logstash
 
-| Type | Size |
-|------|------|
-| Compressed | 301.90 MB |
-| Uncompressed | ~754.76 MB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | N/A |
+| Build Status | unknown |
 
 ## Usage
 

@@ -37,6 +37,8 @@ nix2container.buildImage {
     Entrypoint = [ "${pkgs.zookeeper}/bin/zkServer.sh" ];
     Cmd = [ "start-foreground" ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "Apache ZooKeeper distributed coordination service";
       "org.opencontainers.image.version" = pkgs.zookeeper.version;
       "io.nix-containers.chart" = "apache-nifi";

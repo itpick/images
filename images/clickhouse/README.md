@@ -1,11 +1,13 @@
 # clickhouse
 
-## Image Size
+Clickhouse is the fastest and most resource efficient open-source database for real-time apps and analytics
 
-| Type | Size |
-|------|------|
-| Compressed | 1.88 GB |
-| Uncompressed | ~4.71 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 20s |
+| Build Status | success |
 
 ## Usage
 

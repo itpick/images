@@ -1,11 +1,13 @@
 # neo4j
 
-## Image Size
+Neo4J is a graph database that is commonly used in applications that require complex relationships between data. Neo4j supports both a standalone and a cluster deployment of Neo4j on Kubernetes using the Neo4j Helm charts
 
-| Type | Size |
-|------|------|
-| Compressed | 1.71 GB |
-| Uncompressed | ~4.28 GB |
+## Build Information
+
+| Metric | Value |
+|--------|-------|
+| Build Time | 13s |
+| Build Status | success |
 
 ## Usage
 

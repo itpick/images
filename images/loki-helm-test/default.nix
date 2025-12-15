@@ -37,6 +37,8 @@ nix2container.buildImage {
     ];
     Entrypoint = [ "${pkgs.bash}/bin/bash" ];
     Labels = base.defaultLabels // {
+      "io.nix-containers.build-type" = "source";
+      "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.description" = "Test image for Loki Helm chart";
       "org.opencontainers.image.version" = pkgs.grafana-loki.version;
       "io.nix-containers.chart" = "loki";

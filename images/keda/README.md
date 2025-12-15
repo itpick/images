@@ -6,7 +6,7 @@ Minimal image with the Keda binary
 
 | Metric | Value |
 |--------|-------|
-| Build Time | 1m 33s |
+| Build Time | 2s |
 | Build Status | success |
 
 ## Usage
