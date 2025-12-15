@@ -1,15 +1,25 @@
-{ mkImage, pkgs, ... }:
+{ mkImage, pkgs, nonRoot, ... }:
 
-# TODO: kubevela-vela-cli requires manual configuration
-# This is a placeholder - the actual package may need special handling
+# KubeVela CLI - Application delivery platform CLI
+# Deploy and operate applications in hybrid, multi-cloud environments
 
 mkImage {
-  drv = pkgs.hello;  # Placeholder
+  drv = pkgs.kubevela;
   name = "kubevela-vela-cli";
-  tag = "latest";
-  
-  labels = {
-    "org.opencontainers.image.title" = "kubevela-vela-cli";
-    "org.opencontainers.image.description" = "kubevela-vela-cli container image";
+  tag = "v${pkgs.kubevela.version}";
+
+  entrypoint = [ "${pkgs.kubevela}/bin/vela" ];
+  cmd = [ "--help" ];
+
+  env = {
+    HOME = "/home/${nonRoot.user.name}";
   };
+
+  labels = {
+    "org.opencontainers.image.title" = "KubeVela CLI";
+    "org.opencontainers.image.description" = "Application delivery platform CLI for hybrid multi-cloud";
+    "org.opencontainers.image.version" = pkgs.kubevela.version;
+  };
+
+  user = nonRoot.userString;
 }

@@ -1,15 +1,26 @@
-{ mkImage, pkgs, ... }:
+{ mkImage, pkgs, nonRoot, ... }:
 
-# TODO: gotenberg requires manual configuration
-# This is a placeholder - the actual package may need special handling
+# Gotenberg - A Docker-powered stateless API for PDF generation
+# Converts HTML, Markdown, Word, Excel and more to PDF
 
 mkImage {
-  drv = pkgs.hello;  # Placeholder
+  drv = pkgs.gotenberg;
   name = "gotenberg";
-  tag = "latest";
-  
-  labels = {
-    "org.opencontainers.image.title" = "gotenberg";
-    "org.opencontainers.image.description" = "Last changed 2 days ago";
+  tag = "v${pkgs.gotenberg.version}";
+
+  entrypoint = [ "${pkgs.gotenberg}/bin/gotenberg" ];
+  cmd = [];
+
+  env = {
+    GOTENBERG_API_PORT = "3000";
+    GOTENBERG_LOG_LEVEL = "info";
   };
+
+  labels = {
+    "org.opencontainers.image.title" = "Gotenberg";
+    "org.opencontainers.image.description" = "A Docker-powered stateless API for PDF generation";
+    "org.opencontainers.image.version" = pkgs.gotenberg.version;
+  };
+
+  user = nonRoot.userString;
 }

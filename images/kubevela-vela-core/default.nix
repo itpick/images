@@ -1,15 +1,25 @@
-{ mkImage, pkgs, ... }:
+{ mkImage, pkgs, nonRoot, ... }:
 
-# TODO: kubevela-vela-core requires manual configuration
-# This is a placeholder - the actual package may need special handling
+# KubeVela Core - Application delivery platform core controller
+# Deploy and operate applications in hybrid, multi-cloud environments
 
 mkImage {
-  drv = pkgs.hello;  # Placeholder
+  drv = pkgs.kubevela;
   name = "kubevela-vela-core";
-  tag = "latest";
-  
-  labels = {
-    "org.opencontainers.image.title" = "kubevela-vela-core";
-    "org.opencontainers.image.description" = "kubevela-vela-core container image";
+  tag = "v${pkgs.kubevela.version}";
+
+  entrypoint = [ "${pkgs.kubevela}/bin/vela" ];
+  cmd = [ "controller" ];
+
+  env = {
+    HOME = "/home/${nonRoot.user.name}";
   };
+
+  labels = {
+    "org.opencontainers.image.title" = "KubeVela Core";
+    "org.opencontainers.image.description" = "Application delivery platform core controller for hybrid multi-cloud";
+    "org.opencontainers.image.version" = pkgs.kubevela.version;
+  };
+
+  user = nonRoot.userString;
 }

@@ -1,15 +1,26 @@
-{ mkImage, pkgs, ... }:
+{ mkImage, pkgs, nonRoot, ... }:
 
-# TODO: kubevela-vela-core-fips requires manual configuration
-# This is a placeholder - the actual package may need special handling
+# KubeVela Core FIPS - Application delivery platform core controller (FIPS variant)
+# Deploy and operate applications in hybrid, multi-cloud environments
 
 mkImage {
-  drv = pkgs.hello;  # Placeholder
+  drv = pkgs.kubevela;
   name = "kubevela-vela-core-fips";
-  tag = "latest";
-  
-  labels = {
-    "org.opencontainers.image.title" = "kubevela-vela-core-fips";
-    "org.opencontainers.image.description" = "kubevela-vela-core-fips container image";
+  tag = "v${pkgs.kubevela.version}";
+
+  entrypoint = [ "${pkgs.kubevela}/bin/vela" ];
+  cmd = [ "controller" ];
+
+  env = {
+    HOME = "/home/${nonRoot.user.name}";
+    GOFIPS = "1";
   };
+
+  labels = {
+    "org.opencontainers.image.title" = "KubeVela Core FIPS";
+    "org.opencontainers.image.description" = "Application delivery platform core controller (FIPS)";
+    "org.opencontainers.image.version" = pkgs.kubevela.version;
+  };
+
+  user = nonRoot.userString;
 }
