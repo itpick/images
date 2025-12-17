@@ -18,7 +18,7 @@ let
       owner = "kyverno";
       repo = "policy-reporter";
       rev = "policy-reporter-${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-p5li2A4NKEokXjqSVGCmOpUkEfsjX0KHlmqG9WZqD00=";
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build

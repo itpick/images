@@ -4,16 +4,16 @@
 # NRI (Node Resource Interface) plugin
 
 let
-  version = "0.1.0";
+  version = "1.18.2";
   nri-plugin = buildGoModule {
     pname = "nri-mysql-fips";
     inherit version;
 
     src = fetchFromGitHub {
-      owner = "containerd";
-      repo = "nri-plugins";
+      owner = "newrelic";
+      repo = "nri-mysql";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-8z/LAEyXHEHoZgmQ601fock7rO5t4qadZdP9Tiuqxds=";
     };
 
     vendorHash = null;

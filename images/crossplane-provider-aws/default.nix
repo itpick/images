@@ -19,7 +19,7 @@ let
       owner = "crossplane-contrib";
       repo = "provider-aws";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-ng6LoxNnow8RkhIBa+CdKEToCQdA4eEY0JhzuxPSqlU=";  # TODO: Fix hash after first build
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build

@@ -13,7 +13,7 @@ let
       owner = "prometheus";
       repo = "prometheus";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-nYzM91jq0xSHQay4IEjGkIGWBXNLFHXuljxVJWxEfe8=";
     };
 
     vendorHash = null;

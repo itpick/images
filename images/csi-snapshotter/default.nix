@@ -10,7 +10,7 @@ let
       owner = "kubernetes-csi";
       repo = "external-snapshotter";
       rev = "v${version}";
-      hash = "sha256-0000000000000000000000000000000000000000000=";
+      hash = "sha256-cJFNsCdKF5EJ3y/Y/JWYN2o0Ey8tTMeLsgPHDhLfdyg=";
     };
 
     vendorHash = null;

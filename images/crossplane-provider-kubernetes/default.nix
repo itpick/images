@@ -13,7 +13,7 @@ let
       owner = "crossplane-contrib";
       repo = "provider-kubernetes";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-Rb+plMyBivFNCKJSUnkLkV5vmH+pbIGsI2RjQ9HTnQg=";
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";

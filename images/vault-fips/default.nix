@@ -15,7 +15,7 @@ let
       owner = "hashicorp";
       repo = "vault";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-5CqA2dZZdV1IiGSGwCA2eQIhp3lrsDIJt4rDK1vdvmE=";
     };
 
     vendorHash = null;  # TODO: Update after first build

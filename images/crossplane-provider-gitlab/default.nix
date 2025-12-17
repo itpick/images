@@ -13,7 +13,7 @@ let
       owner = "crossplane-contrib";
       repo = "provider-gitlab";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-moluGWbxFW+2Uq29jgL0w+f7fp0NLbJ4CDzmiojIbpg=";
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";

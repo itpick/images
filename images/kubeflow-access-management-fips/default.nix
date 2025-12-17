@@ -10,9 +10,9 @@ let
     inherit version;
     src = fetchFromGitHub {
       owner = "kubeflow";
-      repo = "pipelines";
+      repo = "kubeflow";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-R3WJ7K+0rHklOxV6kg9QZRV5OipG3qYjZ2XC4Njd8Y0=";
     };
     vendorHash = null;
     subPackages = [ "." ];

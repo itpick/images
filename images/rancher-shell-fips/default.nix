@@ -4,7 +4,7 @@
 # Rancher component
 
 let
-  version = "2.10.0";
+  version = "0.6.1";
   rancher-component = buildGoModule {
     pname = "rancher-shell-fips";
     inherit version;
@@ -13,7 +13,7 @@ let
       owner = "rancher";
       repo = "shell";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-cCUhzQuU6f0CKqQU2ee0AF7ZkT70IOWFeJxU5M/kZp4=";
     };
 
     vendorHash = null;

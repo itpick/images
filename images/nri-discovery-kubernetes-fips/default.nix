@@ -4,16 +4,16 @@
 # NRI (Node Resource Interface) plugin
 
 let
-  version = "0.1.0";
+  version = "1.13.7";
   nri-plugin = buildGoModule {
     pname = "nri-discovery-kubernetes-fips";
     inherit version;
 
     src = fetchFromGitHub {
-      owner = "containerd";
-      repo = "nri-plugins";
+      owner = "newrelic";
+      repo = "nri-discovery-kubernetes";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-8DiJMBJV/DIvwSwFIpuUXeV+MlL1L4r6Zu7hMiCTmok=";
     };
 
     vendorHash = null;

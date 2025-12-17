@@ -19,7 +19,7 @@ let
       owner = "crossplane-contrib";
       repo = "provider-gcp";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-A4wrBy8zNtbKF6zFPoJHGHqPbPZSUVbWzX0TJvfVAuo=";  # TODO: Fix hash after first build
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build

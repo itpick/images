@@ -4,16 +4,16 @@
 # NRI (Node Resource Interface) plugin
 
 let
-  version = "0.1.0";
+  version = "2.8.4";
   nri-plugin = buildGoModule {
     pname = "nri-couchbase-fips";
     inherit version;
 
     src = fetchFromGitHub {
-      owner = "containerd";
-      repo = "nri-plugins";
+      owner = "newrelic";
+      repo = "nri-couchbase";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-JoUVMeT/DnCCvsl13WaaNbtoedb38QzAKgYopm1kCHM=";
     };
 
     vendorHash = null;

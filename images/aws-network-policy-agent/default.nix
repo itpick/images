@@ -4,16 +4,16 @@
 # AWS Kubernetes component
 
 let
-  version = "1.0.0";
+  version = "1.3.0";
   aws-component = buildGoModule {
     pname = "aws-network-policy-agent";
     inherit version;
 
     src = fetchFromGitHub {
       owner = "aws";
-      repo = "network-policy-agent";
+      repo = "aws-network-policy-agent";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-CuWoeNOmAvfpGbk4ZgxFw/kfvLBIg4zi+dar/bMuySA=";
     };
 
     vendorHash = null;

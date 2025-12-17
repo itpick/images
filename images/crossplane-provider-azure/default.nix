@@ -15,7 +15,7 @@ let
       owner = "crossplane-contrib";
       repo = "provider-azure";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-qg+6pIWsRpO0mXjdzn4JtcHD97y7C2pKgnwqvBxc2IU=";  # TODO: Fix hash after first build
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build

@@ -1,4 +1,4 @@
-{ mkImage, pkgs, lib, fetchFromGitHub, buildGoModule, ... }:
+{ mkImage, pkgs, lib, fetchFromGitLab, buildGoModule, ... }:
 
 # GitLab Pages-fips
 # https://gitlab.com/gitlab-org/gitlab-pages
@@ -9,11 +9,11 @@ let
     pname = "gitlab-pages-fips";
     inherit version;
 
-    src = fetchFromGitHub {
+    src = fetchFromGitLab {
       owner = "gitlab-org";
       repo = "gitlab-pages";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-B/v0jj5hoNmF9cygvi9eLQ4pLuZ1+wIyNnJN2uCAXdE=";
     };
 
     vendorHash = null;

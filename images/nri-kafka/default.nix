@@ -4,16 +4,16 @@
 # NRI (Node Resource Interface) plugin
 
 let
-  version = "0.1.0";
+  version = "3.15.2";
   nri-plugin = buildGoModule {
     pname = "nri-kafka";
     inherit version;
 
     src = fetchFromGitHub {
-      owner = "containerd";
-      repo = "nri-plugins";
+      owner = "newrelic";
+      repo = "nri-kafka";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-QQ09DOpKpn6l6AjrDuGpQB4UGfYbREwd2+XaDHZ2/f8=";
     };
 
     vendorHash = null;

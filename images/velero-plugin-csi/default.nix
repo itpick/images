@@ -20,7 +20,7 @@ let
       owner = "vmware-tanzu";
       repo = "velero-plugin-for-csi";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-JgzJarBwLWewTmpaSdYlYzNLo07GFD085mzU2NF0NZQ=";
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build

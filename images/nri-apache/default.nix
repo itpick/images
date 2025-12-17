@@ -4,16 +4,16 @@
 # NRI (Node Resource Interface) plugin
 
 let
-  version = "0.1.0";
+  version = "1.15.4";
   nri-plugin = buildGoModule {
     pname = "nri-apache";
     inherit version;
 
     src = fetchFromGitHub {
-      owner = "containerd";
-      repo = "nri-plugins";
+      owner = "newrelic";
+      repo = "nri-apache";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-1y40yRmJ/QURszmrbUcctZtqF49I98Uq1i4bP5FQYgw=";
     };
 
     vendorHash = null;

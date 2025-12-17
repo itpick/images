@@ -12,7 +12,7 @@ let
       owner = "cert-manager";
       repo = "cert-manager";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-v/dooQU6QlXNk75DIU6bQ3eu2MuSvS+1abFH/1Hwh2o=";
     };
     vendorHash = null;
     subPackages = [ "." ];

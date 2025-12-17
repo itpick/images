@@ -1,4 +1,4 @@
-{ mkImage, fetchFromGitHub, buildGoModule, pkgs, lib, ... }:
+{ mkImage, fetchFromGitLab, buildGoModule, pkgs, lib, ... }:
 
 # GitLab KAS (Kubernetes Agent Server)-fips
 # https://gitlab.com/gitlab-org/cluster-integration/gitlab-agent
@@ -9,11 +9,11 @@ let
     pname = "gitlab-kas-fips";
     inherit version;
 
-    src = fetchFromGitHub {
+    src = fetchFromGitLab {
       owner = "gitlab-org";
-      repo = "cluster-integration";
+      repo = "cluster-integration/gitlab-agent";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-eupwFR1XQLCJc99E80d+CTuPM2zj6o8HauYW+ObeVfU=";
     };
 
     vendorHash = null;

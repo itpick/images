@@ -4,16 +4,16 @@
 # NRI (Node Resource Interface) plugin
 
 let
-  version = "0.1.0";
+  version = "2.25.2";
   nri-plugin = buildGoModule {
     pname = "nri-mssql";
     inherit version;
 
     src = fetchFromGitHub {
-      owner = "containerd";
-      repo = "nri-plugins";
+      owner = "newrelic";
+      repo = "nri-mssql";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-nQtYcfbcuBe6XGovlqq2gTwqKpU2mwEJRp30x8I/k6s=";
     };
 
     vendorHash = null;

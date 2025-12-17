@@ -13,7 +13,7 @@ let
       owner = "crossplane-contrib";
       repo = "provider-sql";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-bWHqUZR0NgZxaPMsDbtr3bSyKdntKle0+YxabSXbf50=";
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";

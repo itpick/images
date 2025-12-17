@@ -4,16 +4,16 @@
 # AWS Kubernetes component
 
 let
-  version = "1.0.0";
+  version = "1.10";
   aws-component = buildGoModule {
     pname = "aws-sigv4-proxy-fips";
     inherit version;
 
     src = fetchFromGitHub {
-      owner = "aws";
-      repo = "sigv4-proxy";
+      owner = "awslabs";
+      repo = "aws-sigv4-proxy";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-DC9JJeMdwxKeALQYA53BmMdAxQlUfPowAEul7+dTh4s=";
     };
 
     vendorHash = null;

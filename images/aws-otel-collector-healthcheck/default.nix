@@ -4,16 +4,16 @@
 # AWS Kubernetes component
 
 let
-  version = "1.0.0";
+  version = "0.46.0";
   aws-component = buildGoModule {
     pname = "aws-otel-collector-healthcheck";
     inherit version;
 
     src = fetchFromGitHub {
-      owner = "aws";
-      repo = "otel-collector-healthcheck";
+      owner = "aws-observability";
+      repo = "aws-otel-collector";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-aUXyCMzZFys1niPtGhysUe34g/pQBAcyfRD6X57D6CA=";
     };
 
     vendorHash = null;

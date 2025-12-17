@@ -4,16 +4,16 @@
 # AWS Kubernetes component
 
 let
-  version = "1.0.0";
+  version = "1.2.0";
   aws-component = buildGoModule {
     pname = "aws-s3-controller";
     inherit version;
 
     src = fetchFromGitHub {
-      owner = "aws";
+      owner = "aws-controllers-k8s";
       repo = "s3-controller";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-u5eXnnDBCPuH7lDLtGtzRJCLPsengyDB2nDMvwHu5I0=";
     };
 
     vendorHash = null;

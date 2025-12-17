@@ -13,7 +13,7 @@ let
       owner = "grafana";
       repo = "grafana-operator";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-CZ6lqwji8CPlTWMxEYjf1MaQWTe22RPTo5gNjeDnOh8=";
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build

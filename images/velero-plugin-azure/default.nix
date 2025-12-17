@@ -19,7 +19,7 @@ let
       owner = "vmware-tanzu";
       repo = "velero-plugin-for-microsoft-azure";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-D/ExM7/tnKoMIIPkgrVZ9Livg+cU+H3Y7NVHmXL9KR8=";
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build

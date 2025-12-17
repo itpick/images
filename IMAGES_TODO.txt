@@ -1,7 +1,7 @@
 # Images TODO List
 # ==================
 # This file tracks container images in the nix-containers project.
-# Updated: 2025-12-07
+# Updated: 2025-12-16
 #
 # IMPORTANT: We build UPSTREAM versions of images (from nixpkgs), NOT IronBank/BigBang
 # hardened versions. The BigBang list is used as a reference for which images are
@@ -12,7 +12,7 @@
 #   [x] - Completed (fully implemented)
 
 # ==============================================================================
-# COMPLETED IMAGES (132 fully implemented)
+# COMPLETED IMAGES (139 fully implemented)
 # ==============================================================================
 
 ## Observability Stack
@@ -164,7 +164,7 @@
 [x] wait-for-it
 
 # ==============================================================================
-# PLACEHOLDER IMAGES (114 - need implementation)
+# PLACEHOLDER IMAGES (107 - need implementation)
 # ==============================================================================
 
 ## GitLab Components
@@ -277,12 +277,12 @@
 [ ] velero-plugin-csi
 
 ## CSI Drivers
-[ ] csi-attacher
-[ ] csi-node-driver-registrar
-[ ] csi-provisioner
-[ ] csi-resizer
-[ ] csi-snapshotter
-[ ] snapshot-validation-webhook
+[x] csi-attacher
+[x] csi-node-driver-registrar
+[x] csi-provisioner
+[x] csi-resizer
+[x] csi-snapshotter
+[x] snapshot-validation-webhook
 
 ## Other Utilities
 [ ] keycloak
@@ -290,7 +290,7 @@
 [ ] kiali
 [ ] kiali-operator
 [ ] kubernetes-reflector
-[ ] kube-webhook-certgen
+[x] kube-webhook-certgen
 [ ] loki-canary
 [ ] loki-helm-test
 [ ] mc

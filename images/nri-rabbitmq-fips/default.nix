@@ -4,16 +4,16 @@
 # NRI (Node Resource Interface) plugin
 
 let
-  version = "0.1.0";
+  version = "2.15.4";
   nri-plugin = buildGoModule {
     pname = "nri-rabbitmq-fips";
     inherit version;
 
     src = fetchFromGitHub {
-      owner = "containerd";
-      repo = "nri-plugins";
+      owner = "newrelic";
+      repo = "nri-rabbitmq";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-tFVPvtO98i1Y43/01JPu+4wZWQrcWSmgNvNWxkeeUmM=";
     };
 
     vendorHash = null;

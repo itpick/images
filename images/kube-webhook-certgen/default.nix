@@ -19,10 +19,10 @@ let
       owner = "jet";
       repo = "kube-webhook-certgen";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-gKgeUhZONSmLg3/ien7KkoI+m8x2rDWDlix2+Vt6CyU=";
     };
 
-    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    vendorHash = null;  # Uses vendored dependencies
 
     env.CGO_ENABLED = 0;
 

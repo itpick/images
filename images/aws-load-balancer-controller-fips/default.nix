@@ -15,7 +15,7 @@ let
       owner = "kubernetes-sigs";
       repo = "aws-load-balancer-controller";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Update hash
+      hash = "sha256-XWnvrYG3S3UgrF5ez+awGEweUymtxFTnFh23X8wrKvo=";
     };
 
     vendorHash = null;  # Uses vendor directory

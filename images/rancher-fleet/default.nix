@@ -4,15 +4,15 @@
 # Rancher component
 
 let
-  version = "2.10.0";
+  version = "0.12.10";
   component = buildGoModule {
     pname = "rancher-fleet";
     inherit version;
     src = fetchFromGitHub {
       owner = "rancher";
-      repo = "rancher";
+      repo = "fleet";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-Z16MI+KVn+nwmoWvlUggbgFQKUoAc7Sxkpiydq3JFdU=";
     };
     vendorHash = null;
     subPackages = [ "." ];

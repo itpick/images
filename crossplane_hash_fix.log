@@ -1,0 +1,940 @@
+Found      127 files to process
+
+[1/     127] Processing images/crossplane-aws-cloudfront-fips/default.nix
+Processing: images/crossplane-aws-cloudfront-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[2/     127] Processing images/crossplane-aws-cloudfront/default.nix
+Processing: images/crossplane-aws-cloudfront/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[3/     127] Processing images/crossplane-aws-cloudwatchlogs-fips/default.nix
+Processing: images/crossplane-aws-cloudwatchlogs-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[4/     127] Processing images/crossplane-aws-cloudwatchlogs/default.nix
+Processing: images/crossplane-aws-cloudwatchlogs/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[5/     127] Processing images/crossplane-aws-dynamodb-fips/default.nix
+Processing: images/crossplane-aws-dynamodb-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[6/     127] Processing images/crossplane-aws-dynamodb/default.nix
+Processing: images/crossplane-aws-dynamodb/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[7/     127] Processing images/crossplane-aws-ec2-fips/default.nix
+Processing: images/crossplane-aws-ec2-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[8/     127] Processing images/crossplane-aws-ec2/default.nix
+Processing: images/crossplane-aws-ec2/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[9/     127] Processing images/crossplane-aws-eks-fips/default.nix
+Processing: images/crossplane-aws-eks-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[10/     127] Processing images/crossplane-aws-eks/default.nix
+Processing: images/crossplane-aws-eks/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[11/     127] Processing images/crossplane-aws-fips/default.nix
+Processing: images/crossplane-aws-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[12/     127] Processing images/crossplane-aws-firehose-fips/default.nix
+Processing: images/crossplane-aws-firehose-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[13/     127] Processing images/crossplane-aws-firehose/default.nix
+Processing: images/crossplane-aws-firehose/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[14/     127] Processing images/crossplane-aws-iam-fips/default.nix
+Processing: images/crossplane-aws-iam-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[15/     127] Processing images/crossplane-aws-iam/default.nix
+Processing: images/crossplane-aws-iam/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[16/     127] Processing images/crossplane-aws-kinesis-fips/default.nix
+Processing: images/crossplane-aws-kinesis-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[17/     127] Processing images/crossplane-aws-kinesis/default.nix
+Processing: images/crossplane-aws-kinesis/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[18/     127] Processing images/crossplane-aws-kms-fips/default.nix
+Processing: images/crossplane-aws-kms-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[19/     127] Processing images/crossplane-aws-kms/default.nix
+Processing: images/crossplane-aws-kms/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[20/     127] Processing images/crossplane-aws-lambda-fips/default.nix
+Processing: images/crossplane-aws-lambda-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[21/     127] Processing images/crossplane-aws-lambda/default.nix
+Processing: images/crossplane-aws-lambda/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[22/     127] Processing images/crossplane-aws-provider-fips/default.nix
+Processing: images/crossplane-aws-provider-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[23/     127] Processing images/crossplane-aws-provider/default.nix
+Processing: images/crossplane-aws-provider/default.nix
+  Found: crossplane/crossplane v2.1.3
+  Fetching hash from: https://github.com/crossplane/crossplane/archive/refs/tags/v2.1.3.tar.gz
+  Got base32 hash: 0yv6nb8bzwzl7nx416fmddivd6gxhxja8ha6xwxvm69h5rmqsfiq
+  Converted to SRI: sha256-ODqNay4wmbo770ZBpGSH/Zm2Y2vVmUC6PfTzv9CyZns=
+  Updated images/crossplane-aws-provider/default.nix
+
+  SUCCESS
+
+[24/     127] Processing images/crossplane-aws-rds-fips/default.nix
+Processing: images/crossplane-aws-rds-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[25/     127] Processing images/crossplane-aws-rds/default.nix
+Processing: images/crossplane-aws-rds/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[26/     127] Processing images/crossplane-aws-route53-fips/default.nix
+Processing: images/crossplane-aws-route53-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[27/     127] Processing images/crossplane-aws-route53/default.nix
+Processing: images/crossplane-aws-route53/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[28/     127] Processing images/crossplane-aws-s3-fips/default.nix
+Processing: images/crossplane-aws-s3-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[29/     127] Processing images/crossplane-aws-s3/default.nix
+Processing: images/crossplane-aws-s3/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[30/     127] Processing images/crossplane-aws-sns-fips/default.nix
+Processing: images/crossplane-aws-sns-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[31/     127] Processing images/crossplane-aws-sns/default.nix
+Processing: images/crossplane-aws-sns/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[32/     127] Processing images/crossplane-aws-sqs-fips/default.nix
+Processing: images/crossplane-aws-sqs-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[33/     127] Processing images/crossplane-aws-sqs/default.nix
+Processing: images/crossplane-aws-sqs/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[34/     127] Processing images/crossplane-aws/default.nix
+Processing: images/crossplane-aws/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[35/     127] Processing images/crossplane-azure-authorization/default.nix
+Processing: images/crossplane-azure-authorization/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[36/     127] Processing images/crossplane-azure-managedidentity/default.nix
+Processing: images/crossplane-azure-managedidentity/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[37/     127] Processing images/crossplane-azure-sql/default.nix
+Processing: images/crossplane-azure-sql/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[38/     127] Processing images/crossplane-azure-storage/default.nix
+Processing: images/crossplane-azure-storage/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[39/     127] Processing images/crossplane-azure/default.nix
+Processing: images/crossplane-azure/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[40/     127] Processing images/crossplane-function-auto-ready-fips/default.nix
+Processing: images/crossplane-function-auto-ready-fips/default.nix
+  Found: crossplane-contrib/function-auto-ready v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/function-auto-ready/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/function-auto-ready/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[41/     127] Processing images/crossplane-function-auto-ready/default.nix
+Processing: images/crossplane-function-auto-ready/default.nix
+  Found: crossplane-contrib/function-auto-ready v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/function-auto-ready/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/function-auto-ready/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[42/     127] Processing images/crossplane-function-environment-configs-fips/default.nix
+Processing: images/crossplane-function-environment-configs-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[43/     127] Processing images/crossplane-function-environment-configs/default.nix
+Processing: images/crossplane-function-environment-configs/default.nix
+  Found: crossplane-contrib/function-environment-configs v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/function-environment-configs/archive/refs/tags/v0.1.0.tar.gz
+  Got base32 hash: 1jd4bpqw2cgz7jqx8vg7pc8jykpn5jd7xq7y2bhwi7vk0hyzv1bh
+  Converted to SRI: sha256-cIX9PQRzn8jhEv7gfpos9k4vEbvnbdSxPP8xwfFdpMk=
+  Updated images/crossplane-function-environment-configs/default.nix
+
+  SUCCESS
+
+[44/     127] Processing images/crossplane-function-go-templating-fips/default.nix
+Processing: images/crossplane-function-go-templating-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[45/     127] Processing images/crossplane-function-go-templating/default.nix
+Processing: images/crossplane-function-go-templating/default.nix
+  Found: crossplane-contrib/function-go-templating v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/function-go-templating/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/function-go-templating/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[46/     127] Processing images/crossplane-gcp-cloudplatform-fips/default.nix
+Processing: images/crossplane-gcp-cloudplatform-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[47/     127] Processing images/crossplane-gcp-cloudplatform/default.nix
+Processing: images/crossplane-gcp-cloudplatform/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[48/     127] Processing images/crossplane-gcp-compute-fips/default.nix
+Processing: images/crossplane-gcp-compute-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[49/     127] Processing images/crossplane-gcp-compute/default.nix
+Processing: images/crossplane-gcp-compute/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[50/     127] Processing images/crossplane-gcp-container-fips/default.nix
+Processing: images/crossplane-gcp-container-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[51/     127] Processing images/crossplane-gcp-container/default.nix
+Processing: images/crossplane-gcp-container/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[52/     127] Processing images/crossplane-gcp-dns-fips/default.nix
+Processing: images/crossplane-gcp-dns-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[53/     127] Processing images/crossplane-gcp-dns/default.nix
+Processing: images/crossplane-gcp-dns/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[54/     127] Processing images/crossplane-gcp-kms-fips/default.nix
+Processing: images/crossplane-gcp-kms-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[55/     127] Processing images/crossplane-gcp-kms/default.nix
+Processing: images/crossplane-gcp-kms/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[56/     127] Processing images/crossplane-gcp-provider-family-fips/default.nix
+Processing: images/crossplane-gcp-provider-family-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[57/     127] Processing images/crossplane-gcp-provider-family/default.nix
+Processing: images/crossplane-gcp-provider-family/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[58/     127] Processing images/crossplane-gcp-pubsub-fips/default.nix
+Processing: images/crossplane-gcp-pubsub-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[59/     127] Processing images/crossplane-gcp-pubsub/default.nix
+Processing: images/crossplane-gcp-pubsub/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[60/     127] Processing images/crossplane-gcp-storage-fips/default.nix
+Processing: images/crossplane-gcp-storage-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[61/     127] Processing images/crossplane-gcp-storage/default.nix
+Processing: images/crossplane-gcp-storage/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[62/     127] Processing images/crossplane-keycloak-fips/default.nix
+Processing: images/crossplane-keycloak-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[63/     127] Processing images/crossplane-keycloak/default.nix
+Processing: images/crossplane-keycloak/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[64/     127] Processing images/crossplane-provider-aws-cloudfront-fips/default.nix
+Processing: images/crossplane-provider-aws-cloudfront-fips/default.nix
+  Found: crossplane-contrib/provider-aws-cloudfront v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-cloudfront/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-cloudfront/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[65/     127] Processing images/crossplane-provider-aws-cloudfront/default.nix
+Processing: images/crossplane-provider-aws-cloudfront/default.nix
+  Found: crossplane-contrib/provider-aws-cloudfront v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-cloudfront/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-cloudfront/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[66/     127] Processing images/crossplane-provider-aws-cloudwatchlogs-fips/default.nix
+Processing: images/crossplane-provider-aws-cloudwatchlogs-fips/default.nix
+  Found: crossplane-contrib/provider-aws-cloudwatchlogs v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-cloudwatchlogs/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-cloudwatchlogs/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[67/     127] Processing images/crossplane-provider-aws-dynamodb-fips/default.nix
+Processing: images/crossplane-provider-aws-dynamodb-fips/default.nix
+  Found: crossplane-contrib/provider-aws-dynamodb v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-dynamodb/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-dynamodb/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[68/     127] Processing images/crossplane-provider-aws-dynamodb/default.nix
+Processing: images/crossplane-provider-aws-dynamodb/default.nix
+  Found: crossplane-contrib/provider-aws-dynamodb v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-dynamodb/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-dynamodb/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[69/     127] Processing images/crossplane-provider-aws-ec2-fips/default.nix
+Processing: images/crossplane-provider-aws-ec2-fips/default.nix
+  Found: crossplane-contrib/provider-aws-ec2 v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-ec2/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-ec2/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[70/     127] Processing images/crossplane-provider-aws-ec2/default.nix
+Processing: images/crossplane-provider-aws-ec2/default.nix
+  Found: crossplane-contrib/provider-aws-ec2 v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-ec2/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-ec2/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[71/     127] Processing images/crossplane-provider-aws-eks-fips/default.nix
+Processing: images/crossplane-provider-aws-eks-fips/default.nix
+  Found: crossplane-contrib/provider-aws-eks v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-eks/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-eks/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[72/     127] Processing images/crossplane-provider-aws-eks/default.nix
+Processing: images/crossplane-provider-aws-eks/default.nix
+  Found: crossplane-contrib/provider-aws-eks v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-eks/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-eks/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[73/     127] Processing images/crossplane-provider-aws-firehose-fips/default.nix
+Processing: images/crossplane-provider-aws-firehose-fips/default.nix
+  Found: crossplane-contrib/provider-aws-firehose v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-firehose/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-firehose/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[74/     127] Processing images/crossplane-provider-aws-firehose/default.nix
+Processing: images/crossplane-provider-aws-firehose/default.nix
+  Found: crossplane-contrib/provider-aws-firehose v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-firehose/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-firehose/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[75/     127] Processing images/crossplane-provider-aws-iam-fips/default.nix
+Processing: images/crossplane-provider-aws-iam-fips/default.nix
+  Found: crossplane-contrib/provider-aws-iam v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-iam/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-iam/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[76/     127] Processing images/crossplane-provider-aws-iam/default.nix
+Processing: images/crossplane-provider-aws-iam/default.nix
+  Found: crossplane-contrib/provider-aws-iam v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-iam/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-iam/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[77/     127] Processing images/crossplane-provider-aws-kinesis-fips/default.nix
+Processing: images/crossplane-provider-aws-kinesis-fips/default.nix
+  Found: crossplane-contrib/provider-aws-kinesis v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-kinesis/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-kinesis/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[78/     127] Processing images/crossplane-provider-aws-kinesis/default.nix
+Processing: images/crossplane-provider-aws-kinesis/default.nix
+  Found: crossplane-contrib/provider-aws-kinesis v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-kinesis/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-kinesis/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[79/     127] Processing images/crossplane-provider-aws-kms-fips/default.nix
+Processing: images/crossplane-provider-aws-kms-fips/default.nix
+  Found: crossplane-contrib/provider-aws-kms v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-kms/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-kms/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[80/     127] Processing images/crossplane-provider-aws-kms/default.nix
+Processing: images/crossplane-provider-aws-kms/default.nix
+  Found: crossplane-contrib/provider-aws-kms v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-kms/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-kms/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[81/     127] Processing images/crossplane-provider-aws-lambda-fips/default.nix
+Processing: images/crossplane-provider-aws-lambda-fips/default.nix
+  Found: crossplane-contrib/provider-aws-lambda v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-lambda/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-lambda/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[82/     127] Processing images/crossplane-provider-aws-lambda/default.nix
+Processing: images/crossplane-provider-aws-lambda/default.nix
+  Found: crossplane-contrib/provider-aws-lambda v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-lambda/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-lambda/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[83/     127] Processing images/crossplane-provider-aws-rds-fips/default.nix
+Processing: images/crossplane-provider-aws-rds-fips/default.nix
+  Found: crossplane-contrib/provider-aws-rds v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-rds/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-rds/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[84/     127] Processing images/crossplane-provider-aws-rds/default.nix
+Processing: images/crossplane-provider-aws-rds/default.nix
+  Found: crossplane-contrib/provider-aws-rds v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-rds/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-rds/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[85/     127] Processing images/crossplane-provider-aws-route53-fips/default.nix
+Processing: images/crossplane-provider-aws-route53-fips/default.nix
+  Found: crossplane-contrib/provider-aws-route53 v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-route53/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-route53/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[86/     127] Processing images/crossplane-provider-aws-route53/default.nix
+Processing: images/crossplane-provider-aws-route53/default.nix
+  Found: crossplane-contrib/provider-aws-route53 v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-route53/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-route53/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[87/     127] Processing images/crossplane-provider-aws-s3-fips/default.nix
+Processing: images/crossplane-provider-aws-s3-fips/default.nix
+  Found: crossplane-contrib/provider-aws-s3 v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-s3/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-s3/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[88/     127] Processing images/crossplane-provider-aws-s3/default.nix
+Processing: images/crossplane-provider-aws-s3/default.nix
+  Found: crossplane-contrib/provider-aws-s3 v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-s3/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-s3/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[89/     127] Processing images/crossplane-provider-aws-sns-fips/default.nix
+Processing: images/crossplane-provider-aws-sns-fips/default.nix
+  Found: crossplane-contrib/provider-aws-sns v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-sns/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-sns/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[90/     127] Processing images/crossplane-provider-aws-sqs-fips/default.nix
+Processing: images/crossplane-provider-aws-sqs-fips/default.nix
+  Found: crossplane-contrib/provider-aws-sqs v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-sqs/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-sqs/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[91/     127] Processing images/crossplane-provider-aws-sqs/default.nix
+Processing: images/crossplane-provider-aws-sqs/default.nix
+  Found: crossplane-contrib/provider-aws-sqs v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws-sqs/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws-sqs/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[92/     127] Processing images/crossplane-provider-aws/default.nix
+Processing: images/crossplane-provider-aws/default.nix
+  Found: crossplane-contrib/provider-aws v0.54.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v0.54.0.tar.gz
+  Got base32 hash: 0mdas89vnwwqs0cf3qa00w4yhi18kph6n08jj88hz8v72fiqn3ly
+  Converted to SRI: sha256-ng6LoxNnow8RkhIBa+CdKEToCQdA4eEY0JhzuxPSqlU=
+  Updated images/crossplane-provider-aws/default.nix
+
+  SUCCESS
+
+[93/     127] Processing images/crossplane-provider-azure-authorization/default.nix
+Processing: images/crossplane-provider-azure-authorization/default.nix
+  Found: crossplane-contrib/provider-azure-authorization v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-azure-authorization/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-azure-authorization/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[94/     127] Processing images/crossplane-provider-azure-family/default.nix
+Processing: images/crossplane-provider-azure-family/default.nix
+  Found: crossplane-contrib/provider-azure-family v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-azure-family/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-azure-family/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[95/     127] Processing images/crossplane-provider-azure-sql/default.nix
+Processing: images/crossplane-provider-azure-sql/default.nix
+  Found: crossplane-contrib/provider-azure-sql v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-azure-sql/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-azure-sql/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[96/     127] Processing images/crossplane-provider-azure-storage/default.nix
+Processing: images/crossplane-provider-azure-storage/default.nix
+  Found: crossplane-contrib/provider-azure-storage v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-azure-storage/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-azure-storage/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[97/     127] Processing images/crossplane-provider-azure/default.nix
+Processing: images/crossplane-provider-azure/default.nix
+  Found: crossplane-contrib/provider-azure v0.20.1
+  Fetching hash from: https://github.com/crossplane-contrib/provider-azure/archive/refs/tags/v0.20.1.tar.gz
+  Got base32 hash: 11fqbhfbqakwh956l2xvpkvw7hdm15zcxpbqk6s96imchnjbl3xa
+  Converted to SRI: sha256-qg+6pIWsRpO0mXjdzn4JtcHD97y7C2pKgnwqvBxc2IU=
+  Updated images/crossplane-provider-azure/default.nix
+
+  SUCCESS
+
+[98/     127] Processing images/crossplane-provider-family-aws-fips/default.nix
+Processing: images/crossplane-provider-family-aws-fips/default.nix
+  Found: crossplane-contrib/provider-family-aws v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-family-aws/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-family-aws/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[99/     127] Processing images/crossplane-provider-family-aws/default.nix
+Processing: images/crossplane-provider-family-aws/default.nix
+  Found: crossplane-contrib/provider-family-aws v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-family-aws/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-family-aws/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[100/     127] Processing images/crossplane-provider-family-gcp-fips/default.nix
+Processing: images/crossplane-provider-family-gcp-fips/default.nix
+  Found: crossplane-contrib/provider-family-gcp v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-family-gcp/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-family-gcp/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[101/     127] Processing images/crossplane-provider-gcp-cloudplatform-fips/default.nix
+Processing: images/crossplane-provider-gcp-cloudplatform-fips/default.nix
+  Found: crossplane-contrib/provider-gcp-cloudplatform v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-gcp-cloudplatform/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-gcp-cloudplatform/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[102/     127] Processing images/crossplane-provider-gcp-cloudplatform/default.nix
+Processing: images/crossplane-provider-gcp-cloudplatform/default.nix
+  Found: crossplane-contrib/provider-gcp-cloudplatform v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-gcp-cloudplatform/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-gcp-cloudplatform/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[103/     127] Processing images/crossplane-provider-gcp-compute-fips/default.nix
+Processing: images/crossplane-provider-gcp-compute-fips/default.nix
+  Found: crossplane-contrib/provider-gcp-compute v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-gcp-compute/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-gcp-compute/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[104/     127] Processing images/crossplane-provider-gcp-compute/default.nix
+Processing: images/crossplane-provider-gcp-compute/default.nix
+  Found: crossplane-contrib/provider-gcp-compute v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-gcp-compute/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-gcp-compute/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[105/     127] Processing images/crossplane-provider-gcp-container-fips/default.nix
+Processing: images/crossplane-provider-gcp-container-fips/default.nix
+  Found: crossplane-contrib/provider-gcp-container v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-gcp-container/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-gcp-container/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[106/     127] Processing images/crossplane-provider-gcp-container/default.nix
+Processing: images/crossplane-provider-gcp-container/default.nix
+  Found: crossplane-contrib/provider-gcp-container v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-gcp-container/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-gcp-container/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[107/     127] Processing images/crossplane-provider-gcp-dns-fips/default.nix
+Processing: images/crossplane-provider-gcp-dns-fips/default.nix
+  Found: crossplane-contrib/provider-gcp-dns v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-gcp-dns/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-gcp-dns/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[108/     127] Processing images/crossplane-provider-gcp-dns/default.nix
+Processing: images/crossplane-provider-gcp-dns/default.nix
+  Found: crossplane-contrib/provider-gcp-dns v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-gcp-dns/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-gcp-dns/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[109/     127] Processing images/crossplane-provider-gcp-kms-fips/default.nix
+Processing: images/crossplane-provider-gcp-kms-fips/default.nix
+  Found: crossplane-contrib/provider-gcp-kms v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-gcp-kms/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-gcp-kms/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[110/     127] Processing images/crossplane-provider-gcp-kms/default.nix
+Processing: images/crossplane-provider-gcp-kms/default.nix
+  Found: crossplane-contrib/provider-gcp-kms v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-gcp-kms/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-gcp-kms/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[111/     127] Processing images/crossplane-provider-gcp-pubsub-fips/default.nix
+Processing: images/crossplane-provider-gcp-pubsub-fips/default.nix
+  Found: crossplane-contrib/provider-gcp-pubsub v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-gcp-pubsub/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-gcp-pubsub/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[112/     127] Processing images/crossplane-provider-gcp-pubsub/default.nix
+Processing: images/crossplane-provider-gcp-pubsub/default.nix
+  Found: crossplane-contrib/provider-gcp-pubsub v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-gcp-pubsub/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-gcp-pubsub/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[113/     127] Processing images/crossplane-provider-gcp-storage-fips/default.nix
+Processing: images/crossplane-provider-gcp-storage-fips/default.nix
+  Found: crossplane-contrib/provider-gcp-storage v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-gcp-storage/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-gcp-storage/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[114/     127] Processing images/crossplane-provider-gcp-storage/default.nix
+Processing: images/crossplane-provider-gcp-storage/default.nix
+  Found: crossplane-contrib/provider-gcp-storage v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-gcp-storage/archive/refs/tags/v0.1.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-gcp-storage/archive/refs/tags/v0.1.0.tar.gz
+  FAILED
+
+[115/     127] Processing images/crossplane-provider-gcp/default.nix
+Processing: images/crossplane-provider-gcp/default.nix
+  Found: crossplane-contrib/provider-gcp v0.22.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-gcp/archive/refs/tags/v0.22.0.tar.gz
+  Got base32 hash: 1sh2spvjc4vxrpb5clajyrn8yyhq8y13xidc2z5dcdik5w3jp303
+  Converted to SRI: sha256-A4wrBy8zNtbKF6zFPoJHGHqPbPZSUVbWzX0TJvfVAuo=
+  Updated images/crossplane-provider-gcp/default.nix
+
+  SUCCESS
+
+[116/     127] Processing images/crossplane-provider-gitlab-fips/default.nix
+Processing: images/crossplane-provider-gitlab-fips/default.nix
+  Found: crossplane-contrib/provider-gitlab v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-gitlab/archive/refs/tags/v0.1.0.tar.gz
+  Got base32 hash: 163fr248mriw11wb4b8dkmzgpry3yh18xgddaav6y5gicqcnx2cs
+  Converted to SRI: sha256-moluGWbxFW+2Uq29jgL0w+f7fp0NLbJ4CDzmiojIbpg=
+  Updated images/crossplane-provider-gitlab-fips/default.nix
+
+  SUCCESS
+
+[117/     127] Processing images/crossplane-provider-gitlab/default.nix
+Processing: images/crossplane-provider-gitlab/default.nix
+  Found: crossplane-contrib/provider-gitlab v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-gitlab/archive/refs/tags/v0.1.0.tar.gz
+  Got base32 hash: 163fr248mriw11wb4b8dkmzgpry3yh18xgddaav6y5gicqcnx2cs
+  Converted to SRI: sha256-moluGWbxFW+2Uq29jgL0w+f7fp0NLbJ4CDzmiojIbpg=
+  Updated images/crossplane-provider-gitlab/default.nix
+
+  SUCCESS
+
+[118/     127] Processing images/crossplane-provider-keycloak-fips/default.nix
+Processing: images/crossplane-provider-keycloak-fips/default.nix
+  Found: crossplane-contrib/provider-keycloak v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-keycloak/archive/refs/tags/v0.1.0.tar.gz
+  Got base32 hash: 1xgnr3hv16g5bnw0wyi1w346svq4rrjrkr4c5y380f79vwnwfl3r
+  Converted to SRI: sha256-eVDHLd/pOICGL4zkmWXOBG9tyOAheg64XeWZsOHI9vU=
+  Updated images/crossplane-provider-keycloak-fips/default.nix
+
+  SUCCESS
+
+[119/     127] Processing images/crossplane-provider-keycloak/default.nix
+Processing: images/crossplane-provider-keycloak/default.nix
+  Found: crossplane-contrib/provider-keycloak v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-keycloak/archive/refs/tags/v0.1.0.tar.gz
+  Got base32 hash: 1xgnr3hv16g5bnw0wyi1w346svq4rrjrkr4c5y380f79vwnwfl3r
+  Converted to SRI: sha256-eVDHLd/pOICGL4zkmWXOBG9tyOAheg64XeWZsOHI9vU=
+  Updated images/crossplane-provider-keycloak/default.nix
+
+  SUCCESS
+
+[120/     127] Processing images/crossplane-provider-kubernetes-fips/default.nix
+Processing: images/crossplane-provider-kubernetes-fips/default.nix
+  Found: crossplane-contrib/provider-kubernetes v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-kubernetes/archive/refs/tags/v0.1.0.tar.gz
+  Got base32 hash: 024xsg8l6qv44fn82v59gyc6ypli1dwm4lm2116z32l1rjaakgs5
+  Converted to SRI: sha256-Rb+plMyBivFNCKJSUnkLkV5vmH+pbIGsI2RjQ9HTnQg=
+  Updated images/crossplane-provider-kubernetes-fips/default.nix
+
+  SUCCESS
+
+[121/     127] Processing images/crossplane-provider-kubernetes/default.nix
+Processing: images/crossplane-provider-kubernetes/default.nix
+  Found: crossplane-contrib/provider-kubernetes v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-kubernetes/archive/refs/tags/v0.1.0.tar.gz
+  Got base32 hash: 024xsg8l6qv44fn82v59gyc6ypli1dwm4lm2116z32l1rjaakgs5
+  Converted to SRI: sha256-Rb+plMyBivFNCKJSUnkLkV5vmH+pbIGsI2RjQ9HTnQg=
+  Updated images/crossplane-provider-kubernetes/default.nix
+
+  SUCCESS
+
+[122/     127] Processing images/crossplane-provider-sql-fips/default.nix
+Processing: images/crossplane-provider-sql-fips/default.nix
+  Found: crossplane-contrib/provider-sql v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-sql/archive/refs/tags/v0.1.0.tar.gz
+  Got base32 hash: 17bzvcjnsnlcz6s5fapdv4lv5d6xdfxhsb7kd1qhcdklji8ylqbd
+  Converted to SRI: sha256-bWHqUZR0NgZxaPMsDbtr3bSyKdntKle0+YxabSXbf50=
+  Updated images/crossplane-provider-sql-fips/default.nix
+
+  SUCCESS
+
+[123/     127] Processing images/crossplane-provider-sql/default.nix
+Processing: images/crossplane-provider-sql/default.nix
+  Found: crossplane-contrib/provider-sql v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-sql/archive/refs/tags/v0.1.0.tar.gz
+  Got base32 hash: 17bzvcjnsnlcz6s5fapdv4lv5d6xdfxhsb7kd1qhcdklji8ylqbd
+  Converted to SRI: sha256-bWHqUZR0NgZxaPMsDbtr3bSyKdntKle0+YxabSXbf50=
+  Updated images/crossplane-provider-sql/default.nix
+
+  SUCCESS
+
+[124/     127] Processing images/crossplane-provider-terraform-fips/default.nix
+Processing: images/crossplane-provider-terraform-fips/default.nix
+  Found: crossplane-contrib/provider-terraform v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-terraform/archive/refs/tags/v0.1.0.tar.gz
+  Got base32 hash: 1q233apvk3w117pzzj06zfkc06p6fdp3ql8h8y9k77i1765f9g57
+  Converted to SRI: sha256-p7zkijkhnjOTRxBRPG5z5hrApvsGyP/vCYGPua8aQ+A=
+  Updated images/crossplane-provider-terraform-fips/default.nix
+
+  SUCCESS
+
+[125/     127] Processing images/crossplane-provider-terraform/default.nix
+Processing: images/crossplane-provider-terraform/default.nix
+  Found: crossplane-contrib/provider-terraform v0.1.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-terraform/archive/refs/tags/v0.1.0.tar.gz
+  Got base32 hash: 1q233apvk3w117pzzj06zfkc06p6fdp3ql8h8y9k77i1765f9g57
+  Converted to SRI: sha256-p7zkijkhnjOTRxBRPG5z5hrApvsGyP/vCYGPua8aQ+A=
+  Updated images/crossplane-provider-terraform/default.nix
+
+  SUCCESS
+
+[126/     127] Processing images/crossplane-sql-fips/default.nix
+Processing: images/crossplane-sql-fips/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+[127/     127] Processing images/crossplane-sql/default.nix
+Processing: images/crossplane-sql/default.nix
+  Found: crossplane-contrib/provider-aws v1.0.0
+  Fetching hash from: https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  ERROR: Failed to fetch hash for https://github.com/crossplane-contrib/provider-aws/archive/refs/tags/v1.0.0.tar.gz
+  FAILED
+
+=========================================
+Completed: 127 files
+Failed: 112 files
+=========================================

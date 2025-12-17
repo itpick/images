@@ -17,7 +17,7 @@ let
       owner = "kiali";
       repo = "kiali-operator";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-NKmlCUOvnp/9BQnKun3cgWWw1kvG7rIAVXek5cUnXAk=";
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build

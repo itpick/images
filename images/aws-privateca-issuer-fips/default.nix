@@ -4,16 +4,16 @@
 # AWS Kubernetes component
 
 let
-  version = "1.0.0";
+  version = "1.8.0";
   aws-component = buildGoModule {
     pname = "aws-privateca-issuer-fips";
     inherit version;
 
     src = fetchFromGitHub {
-      owner = "aws";
-      repo = "privateca-issuer";
+      owner = "cert-manager";
+      repo = "aws-privateca-issuer";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-sN8Jvm0ZduxVAua+ru1G3Ws6f0gG6+4MST/bMaJ5ltY=";
     };
 
     vendorHash = null;

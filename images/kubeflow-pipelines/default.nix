@@ -17,7 +17,7 @@ let
       owner = "kubeflow";
       repo = "pipelines";
       rev = "${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-MCb0lN5Dr3J4QDB8VeMT01fBZSU5GmdTxV7I2FPegFk=";  # TODO: Fix hash after first build
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build

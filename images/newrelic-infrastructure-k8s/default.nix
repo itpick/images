@@ -4,7 +4,7 @@
 # New Relic component
 
 let
-  version = "1.0.0";
+  version = "3.51.1";
   component = buildGoModule {
     pname = "newrelic-infrastructure-k8s";
     inherit version;
@@ -12,7 +12,7 @@ let
       owner = "newrelic";
       repo = "nri-kubernetes";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-5eInOp36Te266UiCfGTIk8qVZodZt3J0N/Xs+leiUzY=";
     };
     vendorHash = null;
     subPackages = [ "." ];

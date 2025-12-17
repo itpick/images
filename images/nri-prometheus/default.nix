@@ -4,16 +4,16 @@
 # NRI (Node Resource Interface) plugin
 
 let
-  version = "0.1.0";
+  version = "2.27.4";
   nri-plugin = buildGoModule {
     pname = "nri-prometheus";
     inherit version;
 
     src = fetchFromGitHub {
-      owner = "containerd";
-      repo = "nri-plugins";
+      owner = "newrelic";
+      repo = "nri-prometheus";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-MyNNNhVhcws7fHH9Gha4nD2QACUAsMfJljR9BFx551s=";
     };
 
     vendorHash = null;

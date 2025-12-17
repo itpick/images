@@ -15,7 +15,7 @@ let
       owner = "gitlab-org";
       repo = "cluster-integration/gitlab-agent";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-2TYqFLc5UxJ7S5dk0rTiT2hko5ZfATn6upZ+DEBgFFk=";
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";

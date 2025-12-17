@@ -18,10 +18,10 @@ let
       owner = "cert-manager";
       repo = "trust-manager";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-Gnnz0GZVjSMqQu3ew7SiMjGzZSdjoY5Oixfgr3R6K9c=";
     };
 
-    vendorHash = null;  # TODO: Update after first build
+    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix after first build
 
     env.CGO_ENABLED = 0;
 

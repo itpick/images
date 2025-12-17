@@ -4,16 +4,16 @@
 # NRI (Node Resource Interface) plugin
 
 let
-  version = "0.1.0";
+  version = "2.9.5";
   nri-plugin = buildGoModule {
     pname = "nri-consul";
     inherit version;
 
     src = fetchFromGitHub {
-      owner = "containerd";
-      repo = "nri-plugins";
+      owner = "newrelic";
+      repo = "nri-consul";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-TOV8T5TxKHL8/1BnrO/ipYTruZJnuvJYKDzYkJ8cvic=";
     };
 
     vendorHash = null;

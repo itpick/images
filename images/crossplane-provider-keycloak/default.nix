@@ -13,7 +13,7 @@ let
       owner = "crossplane-contrib";
       repo = "provider-keycloak";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-eVDHLd/pOICGL4zkmWXOBG9tyOAheg64XeWZsOHI9vU=";
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";

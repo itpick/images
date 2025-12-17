@@ -1,4 +1,4 @@
-{ mkImage, fetchFromGitHub, buildGoModule, pkgs, lib, ... }:
+{ mkImage, fetchFromGitLab, buildGoModule, pkgs, lib, ... }:
 
 # gitlab-exporter-fips
 # GitLab component
@@ -8,11 +8,11 @@ let
   component = buildGoModule {
     pname = "gitlab-exporter-fips";
     inherit version;
-    src = fetchFromGitHub {
+    src = fetchFromGitLab {
       owner = "gitlab-org";
-      repo = "gitlab";
+      repo = "gitlab-foss";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-2dZumkupbqOouKZaPPnKAVINjiLFW63wYVNj0klvRoo=";
     };
     vendorHash = null;
     subPackages = [ "." ];

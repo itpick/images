@@ -19,7 +19,7 @@ let
       owner = "grafana";
       repo = "agent";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-O96d7ksbq2f+JvQwq63lQv2OD1Fsg+2i+o3s5GtRy2Q=";
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build

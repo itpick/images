@@ -1,4 +1,4 @@
-{ mkImage, pkgs, lib, fetchFromGitHub, buildGoModule, ... }:
+{ mkImage, pkgs, lib, fetchFromGitLab, buildGoModule, ... }:
 
 # GitLab Container Registry-fips
 # https://gitlab.com/gitlab-org/container-registry
@@ -9,11 +9,11 @@ let
     pname = "gitlab-container-registry-fips";
     inherit version;
 
-    src = fetchFromGitHub {
+    src = fetchFromGitLab {
       owner = "gitlab-org";
       repo = "container-registry";
-      rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      rev = "v${version}-gitlab";
+      hash = "sha256-WrijK/kQugCpiDbMw1+QTvG60SDsdJ5PDFGKGiLBsb8=";
     };
 
     vendorHash = null;

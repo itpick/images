@@ -4,15 +4,15 @@
 # AWS component
 
 let
-  version = "1.0.0";
+  version = "0.9.1";
   component = buildGoModule {
     pname = "aws-volume-modifier-for-k8s-fips";
     inherit version;
     src = fetchFromGitHub {
-      owner = "aws";
-      repo = "aws-sdk-go";
+      owner = "awslabs";
+      repo = "volume-modifier-for-k8s";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-/66Pt6y7lvLFkbG9HNWRR/evUiqE10INp6l5iLJuKMk=";
     };
     vendorHash = null;
     subPackages = [ "." ];

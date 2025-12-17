@@ -4,7 +4,7 @@
 # Rancher component
 
 let
-  version = "2.10.0";
+  version = "0.7.5";
   rancher-component = buildGoModule {
     pname = "rancher-security-scan";
     inherit version;
@@ -13,7 +13,7 @@ let
       owner = "rancher";
       repo = "security-scan";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-Ug/BF17+U2VBM8O95P4OZ+X0OEnCqyI+6+s3Uw39bZI=";
     };
 
     vendorHash = null;

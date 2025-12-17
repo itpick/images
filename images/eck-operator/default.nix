@@ -19,7 +19,7 @@ let
       owner = "elastic";
       repo = "cloud-on-k8s";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-zqQY5RrCPWODEKAriBNWG/KJQnA4+bOEMcaI2T75DoU=";
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build

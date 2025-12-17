@@ -15,7 +15,7 @@ let
       owner = "hashicorp";
       repo = "vault-csi-provider";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-Ejnnp/0KFFkVxfiRu8i7oG/2NqfJRd/6qov4rg8ZNwA=";
     };
 
     vendorHash = null;  # TODO: Update after first build

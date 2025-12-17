@@ -10,7 +10,7 @@ let
       owner = "kubernetes-csi";
       repo = "external-resizer";
       rev = "v${version}";
-      hash = "sha256-0000000000000000000000000000000000000000000=";
+      hash = "sha256-4YN4XzLjjhULfkxmgMpSVYK4H/snJDSnCdub6Vn7BFw=";
     };
 
     vendorHash = null;

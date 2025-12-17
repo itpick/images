@@ -1,4 +1,4 @@
-{ mkImage, fetchFromGitHub, buildGoModule, pkgs, lib, ... }:
+{ mkImage, fetchFromGitLab, buildGoModule, pkgs, lib, ... }:
 
 # gitlab-kubectl
 # GitLab component
@@ -8,11 +8,11 @@ let
   component = buildGoModule {
     pname = "gitlab-kubectl";
     inherit version;
-    src = fetchFromGitHub {
+    src = fetchFromGitLab {
       owner = "gitlab-org";
-      repo = "gitlab";
+      repo = "gitlab-foss";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-2dZumkupbqOouKZaPPnKAVINjiLFW63wYVNj0klvRoo=";
     };
     vendorHash = null;
     subPackages = [ "." ];

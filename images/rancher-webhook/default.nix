@@ -4,7 +4,7 @@
 # Rancher component
 
 let
-  version = "2.10.0";
+  version = "0.9.1";
   rancher-component = buildGoModule {
     pname = "rancher-webhook";
     inherit version;
@@ -13,7 +13,7 @@ let
       owner = "rancher";
       repo = "webhook";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-WpZjAmAe+NBCvG80el0iipYAXXvxU9SIg8qTx9NxyEg=";
     };
 
     vendorHash = null;

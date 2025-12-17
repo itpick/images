@@ -15,10 +15,10 @@ let
       owner = "kubernetes-csi";
       repo = "external-snapshotter";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-1S8WrjCEDTke2Ku5fhg+4zdns+e/79Ey0k9JILCj9Sk=";
     };
 
-    vendorHash = null;  # TODO: Update after first build
+    vendorHash = null;
 
     subPackages = [ "cmd/snapshot-controller" ];
 

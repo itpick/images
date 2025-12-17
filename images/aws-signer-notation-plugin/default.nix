@@ -4,16 +4,16 @@
 # AWS Kubernetes component
 
 let
-  version = "1.0.0";
+  version = "1.0.350";
   aws-component = buildGoModule {
     pname = "aws-signer-notation-plugin";
     inherit version;
 
     src = fetchFromGitHub {
       owner = "aws";
-      repo = "signer-notation-plugin";
+      repo = "aws-signer-notation-plugin";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-c+t+CJpdUDqHwZ938smOxaDIUfiCKWLErjU9iSMQlTg=";
     };
 
     vendorHash = null;

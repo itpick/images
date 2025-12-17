@@ -17,7 +17,7 @@ let
       owner = "kubernetes-sigs";
       repo = "headlamp";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-n6yzHTayWyjbpUWnVgACQ7jkdTMoNGjKJrrFW/5HWE8=";
     };
 
     vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build

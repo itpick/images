@@ -19,10 +19,10 @@ let
       owner = "kubernetes-csi";
       repo = "external-snapshotter";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-5SrprJLLO8yHTMsmgCsoVpQZMsIdcif/BpHxRkGl1Jw=";
     };
 
-    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    vendorHash = null;
 
     subPackages = [ "cmd/snapshot-validation-webhook" ];
 

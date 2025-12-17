@@ -4,15 +4,15 @@
 # AWS component
 
 let
-  version = "1.0.0";
+  version = "3.1.1";
   component = buildGoModule {
     pname = "aws-for-fluent-bit";
     inherit version;
     src = fetchFromGitHub {
       owner = "aws";
-      repo = "aws-sdk-go";
+      repo = "aws-for-fluent-bit";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-Du5Td3bxTSfcocJv9/AaC0lNsRIF+qUPVy2oFzUWAtY=";
     };
     vendorHash = null;
     subPackages = [ "." ];

@@ -10,7 +10,7 @@ let
       owner = "kubernetes-csi";
       repo = "external-provisioner";
       rev = "v${version}";
-      hash = "sha256-0000000000000000000000000000000000000000000=";
+      hash = "sha256-NmKfRgnVj4auBZp3SRX5yb3r4clMN7gNenPaaz3ZyTY=";
     };
 
     vendorHash = null;

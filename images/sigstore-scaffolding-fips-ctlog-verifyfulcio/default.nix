@@ -10,9 +10,9 @@ let
     inherit version;
     src = fetchFromGitHub {
       owner = "sigstore";
-      repo = "scaffolding-fips-ctlog-verifyfulcio";
+      repo = "cosign";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-+0R/srRJaOY4dOn4sDcIbaquoyxW/JbvRXkpCFDZNWk=";
     };
     vendorHash = null;
     subPackages = [ "." ];

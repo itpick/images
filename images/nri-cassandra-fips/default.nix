@@ -4,16 +4,16 @@
 # NRI (Node Resource Interface) plugin
 
 let
-  version = "0.1.0";
+  version = "2.16.1";
   nri-plugin = buildGoModule {
     pname = "nri-cassandra-fips";
     inherit version;
 
     src = fetchFromGitHub {
-      owner = "containerd";
-      repo = "nri-plugins";
+      owner = "newrelic";
+      repo = "nri-cassandra";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-OawEoG1iPnrni+RuAMEu8r8v9bNV0LkKFe4naocfF2A=";
     };
 
     vendorHash = null;

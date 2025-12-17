@@ -1,4 +1,4 @@
-{ mkImage, fetchFromGitHub, buildGoModule, pkgs, lib, ... }:
+{ mkImage, fetchFromGitLab, buildGoModule, pkgs, lib, ... }:
 
 # GitLab Operator-fips
 # https://gitlab.com/gitlab-org/cloud-native/gitlab-operator
@@ -9,11 +9,11 @@ let
     pname = "gitlab-operator-fips";
     inherit version;
 
-    src = fetchFromGitHub {
+    src = fetchFromGitLab {
       owner = "gitlab-org";
       repo = "cloud-native/gitlab-operator";
-      rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      rev = version;
+      hash = "sha256-DH3/72EKKkFeAPoNBFChNSWlNxqjpF4UL07fdtbE/oE=";
     };
 
     vendorHash = null;

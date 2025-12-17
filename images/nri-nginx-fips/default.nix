@@ -4,16 +4,16 @@
 # NRI (Node Resource Interface) plugin
 
 let
-  version = "0.1.0";
+  version = "3.6.4";
   nri-plugin = buildGoModule {
     pname = "nri-nginx-fips";
     inherit version;
 
     src = fetchFromGitHub {
-      owner = "containerd";
-      repo = "nri-plugins";
+      owner = "newrelic";
+      repo = "nri-nginx";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-qkVlhXlP3oNNG6zmP2J0zBt8vpGjbytE1fTuLyonKOk=";
     };
 
     vendorHash = null;

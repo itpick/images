@@ -10,7 +10,7 @@ let
       owner = "kubernetes-csi";
       repo = "node-driver-registrar";
       rev = "v${version}";
-      hash = "sha256-0000000000000000000000000000000000000000000=";
+      hash = "sha256-5uWpaIbD/bmAwLdwkU8GHxrSjD3bw0tibofTqumC+dA=";
     };
 
     vendorHash = null;

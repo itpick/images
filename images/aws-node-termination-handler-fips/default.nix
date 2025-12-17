@@ -4,15 +4,15 @@
 # AWS component
 
 let
-  version = "1.0.0";
+  version = "1.25.3";
   component = buildGoModule {
     pname = "aws-node-termination-handler-fips";
     inherit version;
     src = fetchFromGitHub {
       owner = "aws";
-      repo = "aws-sdk-go";
+      repo = "aws-node-termination-handler";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-oOkWynLQFUwdb6/fPC4d1zPQSwPuu4DN+YoqU6kD9PQ=";
     };
     vendorHash = null;
     subPackages = [ "." ];
