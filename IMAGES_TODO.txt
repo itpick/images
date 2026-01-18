@@ -1,7 +1,7 @@
 # Images TODO List
 # ==================
 # This file tracks container images in the nix-containers project.
-# Updated: 2025-12-16
+# Updated: 2025-12-17
 #
 # IMPORTANT: We build UPSTREAM versions of images (from nixpkgs), NOT IronBank/BigBang
 # hardened versions. The BigBang list is used as a reference for which images are
@@ -12,7 +12,7 @@
 #   [x] - Completed (fully implemented)
 
 # ==============================================================================
-# COMPLETED IMAGES (139 fully implemented)
+# COMPLETED IMAGES (143 fully implemented)
 # ==============================================================================
 
 ## Observability Stack
@@ -69,6 +69,7 @@
 [x] notification-controller
 [x] source-controller
 [x] gitlab-runner
+[x] gitlab-agent
 
 ## Operators & Controllers
 [x] cloudnative-pg
@@ -164,7 +165,7 @@
 [x] wait-for-it
 
 # ==============================================================================
-# PLACEHOLDER IMAGES (107 - need implementation)
+# PLACEHOLDER IMAGES (104 - need implementation)
 # ==============================================================================
 
 ## GitLab Components
@@ -185,13 +186,14 @@
 [ ] golang
 
 ## Harbor Registry
-[ ] harbor-core
-[ ] harbor-exporter
-[ ] harbor-jobservice
+[ ] harbor-core (requires code generation - complex build)
+[ ] harbor-exporter (requires code generation - complex build)
+[ ] harbor-jobservice (requires code generation - complex build)
 [ ] harbor-portal
-[ ] harbor-registry
-[ ] harbor-registryctl
-[ ] trivy-adapter
+[x] harbor-registry
+[ ] harbor-registryctl (requires code generation - complex build)
+[x] harbor-trivy-adapter
+[x] harbor-scanner-trivy
 
 ## Istio Service Mesh
 [ ] istio-pilot

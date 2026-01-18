@@ -18,7 +18,7 @@ let
       hash = "sha256-2TYqFLc5UxJ7S5dk0rTiT2hko5ZfATn6upZ+DEBgFFk=";
     };
 
-    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    vendorHash = "sha256-rkGERXahoLYGxN3Z70Z6DCdH0WIs4VSKqkeRBvo/4fI=";
 
     subPackages = [ "cmd/kas" "cmd/agentk" ];
 

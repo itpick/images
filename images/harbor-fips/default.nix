@@ -29,7 +29,7 @@ in nix2container.buildImage {
     Labels = base.defaultLabels // {
       "io.nix-containers.build-type" = "source";
       "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "haruor fips";
+      "org.opencontainers.image.title" = "Harbor FIPS";
       "org.opencontainers.image.description" = "harbor-fips container image";
       "org.opencontainers.image.version" = version;
     "io.nix-containers.compliance" = "FIPS-140-2";

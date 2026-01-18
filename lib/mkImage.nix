@@ -37,6 +37,12 @@ let
     mkdir -p $out/tmp
   '';
 
+  # Build type labels
+  buildTypeLabels = {
+    "io.nix-containers.build-type" = buildType;
+    "io.nix-containers.build-method" = if buildType == "source" then "Built from source using Nix" else "Pre-built binary packaged with Nix";
+  };
+
 in
 nix2container.buildImage ({
   inherit name tag;
@@ -54,7 +60,7 @@ nix2container.buildImage ({
         }
       ];
     })
-    
+
     # Application layer
     (nix2container.buildLayer {
       copyToRoot = [ drv ];
@@ -67,12 +73,6 @@ nix2container.buildImage ({
       ];
     })
   ];
-
-  # Build type labels
-  buildTypeLabels = {
-    "io.nix-containers.build-type" = buildType;
-    "io.nix-containers.build-method" = if buildType == "source" then "Built from source using Nix" else "Pre-built binary packaged with Nix";
-  };
 
   config = {
     Entrypoint = if entrypoint != null then entrypoint else [ "${drv}/bin/${binName}" ];
