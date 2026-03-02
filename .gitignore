@@ -3,3 +3,7 @@ result
 .claude
 .cache
 .env
+platform-versions.json
+platform-results/
+scripts/platform-pipeline.sh
+docs/plans/
