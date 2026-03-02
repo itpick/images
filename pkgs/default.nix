@@ -35,6 +35,7 @@
   dex = pkgs.callPackage ./dex { };
   external-secrets = pkgs.callPackage ./external-secrets { };
   flux = pkgs.callPackage ./flux { };
+  flux-source-watcher = pkgs.callPackage ./flux-source-watcher { };
   hubble-ui = pkgs.callPackage ./hubble-ui { };
   ingress-nginx-controller = pkgs.callPackage ./ingress-nginx-controller { };
   istio = pkgs.callPackage ./istio { };
@@ -54,6 +55,7 @@
   oauth2-proxy = pkgs.callPackage ./oauth2-proxy { };
   prometheus-adapter = pkgs.callPackage ./prometheus-adapter { };
   reloader = pkgs.callPackage ./reloader { };
+  rustfs = pkgs.callPackage ./rustfs { };
   sealed-secrets = pkgs.callPackage ./sealed-secrets { };
   sig-storage-local-static-provisioner = pkgs.callPackage ./sig-storage-local-static-provisioner { };
   snapshot-controller = pkgs.callPackage ./snapshot-controller { };
@@ -64,6 +66,7 @@
   trivy = pkgs.callPackage ./trivy { };
   trust-manager = pkgs.callPackage ./trust-manager { };
   velero = pkgs.callPackage ./velero { };
+  velero-plugin-for-gcp = pkgs.callPackage ./velero-plugin-for-gcp { };
   vertical-pod-autoscaler = pkgs.callPackage ./vertical-pod-autoscaler { };
   victoriametrics-cluster = pkgs.callPackage ./victoriametrics-cluster { };
   victoriametrics-cluster-fips = pkgs.callPackage ./victoriametrics-cluster-fips { };
@@ -71,6 +74,7 @@
   victoriametrics-operator = pkgs.callPackage ./victoriametrics-operator { };
   victoriametrics-operator-fips = pkgs.callPackage ./victoriametrics-operator-fips { };
   victoriametrics-utils-fips = pkgs.callPackage ./victoriametrics-utils-fips { };
+  zitadel-login = pkgs.callPackage ./zitadel-login { };
 
   # Font packages - aliases to nixpkgs fonts
   font-abyssinica = pkgs.sil-abyssinica;
