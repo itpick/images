@@ -2,16 +2,17 @@
 
 pkgs.writeShellScript "test-velero" ''
   set -euo pipefail
-  
+
   echo "Testing velero image..."
-  
-  # Test 1: Binary exists and responds
+
   echo "  Testing velero version --client-only..."
-  docker run --rm ${image.imageName}:test velero version --client-only || docker run --rm ${image.imageName}:test --help
-  
-  # Test 2: User setup (non-root)
-  echo "  Testing user setup..."
-  docker run --rm ${image.imageName}:test id -u | grep -qE "^(1000|65534|0)$" || true
-  
+  docker run --rm --entrypoint velero ${image.imageName}:test version --client-only
+
+  echo "  Testing restic binary..."
+  docker run --rm --entrypoint restic ${image.imageName}:test version
+
+  echo "  Testing non-root user..."
+  docker run --rm --entrypoint id ${image.imageName}:test -u | grep -qE "^(65534|1000)$"
+
   echo "All velero tests passed!"
 ''

@@ -1,19 +1,19 @@
 { pkgs, image }:
 
-pkgs.writeShellScript "test-alertmanager" ''
+pkgs.writeShellScript "test-victoria-metrics" ''
   set -euo pipefail
 
-  echo "Testing alertmanager image..."
+  echo "Testing victoria-metrics image..."
 
-  echo "  Testing alertmanager --version..."
-  docker run --rm ${image.imageName}:test alertmanager --version
+  echo "  Testing victoria-metrics --version..."
+  docker run --rm ${image.imageName}:test victoria-metrics --version
 
   echo "  Testing service startup..."
-  CONTAINER_ID=$(docker run -d --rm -p 9093:9093 ${image.imageName}:test)
+  CONTAINER_ID=$(docker run -d --rm -p 8428:8428 ${image.imageName}:test)
   trap "docker stop $CONTAINER_ID 2>/dev/null || true" EXIT
 
   for i in $(seq 1 30); do
-    if curl -sf http://localhost:9093/-/healthy > /dev/null 2>&1; then
+    if curl -sf http://localhost:8428/health > /dev/null 2>&1; then
       echo "  Health check passed on attempt $i"
       break
     fi
@@ -25,5 +25,5 @@ pkgs.writeShellScript "test-alertmanager" ''
     sleep 1
   done
 
-  echo "All alertmanager tests passed!"
+  echo "All victoria-metrics tests passed!"
 ''

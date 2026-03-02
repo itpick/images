@@ -2,16 +2,14 @@
 
 pkgs.writeShellScript "test-keda" ''
   set -euo pipefail
-  
+
   echo "Testing keda image..."
-  
-  # Test 1: Binary exists and responds
+
   echo "  Testing keda --help..."
-  docker run --rm ${image.imageName}:test keda --help || docker run --rm ${image.imageName}:test --help
-  
-  # Test 2: User setup (non-root)
-  echo "  Testing user setup..."
-  docker run --rm ${image.imageName}:test id -u | grep -qE "^(1000|65534|0)$" || true
-  
+  docker run --rm ${image.imageName}:test keda --help
+
+  echo "  Testing non-root user..."
+  docker run --rm --entrypoint id ${image.imageName}:test -u | grep -qE "^(65534|1000)$"
+
   echo "All keda tests passed!"
 ''

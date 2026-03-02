@@ -2,16 +2,15 @@
 
 pkgs.writeShellScript "test-k8s-sidecar" ''
   set -euo pipefail
-  
+
   echo "Testing k8s-sidecar image..."
-  
-  # Test 1: Binary exists and responds
-  echo "  Testing k8s-sidecar --help..."
-  docker run --rm ${image.imageName}:test k8s-sidecar --help || docker run --rm ${image.imageName}:test --help
-  
-  # Test 2: User setup (non-root)
-  echo "  Testing user setup..."
-  docker run --rm ${image.imageName}:test id -u | grep -qE "^(1000|65534|0)$" || true
-  
+
+  echo "  Testing sidecar binary exists..."
+  docker run --rm --entrypoint sidecar ${image.imageName}:test --help || \
+    docker run --rm --entrypoint sh ${image.imageName}:test -c "ls /nix/store/*/bin/sidecar"
+
+  echo "  Testing non-root user..."
+  docker run --rm --entrypoint id ${image.imageName}:test -u | grep -qE "^(65534|1000)$"
+
   echo "All k8s-sidecar tests passed!"
 ''
