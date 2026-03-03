@@ -18,7 +18,7 @@ let
     freefont_ttf
     liberation_ttf
     noto-fonts
-    noto-fonts-emoji
+    noto-fonts-color-emoji
   ];
 
   # Font config so Chromium can find fonts
@@ -38,15 +38,14 @@ nix2container.buildImage {
   tag = "v${pkgs.chromium.version}";
 
   layers = [
-    # System layer: Node.js + Chromium + fonts
+    # Node.js + system tools layer
     (nix2container.buildLayer {
       copyToRoot = [
         pkgs.nodejs_22
-        pkgs.chromium
         pkgs.busybox
         pkgs.cacert
         userDirs
-      ] ++ fontPkgs;
+      ];
       perms = [
         {
           path = userDirs;
@@ -54,6 +53,13 @@ nix2container.buildImage {
           mode = "1777";
         }
       ];
+    })
+
+    # Chromium + fonts layer (separate to avoid /share/man conflict with Node.js)
+    (nix2container.buildLayer {
+      copyToRoot = [
+        pkgs.chromium
+      ] ++ fontPkgs;
     })
   ];
 
