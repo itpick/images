@@ -15,7 +15,7 @@ let
 in
 nix2container.buildImage {
   name = "nginx-unprivileged";
-  tag = "latest";
+  tag = pkgs.nginx.version;
 
   copyToRoot = [
     (buildEnv {

@@ -33,7 +33,7 @@ let
 in
 nix2container.buildImage {
   name = "curl";
-  tag = "latest";
+  tag = pkgs.curl.version;
 
   copyToRoot = [
     (buildEnv {

@@ -295,6 +295,7 @@ let
     "pgbouncer" = getVer "pgbouncer";
     "pgpool" = getVer "pgpool";
     "pixi" = getVer "pixi";
+    "playwright" = getVer "chromium";
     "pixiecore" = getVer "pixiecore";
     "plocate" = getVer "plocate";
     "pluto" = getVer "pluto";

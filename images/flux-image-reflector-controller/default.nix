@@ -16,7 +16,7 @@ let
       hash = "sha256-D4hKUTUwS1Vk6XZM150HiAMZp5veJzNYkyJC/c4bK/U=";
     };
 
-    vendorHash = null;
+    vendorHash = "sha256-S0pRkjS8oBKBDFUNu8EY9+tWhTnmpKDBduCl5+PaNbI=";
     subPackages = [ "." ];
     
     env.CGO_ENABLED = 0;

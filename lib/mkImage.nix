@@ -3,7 +3,7 @@
 
 { drv
 , name ? drv.name or drv.pname or "image"
-, tag ? "latest"
+, tag ? drv.version or "latest"
 , entrypoint ? null
 , cmd ? null
 , env ? {}
@@ -37,10 +37,15 @@ let
     mkdir -p $out/tmp
   '';
 
+  # Auto-detect version from derivation
+  imageVersion = drv.version or null;
+
   # Build type labels
   buildTypeLabels = {
     "io.nix-containers.build-type" = buildType;
     "io.nix-containers.build-method" = if buildType == "source" then "Built from source using Nix" else "Pre-built binary packaged with Nix";
+  } // lib.optionalAttrs (imageVersion != null) {
+    "org.opencontainers.image.version" = imageVersion;
   };
 
 in

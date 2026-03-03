@@ -22,7 +22,7 @@ let
   pilotLayers = {
     amd64 = {
       digest = "sha256:b296c147f27e022a9998880c10443a5e0075fb4588ee9e215b0269867c37f4d7";
-      hash = "sha256-bhuN+4tM3hHCIhENdY//654waL1liUbKaKyJVhOKEUw=";
+      hash = "sha256-qLUfkk0ALPSn4l/hS2GAR4k/H9zDO1qTo4H85aCUWhQ=";
     };
     arm64 = {
       digest = "sha256:4d44877f2282ccf41cac7d4256673c43182134773eb0afa6ed632841bba558d2";
@@ -47,7 +47,7 @@ let
       # Layer with pilot-agent
       pilotAgent = {
         digest = "sha256:53ce041f5c3945c7674188abd8d11b7e7e4ea9c8e7c673b18074c5e6e994f22b";
-        hash = "sha256-gjSxZ+gU8wXuDyqxlmDw7++B98UYNcLp8Ix8rsumJUg=";
+        hash = "sha256-DPFLDvVu13g8WPnmohNFtfchil5vrvhFv4VskVIPj80=";
       };
     };
     arm64 = {

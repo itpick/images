@@ -1,56 +1,38 @@
-{ mkImage, fetchFromGitHub, python3Packages, lib, ... }:
-
-
-# Chainguard SBOM packages for k8s-sidecar:
-# Packages available in nixpkgs:
-#   pkgs.gdbm  # gdbm (1.26-r1)
-#   pkgs.glibc  # glibc (2.42-r4)
-#   pkgs.libffi  # libffi (3.5.2-r1)
-#   pkgs.libgcc  # libgcc (15.2.0-r6)
-#   pkgs.libuuid  # libuuid (2.41.2-r2)
-#   pkgs.mpdecimal  # mpdecimal (4.0.1-r3)
-#   pkgs.ncurses  # ncurses (6.5_p20251025-r1)
-#   pkgs.python  # python-3.13 (3.13.11-r0)
-#   pkgs.readline  # readline (8.3-r1)
-#   pkgs.xz  # xz (5.8.1-r6)
-#   pkgs.zlib  # zlib (1.3.1-r51)
-# Packages NOT in nixpkgs:
-#   k8s-sidecar (2.1.4-r0)
-#   ld-linux (2.42-r4)
-#   libbz2-1 (1.0.8-r21)
-#   libcrypto3 (3.6.0-r4)
-#   libexpat1 (2.7.3-r0)
-#   libssl3 (3.6.0-r4)
-#   libstdc++ (15.2.0-r6)
-#   ncurses-terminfo-base (6.5_p20251025-r1)
-#   py3-pip-wheel (25.3-r2)
-#   python-3.13-base (3.13.11-r0)
-#   sqlite-libs (3.51.1-r0)
+{ mkImage, fetchFromGitHub, python3, pkgs, lib, ... }:
 
 let
   version = "1.28.0";
-  k8s-sidecar = python3Packages.buildPythonApplication {
+
+  python = python3.withPackages (ps: with ps; [
+    kubernetes
+    requests
+  ]);
+
+  k8s-sidecar = pkgs.stdenv.mkDerivation {
     pname = "k8s-sidecar";
     inherit version;
-    format = "pyproject";
 
     src = fetchFromGitHub {
       owner = "kiwigrid";
       repo = "k8s-sidecar";
       rev = version;
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-Zopfn8oujeru7LtsD4ISImIiGmptWs0WNhor/0Y5NoU=";
     };
 
-    nativeBuildInputs = with python3Packages; [
-      setuptools
-    ];
+    dontBuild = true;
 
-    propagatedBuildInputs = with python3Packages; [
-      requests
-      kubernetes
-    ];
+    installPhase = ''
+      mkdir -p $out/lib/k8s-sidecar $out/bin
+      cp src/*.py $out/lib/k8s-sidecar/
 
-    doCheck = false;
+      cat > $out/bin/sidecar <<EOF
+      #!${python}/bin/python3
+      import sys, os
+      sys.path.insert(0, "$out/lib/k8s-sidecar")
+      exec(open("$out/lib/k8s-sidecar/sidecar.py").read())
+      EOF
+      chmod +x $out/bin/sidecar
+    '';
 
     meta = with lib; {
       description = "Kubernetes sidecar to collect ConfigMaps and Secrets";

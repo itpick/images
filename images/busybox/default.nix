@@ -23,7 +23,7 @@ let
 in
 nix2container.buildImage {
   name = "busybox";
-  tag = "latest";
+  tag = pkgs.busybox.version;
 
   copyToRoot = [
     (buildEnv {
