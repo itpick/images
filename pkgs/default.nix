@@ -94,7 +94,7 @@
   font-noto = pkgs.noto-fonts;
   font-noto-cjk = pkgs.noto-fonts-cjk-sans;
   font-noto-common = pkgs.noto-fonts;
-  font-noto-emoji = pkgs.noto-fonts-emoji;
+  font-noto-emoji = pkgs.noto-fonts-color-emoji;
   font-noto-math = pkgs.noto-fonts;
   font-noto-symbols = pkgs.noto-fonts;
   font-opensans = pkgs.open-sans;
