@@ -26,10 +26,14 @@ let
     fontDirectories = fontPkgs;
   };
 
-  userDirs = pkgs.runCommand "playwright-dirs" {} ''
-    mkdir -p $out/tmp
-    mkdir -p $out/home/nonroot
-    mkdir -p $out/app
+  # User environment with /etc/passwd, /etc/group, home dir, /tmp
+  userEnv = nonRoot.mkDefaultUserEnv pkgs [ "/app" ];
+
+  # nsswitch.conf for name resolution (Chromium needs getpwuid)
+  nsswitch = pkgs.writeTextDir "etc/nsswitch.conf" ''
+    passwd: files
+    group: files
+    hosts: files dns
   '';
 
 in
@@ -38,20 +42,14 @@ nix2container.buildImage {
   tag = "v${pkgs.chromium.version}";
 
   layers = [
-    # Node.js + system tools layer
+    # Node.js + system tools + user env layer
     (nix2container.buildLayer {
       copyToRoot = [
         pkgs.nodejs_22
         pkgs.busybox
         pkgs.cacert
-        userDirs
-      ];
-      perms = [
-        {
-          path = userDirs;
-          regex = "/tmp";
-          mode = "1777";
-        }
+        userEnv
+        nsswitch
       ];
     })
 
