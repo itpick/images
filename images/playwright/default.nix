@@ -26,14 +26,18 @@ let
     fontDirectories = fontPkgs;
   };
 
-  # User environment with /etc/passwd, /etc/group, home dir, /tmp
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [ "/app" ];
+  # User environment with /etc/passwd, /etc/group, /etc/nsswitch.conf, home dir, /tmp
+  baseUserEnv = nonRoot.mkDefaultUserEnv pkgs [ "/app" ];
 
-  # nsswitch.conf for name resolution (Chromium needs getpwuid)
-  nsswitch = pkgs.writeTextDir "etc/nsswitch.conf" ''
+  # Extend user env with nsswitch.conf (Chromium needs getpwuid/name resolution)
+  userEnv = pkgs.runCommand "playwright-user-env" {} ''
+    cp -r ${baseUserEnv} $out
+    chmod -R u+w $out
+    cat > $out/etc/nsswitch.conf <<'NSSWITCH'
     passwd: files
     group: files
     hosts: files dns
+    NSSWITCH
   '';
 
 in
@@ -42,14 +46,24 @@ nix2container.buildImage {
   tag = "v${pkgs.chromium.version}";
 
   layers = [
-    # Node.js + system tools + user env layer
+    # User environment layer (/etc/passwd, /etc/group, /etc/nsswitch.conf, /tmp, /home)
+    (nix2container.buildLayer {
+      copyToRoot = [ userEnv ];
+      perms = [
+        {
+          path = userEnv;
+          regex = "/tmp";
+          mode = "1777";
+        }
+      ];
+    })
+
+    # Node.js + system tools layer
     (nix2container.buildLayer {
       copyToRoot = [
         pkgs.nodejs_22
         pkgs.busybox
         pkgs.cacert
-        userEnv
-        nsswitch
       ];
     })
 
