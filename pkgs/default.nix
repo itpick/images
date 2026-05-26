@@ -33,6 +33,10 @@
   csi-provisioner = pkgs.callPackage ./csi-provisioner { };
   csi-resizer = pkgs.callPackage ./csi-resizer { };
   dex = pkgs.callPackage ./dex { };
+  # Override nixpkgs' dragonflydb: it builds from source (1.34.2) and the
+  # vendored abseil_cpp build fails with no cache hit. Use upstream prebuilt
+  # binary (1.38.1) until nixpkgs ships a working derivation.
+  dragonflydb = pkgs.callPackage ./dragonflydb { };
   external-secrets = pkgs.callPackage ./external-secrets { };
   flux = pkgs.callPackage ./flux { };
   flux-source-watcher = pkgs.callPackage ./flux-source-watcher { };
