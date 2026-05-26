@@ -1,0 +1,29 @@
+name: Self-Hosted Runner Smoke Test
+
+# Manual-dispatch only — confirms the hadron-deployed arc-runner-nix scale set
+# can pick up jobs from this repo. Not part of regular CI.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: self-hosted
+    timeout-minutes: 5
+    steps:
+      - name: Identify runner
+        run: |
+          echo "=== runner identity ==="
+          echo "RUNNER_NAME=${RUNNER_NAME:-unset}"
+          echo "RUNNER_OS=${RUNNER_OS:-unset}"
+          echo "RUNNER_ARCH=${RUNNER_ARCH:-unset}"
+          uname -a
+          echo
+          echo "=== environment ==="
+          env | grep -E "^(GITHUB_|RUNNER_|ATTIC_)" | sort
+          echo
+          echo "=== nix availability ==="
+          which nix && nix --version || echo "nix not on PATH"
+          echo
+          echo "=== docker availability ==="
+          which docker && docker version --format '{{.Client.Version}} client / {{.Server.Version}} server' || echo "docker not on PATH"
