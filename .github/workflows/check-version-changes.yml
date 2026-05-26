@@ -19,7 +19,7 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0  # Need history to compare versions
 
@@ -105,7 +105,7 @@ jobs:
           echo "changed-images=$CHANGED_IMAGES" >> $GITHUB_OUTPUT
 
       - name: Upload version comparison results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: version-comparison
           path: |
