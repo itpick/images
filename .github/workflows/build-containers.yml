@@ -145,4 +145,7 @@ jobs:
       contents: read
       security-events: write
     with:
-      images: ${{ needs.select-matrix.outputs.matrix }}
+      # security-scan expects a JSON ARRAY of image entries; select-matrix's
+      # `matrix` output is `{"include":[...]}` (the matrix shape). Unwrap to
+      # the array.
+      images: ${{ toJSON(fromJSON(needs.select-matrix.outputs.matrix).include) }}
