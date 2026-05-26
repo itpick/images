@@ -15,6 +15,11 @@ on:
         required: false
         default: 'false'
         type: boolean
+      images:
+        description: 'Comma-separated list of images to build+test (e.g. "postgres,redis,nginx"). Overrides changes detection; ignored when force_rebuild=true.'
+        required: false
+        default: ''
+        type: string
 
 jobs:
   discover-images:
@@ -23,22 +28,71 @@ jobs:
   check-version-changes:
     uses: ./.github/workflows/check-version-changes.yml
 
-  test-images:
+  select-matrix:
+    # Picks which matrix to feed downstream jobs and whether they should run.
+    # Priority: explicit `images` input > force_rebuild > version changes-detected > nothing.
     needs: [discover-images, check-version-changes]
-    if: needs.check-version-changes.outputs.changes-detected == 'true' || github.event.inputs.force_rebuild == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.pick.outputs.matrix }}
+      run: ${{ steps.pick.outputs.run }}
+    steps:
+      - id: pick
+        # Values are passed via toJSON to safely embed JSON (e.g. the matrix)
+        # into shell assignments — bare interpolation of a JSON object into a
+        # YAML env: entry silently drops the variable.
+        run: |
+          set -euo pipefail
+          IMAGES=${{ toJSON(github.event.inputs.images) }}
+          FORCE=${{ toJSON(github.event.inputs.force_rebuild) }}
+          CHANGES_DETECTED=${{ toJSON(needs.check-version-changes.outputs.changes-detected) }}
+          CHANGED=${{ toJSON(needs.check-version-changes.outputs.changed-images) }}
+          FULL=${{ toJSON(needs.discover-images.outputs.matrix) }}
+
+          # GHA's toJSON(undefined) yields the literal string "null"; normalize.
+          [ "$IMAGES" = "null" ] && IMAGES=""
+          [ "$FORCE" = "null" ] && FORCE="false"
+          [ "$CHANGES_DETECTED" = "null" ] && CHANGES_DETECTED="false"
+
+          if [ -n "$IMAGES" ]; then
+            MATRIX=$(printf '%s' "$FULL" | jq -c --arg list "$IMAGES" '
+              ($list | split(",") | map(gsub("^\\s+|\\s+$"; ""))) as $sel
+              | {include: [.include[] | select(.name as $n | $sel | index($n))]}
+            ')
+            echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "Selected images: $IMAGES"
+            echo "Matrix: $MATRIX"
+          elif [ "$FORCE" = "true" ]; then
+            echo "matrix=$FULL" >> "$GITHUB_OUTPUT"
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "force_rebuild=true; using full discovered matrix"
+          elif [ "$CHANGES_DETECTED" = "true" ]; then
+            echo "matrix=$CHANGED" >> "$GITHUB_OUTPUT"
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "Using changed-images matrix from version detection"
+          else
+            echo 'matrix={"include":[]}' >> "$GITHUB_OUTPUT"
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "No changes detected and no inputs; skipping test/build"
+          fi
+
+  test-images:
+    needs: [select-matrix]
+    if: needs.select-matrix.outputs.run == 'true'
     uses: ./.github/workflows/test-images.yml
     with:
-      matrix: ${{ github.event.inputs.force_rebuild == 'true' && needs.discover-images.outputs.matrix || needs.check-version-changes.outputs.changed-images }}
+      matrix: ${{ needs.select-matrix.outputs.matrix }}
 
   build-and-push:
-    needs: [discover-images, check-version-changes, test-images]
-    if: needs.check-version-changes.outputs.changes-detected == 'true' || github.event.inputs.force_rebuild == 'true'
+    needs: [select-matrix, test-images]
+    if: needs.select-matrix.outputs.run == 'true'
     uses: ./.github/workflows/build-and-push.yml
     permissions:
       contents: read
       packages: write
     with:
-      matrix: ${{ github.event.inputs.force_rebuild == 'true' && needs.discover-images.outputs.matrix || needs.check-version-changes.outputs.changed-images }}
+      matrix: ${{ needs.select-matrix.outputs.matrix }}
 
   check-package-updates:
     uses: ./.github/workflows/check-package-updates.yml
@@ -84,11 +138,11 @@ jobs:
           fi
 
   security-scan:
-    needs: [build-and-push, check-version-changes]
+    needs: [build-and-push, select-matrix]
     if: needs.build-and-push.result == 'success'
     uses: ./.github/workflows/security-scan.yml
     permissions:
       contents: read
       security-events: write
     with:
-      images: ${{ needs.check-version-changes.outputs.changed-images }}
+      images: ${{ needs.select-matrix.outputs.matrix }}
