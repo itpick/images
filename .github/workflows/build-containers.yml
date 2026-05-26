@@ -143,6 +143,7 @@ jobs:
     uses: ./.github/workflows/security-scan.yml
     permissions:
       contents: read
+      packages: read
       security-events: write
     with:
       # security-scan expects a JSON ARRAY of image entries; select-matrix's

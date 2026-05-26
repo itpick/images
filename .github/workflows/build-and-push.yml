@@ -73,7 +73,6 @@ jobs:
 
       - name: Build nix2container image
         if: env.NIX_INSTALLED == 'true'
-        continue-on-error: true
         run: |
           # Source Nix environment
           . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
@@ -83,7 +82,6 @@ jobs:
 
       - name: Load and push image to registry
         if: env.NIX_INSTALLED == 'true' && env.BUILD_SUCCESS == 'true'
-        continue-on-error: true
         run: |
           # Load the nix2container image and push directly to registry
           if [ -f ./result ]; then
@@ -140,6 +138,10 @@ jobs:
             docker rmi "${{ matrix.name }}:temp"
             IMAGE_ID=$(docker images "${{ matrix.name }}:latest" --format "{{.ID}}")
             
+            # Docker tags can't contain '/'; sanitize the branch name (e.g. feat/foo -> feat-foo).
+            REF_TAG="${{ github.ref_name }}"
+            REF_TAG="${REF_TAG//\//-}"
+
             # Tag with different versions
             docker tag "$IMAGE_ID" "${REGISTRY_URL}:latest"
             docker tag "$IMAGE_ID" "${REGISTRY_URL}:${{ github.sha }}"
@@ -147,9 +149,9 @@ jobs:
               docker tag "$IMAGE_ID" "${REGISTRY_URL}:$PACKAGE_VERSION"
             fi
             if [ "${{ github.ref_name }}" != "main" ]; then
-              docker tag "$IMAGE_ID" "${REGISTRY_URL}:${{ github.ref_name }}"
+              docker tag "$IMAGE_ID" "${REGISTRY_URL}:$REF_TAG"
             fi
-            
+
             # Push all tags
             echo "Pushing to registry..."
             docker push "${REGISTRY_URL}:latest"
@@ -158,7 +160,7 @@ jobs:
               docker push "${REGISTRY_URL}:$PACKAGE_VERSION"
             fi
             if [ "${{ github.ref_name }}" != "main" ]; then
-              docker push "${REGISTRY_URL}:${{ github.ref_name }}"
+              docker push "${REGISTRY_URL}:$REF_TAG"
             fi
             
             echo "✅ Successfully pushed ${{ matrix.name }} to registry"
