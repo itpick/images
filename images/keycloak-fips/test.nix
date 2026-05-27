@@ -16,6 +16,21 @@ pkgs.writeShellScript "test-keycloak-fips" ''
 
   echo "🧪 keycloak-fips integration test"
 
+  # kc.sh-wrapped pipes through sed/xargs during startup. A `--help` invocation
+  # runs that pipeline without needing a database, so it surfaces "command not
+  # found" failures fast (the prior coreutils-only image fell over here even
+  # though start-dev was permissive enough to mostly succeed).
+  echo "  ✓ kc.sh --help runs without missing-command errors"
+  help_out=$(docker run --rm --cap-drop=ALL --security-opt no-new-privileges \
+    "$IMAGE" --help 2>&1 || true)
+  case "$help_out" in
+    *"command not found"*|*"No such file"*|*"Failed to create temporary file"*)
+      echo "FAIL: kc.sh wrapper missing a runtime dependency"
+      printf '%s\n' "$help_out" | head -40
+      exit 1
+      ;;
+  esac
+
   # Hardened-compose simulation: cap-drop ALL + no-new-privileges, matching
   # the security posture of downstream consumers (F16PDATool / F16PDA-Deploy).
   echo "  ✓ starting keycloak in dev mode under cap_drop=ALL"
@@ -50,6 +65,18 @@ pkgs.writeShellScript "test-keycloak-fips" ''
       exit 1
     fi
   done
+
+  # Belt-and-suspenders: the JVM tempfile assertion was visible in logs even
+  # when /health/ready eventually came up, so check explicitly.
+  echo "  ✓ no startup-time tempfile or missing-binary errors in logs"
+  log_dump=$(docker logs "$CONTAINER" 2>&1)
+  case "$log_dump" in
+    *"command not found"*|*"Failed to create temporary file"*)
+      echo "FAIL: startup log contains a known-bad sentinel error"
+      printf '%s\n' "$log_dump" | tail -40
+      exit 1
+      ;;
+  esac
 
   echo "  ✓ /health/ready returns 200"
 
