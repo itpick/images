@@ -1,25 +1,40 @@
 { pkgs, image }:
 
-pkgs.writeShellScript "test-nginx" ''
+# Real integration tests for nginx-fips. The original tests only invoked
+# `nginx -v`/`-h` which exercises no I/O. This version also verifies the
+# image works under cap_drop=ALL with a real writable /tmp (the canonical
+# place compose-shim entrypoints sed-substitute config into).
+pkgs.writeShellScript "test-nginx-fips" ''
   set -euo pipefail
-  
-  echo "🧪 Testing nginx image functionality..."
-  
-  # Test 1: Nginx version
-  echo "  ✓ Testing nginx version..."
-  docker run --rm ${image.imageName}:test nginx -v 2>&1 | grep -q "nginx version"
-  
-  # Test 2: Configuration test
-  echo "  ✓ Testing nginx configuration..."
-  docker run --rm ${image.imageName}:test nginx -t 2>&1 | grep -q "test is successful"
-  
-  # Test 3: Help functionality
-  echo "  ✓ Testing nginx help..."
-  docker run --rm ${image.imageName}:test nginx -h 2>&1 | grep -q "Usage"
-  
-  # Test 4: User setup
-  echo "  ✓ Testing user setup..."
-  docker run --rm ${image.imageName}:test id -u | grep -q "1000"
-  
-  echo "✅ All nginx tests passed!"
+
+  IMAGE="${image.imageName}:test"
+
+  echo "🧪 nginx-fips integration test"
+
+  echo "  ✓ nginx -v"
+  docker run --rm --cap-drop=ALL --security-opt no-new-privileges \
+    "$IMAGE" nginx -v 2>&1 | grep -q "nginx version"
+
+  echo "  ✓ nginx -t (config syntax check)"
+  docker run --rm --cap-drop=ALL --security-opt no-new-privileges \
+    "$IMAGE" nginx -t 2>&1 | grep -q "test is successful"
+
+  # /tmp must be a real writable directory — not the read-only nix-store
+  # symlink the buildEnv would otherwise produce. Compose entrypoint shims
+  # routinely do `sed > /tmp/nginx.conf` then exec nginx with -c on that
+  # path; that idiom failed silently against the prior image.
+  echo "  ✓ /tmp is writable under cap_drop=ALL"
+  docker run --rm --cap-drop=ALL --security-opt no-new-privileges \
+    --entrypoint sh "$IMAGE" -c 'echo data > /tmp/probe && cat /tmp/probe' \
+    | grep -q '^data$'
+
+  echo "  ✓ default user is nonroot"
+  uid=$(docker run --rm --cap-drop=ALL --security-opt no-new-privileges \
+    --entrypoint id "$IMAGE" -u)
+  if [ "$uid" = "0" ]; then
+    echo "FAIL: image defaults to root (expected nonroot)"
+    exit 1
+  fi
+
+  echo "✅ All nginx-fips tests passed!"
 ''
