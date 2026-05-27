@@ -20,8 +20,14 @@ let
     home = "/home/keycloak";
   };
 
+  # JDK used by keycloak. nixpkgs.keycloak's own C wrapper hardcodes a
+  # specific openjdk-headless-21 path; we want a matching JDK 21 in the
+  # image so our replacement kc.sh wrapper (below) can set JAVA_HOME.
+  jdk = pkgs.jdk21_headless;
+
   imagePkgs = with pkgs; [
     keycloak
+    jdk
     bash
     coreutils
     # kc.sh-wrapped pipes through sed/xargs during startup. coreutils doesn't
@@ -32,6 +38,24 @@ let
     cacert
     tzdata
   ];
+
+  # The nixpkgs keycloak ships /bin/kc.sh as a compiled C wrapper
+  # (makeCWrapper) that exec's /nix/store/.../keycloak/bin/.kc.sh-wrapped
+  # with a hardcoded path. Inside that wrapped script, $DIRNAME (via
+  # readlink -f "$0") resolves to the nix-store path — and -cp +
+  # augment-output paths follow from $DIRNAME. So even though we copy the
+  # distribution to /opt/keycloak (writable), the original wrapper routes
+  # everything back to the read-only store and augment crashes.
+  #
+  # Replace the C wrapper with this tiny shell wrapper: same env setup
+  # (JAVA_HOME, PATH), but exec's /opt/keycloak/bin/.kc.sh-wrapped — so
+  # $DIRNAME resolves under /opt/keycloak and writes land on the writable
+  # copy.
+  kcShWrapper = pkgs.writeShellScript "kc.sh" ''
+    export JAVA_HOME="${jdk}"
+    export PATH="${jdk}/bin:$PATH"
+    exec /opt/keycloak/bin/.kc.sh-wrapped "$@"
+  '';
 
   userEnv = nonRoot.mkCustomUserEnv pkgs keycloakUser [];
 
@@ -56,6 +80,9 @@ let
     mkdir -p $out/opt
     cp -rL ${pkgs.keycloak} $out/opt/keycloak
     chmod -R u+w $out/opt/keycloak
+    # Replace the nixpkgs C wrapper with our shell wrapper that resolves
+    # paths under /opt/keycloak (see kcShWrapper comment for details).
+    install -m 0755 ${kcShWrapper} $out/opt/keycloak/bin/kc.sh
     mkdir -p $out/opt/keycloak/data/import $out/opt/keycloak/data/sessions
   '';
 
