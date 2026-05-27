@@ -18,11 +18,23 @@ pkgs.writeShellScript "test-postgres-fips" ''
   docker run --rm --entrypoint psql "$IMAGE" --version | grep -q "psql"
   docker run --rm --entrypoint initdb "$IMAGE" --version | grep -q "initdb"
 
-  echo "  ✓ starting container with POSTGRES_PASSWORD=testpw"
+  # Stage an init script. Mounting this exercises the entrypoint's temp
+  # pg_ctl path — previously broken because postgres' default
+  # unix_socket_directories pointed at /run/postgresql (absent from the
+  # nix-base image). The original test missed this by never mounting init.d.
+  INITDIR=$(mktemp -d)
+  trap 'cleanup; rm -rf "$INITDIR"' EXIT
+  cat > "$INITDIR/01-extra-db.sql" <<'SQL'
+  CREATE DATABASE extradb;
+  GRANT ALL PRIVILEGES ON DATABASE extradb TO myuser;
+  SQL
+
+  echo "  ✓ starting container with POSTGRES_PASSWORD=testpw + init script"
   docker run -d --name "$CONTAINER" \
     -e POSTGRES_DB=mydb \
     -e POSTGRES_USER=myuser \
     -e POSTGRES_PASSWORD=testpw \
+    -v "$INITDIR:/docker-entrypoint-initdb.d:ro" \
     "$IMAGE" >/dev/null
 
   echo "  ✓ waiting for pg_isready (up to 30s)"
@@ -42,6 +54,15 @@ pkgs.writeShellScript "test-postgres-fips" ''
   result=$(docker exec "$CONTAINER" psql -U myuser -d mydb -tAc 'SELECT 42;' | tr -d '[:space:]')
   if [ "$result" != "42" ]; then
     echo "FAIL: expected '42' from query, got '$result'"
+    docker logs "$CONTAINER" || true
+    exit 1
+  fi
+
+  echo "  ✓ init script ran (extradb exists)"
+  has_extradb=$(docker exec "$CONTAINER" psql -U myuser -d mydb -tAc \
+    "SELECT 1 FROM pg_database WHERE datname = 'extradb';" | tr -d '[:space:]')
+  if [ "$has_extradb" != "1" ]; then
+    echo "FAIL: extradb not created — init script did not run"
     docker logs "$CONTAINER" || true
     exit 1
   fi

@@ -27,6 +27,14 @@ POSTGRES_INITDB_ARGS="${POSTGRES_INITDB_ARGS:-}"
 PG_UID=999
 PG_GID=999
 
+# Pin the Unix socket directory. The postgres binary's compile-time default
+# is /run/postgresql, but the nix-base image only ships /var/run/postgresql
+# (created below). Without this, postgres FATALs with
+# 'could not create lock file "/run/postgresql/.s.PGSQL.5432.lock"' as soon
+# as any startup tries to bind a socket — including the temp pg_ctl below
+# and the final exec.
+PG_SOCKET_DIR=/var/run/postgresql
+
 # Re-exec self as postgres user when started as root.
 if [ "$(id -u)" = "0" ]; then
   mkdir -p "$PGDATA" /var/run/postgresql
@@ -61,11 +69,16 @@ initialize_db() {
   # Allow remote connections (compose networking).
   echo "host all all all $POSTGRES_HOST_AUTH_METHOD" >> "$PGDATA/pg_hba.conf"
 
-  # Start temp instance on Unix socket only for setup.
-  pg_ctl -D "$PGDATA" -o "-c listen_addresses=''" -w start
+  # Start temp instance on Unix socket only for setup. Also export PGHOST so
+  # the local psql/pg_isready calls below find the socket — their default is
+  # postgres' compile-time /run/postgresql which doesn't exist here.
+  pg_ctl -D "$PGDATA" -o "-c listen_addresses='' -c unix_socket_directories=$PG_SOCKET_DIR" -w start
+  export PGHOST="$PG_SOCKET_DIR"
 
-  # Create the application DB if different from the superuser's auto-created one.
-  if [ "$POSTGRES_DB" != "$POSTGRES_USER" ] && [ "$POSTGRES_DB" != "postgres" ]; then
+  # Create the application DB. initdb only creates template0/1 and postgres,
+  # NOT a database named after the superuser — so we must always create
+  # POSTGRES_DB (unless it's "postgres", which initdb already made).
+  if [ "$POSTGRES_DB" != "postgres" ]; then
     psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname postgres \
       -c "CREATE DATABASE \"$POSTGRES_DB\";"
   fi
@@ -105,6 +118,6 @@ fi
 
 # Default command is "postgres". If the caller passes their own command, exec it.
 if [ "$#" = "0" ] || [ "$1" = "postgres" ]; then
-  exec postgres -D "$PGDATA"
+  exec postgres -D "$PGDATA" -c "unix_socket_directories=$PG_SOCKET_DIR"
 fi
 exec "$@"
