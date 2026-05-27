@@ -83,6 +83,11 @@ in nix2container.buildImage {
       "HOME=${postgresUser.home}"
       "USER=${postgresUser.name}"
       "PGDATA=/var/lib/postgresql/data"
+      # postgres' compile-time default Unix-socket dir is /run/postgresql, but
+      # this image only ships /var/run/postgresql. Setting PGHOST here makes
+      # libpq tools (pg_isready, psql) find the socket by default — which is
+      # what compose healthchecks like `pg_isready -U pda` rely on.
+      "PGHOST=/var/run/postgresql"
     ];
     Entrypoint = [ "${entrypoint}/bin/docker-entrypoint.sh" ];
     Cmd = [ "postgres" ];
