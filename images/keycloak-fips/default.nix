@@ -47,14 +47,16 @@ let
     rm -rf $out/tmp
   '';
 
-  # Pre-create writable data dirs under /opt/keycloak (compose convention).
-  # perms below assigns 999:999 ownership so the dirs are writable when the
-  # container runs as the keycloak user under cap_drop: ALL (no runtime chown).
-  kcDirs = pkgs.runCommand "keycloak-fips-dirs" {} ''
-    mkdir -p $out/opt/keycloak/data/import
-    mkdir -p $out/opt/keycloak/data/sessions
-    chmod 755 $out/opt/keycloak/data/import
-    chmod 755 $out/opt/keycloak/data/sessions
+  # Copy the keycloak distribution to /opt/keycloak with the directory
+  # writable. Runtime `kc.sh start` does an augmentation step that writes
+  # to lib/quarkus/transformed-bytecode.jar — if that path is in the
+  # read-only nix store, startup fails with AccessDeniedException.
+  # Pre-creates data/{import,sessions} too (compose mounts host paths here).
+  keycloakDist = pkgs.runCommand "keycloak-fips-dist" {} ''
+    mkdir -p $out/opt
+    cp -rL ${pkgs.keycloak} $out/opt/keycloak
+    chmod -R u+w $out/opt/keycloak
+    mkdir -p $out/opt/keycloak/data/import $out/opt/keycloak/data/sessions
   '';
 
   # The nix-base /tmp is a symlink to a read-only nix-store path, so the JVM
@@ -75,23 +77,18 @@ in nix2container.buildImage {
       copyToRoot = [
         (buildEnv {
           name = "keycloak-fips-root";
-          paths = base.basePackages ++ imagePkgs ++ [ userEnvSansTmp kcDirs ];
+          paths = base.basePackages ++ imagePkgs ++ [ userEnvSansTmp ];
         })
-        # tmpDir intentionally OUTSIDE buildEnv — buildEnv would symlink it
-        # back to the nix store and re-introduce the read-only /tmp problem.
+        # tmpDir + keycloakDist intentionally OUTSIDE buildEnv — buildEnv
+        # would symlink them back to the nix store and re-introduce the
+        # read-only-path problem.
         tmpDir
+        keycloakDist
       ];
       perms = [
         {
-          path = kcDirs;
-          regex = "/opt/keycloak/data/import";
-          mode = "0755";
-          uid = keycloakUser.uid;
-          gid = keycloakUser.gid;
-        }
-        {
-          path = kcDirs;
-          regex = "/opt/keycloak/data/sessions";
+          path = keycloakDist;
+          regex = "/opt/keycloak(/.*)?";
           mode = "0755";
           uid = keycloakUser.uid;
           gid = keycloakUser.gid;
@@ -112,7 +109,7 @@ in nix2container.buildImage {
       "HOME=${keycloakUser.home}"
       "USER=${keycloakUser.name}"
     ];
-    Entrypoint = [ "${pkgs.keycloak}/bin/kc.sh" ];
+    Entrypoint = [ "/opt/keycloak/bin/kc.sh" ];
     ExposedPorts = {
       "8080/tcp" = {};
       "8443/tcp" = {};

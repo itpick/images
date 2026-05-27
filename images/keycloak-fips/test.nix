@@ -31,6 +31,30 @@ pkgs.writeShellScript "test-keycloak-fips" ''
       ;;
   esac
 
+  # The Quarkus 'augment' step (kc.sh build) writes into KEYCLOAK_HOME/lib/quarkus.
+  # If KEYCLOAK_HOME points at a read-only nix-store path, build fails with
+  # AccessDeniedException. Running `build` explicitly under cap_drop=ALL catches
+  # that without needing a database backend or a slow Quarkus start.
+  echo "  ✓ kc.sh build succeeds (KEYCLOAK_HOME writable)"
+  build_out=$(docker run --rm --cap-drop=ALL --security-opt no-new-privileges \
+    "$IMAGE" build 2>&1 || true)
+  case "$build_out" in
+    *"AccessDeniedException"*|*"Read-only file system"*|*"BUILD FAILURE"*)
+      echo "FAIL: kc.sh build failed — keycloak home is not writable"
+      printf '%s\n' "$build_out" | tail -40
+      exit 1
+      ;;
+  esac
+  # build prints "Server configuration updated and persisted." on success
+  case "$build_out" in
+    *"Server configuration updated and persisted"*|*"server is ready to start up"*) ;;
+    *)
+      echo "FAIL: kc.sh build did not report success"
+      printf '%s\n' "$build_out" | tail -30
+      exit 1
+      ;;
+  esac
+
   # Hardened-compose simulation: cap-drop ALL + no-new-privileges, matching
   # the security posture of downstream consumers (F16PDATool / F16PDA-Deploy).
   echo "  ✓ starting keycloak in dev mode under cap_drop=ALL"
