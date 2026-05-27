@@ -5,6 +5,7 @@
 
 let
   imagePkgs = with pkgs; [
+    postgresql
     bash
     coreutils
     cacert
@@ -15,7 +16,7 @@ let
 
 in nix2container.buildImage {
   name = "postgres-fips";
-  tag = "latest";
+  tag = pkgs.postgresql.version;
   copyToRoot = [
     (buildEnv {
       name = "postgres-fips-root";
@@ -24,12 +25,16 @@ in nix2container.buildImage {
   ];
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv;
+    ExposedPorts = {
+      "5432/tcp" = {};
+    };
     Labels = base.defaultLabels // {
       "io.nix-containers.build-type" = "source";
       "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "postgres-fips";
-      "org.opencontainers.image.description" = "postgres-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
+      "org.opencontainers.image.description" = "PostgreSQL database server (FIPS-intent build)";
+      "org.opencontainers.image.version" = pkgs.postgresql.version;
+      "io.nix-containers.compliance" = "FIPS-140-2";
     };
   };
 }
