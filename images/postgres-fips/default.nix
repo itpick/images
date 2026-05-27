@@ -4,6 +4,13 @@
 # Turnkey postgres container: docker-library-compatible entrypoint that
 # runs initdb on first start, honors POSTGRES_DB/USER/PASSWORD env vars,
 # and processes /docker-entrypoint-initdb.d/*.{sh,sql,sql.gz}.
+#
+# Runs as uid:gid 999:999 by default (the postgres user we bake into
+# /etc/passwd). PGDATA and the Unix-socket dir are pre-created in the
+# image with that ownership so the image works under hardened compose
+# stacks that drop CAP_CHOWN (cap_drop: ALL). When docker mounts a fresh
+# anonymous volume at PGDATA, it inherits the image-side ownership of
+# that mount point.
 
 let
   imagePkgs = with pkgs; [
@@ -11,14 +18,10 @@ let
     bash
     coreutils
     gzip
-    su-exec
     cacert
     tzdata
   ];
 
-  # Postgres runs as uid:gid 999:999. initdb does a getpwuid() lookup
-  # against /etc/passwd and refuses to run without an entry, so we bake one
-  # in (plus /etc/group, /tmp, /home/postgres) via the shared helper.
   postgresUser = {
     uid = 999;
     gid = 999;
@@ -27,13 +30,18 @@ let
   };
   userEnv = nonRoot.mkCustomUserEnv pkgs postgresUser [];
 
+  # Pre-create writable runtime dirs. perms below assigns 999:999 ownership.
+  pgDirs = pkgs.runCommand "postgres-fips-dirs" {} ''
+    mkdir -p $out/var/lib/postgresql/data
+    mkdir -p $out/var/run/postgresql
+    chmod 700 $out/var/lib/postgresql/data
+    chmod 775 $out/var/run/postgresql
+  '';
+
   entrypoint = pkgs.writeShellApplication {
     name = "docker-entrypoint.sh";
     runtimeInputs = imagePkgs;
     text = builtins.readFile ./docker-entrypoint.sh;
-    # Skip shellcheck inside writeShellApplication — the script has
-    # intentional word-splitting on POSTGRES_INITDB_ARGS and the source
-    # of /docker-entrypoint-initdb.d/*.sh is by design dynamic.
     excludeShellChecks = [ "SC2086" "SC1090" ];
   };
 
@@ -41,16 +49,39 @@ in nix2container.buildImage {
   name = "postgres-fips";
   tag = pkgs.postgresql.version;
 
-  copyToRoot = [
-    (buildEnv {
-      name = "postgres-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ entrypoint userEnv ];
+  layers = [
+    (nix2container.buildLayer {
+      copyToRoot = [
+        (buildEnv {
+          name = "postgres-fips-root";
+          paths = base.basePackages ++ imagePkgs ++ [ entrypoint userEnv pgDirs ];
+        })
+      ];
+      perms = [
+        {
+          path = pgDirs;
+          regex = "/var/lib/postgresql/data";
+          mode = "0700";
+          uid = postgresUser.uid;
+          gid = postgresUser.gid;
+        }
+        {
+          path = pgDirs;
+          regex = "/var/run/postgresql";
+          mode = "0775";
+          uid = postgresUser.uid;
+          gid = postgresUser.gid;
+        }
+      ];
     })
   ];
 
-  # Run as root so the entrypoint can chown PGDATA + step down via su-exec.
-  config = nonRoot.rootConfig // {
-    Env = base.defaultEnv ++ nonRoot.rootEnv ++ [
+  config = {
+    User = "${toString postgresUser.uid}:${toString postgresUser.gid}";
+    WorkingDir = postgresUser.home;
+    Env = base.defaultEnv ++ [
+      "HOME=${postgresUser.home}"
+      "USER=${postgresUser.name}"
       "PGDATA=/var/lib/postgresql/data"
     ];
     Entrypoint = [ "${entrypoint}/bin/docker-entrypoint.sh" ];
@@ -62,7 +93,7 @@ in nix2container.buildImage {
       "io.nix-containers.build-type" = "source";
       "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "postgres-fips";
-      "org.opencontainers.image.description" = "PostgreSQL database server (FIPS-intent build) with docker-library-compatible entrypoint";
+      "org.opencontainers.image.description" = "PostgreSQL database server (FIPS-intent build) with docker-library-compatible entrypoint, runs as uid 999";
       "org.opencontainers.image.version" = pkgs.postgresql.version;
       "io.nix-containers.compliance" = "FIPS-140-2";
     };

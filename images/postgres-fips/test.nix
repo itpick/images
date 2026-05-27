@@ -29,8 +29,14 @@ pkgs.writeShellScript "test-postgres-fips" ''
   GRANT ALL PRIVILEGES ON DATABASE extradb TO myuser;
   SQL
 
-  echo "  ✓ starting container with POSTGRES_PASSWORD=testpw + init script"
+  # Hardened-compose simulation: cap-drop ALL and no-new-privileges, the
+  # same security posture as F16PDA-Deploy / F16PDATool. Catches images
+  # that need CAP_CHOWN at startup (which the previous root+su-exec design
+  # required and broke in this configuration).
+  echo "  ✓ starting container with POSTGRES_PASSWORD=testpw + init script + cap_drop=ALL"
   docker run -d --name "$CONTAINER" \
+    --cap-drop=ALL \
+    --security-opt no-new-privileges \
     -e POSTGRES_DB=mydb \
     -e POSTGRES_USER=myuser \
     -e POSTGRES_PASSWORD=testpw \

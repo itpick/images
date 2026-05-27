@@ -13,9 +13,10 @@
 # named POSTGRES_DB, then executes /docker-entrypoint-initdb.d/*.{sh,sql,sql.gz}
 # in alphabetical order. Subsequent runs skip initdb.
 #
-# Drops from root to a postgres user (uid 999) for both initdb and postgres
-# itself — matches the docker-library convention so PGDATA gets owned by
-# the same non-root uid that runs the database.
+# Runs as the postgres user (uid 999) — set as the image's default User
+# and applied to PGDATA + /var/run/postgresql at image-build time. No
+# runtime chown is needed, so the image works under hardened compose
+# stacks that drop CAP_CHOWN.
 set -euo pipefail
 
 POSTGRES_USER="${POSTGRES_USER:-postgres}"
@@ -24,25 +25,11 @@ PGDATA="${PGDATA:-/var/lib/postgresql/data}"
 POSTGRES_HOST_AUTH_METHOD="${POSTGRES_HOST_AUTH_METHOD:-scram-sha-256}"
 POSTGRES_INITDB_ARGS="${POSTGRES_INITDB_ARGS:-}"
 
-PG_UID=999
-PG_GID=999
-
-# Pin the Unix socket directory. The postgres binary's compile-time default
-# is /run/postgresql, but the nix-base image only ships /var/run/postgresql
-# (created below). Without this, postgres FATALs with
-# 'could not create lock file "/run/postgresql/.s.PGSQL.5432.lock"' as soon
-# as any startup tries to bind a socket — including the temp pg_ctl below
-# and the final exec.
+# Pin the Unix socket directory. postgres' compile-time default is
+# /run/postgresql, but this image only ships /var/run/postgresql (pre-baked
+# at the right ownership). Without this pin postgres FATALs with
+# 'could not create lock file "/run/postgresql/.s.PGSQL.5432.lock"'.
 PG_SOCKET_DIR=/var/run/postgresql
-
-# Re-exec self as postgres user when started as root.
-if [ "$(id -u)" = "0" ]; then
-  mkdir -p "$PGDATA" /var/run/postgresql
-  chown -R "$PG_UID:$PG_GID" "$PGDATA" /var/run/postgresql
-  chmod 700 "$PGDATA"
-  chmod 775 /var/run/postgresql
-  exec su-exec "$PG_UID:$PG_GID" "$0" "$@"
-fi
 
 initialize_db() {
   if [ -z "${POSTGRES_PASSWORD:-}" ]; then
@@ -51,9 +38,7 @@ initialize_db() {
   fi
 
   echo "[entrypoint] running initdb in $PGDATA (user=$POSTGRES_USER)"
-  # Use /var/run/postgresql (we ensured it exists above); the nix-base image
-  # doesn't ship a /tmp.
-  local pwfile=/var/run/postgresql/.pwfile.$$
+  local pwfile=$PG_SOCKET_DIR/.pwfile.$$
   printf '%s' "$POSTGRES_PASSWORD" > "$pwfile"
   chmod 600 "$pwfile"
   # shellcheck disable=SC2086  # intentional word-split on POSTGRES_INITDB_ARGS
@@ -69,9 +54,9 @@ initialize_db() {
   # Allow remote connections (compose networking).
   echo "host all all all $POSTGRES_HOST_AUTH_METHOD" >> "$PGDATA/pg_hba.conf"
 
-  # Start temp instance on Unix socket only for setup. Also export PGHOST so
-  # the local psql/pg_isready calls below find the socket — their default is
-  # postgres' compile-time /run/postgresql which doesn't exist here.
+  # Start temp instance on Unix socket only for setup. Also export PGHOST
+  # so local psql/pg_isready calls find the socket (their default is
+  # postgres' compile-time /run/postgresql which doesn't exist here).
   pg_ctl -D "$PGDATA" -o "-c listen_addresses='' -c unix_socket_directories=$PG_SOCKET_DIR" -w start
   export PGHOST="$PG_SOCKET_DIR"
 
