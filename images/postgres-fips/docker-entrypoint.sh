@@ -102,7 +102,12 @@ if [ ! -s "$PGDATA/PG_VERSION" ]; then
 fi
 
 # Default command is "postgres". If the caller passes their own command, exec it.
+# listen_addresses='*' matches the docker-library postgres default — without
+# it, cross-container TCP (e.g. an app container connecting to "postgres:5432")
+# is refused because the server only binds to 127.0.0.1.
 if [ "$#" = "0" ] || [ "$1" = "postgres" ]; then
-  exec postgres -D "$PGDATA" -c "unix_socket_directories=$PG_SOCKET_DIR"
+  exec postgres -D "$PGDATA" \
+    -c "unix_socket_directories=$PG_SOCKET_DIR" \
+    -c "listen_addresses=*"
 fi
 exec "$@"

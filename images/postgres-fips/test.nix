@@ -73,5 +73,25 @@ pkgs.writeShellScript "test-postgres-fips" ''
     exit 1
   fi
 
+  # Cross-container TCP connect, simulating an app container in the same
+  # docker network reaching postgres at its service name. Catches
+  # listen_addresses='localhost' (the postgres default), which leaves the
+  # server unreachable from other containers even though the in-container
+  # socket healthcheck passes.
+  echo "  ✓ cross-container TCP connect works"
+  NET="postgres-fips-net-$$"
+  docker network create "$NET" >/dev/null
+  trap 'cleanup; docker network rm "$NET" >/dev/null 2>&1 || true; rm -rf "$INITDIR"' EXIT
+  docker network connect "$NET" "$CONTAINER" --alias pg-host
+  tcp_result=$(docker run --rm --network "$NET" \
+    -e PGPASSWORD=testpw \
+    --entrypoint psql "$IMAGE" \
+    -h pg-host -U myuser -d mydb -tAc 'SELECT 99;' | tr -d '[:space:]')
+  if [ "$tcp_result" != "99" ]; then
+    echo "FAIL: cross-container TCP query did not return 99 (got '$tcp_result')"
+    docker logs "$CONTAINER" || true
+    exit 1
+  fi
+
   echo "✅ All postgres-fips tests passed!"
 ''
