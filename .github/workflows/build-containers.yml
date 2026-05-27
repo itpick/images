@@ -28,10 +28,17 @@ jobs:
   check-version-changes:
     uses: ./.github/workflows/check-version-changes.yml
 
+  detect-file-changes:
+    needs: [discover-images]
+    uses: ./.github/workflows/detect-file-changes.yml
+    with:
+      full-matrix: ${{ needs.discover-images.outputs.matrix }}
+
   select-matrix:
     # Picks which matrix to feed downstream jobs and whether they should run.
-    # Priority: explicit `images` input > force_rebuild > version changes-detected > nothing.
-    needs: [discover-images, check-version-changes]
+    # Priority: explicit `images` input > force_rebuild >
+    # (file-changed ∪ version-changed) > nothing.
+    needs: [discover-images, check-version-changes, detect-file-changes]
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.pick.outputs.matrix }}
@@ -45,14 +52,21 @@ jobs:
           set -euo pipefail
           IMAGES=${{ toJSON(github.event.inputs.images) }}
           FORCE=${{ toJSON(github.event.inputs.force_rebuild) }}
-          CHANGES_DETECTED=${{ toJSON(needs.check-version-changes.outputs.changes-detected) }}
-          CHANGED=${{ toJSON(needs.check-version-changes.outputs.changed-images) }}
+          VERSION_CHANGED=${{ toJSON(needs.check-version-changes.outputs.changes-detected) }}
+          VERSION_MATRIX=${{ toJSON(needs.check-version-changes.outputs.changed-images) }}
+          FILE_CHANGED=${{ toJSON(needs.detect-file-changes.outputs.changes-detected) }}
+          FILE_MATRIX=${{ toJSON(needs.detect-file-changes.outputs.changed-images) }}
+          FILE_REBUILD_ALL=${{ toJSON(needs.detect-file-changes.outputs.rebuild-all) }}
           FULL=${{ toJSON(needs.discover-images.outputs.matrix) }}
 
           # GHA's toJSON(undefined) yields the literal string "null"; normalize.
           [ "$IMAGES" = "null" ] && IMAGES=""
           [ "$FORCE" = "null" ] && FORCE="false"
-          [ "$CHANGES_DETECTED" = "null" ] && CHANGES_DETECTED="false"
+          [ "$VERSION_CHANGED" = "null" ] && VERSION_CHANGED="false"
+          [ "$FILE_CHANGED" = "null" ] && FILE_CHANGED="false"
+          [ "$FILE_REBUILD_ALL" = "null" ] && FILE_REBUILD_ALL="false"
+          [ "$VERSION_MATRIX" = "null" ] && VERSION_MATRIX='{"include":[]}'
+          [ "$FILE_MATRIX" = "null" ] && FILE_MATRIX='{"include":[]}'
 
           if [ -n "$IMAGES" ]; then
             MATRIX=$(printf '%s' "$FULL" | jq -c --arg list "$IMAGES" '
@@ -63,14 +77,36 @@ jobs:
             echo "run=true" >> "$GITHUB_OUTPUT"
             echo "Selected images: $IMAGES"
             echo "Matrix: $MATRIX"
-          elif [ "$FORCE" = "true" ]; then
+          elif [ "$FORCE" = "true" ] || [ "$FILE_REBUILD_ALL" = "true" ]; then
+            # FORCE: explicit user request. FILE_REBUILD_ALL: detect-file-changes
+            # signalled a shared-path change (lib/, flake.lock, etc.) without
+            # returning the matrix itself (which would be 200KB+ for 3000+ images
+            # and break GHA's exec at the step boundary).
             echo "matrix=$FULL" >> "$GITHUB_OUTPUT"
             echo "run=true" >> "$GITHUB_OUTPUT"
-            echo "force_rebuild=true; using full discovered matrix"
-          elif [ "$CHANGES_DETECTED" = "true" ]; then
-            echo "matrix=$CHANGED" >> "$GITHUB_OUTPUT"
+            if [ "$FORCE" = "true" ]; then
+              echo "force_rebuild=true; using full discovered matrix"
+            else
+              echo "file-change rebuild-all triggered; using full discovered matrix"
+            fi
+          elif [ "$VERSION_CHANGED" = "true" ] || [ "$FILE_CHANGED" = "true" ]; then
+            # Union the two matrices on .name. check-version-changes emits the
+            # matrix as a bare array (e.g. "[]" when empty), while
+            # detect-file-changes emits it as {"include":[...]} — normalize
+            # both shapes before concat.
+            MATRIX=$(jq -cn \
+              --argjson v "$VERSION_MATRIX" \
+              --argjson f "$FILE_MATRIX" '
+              def to_array:
+                if type == "object" and has("include") then .include
+                elif type == "array" then .
+                else [] end;
+              {include: (($v | to_array) + ($f | to_array) | unique_by(.name))}
+            ')
+            echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
             echo "run=true" >> "$GITHUB_OUTPUT"
-            echo "Using changed-images matrix from version detection"
+            echo "Using union of version-changed and file-changed matrices"
+            echo "Matrix: $MATRIX"
           else
             echo 'matrix={"include":[]}' >> "$GITHUB_OUTPUT"
             echo "run=false" >> "$GITHUB_OUTPUT"

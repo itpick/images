@@ -1,0 +1,98 @@
+name: Detect File Changes
+
+on:
+  workflow_call:
+    inputs:
+      full-matrix:
+        description: "Full discovered-images matrix JSON, used when rebuild-all triggers"
+        required: true
+        type: string
+    outputs:
+      changes-detected:
+        description: "Whether any classified file changes were detected"
+        value: ${{ jobs.detect.outputs.changes-detected }}
+      changed-images:
+        description: "Matrix of images to rebuild (empty when no relevant changes)"
+        value: ${{ jobs.detect.outputs.changed-images }}
+      rebuild-all:
+        description: "True if a shared path changed (changed-images = full matrix)"
+        value: ${{ jobs.detect.outputs.rebuild-all }}
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      changes-detected: ${{ steps.classify.outputs.changes-detected }}
+      changed-images: ${{ steps.classify.outputs.changed-images }}
+      rebuild-all: ${{ steps.classify.outputs.rebuild-all }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          # fetch-depth: 0 is required so the base ref (PR) or previous tip
+          # (push) is available locally for git diff.
+          fetch-depth: 0
+
+      - name: Compute diff base
+        id: base
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          case "$EVENT_NAME" in
+            pull_request)
+              # Three-dot diff against merge-base of PR target branch and HEAD.
+              # Survives force-pushes because it always compares to merge-base.
+              # Full history of BASE_REF is required so git can find the
+              # merge-base; do not add --depth=1 here.
+              git fetch origin "$BASE_REF" || true
+              echo "spec=origin/${BASE_REF}...HEAD" >> "$GITHUB_OUTPUT"
+              ;;
+            push)
+              # github.event.before is the previous tip; falls back to HEAD~1
+              # if the event is the first push on a new branch (before = zeros).
+              if [ -n "$BEFORE_SHA" ] && [ "$BEFORE_SHA" != "0000000000000000000000000000000000000000" ]; then
+                echo "spec=${BEFORE_SHA}..HEAD" >> "$GITHUB_OUTPUT"
+              else
+                echo "spec=HEAD~1..HEAD" >> "$GITHUB_OUTPUT"
+              fi
+              ;;
+            *)
+              # workflow_dispatch and friends: no diff base available;
+              # emit empty so classify step outputs no changes.
+              echo "spec=" >> "$GITHUB_OUTPUT"
+              ;;
+          esac
+
+      - name: Classify changed paths
+        id: classify
+        env:
+          DIFF_SPEC: ${{ steps.base.outputs.spec }}
+          FULL_MATRIX_PATH: ${{ runner.temp }}/full-matrix.json
+        run: |
+          set -euo pipefail
+          # Stage the full-matrix to a file. Substituting it directly here
+          # (vs. via env:FULL_MATRIX) avoids "Argument list too long" at
+          # exec time when the matrix is large — this repo has 3000+ images
+          # and the JSON blob exceeds the kernel's ARG_MAX.
+          cat > "$FULL_MATRIX_PATH" <<'MATRIX_EOF'
+          ${{ inputs.full-matrix }}
+          MATRIX_EOF
+
+          if [ -z "$DIFF_SPEC" ]; then
+            echo "No diff spec (event has no comparison base); reporting no changes"
+            CHANGED=""
+          else
+            CHANGED=$(git diff --name-only "$DIFF_SPEC")
+            echo "Diff against $DIFF_SPEC:"
+            printf '%s\n' "$CHANGED" | sed 's/^/  /'
+          fi
+          RESULT=$(printf '%s' "$CHANGED" | .github/scripts/detect-file-changes.sh)
+          echo "Classification result: $RESULT"
+          {
+            echo "changes-detected=$(jq -r '."changes-detected"' <<< "$RESULT")"
+            echo "changed-images=$(jq -c '."changed-images"' <<< "$RESULT")"
+            echo "rebuild-all=$(jq -r '."rebuild-all"' <<< "$RESULT")"
+          } >> "$GITHUB_OUTPUT"
