@@ -20,14 +20,33 @@ let
     home = "/home/keycloak";
   };
 
-  # JDK used by keycloak. nixpkgs.keycloak's own C wrapper hardcodes a
-  # specific openjdk-headless-21 path; we want a matching JDK 21 in the
-  # image so our replacement kc.sh wrapper (below) can set JAVA_HOME.
-  jdk = pkgs.jdk21_headless;
+  # Minimal jlink runtime instead of the full 566 MB openjdk-headless JDK.
+  # keycloak (and its Quarkus augment step) run fine on a JRE; the module
+  # list is the well-established keycloak/Quarkus jlink set. java.se is
+  # intentionally omitted — it's an aggregator that pulls nearly every
+  # module back in and defeats the trim. The full JDK is still used at
+  # BUILD time by jre_minimal's jlink; only this ~150 MB runtime ships.
+  jre = pkgs.jre_minimal.override {
+    jdk = pkgs.jdk21_headless;
+    modules = [
+      "java.base" "java.compiler" "java.datatransfer" "java.desktop"
+      "java.instrument" "java.logging" "java.management" "java.management.rmi"
+      "java.naming" "java.net.http" "java.prefs" "java.rmi" "java.scripting"
+      "java.security.jgss" "java.security.sasl" "java.sql" "java.sql.rowset"
+      "java.transaction.xa" "java.xml" "java.xml.crypto"
+      "jdk.crypto.cryptoki" "jdk.crypto.ec" "jdk.httpserver" "jdk.jfr"
+      "jdk.management" "jdk.management.agent" "jdk.naming.dns" "jdk.naming.rmi"
+      "jdk.net" "jdk.security.auth" "jdk.security.jgss" "jdk.unsupported"
+      "jdk.zipfs"
+    ];
+  };
 
+  # keycloak is NOT in imagePkgs — the distribution ships only via the
+  # writable /opt copy (keycloakDist) below, so the read-only store copy
+  # (~184 MB) doesn't get duplicated into the image. java comes from the
+  # jlink jre, referenced by the wrapper (JAVA_HOME), so it's in the
+  # closure without polluting /bin.
   imagePkgs = with pkgs; [
-    keycloak
-    jdk
     bash
     coreutils
     # kc.sh-wrapped pipes through sed/xargs during startup. coreutils doesn't
@@ -52,8 +71,8 @@ let
   # $DIRNAME resolves under /opt/keycloak and writes land on the writable
   # copy.
   kcShWrapper = pkgs.writeShellScript "kc.sh" ''
-    export JAVA_HOME="${jdk}"
-    export PATH="${jdk}/bin:$PATH"
+    export JAVA_HOME="${jre}"
+    export PATH="${jre}/bin:$PATH"
     exec /opt/keycloak/bin/.kc.sh-wrapped "$@"
   '';
 
