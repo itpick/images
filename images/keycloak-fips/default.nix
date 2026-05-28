@@ -58,22 +58,21 @@ let
     tzdata
   ];
 
-  # The nixpkgs keycloak ships /bin/kc.sh as a compiled C wrapper
-  # (makeCWrapper) that exec's /nix/store/.../keycloak/bin/.kc.sh-wrapped
-  # with a hardcoded path. Inside that wrapped script, $DIRNAME (via
-  # readlink -f "$0") resolves to the nix-store path — and -cp +
-  # augment-output paths follow from $DIRNAME. So even though we copy the
-  # distribution to /opt/keycloak (writable), the original wrapper routes
-  # everything back to the read-only store and augment crashes.
+  # nixpkgs keycloak ships every launcher (kc.sh, kcadm.sh, kcreg.sh,
+  # federation-sssd-setup.sh) as a compiled C wrapper (makeCWrapper) that
+  # hardcodes BOTH the full-JDK path (JAVA_HOME) and the store keycloak
+  # path (the .X-wrapped it exec's). cp -rL preserves those binaries
+  # verbatim, so nix's reference scanner keeps the ~566MB JDK and ~184MB
+  # store keycloak in the image closure — even though we run from /opt and
+  # a jlink JRE. Replacing each C wrapper with a shell wrapper that resolves
+  # under /opt and points JAVA_HOME at the jlink JRE frees both store paths.
   #
-  # Replace the C wrapper with this tiny shell wrapper: same env setup
-  # (JAVA_HOME, PATH), but exec's /opt/keycloak/bin/.kc.sh-wrapped — so
-  # $DIRNAME resolves under /opt/keycloak and writes land on the writable
-  # copy.
-  kcShWrapper = pkgs.writeShellScript "kc.sh" ''
+  # Bonus: $DIRNAME inside .X-wrapped (via readlink -f "$0") now resolves
+  # under /opt/keycloak, so augment writes land on the writable copy.
+  mkKcWrapper = tool: pkgs.writeShellScript "${tool}.sh" ''
     export JAVA_HOME="${jre}"
     export PATH="${jre}/bin:$PATH"
-    exec /opt/keycloak/bin/.kc.sh-wrapped "$@"
+    exec "/opt/keycloak/bin/.${tool}.sh-wrapped" "$@"
   '';
 
   userEnv = nonRoot.mkCustomUserEnv pkgs keycloakUser [];
@@ -99,9 +98,16 @@ let
     mkdir -p $out/opt
     cp -rL ${pkgs.keycloak} $out/opt/keycloak
     chmod -R u+w $out/opt/keycloak
-    # Replace the nixpkgs C wrapper with our shell wrapper that resolves
-    # paths under /opt/keycloak (see kcShWrapper comment for details).
-    install -m 0755 ${kcShWrapper} $out/opt/keycloak/bin/kc.sh
+    # Replace ALL nixpkgs C-wrapper launchers with shell wrappers (see
+    # mkKcWrapper). Leaving any of them keeps the full JDK + store keycloak
+    # in the closure.
+    install -m 0755 ${mkKcWrapper "kc"}    $out/opt/keycloak/bin/kc.sh
+    install -m 0755 ${mkKcWrapper "kcadm"} $out/opt/keycloak/bin/kcadm.sh
+    install -m 0755 ${mkKcWrapper "kcreg"} $out/opt/keycloak/bin/kcreg.sh
+    # federation-sssd-setup (AD/LDAP helper) isn't used by `kc.sh start`;
+    # drop it and its wrapped form so they don't pull the full JDK back in.
+    rm -f $out/opt/keycloak/bin/federation-sssd-setup.sh \
+          $out/opt/keycloak/bin/.federation-sssd-setup.sh-wrapped
     mkdir -p $out/opt/keycloak/data/import $out/opt/keycloak/data/sessions
   '';
 
