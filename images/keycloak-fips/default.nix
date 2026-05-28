@@ -34,9 +34,10 @@ let
       "java.naming" "java.net.http" "java.prefs" "java.rmi" "java.scripting"
       "java.security.jgss" "java.security.sasl" "java.sql" "java.sql.rowset"
       "java.transaction.xa" "java.xml" "java.xml.crypto"
-      "jdk.crypto.cryptoki" "jdk.crypto.ec" "jdk.httpserver" "jdk.management"
-      "jdk.management.agent" "jdk.naming.dns" "jdk.naming.rmi" "jdk.net"
-      "jdk.security.auth" "jdk.security.jgss" "jdk.unsupported" "jdk.zipfs"
+      "jdk.crypto.cryptoki" "jdk.crypto.ec" "jdk.httpserver" "jdk.jfr"
+      "jdk.management" "jdk.management.agent" "jdk.naming.dns" "jdk.naming.rmi"
+      "jdk.net" "jdk.security.auth" "jdk.security.jgss" "jdk.unsupported"
+      "jdk.zipfs"
     ];
   };
 
