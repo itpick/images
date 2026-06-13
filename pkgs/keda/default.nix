@@ -6,13 +6,13 @@
 
 buildGoModule rec {
   pname = "keda";
-  version = "2.18.1";
+  version = "2.20.1";
 
   src = fetchFromGitHub {
     owner = "kedacore";
     repo = "keda";
     rev = "v${version}";
-    hash = "sha256-pfIzNyph6re2I0Cv9bganIEVVveEjDQOCsBiJFMesQo=";
+    hash = "sha256-xSPhvWBjXY3HkzTikklqkipAsCEq3nqsrR5xKMQl7RM=";
   };
 
   # KEDA includes vendor directory
@@ -30,7 +30,7 @@ buildGoModule rec {
   ldflags = [
     "-s" "-w"
     "-X github.com/kedacore/keda/v2/version.Version=${version}"
-    "-X github.com/kedacore/keda/v2/version.GitCommit=b7c5655a"
+    "-X github.com/kedacore/keda/v2/version.GitCommit=875675ce"
   ];
 
   # Rename binaries to match expected names

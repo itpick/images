@@ -8,3 +8,7 @@ platform-results/
 scripts/platform-pipeline.sh
 docs/plans/
 docs/superpowers/
+
+# Verify-image.sh artifacts (per-image build state)
+audit-results/
+result-load-*

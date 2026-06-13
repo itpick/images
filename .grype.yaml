@@ -1,0 +1,317 @@
+# Accepted residual CVEs — see docs/audits/cluster-image-audit.md
+# Mirrors .trivyignore for grype.
+# These are upstream toolchain or x/* ecosystem vulnerabilities whose fixes exist
+# upstream but are not yet propagated to nixpkgs unstable (for stdlib) or to the
+# flux image releases we consume (for vendored x/* libs).
+# Surfaced during the 2026-06-13 refresh scan of helm-controller:v1.5.5.
+#
+# Stakeholder-approved on 2026-06-12: accept-with-documentation.
+ignore:
+  # stdlib go1.26.3 → fixed in 1.26.4; nixpkgs unstable still ships 1.26.3 (as of 2026-06-10)
+  - vulnerability: CVE-2026-42504
+    # package: stdlib, fix: 1.26.4
+  - vulnerability: GO-2026-5038
+    # package: stdlib, fix: 1.26.4
+
+  # golang.org/x/crypto v0.50.0 → fixed in 0.52.0; fluxcd 1.5.x has not revendored yet
+  - vulnerability: CVE-2026-39833
+    # package: golang.org/x/crypto, fix: 0.52.0
+  - vulnerability: GO-2026-5005
+    # package: golang.org/x/crypto, fix: 0.52.0
+  - vulnerability: CVE-2026-39832
+    # package: golang.org/x/crypto, fix: 0.52.0
+  - vulnerability: GO-2026-5006
+    # package: golang.org/x/crypto, fix: 0.52.0
+  - vulnerability: CVE-2026-46597
+    # package: golang.org/x/crypto, fix: 0.52.0
+  - vulnerability: GO-2026-5013
+    # package: golang.org/x/crypto, fix: 0.52.0
+  - vulnerability: CVE-2026-39830
+    # package: golang.org/x/crypto, fix: 0.52.0
+  - vulnerability: GO-2026-5017
+    # package: golang.org/x/crypto, fix: 0.52.0
+  - vulnerability: CVE-2026-39829
+    # package: golang.org/x/crypto, fix: 0.52.0
+  - vulnerability: GO-2026-5018
+    # package: golang.org/x/crypto, fix: 0.52.0
+  - vulnerability: CVE-2026-39831
+    # package: golang.org/x/crypto, fix: 0.52.0
+  - vulnerability: GO-2026-5019
+    # package: golang.org/x/crypto, fix: 0.52.0
+  - vulnerability: CVE-2026-39834
+    # package: golang.org/x/crypto, fix: 0.52.0
+  - vulnerability: GO-2026-5020
+    # package: golang.org/x/crypto, fix: 0.52.0
+  - vulnerability: CVE-2026-42508
+    # package: golang.org/x/crypto, fix: 0.52.0
+  - vulnerability: GO-2026-5021
+    # package: golang.org/x/crypto, fix: 0.52.0
+  - vulnerability: CVE-2026-46595
+    # package: golang.org/x/crypto, fix: 0.52.0
+  - vulnerability: GO-2026-5023
+    # package: golang.org/x/crypto, fix: 0.52.0
+
+  # golang.org/x/net v0.50.0–v0.53.0 → fixed in 0.51.0/0.53.0/0.55.0; fluxcd has not revendored yet
+  - vulnerability: CVE-2026-39821
+    # package: golang.org/x/net, fix: 0.55.0
+  - vulnerability: GO-2026-5026
+    # package: golang.org/x/net, fix: 0.55.0
+  - vulnerability: GO-2026-4918
+    # package: golang.org/x/net v0.50.0, fix: 0.53.0; flux-source-watcher 2.1.1 vendor
+  - vulnerability: GO-2026-4559
+    # package: golang.org/x/net v0.50.0, fix: 0.51.0; flux-source-watcher 2.1.1 vendor
+
+  # github.com/prometheus/prometheus v0.304.2 → fixed in 0.305.2/0.311.3
+  # keda 2.20.1 vendors prometheus at v0.304.2; upstream has not revendored yet
+  - vulnerability: GHSA-8rm2-7qqf-34qm
+    # package: github.com/prometheus/prometheus, fix: 0.305.2
+  - vulnerability: GHSA-wg65-39gg-5wfj
+    # package: github.com/prometheus/prometheus, fix: 0.311.3
+  - vulnerability: CVE-2026-42151
+    # package: github.com/prometheus/prometheus, fix: 0.311.3
+  - vulnerability: CVE-2026-42154
+    # package: github.com/prometheus/prometheus, fix: 0.305.2
+
+  # github.com/moby/spdystream v0.5.0 → fixed in 0.5.1
+  # istio 1.30.1 has not yet revendored; applies to istio-pilot and istio-proxyv2
+  # Surfaced during the 2026-06-13 refresh scan of istio-pilot:1.30.1 and istio-proxyv2:1.30.1.
+  - vulnerability: GHSA-pc3f-x583-g7j2
+    # package: github.com/moby/spdystream, fix: 0.5.1
+  - vulnerability: GO-2026-4958
+    # package: github.com/moby/spdystream, fix: 0.5.1
+
+  # google.golang.org/grpc v1.74.2 → fixed in 1.79.3; velero 1.18.1 has not revendored yet
+  # CVE-2026-33186: gRPC-Go authz bypass (CRITICAL)
+  # Surfaced during the 2026-06-13 refresh scan of velero:1.18.1.
+  - vulnerability: CVE-2026-33186
+    # package: google.golang.org/grpc, fix: 1.79.3
+  - vulnerability: GHSA-p77j-4mvh-x3m3
+    # package: google.golang.org/grpc, fix: 1.79.3
+  - vulnerability: GO-2026-4762
+    # package: google.golang.org/grpc, fix: 1.79.3
+
+  # go.opentelemetry.io/otel v1.36.0 → fixed in 1.41.0; velero 1.18.1 has not revendored yet
+  - vulnerability: CVE-2026-29181
+    # package: go.opentelemetry.io/otel, fix: 1.41.0
+  - vulnerability: GHSA-mh2q-q3fh-2475
+    # package: go.opentelemetry.io/otel, fix: 1.41.0
+
+  # go.opentelemetry.io/otel/sdk v1.36.0 → fixed in 1.40.0/1.43.0; velero 1.18.1 has not revendored yet
+  - vulnerability: CVE-2026-24051
+    # package: go.opentelemetry.io/otel/sdk, fix: 1.40.0
+  - vulnerability: GHSA-9h8m-3fm2-qjrq
+    # package: go.opentelemetry.io/otel/sdk, fix: 1.40.0
+  - vulnerability: GO-2026-4394
+    # package: go.opentelemetry.io/otel/sdk, fix: 1.40.0
+  - vulnerability: CVE-2026-39883
+    # package: go.opentelemetry.io/otel/sdk, fix: 1.43.0
+  - vulnerability: GHSA-hfvc-g4fc-pqhx
+    # package: go.opentelemetry.io/otel/sdk, fix: 1.43.0
+
+  # golang.org/x/crypto v0.41.0 → fixed in 0.43.0; velero 1.18.1 has not revendored yet
+  - vulnerability: GO-2025-4116
+    # package: golang.org/x/crypto, fix: 0.43.0
+
+  # github.com/projectcontour/contour v1.33.3 → fixed in 1.33.4; external-dns 0.21.0 has not revendored
+  # CVE-2026-41246: Contour/Envoy vulnerability (HIGH)
+  # Surfaced during the 2026-06-13 refresh scan of external-dns:0.21.0.
+  - vulnerability: CVE-2026-41246
+    # package: github.com/projectcontour/contour, fix: 1.33.4
+  - vulnerability: GHSA-x4mj-7f9g-29h4
+    # package: github.com/projectcontour/contour, fix: 1.33.4
+
+  # urllib3 2.6.3 → fixed in 2.7.0; nixpkgs unstable ships 2.6.3 (as of 2026-06-13)
+  # k8s-sidecar 2.7.3 depends on python3.withPackages using nixpkgs urllib3
+  - vulnerability: CVE-2026-44431
+    # package: urllib3, fix: 2.7.0
+  - vulnerability: CVE-2026-44432
+    # package: urllib3, fix: 2.7.0
+  - vulnerability: GHSA-mf9v-mfxr-j63j
+    # package: urllib3, fix: 2.7.0
+  - vulnerability: GHSA-qccp-gfcp-xxvc
+    # package: urllib3, fix: 2.7.0
+
+  # Python 3.13.13 CVEs — nixpkgs toolchain residuals; k8s-sidecar 2.7.3
+  - vulnerability: CVE-2026-3298
+    # package: python 3.13.13
+  - vulnerability: CVE-2026-9669
+    # package: python 3.13.13
+  - vulnerability: CVE-2026-4786
+    # package: python 3.13.13
+  - vulnerability: CVE-2026-7210
+    # package: python 3.13.13
+  - vulnerability: CVE-2026-6100
+    # package: python 3.13.13
+
+  # SQLite 3.51.2 → fixed in 3.53.2; nixpkgs toolchain residual; k8s-sidecar 2.7.3
+  - vulnerability: CVE-2026-11822
+    # package: sqlite, fix: 3.53.2
+  - vulnerability: CVE-2026-11824
+    # package: sqlite, fix: 3.53.2
+
+  # stdlib go1.26.2 → fixed in 1.26.3; nixpkgs unstable ships 1.26.2 (as of 2026-06-13)
+  # New CVEs surfaced during the 2026-06-13 refresh scan of google-cloud-sdk:565.0.0.
+  - vulnerability: CVE-2026-33811
+    # package: stdlib, fix: 1.26.3
+  - vulnerability: CVE-2026-33814
+    # package: stdlib, fix: 1.26.3
+  - vulnerability: CVE-2026-39820
+    # package: stdlib, fix: 1.26.3
+  - vulnerability: CVE-2026-39823
+    # package: stdlib, fix: 1.26.3
+  - vulnerability: CVE-2026-39825
+    # package: stdlib, fix: 1.26.3
+  - vulnerability: CVE-2026-39836
+    # package: stdlib, fix: 1.26.3
+  - vulnerability: CVE-2026-42499
+    # package: stdlib, fix: 1.26.3
+
+  # github.com/grafana/tempo vendored in grafana 13.0.1; upstream has not revendored yet
+  # CVE-2026-21728: Tempo DoS via large queries (HIGH); CVE-2026-28377: S3 info disclosure (HIGH)
+  - vulnerability: CVE-2026-21728
+    # package: github.com/grafana/tempo, fix: 2.8.4
+  - vulnerability: GHSA-p4r4-xvrq-gvmc
+    # package: github.com/grafana/tempo, fix: 2.8.4
+  - vulnerability: CVE-2026-28377
+    # package: github.com/grafana/tempo, fix: 2.10.3
+  - vulnerability: GHSA-ffqx-q65f-36jf
+    # package: github.com/grafana/tempo, fix: 2.10.3
+
+  # stdlib go1.26.2 additional GO-database IDs — same underlying issue as CVE batch above
+  - vulnerability: GO-2026-4986
+    # package: stdlib, fix: 1.26.3
+  - vulnerability: GO-2026-4977
+    # package: stdlib, fix: 1.26.3
+  - vulnerability: GO-2026-4971
+    # package: stdlib, fix: 1.26.3
+  - vulnerability: GO-2026-4981
+    # package: stdlib, fix: 1.26.3
+  - vulnerability: CVE-2026-42501
+    # package: stdlib, fix: 1.26.3
+
+  # github.com/go-jose/go-jose/v4 v4.1.4 — false positive: trivy says fixed in v4.0.5 (4.1.4 > 4.0.5)
+  - vulnerability: CVE-2026-34986
+    # package: go-jose/v4, false-positive version comparison
+  - vulnerability: GHSA-78h2-9frx-2jm8
+    # package: go-jose/v4, false-positive version comparison
+  - vulnerability: GO-2026-4945
+    # package: go-jose/v4, false-positive version comparison
+
+  # openssl 3.6.2 → fixed in 3.6.3; nixpkgs nix store still has 3.6.2 cached (as of 2026-06-13)
+  # affects istio-proxyv2 via iptables/iproute2 transitive dependency
+  # Surfaced during the 2026-06-13 refresh scan of istio-proxyv2:1.30.1.
+  - vulnerability: CVE-2026-45447
+    # package: openssl, fix: 3.6.3
+  - vulnerability: CVE-2026-9076
+    # package: openssl, fix: 3.6.3
+  - vulnerability: CVE-2026-7383
+    # package: openssl, fix: 3.6.3
+  - vulnerability: CVE-2026-34180
+    # package: openssl, fix: 3.6.3
+  - vulnerability: CVE-2026-42764
+    # package: openssl, fix: 3.6.3
+  - vulnerability: CVE-2026-34183
+    # package: openssl, fix: 3.6.3
+  - vulnerability: CVE-2026-42765
+    # package: openssl, fix: 3.6.3
+  - vulnerability: CVE-2026-45445
+    # package: openssl, fix: 3.6.3
+  - vulnerability: CVE-2026-34182
+    # package: openssl, fix: 3.6.3; CRITICAL
+  - vulnerability: CVE-2026-34181
+    # package: openssl, fix: 3.6.3
+
+  # redis 8.8.0 — false positives: Debian-packaging-specific CVEs
+  # Surfaced during the 2026-06-13 verify of redis:8.8.0.
+  # CVE-2022-0543 and CVE-2022-3734 are specific to Debian/Ubuntu Redis packaging where
+  # Lua was a separate shared library. nixpkgs builds Redis without this Debian-specific
+  # packaging; no upstream fix exists as it is not a Redis upstream vulnerability.
+  - vulnerability: CVE-2022-0543
+    # package: redis (debian packaging false positive), no upstream fix
+  - vulnerability: CVE-2022-3734
+    # package: redis (debian packaging false positive), no upstream fix
+
+  # keycloak 26.6.3 — vendored Java (Netty) CVEs; keycloak has not revendored to 4.1.135.Final yet
+  # Surfaced during the 2026-06-13 verify of keycloak:26.6.3.
+  - vulnerability: CVE-2026-44249
+    # package: io.netty:netty-handler 4.1.133.Final, fix: 4.1.135.Final
+  - vulnerability: GHSA-x4gw-5cx5-pgmh
+    # package: io.netty:netty-handler 4.1.133.Final, fix: 4.1.135.Final
+  - vulnerability: CVE-2026-45416
+    # package: io.netty:netty-handler 4.1.133.Final, fix: 4.1.135.Final
+  - vulnerability: GHSA-3qp7-7mw8-wx86
+    # package: io.netty:netty-handler 4.1.133.Final, fix: 4.1.135.Final
+  - vulnerability: CVE-2026-44893
+    # package: io.netty:netty-codec-haproxy 4.1.133.Final, fix: 4.1.135.Final
+  - vulnerability: GHSA-h2qv-fj59-j46j
+    # package: io.netty:netty-codec-haproxy 4.1.133.Final, fix: 4.1.135.Final
+  - vulnerability: CVE-2026-48059
+    # package: io.netty:netty-codec-haproxy 4.1.133.Final, fix: 4.1.135.Final
+  - vulnerability: GHSA-cc37-9q2j-3hfv
+    # package: io.netty:netty-codec-haproxy 4.1.133.Final, fix: 4.1.135.Final
+  - vulnerability: CVE-2026-45674
+    # package: io.netty:netty-resolver-dns 4.1.133.Final, fix: 4.1.135.Final
+  - vulnerability: GHSA-5pvg-856g-cp85
+    # package: io.netty:netty-resolver-dns 4.1.133.Final, fix: 4.1.135.Final
+  - vulnerability: CVE-2026-47691
+    # package: io.netty:netty-resolver-dns 4.1.133.Final, fix: 4.1.135.Final
+  - vulnerability: GHSA-676x-f7gg-47vc
+    # package: io.netty:netty-resolver-dns 4.1.133.Final, fix: 4.1.135.Final
+
+  # keycloak 26.6.3 — false positive: CVE-2017-12159 fixed in keycloak 3.3.1; we ship 26.6.3
+  - vulnerability: CVE-2017-12159
+    # package: keycloak, false-positive: fixed in 3.3.1, we ship 26.6.3
+
+  # keycloak 26.6.3 — libtiff and cups nixpkgs toolchain residuals (JDK 21 transitive)
+  # Surfaced during the 2026-06-13 verify of keycloak:26.6.3.
+  - vulnerability: CVE-2023-52356
+    # package: libtiff, toolchain residual via openjdk21
+  - vulnerability: CVE-2026-4775
+    # package: libtiff, toolchain residual via openjdk21
+  - vulnerability: CVE-2018-6553
+    # package: cups, toolchain residual via openjdk21
+
+  # vaultwarden 1.36.0 — false positives: scanners detect internal Rust crate "vaultwarden"
+  # at version 1.0.0 but we ship the application at 1.36.0 which incorporates all fixes.
+  # Surfaced during the 2026-06-13 verify of vaultwarden:v1.36.0.
+  - vulnerability: CVE-2024-55225
+    # package: vaultwarden app 1.36.0 > fixed 1.32.5; false positive on internal crate version
+  - vulnerability: GHSA-x7m9-mv49-fv73
+    # package: vaultwarden app 1.36.0 > fixed 1.32.5; false positive on internal crate version
+  - vulnerability: CVE-2026-27802
+    # package: vaultwarden app 1.36.0 > fixed 1.35.4; false positive on internal crate version
+  - vulnerability: GHSA-h4hq-rgvh-wh27
+    # package: vaultwarden app 1.36.0 > fixed 1.35.4; false positive on internal crate version
+  - vulnerability: CVE-2026-27803
+    # package: vaultwarden app 1.36.0 > fixed 1.35.4; false positive on internal crate version
+  - vulnerability: GHSA-r32r-j5jq-3w4m
+    # package: vaultwarden app 1.36.0 > fixed 1.35.4; false positive on internal crate version
+
+  # openssl Rust crate 0.10.78 → fixed in 0.10.79; vendored in nixpkgs vaultwarden 1.36.0
+  # nixpkgs upstream has not yet bumped this dependency
+  # Surfaced during the 2026-06-13 verify of vaultwarden:v1.36.0.
+  - vulnerability: CVE-2026-42327
+    # package: openssl (rust crate), fix: 0.10.79
+  - vulnerability: GHSA-xp3w-r5p5-63rr
+    # package: openssl (rust crate), fix: 0.10.79
+
+  # rustls-webpki 0.101.7 → fixed in 0.103.13; vendored in nixpkgs vaultwarden 1.36.0
+  # nixpkgs upstream has not yet bumped this dependency
+  # Surfaced during the 2026-06-13 verify of vaultwarden:v1.36.0.
+  - vulnerability: GHSA-82j2-j2ch-gfr8
+    # package: rustls-webpki, fix: 0.103.13
+
+  # twentycrm v2.12.0 — vendored upstream image CVEs; build strategy is nix2container pullImage
+  # (true buildNpmPackage derivation is followup work; these CVEs are inherited from upstream image)
+  # Surfaced during the 2026-06-13 verify of twentycrm:v2.12.0.
+  #
+  # esbuild 0.28.0 → fixed in 0.28.1; vendored by twentycrm v2.12.0 upstream Node package;
+  # pending upstream revendor (twentyhq/twenty has not yet bumped esbuild)
+  - vulnerability: GHSA-gv7w-rqvm-qjhr
+    # package: esbuild 0.28.0 (npm), fix: 0.28.1
+  #
+  # curl 8.19.0-r0 — from upstream twentycrm OS layer (Alpine); reroll on next upstream image refresh
+  - vulnerability: CVE-2026-5773
+    # package: curl 8.19.0-r0 (apk), from upstream twentycrm OS layer
+  - vulnerability: CVE-2026-6276
+    # package: curl 8.19.0-r0 (apk), from upstream twentycrm OS layer

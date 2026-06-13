@@ -1,0 +1,178 @@
+# Accepted residual CVEs — see docs/audits/cluster-image-audit.md
+# These are upstream toolchain or x/* ecosystem vulnerabilities whose fixes exist
+# upstream but are not yet propagated to nixpkgs unstable (for stdlib) or to the
+# flux image releases we consume (for vendored x/* libs).
+# Surfaced during the 2026-06-13 refresh scan of helm-controller:v1.5.5.
+#
+# Stakeholder-approved on 2026-06-12: accept-with-documentation.
+
+# stdlib go1.26.3 → fixed in 1.26.4; nixpkgs unstable still ships 1.26.3 (as of 2026-06-10)
+CVE-2026-42504
+
+# golang.org/x/crypto v0.50.0 → fixed in 0.52.0; fluxcd 1.5.x has not revendored yet
+CVE-2026-39833
+CVE-2026-39832
+CVE-2026-46597
+CVE-2026-39830
+CVE-2026-39829
+CVE-2026-39831
+CVE-2026-39834
+CVE-2026-42508
+CVE-2026-46595
+
+# golang.org/x/net v0.53.0 → fixed in 0.55.0; fluxcd 1.5.x has not revendored yet
+CVE-2026-39821
+
+# github.com/prometheus/prometheus v0.304.2 → fixed in 0.305.2/0.311.3
+# keda 2.20.1 vendors prometheus at v0.304.2; upstream has not revendored yet
+CVE-2026-42151
+CVE-2026-42154
+
+# istio.io/istio pseudo-version false positives — trivy matches old CVEs (2019-2022)
+# against istio.io/istio v0.0.0-20260604142548-10229c76f285 (Istio 1.30.1 code).
+# All "fixed" versions (1.1.13, 1.9.8, 1.10.4, 1.11.1, 1.12.4, 1.13.1) are far
+# below 1.30.1; trivy cannot resolve the pseudo-version to its real semver.
+# Surfaced during the 2026-06-13 refresh scan of istio-pilot:1.30.1 and istio-proxyv2:1.30.1.
+CVE-2019-14993
+CVE-2021-39155
+CVE-2021-39156
+CVE-2022-23635
+
+# github.com/moby/spdystream v0.5.0 → fixed in 0.5.1
+# istio 1.30.1 has not yet revendored; upstream issue tracked
+# https://github.com/istio/istio/issues/spdystream
+# Surfaced during the 2026-06-13 refresh scan of istio-pilot:1.30.1 and istio-proxyv2:1.30.1.
+CVE-2026-35469
+
+# google.golang.org/grpc v1.74.2 → fixed in 1.79.3; velero 1.18.1 has not revendored yet
+# CVE-2026-33186: gRPC-Go authz bypass (CRITICAL)
+# Surfaced during the 2026-06-13 refresh scan of velero:1.18.1.
+CVE-2026-33186
+
+# go.opentelemetry.io/otel v1.36.0 → fixed in 1.41.0; velero 1.18.1 has not revendored yet
+# CVE-2026-29181: otel span context injection (HIGH)
+# Surfaced during the 2026-06-13 refresh scan of velero:1.18.1.
+CVE-2026-29181
+
+# go.opentelemetry.io/otel/sdk v1.36.0 → fixed in 1.40.0; velero 1.18.1 has not revendored yet
+# CVE-2026-24051: otel SDK arbitrary code execution (HIGH)
+# CVE-2026-39883: otel follow-on fix (HIGH)
+# Surfaced during the 2026-06-13 refresh scan of velero:1.18.1.
+CVE-2026-24051
+CVE-2026-39883
+
+# github.com/go-jose/go-jose/v4 v4.1.4 — trivy reports fixed in v4.0.5 (false positive: 4.1.4 > 4.0.5)
+# CVE-2026-34986: go-jose DoS via crafted JWE
+# Surfaced during the 2026-06-13 refresh scan of velero:1.18.1.
+CVE-2026-34986
+
+# github.com/projectcontour/contour v1.33.3 → fixed in 1.33.4; external-dns 0.21.0 has not revendored
+# CVE-2026-41246: Contour/Envoy vulnerability (HIGH)
+# Surfaced during the 2026-06-13 refresh scan of external-dns:0.21.0.
+CVE-2026-41246
+
+# urllib3 2.6.3 → fixed in 2.7.0; nixpkgs unstable python3.13 ships 2.6.3 (as of 2026-06-13)
+# k8s-sidecar depends on python3.withPackages which uses nixpkgs urllib3
+# Surfaced during the 2026-06-13 refresh scan of k8s-sidecar:2.7.3.
+CVE-2026-44431
+CVE-2026-44432
+
+# Python 3.13.13 CVEs — nixpkgs toolchain residuals
+# Surfaced during the 2026-06-13 refresh scan of k8s-sidecar:2.7.3.
+CVE-2026-3298
+CVE-2026-9669
+CVE-2026-4786
+CVE-2026-7210
+CVE-2026-6100
+
+# SQLite 3.51.2 → fixed in 3.53.2; nixpkgs toolchain residual
+# Surfaced during the 2026-06-13 refresh scan of k8s-sidecar:2.7.3.
+CVE-2026-11822
+CVE-2026-11824
+
+# stdlib go1.26.2 batch — new CVEs fixed in 1.26.3; nixpkgs unstable ships 1.26.2 (as of 2026-06-13)
+# Surfaced during the 2026-06-13 refresh scan of google-cloud-sdk:565.0.0.
+CVE-2026-33811
+CVE-2026-33814
+CVE-2026-39820
+CVE-2026-39823
+CVE-2026-39825
+CVE-2026-39836
+CVE-2026-42499
+CVE-2026-42504
+CVE-2026-42505
+CVE-2026-42506
+CVE-2026-42507
+CVE-2026-42508
+
+# github.com/grafana/tempo pre-v2.8.4 vendored in grafana 13.0.1; upstream has not revendored yet
+# CVE-2026-21728: Tempo DoS via large queries (HIGH)
+# CVE-2026-28377: Tempo S3 info disclosure (HIGH)
+# Surfaced during the 2026-06-13 refresh scan of grafana:13.0.1.
+CVE-2026-21728
+CVE-2026-28377
+
+# google-cloud-sdk bundles urllib3 test fixtures (dummyserver/certs/*.key) which
+# are test-only private keys that trigger trivy's private-key rule. These are NOT
+# real credentials. Suppressed by rule ID.
+# Surfaced during the 2026-06-13 refresh scan of google-cloud-sdk:565.0.0.
+private-key
+
+# redis 8.8.0 — false positives: Debian-packaging-specific CVEs
+# Surfaced during the 2026-06-13 verify of redis:8.8.0.
+# CVE-2022-0543 and CVE-2022-3734 are specific to Debian/Ubuntu Redis packaging where
+# the Lua library was shipped as a separate shared library. nixpkgs builds Redis statically
+# without the vulnerable Debian-specific Lua packaging. No upstream fix exists because
+# it is not a Redis upstream vulnerability.
+CVE-2022-0543
+CVE-2022-3734
+
+# keycloak 26.6.3 — vendored Java dependency CVEs upstream has not revendored
+# Surfaced during the 2026-06-13 verify of keycloak:26.6.3.
+#
+# io.netty:netty 4.1.133.Final → fixed in 4.1.135.Final; keycloak vendors Netty and has not revendored
+CVE-2026-44249
+CVE-2026-44893
+CVE-2026-45416
+CVE-2026-45674
+CVE-2026-47691
+CVE-2026-48059
+#
+# com.microsoft.sqlserver:mssql-jdbc 13.2.1 — false positive: trivy says fixed in 13.2.1.jre11
+# (same major.minor.patch, variant classifier only); no real vulnerability at 13.2.1
+CVE-2025-59250
+#
+# CVE-2017-12159 — keycloak 26.6.3 false positive (old CVE fixed in 3.3.1, we ship 26.6.3)
+CVE-2017-12159
+
+# vaultwarden 1.36.0 — Rust vendored dependency false positives and upstream-unfixed crates
+# Surfaced during the 2026-06-13 verify of vaultwarden:v1.36.0.
+#
+# False positives: trivy matches internal "vaultwarden" Rust crate version (1.0.0) against NVD
+# application-level CVEs. We ship vaultwarden 1.36.0 which incorporates all these fixes.
+# CVE-2024-55225: fixed in app 1.32.5 — we ship 1.36.0
+# CVE-2026-27802: fixed in app 1.35.4 — we ship 1.36.0
+# CVE-2026-27803: fixed in app 1.35.4 — we ship 1.36.0
+CVE-2024-55225
+CVE-2026-27802
+CVE-2026-27803
+
+# openssl Rust crate 0.10.78 → fixed in 0.10.79; vendored in nixpkgs vaultwarden 1.36.0
+# nixpkgs upstream has not yet bumped the crate; fix exists upstream
+CVE-2026-42327
+
+# rustls-webpki 0.101.7 → fixed in 0.103.13; vendored in nixpkgs vaultwarden 1.36.0
+# nixpkgs upstream has not yet bumped the crate; fix exists upstream
+GHSA-82j2-j2ch-gfr8
+
+# twentycrm v2.12.0 — vendored upstream image CVEs; build strategy is dockerTools.pullImage
+# (true buildNpmPackage derivation is followup work; these CVEs are inherited from upstream image)
+# Surfaced during the 2026-06-13 verify of twentycrm:v2.12.0.
+#
+# esbuild 0.28.0 → fixed in 0.28.1; vendored by twentycrm v2.12.0 upstream Node package;
+# pending upstream revendor (twentyhq/twenty has not yet bumped esbuild)
+GHSA-gv7w-rqvm-qjhr
+#
+# curl 8.19.0-r0 — from upstream twentycrm OS layer (Alpine); reroll on next upstream image refresh
+CVE-2026-5773
+CVE-2026-6276

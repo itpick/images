@@ -1,37 +1,54 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
 
-# stakater-reloader
-# Container image
+# stakater/Reloader — Kubernetes controller for rolling upgrades on ConfigMap/Secret changes.
+# https://github.com/stakater/Reloader
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.4.14";
+  reloader = buildGoModule {
+    pname = "reloader";
+    inherit version;
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
-  name = "stakater-reloader";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "stakater-reloader-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "stakater reloader";
-      "org.opencontainers.image.description" = "stakater-reloader container image";
-      "org.opencontainers.image.version" = version;
+    src = fetchFromGitHub {
+      owner = "stakater";
+      repo = "Reloader";
+      rev = "v${version}";
+      hash = "sha256-4d2BwcIn8Hppc0I+mezKbuqQZ/o0dYKJH8ik985zgHk=";
     };
+
+    proxyVendor = true;
+    vendorHash = "sha256-BgbaUceVvsYFUcGO6TFwQtKOLJslrflWiewwZs1v68c=";
+
+    subPackages = [ "." ];
+
+    env.CGO_ENABLED = 0;
+
+    ldflags = [
+      "-s" "-w"
+      "-X main.version=v${version}"
+    ];
+
+    doCheck = false;
+
+    meta = with lib; {
+      description = "Kubernetes controller to watch changes in ConfigMap and Secrets and trigger rolling upgrades";
+      homepage = "https://github.com/stakater/Reloader";
+      license = licenses.asl20;
+    };
+  };
+in
+
+mkImage {
+  drv = reloader;
+  name = "stakater-reloader";
+  tag = "v${version}";
+  entrypoint = [ "${reloader}/bin/Reloader" ];
+  cmd = [];
+
+  labels = {
+    "org.opencontainers.image.title" = "Stakater Reloader";
+    "org.opencontainers.image.description" = "Kubernetes controller to watch ConfigMaps and Secrets and trigger rolling upgrades";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "reloader";
   };
 }

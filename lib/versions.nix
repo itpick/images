@@ -407,6 +407,7 @@ let
     "trivy" = getVer "trivy";
     "trufflehog" = getVer "trufflehog";
     "vault" = getVer "vault";
+    "vaultwarden" = getVer "vaultwarden";
     "vcluster" = getVer "vcluster";
     "vector" = getVer "vector";
     "velero" = getVer "velero";

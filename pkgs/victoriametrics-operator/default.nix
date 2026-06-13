@@ -7,19 +7,19 @@
 { lib, stdenvNoCC, crane, cacert }:
 
 let
-  version = "0.66.1";
+  version = "0.71.0";
   imageRef = "victoriametrics/operator:v${version}";
 
   # Layer digests containing the binary for each architecture
   layerDigests = {
-    amd64 = "sha256:2e3f7ff84753d61ad72cd7bca62a7881aacc831a70ed3e17c9827ba2eff33477";
-    arm64 = "sha256:be647599da3a7eedf4b0467a85311e2cc45a83bb63f86d5bc36fe03041cedd4c";
+    amd64 = "sha256:1f1a2c7ab2ba0095dc3a921f500af2f608b8efb058af695bc4a66455b638d463";
+    arm64 = "sha256:f6b10b9b4818058bdcd819e21689ad60afe5c2cac2399af56873b62b06695aa0";
   };
 
   # Output hashes for the fixed-output derivation
   outputHashes = {
-    amd64 = "sha256-MvnwD0nr9rGJj4KZOQeOkrcIC0PltbE4OLfRfzicOgM=";
-    arm64 = "sha256-/XxyPhCnR6HdJMO5B66o8ly//610Emsv8EVxym1hzvA=";
+    amd64 = "sha256-NmXGN5IEeVxC0EcWawLS4mFGdnrqe7t9oyWIWP+hsCw=";
+    arm64 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
   };
 
   arch = if stdenvNoCC.hostPlatform.isAarch64 then "arm64" else "amd64";

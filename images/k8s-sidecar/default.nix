@@ -1,7 +1,7 @@
 { mkImage, fetchFromGitHub, python3, pkgs, lib, ... }:
 
 let
-  version = "1.28.0";
+  version = "2.7.3";
 
   python = python3.withPackages (ps: with ps; [
     kubernetes
@@ -16,7 +16,7 @@ let
       owner = "kiwigrid";
       repo = "k8s-sidecar";
       rev = version;
-      hash = "sha256-Zopfn8oujeru7LtsD4ISImIiGmptWs0WNhor/0Y5NoU=";
+      hash = "sha256-ZmDVqniiHWughAGShTMSH+VNn7fkdZLenRL3BTI3Fks=";
     };
 
     dontBuild = true;

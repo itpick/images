@@ -10,7 +10,7 @@
 #   ld-linux (2.42-r4)
 
 let
-  version = "1.4.5";
+  version = "1.5.5";
   helm-controller = buildGoModule {
     pname = "helm-controller";
     inherit version;
@@ -19,10 +19,10 @@ let
       owner = "fluxcd";
       repo = "helm-controller";
       rev = "v${version}";
-      hash = "sha256-kt5aASNpODEeQO9nJpULg8YLo8ZaanS++rL4luPF/b8=";
+      hash = "sha256-xM4qstrnfHRI7W31Xi5L+91OG/rUlDbp8pYcQAx5ZEA=";
     };
 
-    vendorHash = "sha256-W9TfC2KIa2foarw4utRqQl+6jZG7jMoowBPUhBZfVFc=";
+    vendorHash = "sha256-MtmLUaxyKxYdHU/FICF3dVzswq3IS3uCQZueYWLphSs=";
 
     subPackages = [ "." ];
 

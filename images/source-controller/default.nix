@@ -6,7 +6,7 @@
 #   flux-source-controller (1.7.4-r3)
 
 let
-  version = "1.7.4";
+  version = "1.8.5";
   source-controller = buildGoModule {
     pname = "source-controller";
     inherit version;
@@ -15,10 +15,10 @@ let
       owner = "fluxcd";
       repo = "source-controller";
       rev = "v${version}";
-      hash = "sha256-k1UkxJ+rfin+6jUv3lCH1UN2JuGbmh3Fzv/GkJKOCjs=";
+      hash = "sha256-yKP2UmtliUE4jNbd95rgVWVw208Dosg+QjMvfvVfR2o=";
     };
 
-    vendorHash = "sha256-MLdVPqGsamzjKQgBhy8MXnJsq1jXbZQ0xU1XJaFVg2I=";
+    vendorHash = "sha256-Kzj+I4jteLyR/QFSf97oyYaaFaM1iauOQX/dda8NIyU=";
 
     subPackages = [ "." ];
 

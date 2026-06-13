@@ -12,18 +12,18 @@
 { lib, stdenv, dockerTools, undocker }:
 
 let
-  version = "4.10.1";
+  version = "4.15.1";
 
   # Pull the upstream image (architecture-specific)
   upstreamImage = dockerTools.pullImage ({
     imageName = "ghcr.io/zitadel/zitadel-login";
     finalImageTag = "v${version}";
   } // (if stdenv.hostPlatform.isAarch64 then {
-    imageDigest = "sha256:5059b177f1540809c4d4c7b2a9688b3a8923da148e96822b68225d7379a09cf7";
-    hash = "sha256-kPZ1HKtoxPRVNbdRg1V1Ab/2JMXQ3bY+ByLOUMAJHlc=";
+    imageDigest = "sha256:68115b61a15d590011bf5c41191e5e3754d8f7476d7b86941e798283d79b2a36";
+    hash = "sha256-f4RXaeDDK4NAeKosKir3VCnDammeagtEF0L5ajEvsiE=";
   } else {
-    imageDigest = "sha256:65f24ba20cb3b2836c1336af11a37514d2dec5e0aa691f37560975d37c4fecf9";
-    hash = "sha256-KYI/t1eR5/lMCN2FQiDz1xnCP+WcBcX6jCt4LeV96g8=";
+    imageDigest = "sha256:4878745e09a56748c457675bec5781b209c3c15fedbf27f7836011702f811f00";
+    hash = "sha256-96IriRrUEoXlUlwOhhE/KnOeDvNN9dXAA+4uV/ikYqY=";
   }));
 
 in stdenv.mkDerivation {
@@ -35,6 +35,11 @@ in stdenv.mkDerivation {
   nativeBuildInputs = [ undocker ];
 
   dontUnpack = true;
+  # pnpm virtual-store symlinks in the extracted image point to packages that
+  # pnpm deduplicates. Some of these symlinks are absent in the extracted layer
+  # because they are part of a separate node_modules directory that pnpm keeps
+  # only at runtime. Skip the broken-symlink fixup check.
+  dontFixup = true;
 
   installPhase = ''
     runHook preInstall

@@ -10,15 +10,15 @@
 { stdenv, lib, fetchurl, autoPatchelfHook, zlib }:
 
 let
-  version = "1.38.1";
+  version = "1.39.0";
   selectSystem = {
     "x86_64-linux" = {
       arch = "x86_64";
-      hash = "sha256-JtadFyTUkFsZMQnT3IoYUI4KojXOxDTW2Iah/u29qx4=";
+      hash = "sha256-gfiM/QCWxVDkFacAyX61v2Btsd9hBswDWE6Hj9eqEmo=";
     };
     "aarch64-linux" = {
       arch = "aarch64";
-      hash = "sha256-9zZ/FSFaC0kFjaOdjorBMqrHykk8X7XhH+rHaEBYSc0=";
+      hash = "sha256-UqFOiM2L2dCGo6R5S4y05g7+jixh+02eo/FBvNJ5guM=";
     };
   };
   sys = selectSystem.${stdenv.hostPlatform.system}

@@ -14,19 +14,19 @@
 { lib, stdenvNoCC, crane, cacert }:
 
 let
-  version = "1.28.1";
+  version = "1.30.1";
 
   arch = if stdenvNoCC.hostPlatform.isAarch64 then "arm64" else "amd64";
 
   # Layer digests for pilot image (contains pilot-discovery)
   pilotLayers = {
     amd64 = {
-      digest = "sha256:b296c147f27e022a9998880c10443a5e0075fb4588ee9e215b0269867c37f4d7";
-      hash = "sha256-qLUfkk0ALPSn4l/hS2GAR4k/H9zDO1qTo4H85aCUWhQ=";
+      digest = "sha256:1359ddeb16c6c6399f3786088396ea910ed56785f768e41be0735df376378fee";
+      hash = "sha256-uTR1Z4wQiDz7SwxrVVTR+pKpmbXIv/80IlxDuGsaDA8=";
     };
     arm64 = {
-      digest = "sha256:4d44877f2282ccf41cac7d4256673c43182134773eb0afa6ed632841bba558d2";
-      hash = "sha256-W4XQ2lNU0weVQ1mULdx7KByMgE/II2JbS6csaHh8VgE=";
+      digest = "sha256:d21ad85b565022342a6fad82229d9112850f837eb38422125904aa14c3ec8def";
+      hash = "sha256-s3FgDUagyOxZSQrkECnuufS4GmaBOudjwHoMT+BEMx8=";
     };
   };
 
@@ -36,32 +36,32 @@ let
     amd64 = {
       # Layer with envoy binary
       envoy = {
-        digest = "sha256:a8ee5b657fc82b9b8f596bb122577d1473d390862f3757de72f2258f8ec703df";
-        hash = "sha256-bLOiL7L4R1vIDI7WpK/O1JJsGvTwki6VnReIE24cfvs=";
+        digest = "sha256:0f6f52d6b48efd42c2ebc20774cfc67b39b0a683641204b5d968b3d60ff6930a";
+        hash = "sha256-K3QoPs28aV+FEZz2/DtCbM96ygDHBInIcVxmFmRNG70=";
       };
       # Layer with bootstrap template
       bootstrap = {
-        digest = "sha256:89c4282446c8d0a6988ab69c1255688c878749da57270b80586d475aee9c0b80";
-        hash = "sha256-SK4kDjH7xN1AOscMa42aXBaeP42M0gwcrQRrE3mY1w8=";
+        digest = "sha256:b9db30739321a4446aa969cba6056ef6b72a47a6eb1cff791eee6472a0279d0d";
+        hash = "sha256-8FenTI533DaVKm4oiW4pvmCCbRTxSgLg4Ay1xY/baV0=";
       };
       # Layer with pilot-agent
       pilotAgent = {
-        digest = "sha256:53ce041f5c3945c7674188abd8d11b7e7e4ea9c8e7c673b18074c5e6e994f22b";
-        hash = "sha256-DPFLDvVu13g8WPnmohNFtfchil5vrvhFv4VskVIPj80=";
+        digest = "sha256:d276db19ce85199de06ccbf305efb5bd294c7f1bf4f2b76d08d294fc2b044fb8";
+        hash = "sha256-tWStCC/wYacBGBS41Uz1Jn+rvKgWPNJj2eMqrH4WlgI=";
       };
     };
     arm64 = {
       envoy = {
-        digest = "sha256:3992af213892f9500726ab11b05bebfb5550231ff9931c058513bdeeb0894987";
-        hash = "sha256-G05xNcL4yhv2u9CFFTDP8S8QWf48sYt8xh/PjX40VzA=";
+        digest = "sha256:fb5123d64667dc44a2cd1f0dd578303bb62e024f5e11bdbbaaedaa0d94c46d9e";
+        hash = "sha256-5QqVXpnmu2RqOC+U90vZQgSww0M0AvrQ53pZDDYJdJc=";
       };
       bootstrap = {
-        digest = "sha256:be6f4fe9dbaf7038cfbe995ebfe936ca2010717d9ae2e5a65890466819f17ee7";
-        hash = "sha256-SK4kDjH7xN1AOscMa42aXBaeP42M0gwcrQRrE3mY1w8=";
+        digest = "sha256:378b70b952016a2644e54ce797889a3e775e380a66fee791349f20d00d3179c9";
+        hash = "sha256-8FenTI533DaVKm4oiW4pvmCCbRTxSgLg4Ay1xY/baV0=";
       };
       pilotAgent = {
-        digest = "sha256:c074648e67d313e1651abda4b0894fe998264392aee6a3e6971db4abb3e257f4";
-        hash = "sha256-+yJeaq3rkJSvPGgXqDuYGZHxMEgq1JA0h0aUpM7piGA=";
+        digest = "sha256:620594827e2d6cd71627d4f3b9f4568031e0a57ee63ce7b377a107a85d75b852";
+        hash = "sha256-esifkeMnhic9FYGjVSeLlIbkTMmJyN3RtaggEt2a9EY=";
       };
     };
   };

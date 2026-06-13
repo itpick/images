@@ -35,8 +35,14 @@
   dex = pkgs.callPackage ./dex { };
   # Override nixpkgs' dragonflydb: it builds from source (1.34.2) and the
   # vendored abseil_cpp build fails with no cache hit. Use upstream prebuilt
-  # binary (1.38.1) until nixpkgs ships a working derivation.
+  # binary (1.39.0) until nixpkgs ships a working derivation.
   dragonflydb = pkgs.callPackage ./dragonflydb { };
+  # Override nixpkgs' forgejo: bump to 15.0.3 ahead of nixpkgs 15.0.1.
+  # Uses the upstream statically-linked prebuilt binary.
+  forgejo = pkgs.callPackage ./forgejo { };
+  # Override nixpkgs' pulumi: bump to 3.246.0 ahead of nixpkgs 3.192.0.
+  # Uses the upstream statically-linked prebuilt binary.
+  pulumi = pkgs.callPackage ./pulumi { };
   external-secrets = pkgs.callPackage ./external-secrets { };
   flux = pkgs.callPackage ./flux { };
   flux-source-watcher = pkgs.callPackage ./flux-source-watcher { };
@@ -57,6 +63,7 @@
   mimir = pkgs.callPackage ./mimir { };
   node-feature-discovery = pkgs.callPackage ./node-feature-discovery { };
   oauth2-proxy = pkgs.callPackage ./oauth2-proxy { };
+  openfga = pkgs.callPackage ./openfga { };
   prometheus-adapter = pkgs.callPackage ./prometheus-adapter { };
   reloader = pkgs.callPackage ./reloader { };
   rustfs = pkgs.callPackage ./rustfs { };
@@ -72,6 +79,8 @@
   velero = pkgs.callPackage ./velero { };
   velero-plugin-for-gcp = pkgs.callPackage ./velero-plugin-for-gcp { };
   vertical-pod-autoscaler = pkgs.callPackage ./vertical-pod-autoscaler { };
+  # Override nixpkgs' victoriametrics: bump core to v1.145.0 ahead of nixpkgs
+  victoriametrics = pkgs.callPackage ./victoriametrics { };
   victoriametrics-cluster = pkgs.callPackage ./victoriametrics-cluster { };
   victoriametrics-cluster-fips = pkgs.callPackage ./victoriametrics-cluster-fips { };
   victoriametrics-fips = pkgs.callPackage ./victoriametrics-fips { };

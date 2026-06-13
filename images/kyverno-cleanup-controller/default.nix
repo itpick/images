@@ -9,7 +9,7 @@
 #   kyverno-cleanup-controller-1.16 (1.16.1-r0)
 
 let
-  version = "1.16.1";
+  version = "1.18.1";
   kyverno-cleanup-controller = buildGoModule {
     pname = "kyverno-cleanup-controller";
     inherit version;
@@ -18,11 +18,11 @@ let
       owner = "kyverno";
       repo = "kyverno";
       rev = "v${version}";
-      hash = "sha256-frLuq91CWjyNSj5HFvYIsyR6NFvZqXLil3YQL5Tli6o=";
+      hash = "sha256-zo02ABieJ+CykuqGJlnthXibgBzNGB3t3UdlKMTIkFo=";
     };
 
     proxyVendor = true;
-    vendorHash = "sha256-gdv3QReFGDhVjaJgtSCYlYuDoJwDx9FNPDn1hl0brp8=";
+    vendorHash = "sha256-oE6/xyznEtAAoypMICvjDB3hOhXCK1VelrV/zJuBeZA=";
 
     env.CGO_ENABLED = 0;
 

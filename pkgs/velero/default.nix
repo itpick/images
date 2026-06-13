@@ -4,16 +4,16 @@
 
 buildGoModule rec {
   pname = "velero";
-  version = "1.17.1";
+  version = "1.18.1";
 
   src = fetchFromGitHub {
     owner = "vmware-tanzu";
     repo = "velero";
     rev = "v${version}";
-    hash = "sha256-ZVnYHBcnYOCBFJ9wyvMDrRIf3NyDV1Zqqf7e6JbA+go=";
+    hash = "sha256-YByxKkuRBqGET5kVw7cDv8nTR9v1ITFr52t/vpm6gJI=";
   };
 
-  vendorHash = "sha256-AuvJmHRAmxKduP6q7k81GapGbGLS4x7cwccSnZWvPwI=";
+  vendorHash = "sha256-piwYYMuYenJY4TsjH8+ozPwam12+ZlTJF2fiQ/Dkb+A=";
 
   subPackages = [
     "cmd/velero"

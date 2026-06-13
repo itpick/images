@@ -5,16 +5,16 @@
 
 buildGoModule rec {
   pname = "cloudnative-pg";
-  version = "1.27.1";
+  version = "1.29.1";
 
   src = fetchFromGitHub {
     owner = "cloudnative-pg";
     repo = "cloudnative-pg";
     rev = "v${version}";
-    hash = "sha256-iEia3g3nxnVm4q5lpV9SFOSKgHJsZ7jdqE73vA2bPpI=";
+    hash = "sha256-SlisY7v/CFVXH85IAvlBH1RjyrTS+e8hFHJIwh0FgCc=";
   };
 
-  vendorHash = "sha256-nbUaSTmhAViwkguMsgIp3lh2JVe7ZTwBTM7oE1aIulk=";
+  vendorHash = "sha256-He5L4HBTMOlzLgB+tAxNbjvDdvGyz5UolC8mMFibwZ4=";
 
   subPackages = [ "cmd/manager" ];
 
@@ -23,7 +23,7 @@ buildGoModule rec {
   ldflags = [
     "-s" "-w"
     "-X github.com/cloudnative-pg/cloudnative-pg/pkg/versions.buildVersion=${version}"
-    "-X github.com/cloudnative-pg/cloudnative-pg/pkg/versions.buildCommit=9daa6813"
+    "-X github.com/cloudnative-pg/cloudnative-pg/pkg/versions.buildCommit=a4060c15"
   ];
 
   # Rename the output binary to include architecture suffix
