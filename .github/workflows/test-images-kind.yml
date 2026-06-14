@@ -34,39 +34,46 @@ permissions:
   contents: read
 
 jobs:
-  # Build a matrix from the dispatch input. When called via workflow_call the
-  # caller already provides a matrix and this job is skipped.
-  build-dispatch-matrix:
-    if: github.event_name == 'workflow_dispatch'
+  # Pick the matrix from whichever input the caller used. We don't condition
+  # on github.event_name because when chained via workflow_call, the called
+  # workflow inherits the parent's event_name (e.g. "push"), not
+  # "workflow_call" — so we can't reliably distinguish triggers that way.
+  # Instead we check whether the typed workflow_call input `matrix` is set
+  # (non-empty when called via workflow_call) and otherwise build one from
+  # the workflow_dispatch `images` CSV input.
+  resolve-matrix:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.pick.outputs.matrix }}
     steps:
       - id: pick
+        env:
+          CALLER_MATRIX: ${{ inputs.matrix }}
+          DISPATCH_IMAGES: ${{ inputs.images }}
         run: |
           set -euo pipefail
-          IMAGES='${{ github.event.inputs.images }}'
-          MATRIX=$(printf '%s' "$IMAGES" | jq -Rc '
-            split(",")
-            | map(gsub("^\\s+|\\s+$"; ""))
-            | map(select(length > 0))
-            | {include: map({name: .})}
-          ')
-          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
-          echo "Resolved matrix: $MATRIX"
+          if [ -n "${CALLER_MATRIX:-}" ]; then
+            echo "Using workflow_call matrix"
+            echo "matrix=${CALLER_MATRIX}" >> "$GITHUB_OUTPUT"
+          else
+            echo "Building matrix from workflow_dispatch images CSV"
+            MATRIX=$(printf '%s' "${DISPATCH_IMAGES:-}" | jq -Rc '
+              split(",")
+              | map(gsub("^\\s+|\\s+$"; ""))
+              | map(select(length > 0))
+              | {include: map({name: .})}
+            ')
+            echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+          fi
 
   kind-test:
-    needs: [build-dispatch-matrix]
-    # Run when called by workflow_call (no needs satisfied) OR after dispatch matrix built.
-    # `always()` lets the job run even when build-dispatch-matrix is skipped
-    # under workflow_call.
-    if: ${{ always() && (github.event_name == 'workflow_call' || needs.build-dispatch-matrix.result == 'success') }}
+    needs: [resolve-matrix]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       fail-fast: false
       max-parallel: 8
-      matrix: ${{ fromJSON(github.event_name == 'workflow_call' && inputs.matrix || needs.build-dispatch-matrix.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.resolve-matrix.outputs.matrix) }}
     env:
       KIND_VERSION: v0.30.0
       IMAGE_TAG: kind-test
