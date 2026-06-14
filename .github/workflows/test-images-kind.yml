@@ -77,9 +77,9 @@ jobs:
       - name: Install kind
         run: |
           set -euo pipefail
-          curl -sSLo /usr/local/bin/kind \
+          sudo curl -sSLo /usr/local/bin/kind \
             "https://kind.sigs.k8s.io/dl/${{ env.KIND_VERSION }}/kind-linux-amd64"
-          chmod +x /usr/local/bin/kind
+          sudo chmod +x /usr/local/bin/kind
           kind version
 
       - name: Build image
