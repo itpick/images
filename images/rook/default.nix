@@ -22,7 +22,7 @@ let
   upstreamImage = nix2container.pullImage {
     imageName   = "rook/ceph";
     imageDigest = "sha256:b76f9fdb4154939c7896466d6d1d6cce1cf02c232d5dcf97ce9603107ab4c426";
-    sha256      = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    sha256      = "sha256-9WXIovuuj+y+MOtM8D3Zx2ykOmoiylQz5PWmrVvLkwU=";
   };
 
 in

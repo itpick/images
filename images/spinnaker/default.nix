@@ -31,7 +31,7 @@ let
   upstreamImage = nix2container.pullImage {
     imageName   = "us-docker.pkg.dev/spinnaker-community/docker/halyard";
     imageDigest = "sha256:f656b354f743412c5acf77b890c27e403747814a75f2982f70e5c37e74c8f46a";
-    sha256      = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    sha256      = "sha256-N6Aj3UnfrLGgunNfnunzc7+t4zL2KTEzi6pBmWJ2+E8=";
   };
 
 in

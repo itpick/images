@@ -19,7 +19,7 @@ let
   upstreamImage = nix2container.pullImage {
     imageName   = "jaegertracing/all-in-one";
     imageDigest = "sha256:ab6f1a1f0fb49ea08bcd19f6b84f6081d0d44b364b6de148e1798eb5816bacac";
-    sha256      = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    sha256      = "sha256-EtdbPm0qyE6ER+3bk2JwHVh38H+xAT3JkW9jt89j+hA=";
   };
 
 in
