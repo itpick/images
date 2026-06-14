@@ -120,6 +120,17 @@ jobs:
     with:
       matrix: ${{ needs.select-matrix.outputs.matrix }}
 
+  # Kind-cluster smoke test. Runs in parallel with test-images (docker-run
+  # smoke). Deliberately NOT a dependency of build-and-push for now — we want
+  # visibility into per-image kind behavior before making it a publish gate.
+  # Promote to a gate (add to build-and-push.needs) once trusted.
+  test-images-kind:
+    needs: [select-matrix]
+    if: needs.select-matrix.outputs.run == 'true'
+    uses: ./.github/workflows/test-images-kind.yml
+    with:
+      matrix: ${{ needs.select-matrix.outputs.matrix }}
+
   build-and-push:
     needs: [select-matrix, test-images]
     if: needs.select-matrix.outputs.run == 'true'
