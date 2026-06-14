@@ -5,6 +5,13 @@ name: Test Images on Kind
 # images) → fail on CrashLoopBackOff. Soft signal that the image survives
 # pod-lifecycle scheduling, not a full integration test.
 #
+# Known categorical limitations of this 0-config smoke test (CLI tools that
+# exit on no args, servers that need config files, images that need cluster
+# wiring, UID/permissions mismatches) are documented in
+# tests/kind-tests/KNOWN-LIMITATIONS.md. A failure for one of those reasons
+# is expected and means "this image needs a richer test", not "this image is
+# broken."
+#
 # Designed to be callable from `build-containers.yml` after the matrix builds,
 # AND triggerable on demand via workflow_dispatch with a comma-separated
 # `images` input for targeted testing.
