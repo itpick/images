@@ -1,0 +1,198 @@
+name: Test Images on Kind
+
+# Smoke-test each image on a kind (Kubernetes-in-Docker) cluster: build → load
+# into kind → deploy as a Pod → wait for Running (or Completed for one-shot
+# images) → fail on CrashLoopBackOff. Soft signal that the image survives
+# pod-lifecycle scheduling, not a full integration test.
+#
+# Designed to be callable from `build-containers.yml` after the matrix builds,
+# AND triggerable on demand via workflow_dispatch with a comma-separated
+# `images` input for targeted testing.
+
+on:
+  workflow_call:
+    inputs:
+      matrix:
+        description: "Matrix of images to test (same shape as test-images.yml: {include: [{name: ...}, ...]})"
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      images:
+        description: 'Comma-separated list of images to kind-test (e.g. "redis,postgres,nginx")'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  # Build a matrix from the dispatch input. When called via workflow_call the
+  # caller already provides a matrix and this job is skipped.
+  build-dispatch-matrix:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.pick.outputs.matrix }}
+    steps:
+      - id: pick
+        run: |
+          set -euo pipefail
+          IMAGES='${{ github.event.inputs.images }}'
+          MATRIX=$(printf '%s' "$IMAGES" | jq -Rc '
+            split(",")
+            | map(gsub("^\\s+|\\s+$"; ""))
+            | map(select(length > 0))
+            | {include: map({name: .})}
+          ')
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+          echo "Resolved matrix: $MATRIX"
+
+  kind-test:
+    needs: [build-dispatch-matrix]
+    # Run when called by workflow_call (no needs satisfied) OR after dispatch matrix built.
+    # `always()` lets the job run even when build-dispatch-matrix is skipped
+    # under workflow_call.
+    if: ${{ always() && (github.event_name == 'workflow_call' || needs.build-dispatch-matrix.result == 'success') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix: ${{ fromJSON(github.event_name == 'workflow_call' && inputs.matrix || needs.build-dispatch-matrix.outputs.matrix) }}
+    env:
+      KIND_VERSION: v0.30.0
+      IMAGE_TAG: kind-test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v32
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install kind
+        run: |
+          set -euo pipefail
+          curl -sSLo /usr/local/bin/kind \
+            "https://kind.sigs.k8s.io/dl/${{ env.KIND_VERSION }}/kind-linux-amd64"
+          chmod +x /usr/local/bin/kind
+          kind version
+
+      - name: Build image
+        id: build
+        run: |
+          set -euo pipefail
+          nix build .#${{ matrix.name }} --print-build-logs
+          echo "built=true" >> "$GITHUB_OUTPUT"
+
+      - name: Load image into Docker
+        id: load
+        run: |
+          set -euo pipefail
+          nix run .#${{ matrix.name }}.copyTo -- \
+            docker-daemon:${{ matrix.name }}:${{ env.IMAGE_TAG }}
+          docker images | grep ${{ matrix.name }} | head -1
+          echo "loaded=true" >> "$GITHUB_OUTPUT"
+
+      - name: Create kind cluster
+        run: |
+          set -euo pipefail
+          # Single-node cluster is enough for smoke tests; saves ~30s vs the
+          # full ingress-ready config used in tests/kind-tests/configs.
+          kind create cluster \
+            --name=kind-e2e-${{ matrix.name }} \
+            --wait=120s
+          kubectl cluster-info
+
+      - name: Load image into kind
+        run: |
+          set -euo pipefail
+          kind load docker-image ${{ matrix.name }}:${{ env.IMAGE_TAG }} \
+            --name=kind-e2e-${{ matrix.name }}
+
+      - name: Deploy image as Pod
+        run: |
+          set -euo pipefail
+          # Generic Pod manifest. Uses the image's default entrypoint+cmd.
+          # `restartPolicy: Never` means a one-shot image (e.g. CLI tool) that
+          # exits Successfully counts as a pass. Long-lived servers should
+          # reach Running and stay there.
+          cat <<EOF | kubectl apply -f -
+          apiVersion: v1
+          kind: Pod
+          metadata:
+            name: e2e-${{ matrix.name }}
+            namespace: default
+            labels:
+              app: e2e-${{ matrix.name }}
+          spec:
+            restartPolicy: Never
+            containers:
+              - name: app
+                image: ${{ matrix.name }}:${{ env.IMAGE_TAG }}
+                imagePullPolicy: Never
+          EOF
+
+      - name: Wait for pod success
+        id: wait
+        run: |
+          set -uo pipefail
+          POD=e2e-${{ matrix.name }}
+          DEADLINE=$(( $(date +%s) + 90 ))
+          PASS=""
+          REASON=""
+          while [ "$(date +%s)" -lt "$DEADLINE" ]; do
+            PHASE=$(kubectl get pod "$POD" -o jsonpath='{.status.phase}' 2>/dev/null || echo "")
+            REASON=$(kubectl get pod "$POD" -o jsonpath='{.status.containerStatuses[0].state.waiting.reason}' 2>/dev/null || echo "")
+            case "$PHASE/$REASON" in
+              Running/) PASS=running; break ;;
+              Succeeded/) PASS=succeeded; break ;;
+              Failed/*|*/CrashLoopBackOff|*/ErrImagePull|*/ImagePullBackOff|*/CreateContainerConfigError|*/Error)
+                PASS=fail; break ;;
+            esac
+            sleep 3
+          done
+          echo "pod_phase=$PHASE" >> "$GITHUB_OUTPUT"
+          echo "pod_reason=$REASON" >> "$GITHUB_OUTPUT"
+          echo "result=${PASS:-timeout}" >> "$GITHUB_OUTPUT"
+          if [ "$PASS" = "running" ] || [ "$PASS" = "succeeded" ]; then
+            echo "PASS: ${{ matrix.name }} → $PASS"
+            exit 0
+          fi
+          echo "FAIL: ${{ matrix.name }} → phase=$PHASE reason=$REASON"
+          exit 1
+
+      - name: Pod details on failure
+        if: failure()
+        run: |
+          kubectl describe pod e2e-${{ matrix.name }} || true
+          kubectl logs e2e-${{ matrix.name }} --tail=200 --all-containers=true || true
+
+      - name: Upload pod logs as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kind-e2e-${{ matrix.name }}-logs
+          path: |
+            /tmp/kind-e2e-${{ matrix.name }}.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "=== Kind E2E Summary for ${{ matrix.name }} ==="
+          echo "Build: ${{ steps.build.outputs.built || 'skipped' }}"
+          echo "Load: ${{ steps.load.outputs.loaded || 'skipped' }}"
+          echo "Pod phase: ${{ steps.wait.outputs.pod_phase || 'n/a' }}"
+          echo "Pod reason: ${{ steps.wait.outputs.pod_reason || 'n/a' }}"
+          echo "Result: ${{ steps.wait.outputs.result || 'n/a' }}"
+
+      - name: Tear down kind cluster
+        if: always()
+        run: |
+          kind delete cluster --name=kind-e2e-${{ matrix.name }} 2>/dev/null || true
