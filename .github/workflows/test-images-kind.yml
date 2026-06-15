@@ -146,10 +146,14 @@ jobs:
           #    reaching Running (server) or Succeeded (one-shot) counts.
           #    Categorical limits documented in KNOWN-LIMITATIONS.md.
           SMOKETEST="images/${{ matrix.name }}/smoketest.sh"
+          HELPERS="tests/kind-tests/smoketest-helpers.sh"
           if [ -f "$SMOKETEST" ]; then
             echo "mode=smoketest" >> "$GITHUB_OUTPUT"
+            # Bundle both the per-image script AND the shared helpers
+            # library; smoketest.sh sources `/smoketest/helpers.sh`.
             kubectl create configmap "e2e-${{ matrix.name }}-script" \
-              --from-file=smoketest.sh="$SMOKETEST"
+              --from-file=smoketest.sh="$SMOKETEST" \
+              --from-file=helpers.sh="$HELPERS"
             cat <<EOF | kubectl apply -f -
           apiVersion: v1
           kind: Pod

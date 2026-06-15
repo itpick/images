@@ -178,7 +178,32 @@ jobs:
             if [ "${{ github.ref_name }}" != "main" ]; then
               docker push "${REGISTRY_URL}:$REF_TAG"
             fi
-            
+
+            # Registry-side tag presence check. The version-tag push has
+            # silently failed in the past (e.g. when PACKAGE_VERSION
+            # resolution fell back to "latest"), leaving the registry
+            # without the :v<ver> tag callers reference. Operators only
+            # noticed when downstream pods went ImagePullBackOff hours
+            # later. Verify each tag we just attempted to push actually
+            # resolves on the registry before declaring success.
+            echo "Verifying tags on registry..."
+            verify_tag() {
+              local ref=$1
+              if ! docker manifest inspect "$ref" >/dev/null 2>&1; then
+                echo "❌ Registry verify FAILED: $ref is not resolvable" >&2
+                return 1
+              fi
+              echo "  ✓ $ref"
+            }
+            verify_tag "${REGISTRY_URL}:latest"
+            verify_tag "${REGISTRY_URL}:${{ github.sha }}"
+            if [ "$PACKAGE_VERSION" != "latest" ]; then
+              verify_tag "${REGISTRY_URL}:$PACKAGE_VERSION"
+            fi
+            if [ "${{ github.ref_name }}" != "main" ]; then
+              verify_tag "${REGISTRY_URL}:$REF_TAG"
+            fi
+
             echo "✅ Successfully pushed ${{ matrix.name }} to registry"
           else
             echo "Error: Could not find nix2container result file"
