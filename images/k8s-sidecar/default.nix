@@ -1,11 +1,32 @@
-{ mkImage, fetchFromGitHub, python3, pkgs, lib, ... }:
+{ mkImage, fetchFromGitHub, fetchPypi, python3, pkgs, lib, ... }:
 
 let
   version = "2.7.3";
 
+  # logfmter isn't in nixpkgs as of nixos-25.11; package it inline from
+  # PyPI. Pure-Python, no native deps — buildPythonPackage suffices.
+  # Pinned to the version k8s-sidecar 2.7.3's pyproject.toml requires.
+  logfmter = python3.pkgs.buildPythonPackage rec {
+    pname = "logfmter";
+    version = "0.0.12";
+    pyproject = true;
+    src = fetchPypi {
+      inherit pname version;
+      hash = "sha256-lY0OG+IVYhRRhF+V+OMmYNjadgpLzY7MVWSgx5Vwxnk=";
+    };
+    build-system = [ python3.pkgs.setuptools ];
+    doCheck = false;
+    meta.license = lib.licenses.mit;
+  };
+
   python = python3.withPackages (ps: with ps; [
     kubernetes
     requests
+    # New deps for k8s-sidecar 2.7.x — missed when image was first
+    # packaged, surfaced as `ModuleNotFoundError: No module named
+    # 'logfmter'` at startup when run as the grafana sidecar.
+    python-json-logger
+    logfmter
   ]);
 
   k8s-sidecar = pkgs.stdenv.mkDerivation {

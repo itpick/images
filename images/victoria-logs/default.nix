@@ -11,6 +11,18 @@ mkImage {
   entrypoint = [ "${pkgs.victorialogs}/bin/victoria-logs" ];
   cmd = [];
 
+  # Match upstream's User (root) so the image is drop-in compatible
+  # with existing PVCs. The upstream victoriametrics/victoria-logs
+  # image runs as root; its on-disk dirs (flock.lock, parts, indexdb,
+  # etc.) are root-owned. mkImage's default User of 65534:65534 fails
+  # to write the lock file:
+  #
+  #   FATAL: cannot create lock file "/victoria-logs-data/flock.lock":
+  #          permission denied
+  #
+  # Operators that want non-root can still set fsGroup on the PodSpec.
+  user = "0:0";
+
   extraPkgs = with pkgs; [ cacert tzdata ];
 
   labels = {
