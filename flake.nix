@@ -160,7 +160,19 @@
             }
           ) discoveredImages);
 
-          # Create dev variants of all images
+          # Create dev variants of all images.
+          #
+          # Skip when:
+          #   - the base image's name already ends in `-dev` (avoids
+          #     `kubectl-dev-dev` etc.)
+          #   - a hand-written image already exists under the `-dev` name
+          #     (e.g. `images/kubectl-dev` ships a curated toolkit; the
+          #     auto-generated `mkDevImage kubectl` would otherwise shadow it
+          #     when the attrsets are merged below, replacing the curated
+          #     content with a generic devshell layer).
+          devImageCandidates = pkgs.lib.filter
+            (n: !(pkgs.lib.hasSuffix "-dev" n) && !(builtins.elem "${n}-dev" discoveredImages))
+            discoveredImages;
           devImages = builtins.listToAttrs (map (imageName:
             let
               baseImage = images.${imageName};
@@ -171,7 +183,7 @@
                 devLevel = "standard";
               };
             }
-          ) discoveredImages);
+          ) devImageCandidates);
 
           # Import manifest generator
           manifest = import ./lib/manifest.nix {
