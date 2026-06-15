@@ -74,7 +74,7 @@ nix2container.buildImage {
       "org.opencontainers.image.url"         = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source"      = "https://github.com/nix-containers/images";
       "org.opencontainers.image.vendor"      = "nix-containers";
-      "org.opencontainers.image.version"     = "${pkgs.kubectl.version}-dev";
+      "org.opencontainers.image.version"     = "v${pkgs.kubectl.version}-dev";
       "io.nix-containers.image.upstream"     = "https://kubernetes.io/";
       "io.nix-containers.image.category"     = "devops-tool";
       "io.nix-containers.image.aliases"      = "kubectl-dev,k8s-toolkit,cluster-shell";

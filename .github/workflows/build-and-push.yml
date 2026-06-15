@@ -116,10 +116,26 @@ jobs:
             # Generate the target registry URL
             REGISTRY_URL="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.name }}"
             
-            # Extract package version for version tagging
+            # Extract package version for version tagging.
+            #
+            # Resolution order:
+            #   1. `.config.Labels."org.opencontainers.image.version"` — what
+            #      images built via `lib/mkImage.nix` expose. Tells us the
+            #      upstream version (e.g. `8.0.5`), independent of registry tag.
+            #   2. `.imageTag` — the tag the derivation itself declares (e.g.
+            #      `v1.36.1-dev` for kubectl-dev). nix2container outputs from
+            #      hand-written `default.nix` don't expose `.config` as a
+            #      direct attribute, so the eval in (1) silently fails for
+            #      them; without this fallback, the tag never gets pushed.
+            #   3. `latest` — last resort, suppresses the version-tag push.
             echo "Extracting package version..."
             . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-            PACKAGE_VERSION=$(nix --extra-experimental-features "nix-command flakes" eval --raw ".#${{ matrix.name }}.config.Labels.\"org.opencontainers.image.version\"" 2>/dev/null || echo "latest")
+            nix_eval() {
+              nix --extra-experimental-features "nix-command flakes" eval --raw "$@" 2>/dev/null
+            }
+            PACKAGE_VERSION=$(nix_eval ".#${{ matrix.name }}.config.Labels.\"org.opencontainers.image.version\"" \
+              || nix_eval ".#${{ matrix.name }}.imageTag" \
+              || echo "latest")
             echo "Package version: $PACKAGE_VERSION"
             
             # Calculate compressed size and add as label
