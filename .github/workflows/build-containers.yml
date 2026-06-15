@@ -79,15 +79,48 @@ jobs:
             echo "Matrix: $MATRIX"
           elif [ "$FORCE" = "true" ] || [ "$FILE_REBUILD_ALL" = "true" ]; then
             # FORCE: explicit user request. FILE_REBUILD_ALL: detect-file-changes
-            # signalled a shared-path change (lib/, flake.lock, etc.) without
-            # returning the matrix itself (which would be 200KB+ for 3000+ images
-            # and break GHA's exec at the step boundary).
-            echo "matrix=$FULL" >> "$GITHUB_OUTPUT"
-            echo "run=true" >> "$GITHUB_OUTPUT"
-            if [ "$FORCE" = "true" ]; then
-              echo "force_rebuild=true; using full discovered matrix"
+            # signalled a shared-path change (lib/, flake.lock, etc.) where any
+            # one image change can't be precisely attributed, so a full rebuild
+            # is the safe default.
+            #
+            # Hard cap: GitHub Actions imposes a 256-job limit per matrix, AND
+            # any downstream `workflow_call` that exposes `inputs.matrix` as an
+            # env var hits Linux's MAX_ARG_STRLEN (~128KB) when the matrix JSON
+            # is large. With 3000+ images in this repo the full matrix is both
+            # ~425KB and ~12x the matrix-job ceiling, so passing $FULL downstream
+            # detonates `execve: Argument list too long` and skips the chain
+            # silently. Force a graceful skip + a step summary explaining the
+            # operator's options (targeted workflow_dispatch with `images=`).
+            FULL_COUNT=$(printf '%s' "$FULL" | jq -r '.include | length // 0')
+            if [ "$FULL_COUNT" -gt 256 ]; then
+              echo 'matrix={"include":[]}' >> "$GITHUB_OUTPUT"
+              echo "run=false" >> "$GITHUB_OUTPUT"
+              {
+                echo "## select-matrix: rebuild-all skipped"
+                echo ""
+                echo "Discovered matrix has **${FULL_COUNT}** images, which exceeds GitHub Actions' 256-job matrix limit."
+                echo ""
+                if [ "$FORCE" = "true" ]; then
+                  echo "Trigger source: \`workflow_dispatch\` with \`force_rebuild=true\`."
+                else
+                  echo "Trigger source: shared-path file change (e.g. \`flake.nix\`, \`flake.lock\`, \`lib/**\`)."
+                fi
+                echo ""
+                echo "To rebuild specific images, re-run \`workflow_dispatch\` with the \`images\` input set to a CSV of names, e.g.:"
+                echo ""
+                echo '```'
+                echo "gh workflow run build-containers.yml --ref main -f images=imageA,imageB,imageC"
+                echo '```'
+              } >> "$GITHUB_STEP_SUMMARY"
+              echo "matrix has $FULL_COUNT images (>256); skipping downstream chain — see workflow summary for next steps"
             else
-              echo "file-change rebuild-all triggered; using full discovered matrix"
+              echo "matrix=$FULL" >> "$GITHUB_OUTPUT"
+              echo "run=true" >> "$GITHUB_OUTPUT"
+              if [ "$FORCE" = "true" ]; then
+                echo "force_rebuild=true; using full discovered matrix ($FULL_COUNT images)"
+              else
+                echo "file-change rebuild-all triggered; using full discovered matrix ($FULL_COUNT images)"
+              fi
             fi
           elif [ "$VERSION_CHANGED" = "true" ] || [ "$FILE_CHANGED" = "true" ]; then
             # Union the two matrices on .name. check-version-changes emits the
