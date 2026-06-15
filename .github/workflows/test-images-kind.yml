@@ -168,7 +168,12 @@ jobs:
               - name: app
                 image: ${{ matrix.name }}:${{ env.IMAGE_TAG }}
                 imagePullPolicy: Never
-                command: ["/bin/bash", "/smoketest/smoketest.sh"]
+                # Invoke the script directly so each smoketest's shebang
+                # picks its own interpreter — slim images can use
+                # `#!/bin/sh` (busybox), richer ones (kubectl-dev) can
+                # opt into bash. The ConfigMap mount defaults to 0755
+                # below so the entry is executable.
+                command: ["/smoketest/smoketest.sh"]
                 volumeMounts:
                   - name: script
                     mountPath: /smoketest
