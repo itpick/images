@@ -7,6 +7,13 @@
 let
   keda = pkgs.keda;
   version = keda.version;
+  # The keda helm chart hardcodes `command: ["/keda-admission-webhooks"]`
+  # on the admission Deployment. Add a top-level symlink for chart
+  # compatibility — see comment in ../keda/default.nix.
+  cmdCompat = pkgs.runCommand "keda-admission-webhooks-cmd-compat" {} ''
+    mkdir -p $out
+    ln -s ${keda}/bin/keda-admission-webhooks $out/keda-admission-webhooks
+  '';
 in
 mkImage {
   drv = keda;
@@ -16,6 +23,7 @@ mkImage {
   cmd = [ "--help" ];
 
   extraPkgs = with pkgs; [ busybox tzdata ];
+  extraContents = [ cmdCompat ];
 
   labels = {
     "org.opencontainers.image.title" = "KEDA Admission Webhooks";
