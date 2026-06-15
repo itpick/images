@@ -129,13 +129,55 @@ jobs:
             --name=kind-e2e-${{ matrix.name }}
 
       - name: Deploy image as Pod
+        id: deploy
         run: |
           set -euo pipefail
-          # Generic Pod manifest. Uses the image's default entrypoint+cmd.
-          # `restartPolicy: Never` means a one-shot image (e.g. CLI tool) that
-          # exits Successfully counts as a pass. Long-lived servers should
-          # reach Running and stay there.
-          cat <<EOF | kubectl apply -f -
+          # Two deploy modes:
+          #
+          # 1. Smoketest mode — used when `images/<name>/smoketest.sh` exists.
+          #    The script is bundled into a ConfigMap and run as the Pod's
+          #    command via `/bin/bash`. Pass requires `exit 0` (the script
+          #    uses `set -euo pipefail` per convention). Catches regressions
+          #    the default mode can't: wrong tool variants (Python yq vs Go
+          #    yq), binaries-not-on-PATH, broken option flags, etc.
+          #
+          # 2. Default mode — generic Pod with the image's default
+          #    entrypoint+cmd. Verifies the image can load and schedule;
+          #    reaching Running (server) or Succeeded (one-shot) counts.
+          #    Categorical limits documented in KNOWN-LIMITATIONS.md.
+          SMOKETEST="images/${{ matrix.name }}/smoketest.sh"
+          if [ -f "$SMOKETEST" ]; then
+            echo "mode=smoketest" >> "$GITHUB_OUTPUT"
+            kubectl create configmap "e2e-${{ matrix.name }}-script" \
+              --from-file=smoketest.sh="$SMOKETEST"
+            cat <<EOF | kubectl apply -f -
+          apiVersion: v1
+          kind: Pod
+          metadata:
+            name: e2e-${{ matrix.name }}
+            namespace: default
+            labels:
+              app: e2e-${{ matrix.name }}
+          spec:
+            restartPolicy: Never
+            containers:
+              - name: app
+                image: ${{ matrix.name }}:${{ env.IMAGE_TAG }}
+                imagePullPolicy: Never
+                command: ["/bin/bash", "/smoketest/smoketest.sh"]
+                volumeMounts:
+                  - name: script
+                    mountPath: /smoketest
+                    readOnly: true
+            volumes:
+              - name: script
+                configMap:
+                  name: e2e-${{ matrix.name }}-script
+                  defaultMode: 0755
+          EOF
+          else
+            echo "mode=default" >> "$GITHUB_OUTPUT"
+            cat <<EOF | kubectl apply -f -
           apiVersion: v1
           kind: Pod
           metadata:
@@ -150,20 +192,29 @@ jobs:
                 image: ${{ matrix.name }}:${{ env.IMAGE_TAG }}
                 imagePullPolicy: Never
           EOF
+          fi
 
       - name: Wait for pod success
         id: wait
+        env:
+          MODE: ${{ steps.deploy.outputs.mode }}
         run: |
           set -uo pipefail
           POD=e2e-${{ matrix.name }}
-          DEADLINE=$(( $(date +%s) + 90 ))
+          # Smoketest mode runs a real script, allow more time.
+          if [ "$MODE" = "smoketest" ]; then DEADLINE=$(( $(date +%s) + 180 )); else DEADLINE=$(( $(date +%s) + 90 )); fi
           PASS=""
           REASON=""
           while [ "$(date +%s)" -lt "$DEADLINE" ]; do
             PHASE=$(kubectl get pod "$POD" -o jsonpath='{.status.phase}' 2>/dev/null || echo "")
             REASON=$(kubectl get pod "$POD" -o jsonpath='{.status.containerStatuses[0].state.waiting.reason}' 2>/dev/null || echo "")
             case "$PHASE/$REASON" in
-              Running/) PASS=running; break ;;
+              # Default mode: a Pod that stays Running is a pass (long-lived
+              # servers). Smoketest mode: Running is intermediate — the
+              # script hasn't exited yet, keep polling for Succeeded/Failed.
+              Running/)
+                if [ "$MODE" = "smoketest" ]; then : ; else PASS=running; break; fi
+                ;;
               Succeeded/) PASS=succeeded; break ;;
               Failed/*|*/CrashLoopBackOff|*/ErrImagePull|*/ImagePullBackOff|*/CreateContainerConfigError|*/Error)
                 PASS=fail; break ;;
@@ -174,10 +225,10 @@ jobs:
           echo "pod_reason=$REASON" >> "$GITHUB_OUTPUT"
           echo "result=${PASS:-timeout}" >> "$GITHUB_OUTPUT"
           if [ "$PASS" = "running" ] || [ "$PASS" = "succeeded" ]; then
-            echo "PASS: ${{ matrix.name }} → $PASS"
+            echo "PASS: ${{ matrix.name }} ($MODE) → $PASS"
             exit 0
           fi
-          echo "FAIL: ${{ matrix.name }} → phase=$PHASE reason=$REASON"
+          echo "FAIL: ${{ matrix.name }} ($MODE) → phase=$PHASE reason=$REASON"
           exit 1
 
       - name: Pod details on failure

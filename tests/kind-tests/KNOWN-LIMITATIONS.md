@@ -61,11 +61,44 @@ These either crash on first start without DB initialisation, CRDs, peer
 sidecars, or service endpoints. They're not failures of the image — they're
 failures of running them in isolation.
 
+## Per-image smoketest convention (richer than the default)
+
+When `images/<name>/smoketest.sh` exists, the kind workflow:
+
+1. Bundles the script into a ConfigMap and mounts it at `/smoketest/smoketest.sh`
+   in the test Pod.
+2. Sets the Pod's `command:` to `[/bin/bash, /smoketest/smoketest.sh]`,
+   overriding the image's default Entrypoint/Cmd.
+3. Requires `Succeeded` to pass (not just `Running` like default mode) and
+   gets an extended 180s deadline to allow real assertions.
+
+The smoketest script gets a clean stdout/stderr destination — failures show
+up in `kubectl logs e2e-<name>` and the workflow's "Pod details on failure"
+step. Convention is `set -euo pipefail` so any single failing assertion
+fails the whole image build.
+
+What this catches that the default Pod-load smoke can't:
+
+- **Wrong binary variant** — e.g. `pkgs.yq` (Python jq-wrapper) vs
+  `pkgs.yq-go` (Go mikefarah). The default smoke would happily run either;
+  `yq --version | grep -q mikefarah` blocks the publish if the closure
+  silently swaps them.
+- **PATH integrity** — bare-name invocation (`kubectl version --client`,
+  not `/nix/store/.../bin/kubectl version`) verifies the binary is actually
+  reachable. This would have blocked the kubectl-dev shadow regression
+  (image was `mkDevImage(kubectl)` with no `/bin/kubectl`).
+- **Option flags** — `yq -o=json` syntactic check, `helm version --short`,
+  etc. Tools that accept "old" flags silently are easy to mis-package.
+
+The first image to adopt the convention is `kubectl-dev`. Add the same
+pattern to any image whose value is a curated bundle of binaries (toolkit
+images, CLIs, anything where "image loads" doesn't prove "image works").
+
 ## Next steps (when someone wants to address this)
 
-1. Build a per-image override registry (e.g. `tests/kind-tests/overrides.yaml`)
-   that the kind workflow consults for `command`, `securityContext`, `env`,
-   `volumeMounts`, etc.
+1. Extend the smoketest convention to richer overrides
+   (`smoketest-spec.yaml` for env, securityContext, volumeMounts) for
+   images that need pre-mounted config or specific UIDs.
 2. For images mapped in `chart-image-mapping.nix`, wire a chart-based test
    that helm-installs the chart with the image override and validates pod
    Ready. The `tests/kind-tests/` framework already has the chart category
