@@ -12,15 +12,69 @@ let
 
   userEnv = nonRoot.mkDefaultUserEnv pkgs [];
 
+  # nginx's compile-time defaults (per `nginx -V`) require writing to:
+  #   --error-log-path=/var/log/nginx/error.log
+  #   --pid-path=/var/log/nginx/nginx.pid
+  #   --http-client-body-temp-path=/tmp/nginx_client_body
+  #   --http-proxy-temp-path=/tmp/nginx_proxy
+  #   --http-fastcgi-temp-path=/tmp/nginx_fastcgi
+  # As a non-root user, these paths need to pre-exist with the right
+  # ownership/mode. buildEnv-only images don't create them, so the
+  # container fails to start with:
+  #   nginx: [alert] could not open error log file: ... No such file
+  #   nginx: [emerg] mkdir() "/tmp/nginx_client_body" failed:
+  #          Permission denied
+  # Mirror the upstream nginxinc/nginx-unprivileged image layout:
+  # /tmp world-writable (sticky, mode 1777), /var/log/nginx writable
+  # by the nginx user (mode 0755 with owner 65532).
+  writableDirs = pkgs.runCommand "nginx-writable-dirs" {} ''
+    mkdir -p $out/tmp
+    mkdir -p $out/var/log/nginx
+    mkdir -p $out/var/cache/nginx
+  '';
+
 in
 nix2container.buildImage {
   name = "nginx-unprivileged";
   tag = pkgs.nginx.version;
 
-  copyToRoot = [
-    (buildEnv {
-      name = "nginx-unprivileged-root";
-      paths = base.basePackages ++ nginxPackages ++ [ userEnv ];
+  # Use separate layers (not copyToRoot) so the writable-dirs scaffold
+  # doesn't collide with buildEnv's /tmp symlink (bash/coreutils brings
+  # one in via their default `passthru.passthru-paths`). Same approach
+  # mkImage takes -- isolate the tmpDir layer so it can declare its own
+  # perms.
+  layers = [
+    (nix2container.buildLayer {
+      copyToRoot = [
+        (buildEnv {
+          name = "nginx-unprivileged-root";
+          paths = base.basePackages ++ nginxPackages ++ [ userEnv ];
+        })
+      ];
+    })
+    (nix2container.buildLayer {
+      copyToRoot = [ writableDirs ];
+      perms = [
+        {
+          path = writableDirs;
+          regex = "/tmp";
+          mode = "1777";
+        }
+        {
+          path = writableDirs;
+          regex = "/var/log/nginx";
+          mode = "0755";
+          uid = 65532;
+          gid = 65532;
+        }
+        {
+          path = writableDirs;
+          regex = "/var/cache/nginx";
+          mode = "0755";
+          uid = 65532;
+          gid = 65532;
+        }
+      ];
     })
   ];
 
