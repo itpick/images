@@ -5,7 +5,15 @@ mkImage {
   name = "forgejo";
   tag = pkgs.forgejo.version;
   entrypoint = [ "${pkgs.forgejo}/bin/gitea" ];
-  cmd = [ "--help" ];
+  # Charts (forgejo's official chart, code.forgejo.org/forgejo/runner,
+  # etc.) leave `command` and `args` unset on the container spec and
+  # rely on the image's OCI Entrypoint+Cmd to start the web server.
+  # Previously `cmd = [ "--help" ]` made the container print the usage
+  # banner and exit 0 immediately, surfacing as a CrashLoopBackOff
+  # whose stdout was just `GLOBAL OPTIONS:` rather than the expected
+  # `Listening on http://0.0.0.0:3000`. `web` is gitea/forgejo's
+  # canonical subcommand to start the long-running server process.
+  cmd = [ "web" ];
 
   extraPkgs = with pkgs; [ git openssh cacert bash gnupg ];
 

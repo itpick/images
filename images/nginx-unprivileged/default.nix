@@ -30,6 +30,15 @@ nix2container.buildImage {
       "PATH=${lib.makeBinPath nginxPackages}"
       "NGINX_ENTRYPOINT_QUIET_LOGS=1"
     ];
+    # Charts that consume nginx as a plain webserver image typically
+    # leave `command` and `args` unset on the container spec, relying on
+    # the OCI Entrypoint+Cmd. Without these set, the container starts
+    # with no command and fails with:
+    #   failed to generate container spec: no command specified
+    # Match the upstream nginxinc/nginx-unprivileged image's behavior
+    # (run nginx in the foreground).
+    Entrypoint = [ "${pkgs.nginx}/bin/nginx" ];
+    Cmd = [ "-g" "daemon off;" ];
     ExposedPorts = {
       "8080/tcp" = {};
     };
