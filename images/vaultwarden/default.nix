@@ -23,8 +23,18 @@ mkImage {
     vaultwarden-webvault
   ];
 
+  # Match upstream vaultwarden/server image defaults. Without these
+  # the rust binary's own defaults take over and the server binds to
+  # 127.0.0.1 (loopback only), so any k8s probe / Service traffic
+  # hitting the pod IP gets refused and the chart's liveness/
+  # readiness probes kill the pod. We don't carry ROCKET_PORT=80 from
+  # upstream because (a) the chart already sets ROCKET_PORT to its
+  # service port (8080 for our HelmRelease) and (b) <1024 binds would
+  # fail under the nonRoot user we set below.
   env = {
     WEB_VAULT_FOLDER = "${pkgs.vaultwarden-webvault}/share/vaultwarden/vault";
+    ROCKET_ADDRESS = "0.0.0.0";
+    ROCKET_PROFILE = "release";
   };
 
   labels = {

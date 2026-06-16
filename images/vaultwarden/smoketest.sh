@@ -10,16 +10,24 @@
 set -eu
 . /smoketest/helpers.sh
 
-# env var was set in the image config
+# web-vault assets: env var set, directory + index.html bundled
 [ -n "${WEB_VAULT_FOLDER:-}" ] || {
   echo "ASSERT FAIL: WEB_VAULT_FOLDER not set in image env"
   exit 1
 }
-
-# the directory it points at landed in the rootfs
 assert_path_exists "$WEB_VAULT_FOLDER" dir
-
-# and contains the SPA entry point the binary actually serves
 assert_path_exists "$WEB_VAULT_FOLDER/index.html" file
+
+# Rocket bind defaults. Upstream vaultwarden/server sets these in the
+# image; we must match or the binary binds to 127.0.0.1 and k8s
+# probes / Service traffic can't reach the pod.
+[ "${ROCKET_ADDRESS:-}" = "0.0.0.0" ] || {
+  echo "ASSERT FAIL: ROCKET_ADDRESS=${ROCKET_ADDRESS:-<unset>}, expected 0.0.0.0"
+  exit 1
+}
+[ "${ROCKET_PROFILE:-}" = "release" ] || {
+  echo "ASSERT FAIL: ROCKET_PROFILE=${ROCKET_PROFILE:-<unset>}, expected release"
+  exit 1
+}
 
 echo "ok"
