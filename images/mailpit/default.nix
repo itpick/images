@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.mailpit;
   name = "mailpit";
-  tag = "latest";
+  tag = "v${pkgs.mailpit.version}";
   
   entrypoint = [ "mailpit" ];
   cmd = [ "--help" ];
