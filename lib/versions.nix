@@ -349,6 +349,7 @@ let
     "rstudio" = getVer "rstudio";
     "rsyslog" = getVer "rsyslog";
     "rtorrent" = getVer "rtorrent";
+    "rustfs" = getVer "rustfs";
     "sabnzbd" = getVer "sabnzbd";
     "sbt" = getVer "sbt";
     "screen" = getVer "screen";
