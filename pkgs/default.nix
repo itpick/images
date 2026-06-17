@@ -79,6 +79,9 @@
   velero = pkgs.callPackage ./velero { };
   velero-plugin-for-gcp = pkgs.callPackage ./velero-plugin-for-gcp { };
   vertical-pod-autoscaler = pkgs.callPackage ./vertical-pod-autoscaler { };
+  # Override nixpkgs' vector: bump to 0.56.0 ahead of nixpkgs 0.55.0.
+  # Uses the upstream statically-linked musl prebuilt binary.
+  vector = pkgs.callPackage ./vector { };
   # Override nixpkgs' victoriametrics: bump core to v1.145.0 ahead of nixpkgs
   victoriametrics = pkgs.callPackage ./victoriametrics { };
   victoriametrics-cluster = pkgs.callPackage ./victoriametrics-cluster { };
