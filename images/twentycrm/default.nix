@@ -27,7 +27,16 @@ let
 in
 # Re-wrap the pulled image: inherit all upstream layers, add our labels.
 # No extra Nix content is added — this is a pure label-only wrapper.
-nix2container.buildImage {
+#
+# Tagging note
+# ------------
+# `tag = "v${version}"` matches upstream `twentycrm/twenty:v<X>.<Y>.<Z>`.
+# The publish workflow's tag-resolution chain reads `.imageTag` (since
+# nix2container.buildImage does not expose `.config.Labels` as a direct
+# attribute), so a published image lands at
+# `ghcr.io/nix-containers/images/twentycrm:v${version}` alongside `:latest`.
+# Consumers should pin to the version tag, NOT `:latest` — see issue #55.
+(nix2container.buildImage {
   name      = "twentycrm";
   tag       = "v${version}";
   fromImage = upstreamImage;
@@ -43,4 +52,12 @@ nix2container.buildImage {
       "io.nix-containers.followup"           = "true-buildNpmPackage-derivation";
     };
   };
+}) // {
+  # Expose `version` as a passthru attribute so the publish workflow's
+  # tag-resolution chain — and any external `nix eval` consumer — can
+  # query it directly without rebuilding the image. nix2container's
+  # buildImage output otherwise hides version metadata inside the
+  # generated JSON, where `nix eval --raw .#twentycrm.<...>` can't reach
+  # it. Keeps `imageTag` (= `v${version}`) and this attribute in sync.
+  inherit version;
 }
