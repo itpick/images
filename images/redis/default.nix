@@ -32,7 +32,7 @@ let
 in
 nix2container.buildImage {
   name = "redis";
-  tag = "latest";
+  tag = pkgs.redis.version;  # version-tagged
 
   copyToRoot = [
     (buildEnv {
@@ -48,6 +48,8 @@ nix2container.buildImage {
     ExposedPorts = {
       "6379/tcp" = {};
     };
+    # Run redis as a server, reachable from the kind-test pod probe.
+    Cmd = [ "redis-server" "--bind" "0.0.0.0" "--protected-mode" "no" ];
     Labels = base.defaultLabels // {
       "io.nix-containers.build-type" = "source";
       "io.nix-containers.build-method" = "Built from source using Nix";
