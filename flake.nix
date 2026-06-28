@@ -532,45 +532,8 @@
             ) discoveredImages)}
           '';
 
-          # Static website generator
-          website = pkgs.stdenv.mkDerivation {
-            name = "nix-containers-website";
-            dontUnpack = true;
-            buildPhase = ''
-              mkdir -p $out
-              cp ${./website/static/index.html} $out/index.html
-              cp ${./website/static/app.js} $out/app.js
-              cat > $out/images-data.json << 'EOF'
-              {
-                "images": ${builtins.toJSON (map (imageName:
-                  let
-                    imageConfig = images.${imageName}.config or {};
-                    labels = imageConfig.Labels or {};
-                    version = getPackageVersion imageName;
-                  in {
-                    name = imageName;
-                    description = labels."org.opencontainers.image.description" or "Container image for ${imageName}";
-                    version = version;
-                    category = labels."io.nix-containers.image.category" or "utility";
-                    hasTest = builtins.pathExists (./images + "/${imageName}/test.nix");
-                    pullCommand = "docker pull ghcr.io/nix-containers/images/${imageName}:latest";
-                    upstream = labels."io.nix-containers.image.upstream" or "";
-                    aliases = labels."io.nix-containers.image.aliases" or imageName;
-                    size = "Not built";
-                    readme = if builtins.pathExists (./images + "/${imageName}/README.md")
-                             then builtins.readFile (./images + "/${imageName}/README.md")
-                             else "# ${imageName}\n\nNo README available.";
-                  }) discoveredImages)},
-                "totalCount": ${toString (builtins.length discoveredImages)},
-                "lastUpdated": "BUILD_TIME"
-              }
-              EOF
-              ${pkgs.gnused}/bin/sed -i "s/BUILD_TIME/$(date -Iseconds)/g" $out/images-data.json
-            '';
-            installPhase = ''
-              echo "Static website generated"
-            '';
-          };
+          # Static website generator — see ./website/generate-site.nix
+          website = pkgs.callPackage ./website/generate-site.nix { lib = pkgs.lib; };
 
           # Expose the chart puller script
           pull-all-charts = pullAllChartsScript;

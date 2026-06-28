@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "JetBrains Mono";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/static/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "JetBrains Mono";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("/static/fonts/JetBrainsMono-Bold.woff2") format("woff2");
+  }
+  html {
+    background-color: #0a0a0a;
+    color: #e5e5e5;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  code, pre, .font-mono {
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  }
+}
+
+@layer components {
+  .badge {
+    @apply inline-block rounded-full px-2 py-0.5 text-xs font-medium;
+  }
+  .badge-cat-runtime { @apply badge bg-blue-900/40 text-blue-300; }
+  .badge-cat-build-env { @apply badge bg-green-900/40 text-green-300; }
+  .badge-cat-database { @apply badge bg-purple-900/40 text-purple-300; }
+  .badge-cat-web-service { @apply badge bg-orange-900/40 text-orange-300; }
+  .badge-cat-devops-tool { @apply badge bg-indigo-900/40 text-indigo-300; }
+  .badge-cat-utility { @apply badge bg-neutral-700 text-neutral-200; }
+  .badge-cat-shell { @apply badge bg-yellow-900/40 text-yellow-300; }
+  .badge-cat-unknown { @apply badge bg-neutral-800 text-neutral-400; }
+
+  .card {
+    @apply bg-bg-elevated rounded-lg border border-neutral-800 p-4
+           hover:border-neutral-600 transition-colors;
+  }
+}

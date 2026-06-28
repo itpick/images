@@ -34,10 +34,46 @@ jobs:
           echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
           echo "/nix/var/nix/profiles/default/bin" >> $GITHUB_PATH
 
-      - name: Build static website
+      - name: Download latest security scan results
+        id: scan
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
+          RUN_ID=$(gh run list \
+            --workflow=security-scan.yml \
+            --branch=main \
+            --status=success \
+            --limit=1 \
+            --json databaseId \
+            --jq '.[0].databaseId' || true)
+          if [ -z "${RUN_ID:-}" ] || [ "${RUN_ID}" = "null" ]; then
+            echo "No successful security-scan.yml run found; vulnerability panels will be omitted."
+            echo "path=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "Using security-scan.yml run $RUN_ID"
+          SCAN_DIR="$RUNNER_TEMP/scan-data"
+          mkdir -p "$SCAN_DIR"
+          gh run download "$RUN_ID" -n security-scan-results -D "$SCAN_DIR" || {
+            echo "Download failed; vulnerability panels will be omitted."
+            echo "path=" >> "$GITHUB_OUTPUT"
+            exit 0
+          }
+          echo "Downloaded $(find "$SCAN_DIR" -maxdepth 1 -name '*-trivy.json' 2>/dev/null | wc -l) trivy json files."
+          echo "path=$SCAN_DIR" >> "$GITHUB_OUTPUT"
+
+      - name: Build static website
+        env:
+          SCAN_DATA_PATH: ${{ steps.scan.outputs.path }}
+        run: |
+          set -euo pipefail
           . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-          nix build .#website --print-build-logs
+          if [ -n "${SCAN_DATA_PATH:-}" ]; then
+            nix build .#website --impure --print-build-logs
+          else
+            nix build .#website --print-build-logs
+          fi
           mkdir -p ./website-build
           cp -r ./result/* ./website-build/
         
