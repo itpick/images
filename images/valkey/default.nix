@@ -28,7 +28,7 @@ let
 in
 nix2container.buildImage {
   name = "valkey";
-  tag = "latest";
+  tag = pkgs.valkey.version;
 
   copyToRoot = [
     (buildEnv {
@@ -44,6 +44,10 @@ nix2container.buildImage {
     ExposedPorts = {
       "6379/tcp" = {};
     };
+    # Bind all interfaces + disable protected-mode so the kind-test probe
+    # (and any in-cluster client) can reach the server with no config file.
+    # Mirrors images/redis, the validated server template.
+    Cmd = [ "valkey-server" "--bind" "0.0.0.0" "--protected-mode" "no" ];
     Labels = base.defaultLabels // {
       "io.nix-containers.build-type" = "source";
       "io.nix-containers.build-method" = "Built from source using Nix";
