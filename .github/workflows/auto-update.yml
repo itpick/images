@@ -1,0 +1,241 @@
+name: Auto Update Dependencies
+
+# "Always checking + updating" dependency automation.
+#
+# Two resilient parts, both in one job so they land in a SINGLE pull request:
+#   (a) flake.lock bump      -> `nix flake update` (nixpkgs + nix2container)
+#   (b) per-package upstream  -> `nix-update` against every custom package in
+#       pkgs/<name>/default.nix (or the CSV subset), tolerating per-package
+#       failures.
+#
+# The resulting PR is pushed to a branch, which triggers build-containers on
+# `pull_request` and rebuilds the changed images. Auto-merge is enabled so the
+# PR merges ONLY once that CI passes — a broken bump shows up as a red PR, not
+# broken main.
+
+on:
+  schedule:
+    # Daily at 05:17 UTC — deliberately off-peak and off the :00 minute to
+    # avoid the cron stampede GitHub schedules on the hour.
+    - cron: '17 5 * * *'
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: 'Optional CSV of package attrs to limit the per-package bump (e.g. "rustfs,forgejo,pulumi"). Empty = all custom packages.'
+        required: false
+        default: ''
+        type: string
+      flake_only:
+        description: 'Only run `nix flake update`; skip the per-package upstream bump.'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install Nix
+        run: |
+          curl --connect-timeout 30 --max-time 300 -fsSL https://nixos.org/nix/install | sh -s -- --daemon --yes
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          mkdir -p ~/.config/nix
+          echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+          echo "access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}" >> ~/.config/nix/nix.conf
+          echo "/nix/var/nix/profiles/default/bin" >> "$GITHUB_PATH"
+
+      # ---- (a) flake.lock bump --------------------------------------------
+      - name: Update flake.lock (nixpkgs + nix2container)
+        id: flake
+        run: |
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          set -uo pipefail
+          {
+            echo "## Auto-update summary"
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if nix --extra-experimental-features "nix-command flakes" flake update 2>&1 | tee flake-update.log; then
+            if ! git diff --quiet -- flake.lock; then
+              echo "flake_changed=true" >> "$GITHUB_OUTPUT"
+              echo "- flake.lock updated (nixpkgs + nix2container)" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "flake_changed=false" >> "$GITHUB_OUTPUT"
+              echo "- flake.lock already current" >> "$GITHUB_STEP_SUMMARY"
+            fi
+          else
+            echo "flake_changed=false" >> "$GITHUB_OUTPUT"
+            echo "- :warning: \`nix flake update\` failed (see logs); continuing with package bumps" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # ---- (b) per-package upstream bump ----------------------------------
+      - name: Resolve package list
+        id: list
+        if: ${{ github.event.inputs.flake_only != 'true' }}
+        run: |
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          set -euo pipefail
+          INPUT_CSV='${{ github.event.inputs.packages }}'
+
+          # Derive the full set of custom package ATTRS from pkgs/_update.nix
+          # (the attr key, which is not always the directory name), excluding
+          # font/ttf aliases — those just point at nixpkgs and have nothing
+          # local to bump.
+          ALL=$(nix --extra-experimental-features "nix-command flakes" eval --impure --json --expr '
+            let f = import ./pkgs/_update.nix {}; in
+            builtins.filter (n: builtins.match "(font-|ttf-).*" n == null) (builtins.attrNames f)
+          ')
+
+          if [ -n "$INPUT_CSV" ]; then
+            # Intersect requested CSV with the known attr set (drop unknowns).
+            PKGS=$(printf '%s' "$ALL" | jq -c --arg csv "$INPUT_CSV" '
+              ($csv | split(",") | map(gsub("^\\s+|\\s+$"; "")) | map(select(length > 0))) as $want
+              | map(select(. as $n | $want | index($n)))
+            ')
+          else
+            PKGS="$ALL"
+          fi
+
+          echo "packages=$PKGS" >> "$GITHUB_OUTPUT"
+          COUNT=$(printf '%s' "$PKGS" | jq 'length')
+          echo "Resolved $COUNT package(s) to check."
+          echo "- per-package check scope: ${COUNT} package(s)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Bump packages with nix-update
+        if: ${{ github.event.inputs.flake_only != 'true' }}
+        env:
+          # nix-update reads GITHUB_TOKEN for the GitHub releases/atom API,
+          # avoiding rate limits when resolving upstream versions.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          set -uo pipefail
+
+          PKGS='${{ steps.list.outputs.packages }}'
+          # Pin nix-update to the same flake-resolved tool used at dev time.
+          NIX_UPDATE="nix --extra-experimental-features nix-command flakes run github:Mic92/nix-update --"
+
+          UPDATED=()
+          FAILED=()
+          SKIPPED=()
+
+          for ATTR in $(printf '%s' "$PKGS" | jq -r '.[]'); do
+            echo "::group::nix-update $ATTR"
+            BEFORE=$(git rev-parse "HEAD:pkgs" >/dev/null 2>&1 && git hash-object "pkgs/$ATTR/default.nix" 2>/dev/null || echo "")
+
+            # --version=stable: follow upstream stable releases only (ignore
+            #   pre-releases). --src-only: just bump src/version/hash; don't
+            #   try to regenerate vendored cargo/go/npm deps (these are mostly
+            #   prebuilt-binary derivations anyway).
+            # Per-package failure (unresolvable upstream, fixed tarball, hash
+            # recompute failure) must NOT fail the job — log + continue.
+            if $NIX_UPDATE -f ./pkgs/_update.nix --version=stable --src-only "$ATTR" > "/tmp/nu-$ATTR.log" 2>&1; then
+              AFTER=$(git hash-object "pkgs/$ATTR/default.nix" 2>/dev/null || echo "")
+              if [ "$BEFORE" != "$AFTER" ]; then
+                NEWVER=$(grep -oE 'version = "[^"]+"' "pkgs/$ATTR/default.nix" | head -1 | sed 's/version = "//;s/"//')
+                echo "  -> updated $ATTR (now ${NEWVER:-?})"
+                UPDATED+=("$ATTR -> ${NEWVER:-?}")
+              else
+                echo "  -> $ATTR already up to date"
+                SKIPPED+=("$ATTR")
+              fi
+            else
+              # Distinguish "no newer/ignored unstable/no-url" (expected, skip)
+              # from genuine failures, but never abort the loop either way.
+              if grep -qiE 'unstable version|already up to date|no.*url|could not find' "/tmp/nu-$ATTR.log"; then
+                echo "  -> skipped $ATTR (nothing to bump)"
+                SKIPPED+=("$ATTR")
+              else
+                echo "  -> FAILED $ATTR (tolerated):"
+                tail -n 8 "/tmp/nu-$ATTR.log" || true
+                FAILED+=("$ATTR")
+              fi
+            fi
+            echo "::endgroup::"
+          done
+
+          {
+            echo ""
+            echo "### Per-package results"
+            echo ""
+            echo "Updated: ${#UPDATED[@]} | Skipped: ${#SKIPPED[@]} | Failed (tolerated): ${#FAILED[@]}"
+            if [ ${#UPDATED[@]} -gt 0 ]; then
+              echo ""
+              echo "Bumped:"
+              for u in "${UPDATED[@]}"; do echo "- $u"; done
+            fi
+            if [ ${#FAILED[@]} -gt 0 ]; then
+              echo ""
+              echo "Failed to resolve (left unchanged):"
+              for f in "${FAILED[@]}"; do echo "- $f"; done
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          # Build a PR-body fragment listing the bumps.
+          {
+            echo "### Package bumps"
+            echo ""
+            if [ ${#UPDATED[@]} -gt 0 ]; then
+              for u in "${UPDATED[@]}"; do echo "- \`$u\`"; done
+            else
+              echo "_No per-package upstream bumps this run._"
+            fi
+          } > pr-body-packages.md
+
+      - name: Assemble PR body
+        if: always()
+        run: |
+          {
+            echo "Automated dependency update, opened by \`.github/workflows/auto-update.yml\`."
+            echo ""
+            if [ "${{ steps.flake.outputs.flake_changed }}" = "true" ]; then
+              echo "### flake.lock"
+              echo ""
+              echo "- \`nix flake update\` bumped pinned inputs (nixpkgs + nix2container)."
+              echo ""
+            fi
+            if [ -f pr-body-packages.md ]; then
+              cat pr-body-packages.md
+            fi
+            echo ""
+            echo "---"
+            echo "Merges automatically once \`build-containers\` (triggered by this PR) passes."
+          } > pr-body.md
+          # pr-body-packages.md is a build artifact, not part of the diff.
+          rm -f pr-body-packages.md
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: automated/deps-update
+          # Replace the branch each run instead of stacking commits.
+          delete-branch: true
+          commit-message: "chore(deps): automated package + flake updates"
+          title: "chore(deps): automated package + flake updates"
+          body-path: pr-body.md
+          labels: |
+            dependencies
+            automated
+          # Only the files this workflow is responsible for. Never sweep up
+          # unrelated working-tree changes.
+          add-paths: |
+            flake.lock
+            pkgs/**/default.nix
+
+      - name: Enable auto-merge
+        if: steps.cpr.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Squash-merge ONLY when required status checks (build-containers)
+          # pass. `gh pr merge --auto` queues the merge; it does not bypass CI.
+          gh pr merge --auto --squash "${{ steps.cpr.outputs.pull-request-number }}"

@@ -1,5 +1,12 @@
 name: Check Package Updates
 
+# NOTE: Active package-update detection now lives in
+# `.github/workflows/auto-update.yml`, which runs `nix flake update` +
+# `nix-update` daily and opens a PR with any bumps (gated on CI via
+# auto-merge). This workflow is retained only because `build-containers.yml`
+# still calls it as a job; its `workflow_call` interface must stay intact.
+# It is a deliberate no-op on the schedule/build path.
+
 on:
   workflow_call:
 
@@ -8,11 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'schedule'
     steps:
-      - name: Placeholder for package update detection
+      - name: Superseded by auto-update.yml
         run: |
-          echo "TODO: Implement package update detection logic"
-          echo "This job should:"
-          echo "  - Check if any packages in flake.lock have updates"
-          echo "  - Compare current package versions with previous build"
-          echo "  - Only trigger builds if packages have changed"
-          echo "  - Store package fingerprints for comparison"
+          echo "Package update detection is handled by auto-update.yml."
+          echo "It runs 'nix flake update' + 'nix-update' daily and opens a"
+          echo "PR (branch: automated/deps-update) with any bumps, merged"
+          echo "automatically once build-containers CI passes."
