@@ -47,7 +47,7 @@ let
 in
 nix2container.buildImage {
   name = "python";
-  tag = "latest";
+  tag = pkgs.python3.version;
 
   copyToRoot = [
     (buildEnv {
@@ -59,13 +59,13 @@ nix2container.buildImage {
   config = nonRoot.defaultConfig // {
     Env = base.defaultEnv ++ nonRoot.userEnv ++ [
       "PATH=${lib.makeBinPath pythonPackages}"
-      "PYTHONPATH=/home/nonroot/.local/lib/python3.12/site-packages"
+      "PYTHONPATH=/home/nonroot/.local/lib/python${pkgs.python3.pythonVersion}/site-packages"
       "PIP_USER=1"
     ];
     Labels = base.defaultLabels // {
       "io.nix-containers.build-type" = "source";
       "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.description" = "Python 3.12 runtime with pip and development tools";
+      "org.opencontainers.image.description" = "Python runtime with pip and development tools";
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.vendor" = "nix-containers";
