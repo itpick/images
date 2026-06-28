@@ -19,7 +19,10 @@ mkImage {
   name = "node-exporter";
   tag = "v${pkgs.prometheus-node-exporter.version}";
   entrypoint = [ "${pkgs.prometheus-node-exporter}/bin/node_exporter" ];
-  cmd = [ "--help" ];
+  # Was `--help` (a one-shot). Serve the /metrics endpoint on 0.0.0.0:9100
+  # (>1024, nonroot-bindable). node_exporter needs no config and contacts no
+  # target — it reads the local /proc + /sys and serves immediately.
+  cmd = [ "--web.listen-address=0.0.0.0:9100" ];
 
   extraPkgs = with pkgs; [
     busybox
@@ -30,5 +33,8 @@ mkImage {
     "org.opencontainers.image.description" = "Prometheus exporter for hardware and OS metrics";
     "org.opencontainers.image.version" = pkgs.prometheus-node-exporter.version;
     "io.nix-containers.chart" = "kube-prometheus-stack";
+    "io.nix-containers.image.upstream" = "https://github.com/prometheus/node_exporter";
+    "io.nix-containers.image.category" = "monitoring";
+    "io.nix-containers.image.aliases" = "node-exporter,node_exporter,prometheus";
   };
 }
