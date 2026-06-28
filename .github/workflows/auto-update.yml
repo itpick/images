@@ -233,7 +233,6 @@ jobs:
             pkgs/**/default.nix
 
       - name: Enable auto-merge
-        if: steps.cpr.outputs.pull-request-number != ''
         continue-on-error: true
         if: steps.cpr.outputs.pull-request-number
         env:
