@@ -28,19 +28,95 @@ let
   # Use default non-root user environment
   userEnv = nonRoot.mkDefaultUserEnv pkgs [];
 
+  # Minimal non-root server config. nginx's compile-time defaults bind :80
+  # (privileged) and write the error log / pid under /var/log/nginx, which a
+  # non-root, buildEnv-only image can't satisfy, so a bare image fails to
+  # start (server-needs-config in KNOWN-LIMITATIONS). Listen on 8080 (>1024,
+  # bindable by the nonroot user) and keep pid + temp dirs under writable
+  # /tmp. Operators override by mounting their own /etc/nginx/nginx.conf.
+  nginxConfig = pkgs.writeTextDir "etc/nginx/nginx.conf" ''
+    worker_processes  1;
+    error_log  /var/log/nginx/error.log warn;
+    pid        /tmp/nginx.pid;
+
+    events {
+        worker_connections  1024;
+    }
+
+    http {
+        access_log  /dev/stdout;
+
+        client_body_temp_path  /tmp/nginx_client_body;
+        proxy_temp_path        /tmp/nginx_proxy;
+        fastcgi_temp_path      /tmp/nginx_fastcgi;
+        uwsgi_temp_path        /tmp/nginx_uwsgi;
+        scgi_temp_path         /tmp/nginx_scgi;
+
+        server {
+            listen       8080;
+            server_name  localhost;
+            location / {
+                return 200 "ok\n";
+            }
+        }
+    }
+  '';
+
+  # nginx (non-root) needs these to pre-exist writable: /tmp for the pid +
+  # temp dirs (buildEnv otherwise leaves /tmp a read-only store symlink), and
+  # /var/log/nginx owned by the nonroot uid for the error log. Mirrors the
+  # sibling nginx-unprivileged image's writable-dirs scaffold.
+  writableDirs = pkgs.runCommand "nginx-writable-dirs" {} ''
+    mkdir -p $out/tmp
+    mkdir -p $out/var/log/nginx
+  '';
+
 in
 nix2container.buildImage {
   name = "nginx";
-  tag = "latest";
+  # Version-tag the image (matches the org.opencontainers.image.version label).
+  tag = pkgs.nginx.version;
 
-  copyToRoot = [
-    (buildEnv {
-      name = "nginx-root";
-      paths = base.basePackages ++ nginxPackages ++ [ userEnv ];
+  # Separate layers so the writable-dirs scaffold can declare its own perms
+  # without colliding with buildEnv's read-only /tmp symlink (same approach as
+  # nginx-unprivileged).
+  layers = [
+    (nix2container.buildLayer {
+      copyToRoot = [
+        (buildEnv {
+          name = "nginx-root";
+          paths = base.basePackages ++ nginxPackages ++ [ userEnv nginxConfig ];
+        })
+      ];
+    })
+    (nix2container.buildLayer {
+      copyToRoot = [ writableDirs ];
+      perms = [
+        {
+          path = writableDirs;
+          regex = "/tmp";
+          mode = "1777";
+        }
+        {
+          path = writableDirs;
+          regex = "/var/log/nginx";
+          mode = "0755";
+          uid = 65532;
+          gid = 65532;
+        }
+      ];
     })
   ];
 
   config = nonRoot.defaultConfig // {
+    User = "65532:65532";
+    # Charts consuming nginx leave command/args unset, relying on the OCI
+    # Entrypoint+Cmd; run nginx in the foreground with the baked config.
+    Entrypoint = [ "${pkgs.nginx}/bin/nginx" ];
+    Cmd = [ "-c" "/etc/nginx/nginx.conf" "-g" "daemon off;" ];
+    ExposedPorts = {
+      "8080/tcp" = {};
+    };
     Env = base.defaultEnv ++ nonRoot.userEnv ++ [
       "PATH=${lib.makeBinPath nginxPackages}"
     ];
