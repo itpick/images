@@ -112,13 +112,22 @@ jobs:
           docker images | grep ${{ matrix.name }} | head -1
           echo "loaded=true" >> "$GITHUB_OUTPUT"
 
+      - name: Compute kind-safe resource name
+        run: |
+          # kind cluster names and k8s resource names must match
+          # ^[a-z0-9.-]+$ (no underscores), but image names can contain '_'
+          # (php-fpm_exporter, kafka_exporter, k8s_gateway, …). Derive a
+          # sanitized name for all kind/k8s resources while keeping
+          # matrix.name for the image / build / path references.
+          echo "SAFE_NAME=$(printf '%s' '${{ matrix.name }}' | tr '_' '-')" >> "$GITHUB_ENV"
+
       - name: Create kind cluster
         run: |
           set -euo pipefail
           # Single-node cluster is enough for smoke tests; saves ~30s vs the
           # full ingress-ready config used in tests/kind-tests/configs.
           kind create cluster \
-            --name=kind-e2e-${{ matrix.name }} \
+            --name=kind-e2e-${{ env.SAFE_NAME }} \
             --wait=120s
           kubectl cluster-info
 
@@ -126,7 +135,7 @@ jobs:
         run: |
           set -euo pipefail
           kind load docker-image ${{ matrix.name }}:${{ env.IMAGE_TAG }} \
-            --name=kind-e2e-${{ matrix.name }}
+            --name=kind-e2e-${{ env.SAFE_NAME }}
 
       - name: Deploy image as Pod
         id: deploy
@@ -151,17 +160,17 @@ jobs:
             echo "mode=smoketest" >> "$GITHUB_OUTPUT"
             # Bundle both the per-image script AND the shared helpers
             # library; smoketest.sh sources `/smoketest/helpers.sh`.
-            kubectl create configmap "e2e-${{ matrix.name }}-script" \
+            kubectl create configmap "e2e-${{ env.SAFE_NAME }}-script" \
               --from-file=smoketest.sh="$SMOKETEST" \
               --from-file=helpers.sh="$HELPERS"
             cat <<EOF | kubectl apply -f -
           apiVersion: v1
           kind: Pod
           metadata:
-            name: e2e-${{ matrix.name }}
+            name: e2e-${{ env.SAFE_NAME }}
             namespace: default
             labels:
-              app: e2e-${{ matrix.name }}
+              app: e2e-${{ env.SAFE_NAME }}
           spec:
             restartPolicy: Never
             containers:
@@ -181,7 +190,7 @@ jobs:
             volumes:
               - name: script
                 configMap:
-                  name: e2e-${{ matrix.name }}-script
+                  name: e2e-${{ env.SAFE_NAME }}-script
                   defaultMode: 0755
           EOF
           else
@@ -190,10 +199,10 @@ jobs:
           apiVersion: v1
           kind: Pod
           metadata:
-            name: e2e-${{ matrix.name }}
+            name: e2e-${{ env.SAFE_NAME }}
             namespace: default
             labels:
-              app: e2e-${{ matrix.name }}
+              app: e2e-${{ env.SAFE_NAME }}
           spec:
             restartPolicy: Never
             containers:
@@ -209,7 +218,7 @@ jobs:
           MODE: ${{ steps.deploy.outputs.mode }}
         run: |
           set -uo pipefail
-          POD=e2e-${{ matrix.name }}
+          POD=e2e-${{ env.SAFE_NAME }}
           # Smoketest mode runs a real script, allow more time.
           if [ "$MODE" = "smoketest" ]; then DEADLINE=$(( $(date +%s) + 180 )); else DEADLINE=$(( $(date +%s) + 90 )); fi
           PASS=""
@@ -243,16 +252,16 @@ jobs:
       - name: Pod details on failure
         if: failure()
         run: |
-          kubectl describe pod e2e-${{ matrix.name }} || true
-          kubectl logs e2e-${{ matrix.name }} --tail=200 --all-containers=true || true
+          kubectl describe pod e2e-${{ env.SAFE_NAME }} || true
+          kubectl logs e2e-${{ env.SAFE_NAME }} --tail=200 --all-containers=true || true
 
       - name: Upload pod logs as artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: kind-e2e-${{ matrix.name }}-logs
+          name: kind-e2e-${{ env.SAFE_NAME }}-logs
           path: |
-            /tmp/kind-e2e-${{ matrix.name }}.log
+            /tmp/kind-e2e-${{ env.SAFE_NAME }}.log
           if-no-files-found: ignore
           retention-days: 7
 
@@ -269,4 +278,4 @@ jobs:
       - name: Tear down kind cluster
         if: always()
         run: |
-          kind delete cluster --name=kind-e2e-${{ matrix.name }} 2>/dev/null || true
+          kind delete cluster --name=kind-e2e-${{ env.SAFE_NAME }} 2>/dev/null || true
