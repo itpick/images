@@ -11,14 +11,21 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
 
+        chartRoutingJson = import ./chart-routing.nix { inherit pkgs; };
+
         # Chart test definitions
         chartTests = {
-          infrastructure = [ "cert-manager" "coredns" "crossplane" "keda" ];
+          infrastructure = [
+            "cert-manager" "coredns" "crossplane" "keda"
+            "reflector" "reloader" "external-dns" "dragonfly-operator"
+            "prometheus-adapter" "snapshot-controller" "spegel"
+            "cloudnative-pg"
+          ];
           security = [ "vault" "kyverno" "external-secrets" ];
-          observability = [ "kube-prometheus-stack" "loki" "tempo" ];
+          observability = [ "kube-prometheus-stack" "loki" "tempo" "alloy" ];
           gitops = [ "argocd" ];
           service-mesh = [ "istio" ];
-          ml-platform = [ "spark-operator" ];
+          ml-platform = [ "spark-operator" "mlflow" ];
           backup = [ "velero" ];
         };
 
@@ -158,6 +165,14 @@
             run_test ${./charts/infrastructure/test-coredns.sh} "coredns"
             run_test ${./charts/infrastructure/test-crossplane.sh} "crossplane"
             run_test ${./charts/infrastructure/test-keda.sh} "keda"
+            run_test ${./charts/infrastructure/test-reflector.sh} "reflector"
+            run_test ${./charts/infrastructure/test-reloader.sh} "reloader"
+            run_test ${./charts/infrastructure/test-external-dns.sh} "external-dns"
+            run_test ${./charts/infrastructure/test-dragonfly-operator.sh} "dragonfly-operator"
+            run_test ${./charts/infrastructure/test-prometheus-adapter.sh} "prometheus-adapter"
+            run_test ${./charts/infrastructure/test-snapshot-controller.sh} "snapshot-controller"
+            run_test ${./charts/infrastructure/test-spegel.sh} "spegel"
+            run_test ${./charts/infrastructure/test-cloudnative-pg.sh} "cloudnative-pg"
           fi
 
           if [ "$CATEGORY" = "all" ] || [ "$CATEGORY" = "security" ]; then
@@ -170,6 +185,7 @@
             run_test ${./charts/observability/test-kube-prometheus-stack.sh} "kube-prometheus-stack"
             run_test ${./charts/observability/test-loki.sh} "loki"
             run_test ${./charts/observability/test-tempo.sh} "tempo"
+            run_test ${./charts/observability/test-alloy.sh} "alloy"
           fi
 
           if [ "$CATEGORY" = "all" ] || [ "$CATEGORY" = "gitops" ]; then
@@ -182,6 +198,7 @@
 
           if [ "$CATEGORY" = "all" ] || [ "$CATEGORY" = "ml-platform" ]; then
             run_test ${./charts/ml-platform/test-spark-operator.sh} "spark-operator"
+            run_test ${./charts/ml-platform/test-mlflow.sh} "mlflow"
           fi
 
           if [ "$CATEGORY" = "all" ] || [ "$CATEGORY" = "backup" ]; then
@@ -203,6 +220,9 @@
           teardown = teardownCluster;
           load-image = loadImage;
           run-tests = runAllTests;
+
+          # Chart <-> image routing JSON (used by CI matrix builder)
+          chart-routing-json = chartRoutingJson;
 
           # Individual test scripts
           test-cert-manager = mkChartTest "infrastructure" "cert-manager";

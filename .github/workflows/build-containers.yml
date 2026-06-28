@@ -165,6 +165,16 @@ jobs:
     with:
       matrix: ${{ needs.select-matrix.outputs.matrix }}
 
+  # Helm-chart smoke test. Like test-images-kind, runs in parallel with
+  # test-images, deliberately NOT a publish gate yet. Promote to a gate
+  # by adding to build-and-push.needs once stable.
+  test-images-charts:
+    needs: [select-matrix]
+    if: needs.select-matrix.outputs.run == 'true'
+    uses: ./.github/workflows/test-images-charts.yml
+    with:
+      matrix: ${{ needs.select-matrix.outputs.matrix }}
+
   build-and-push:
     needs: [select-matrix, test-images]
     if: needs.select-matrix.outputs.run == 'true'

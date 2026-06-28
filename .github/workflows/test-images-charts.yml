@@ -1,0 +1,221 @@
+name: Test Images on Helm Charts
+
+# Helm-chart smoke test: for each PR-affected image that's used by one or
+# more helm charts (per chart-image-mapping.nix), spin a kind cluster,
+# load the chart's images, helm install with image overrides, wait for
+# Ready, uninstall. Mirrors the build/load pattern from
+# test-images-kind.yml, but exercises chart integration instead of bare
+# pod smoke.
+
+on:
+  workflow_call:
+    inputs:
+      matrix:
+        description: "Matrix of images (same shape as test-images.yml: {include: [{name: ...}, ...]})"
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      charts:
+        description: 'Comma-separated chart names to test (e.g. "alloy,vault")'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  resolve-charts:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.pick.outputs.matrix }}
+      run: ${{ steps.pick.outputs.run }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build routing JSON
+        id: routing
+        run: |
+          set -euo pipefail
+          cd tests/kind-tests
+          nix build .#chart-routing-json
+          echo "json_path=$(realpath result)" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve chart matrix
+        id: pick
+        env:
+          CALLER_MATRIX: ${{ inputs.matrix }}
+          DISPATCH_CHARTS: ${{ inputs.charts }}
+          ROUTING_JSON: ${{ steps.routing.outputs.json_path }}
+        run: |
+          set -euo pipefail
+          # Build "charts" list from either source.
+          if [ -n "${DISPATCH_CHARTS:-}" ]; then
+            CHARTS=$(printf '%s' "$DISPATCH_CHARTS" | jq -Rc '
+              split(",") | map(gsub("^\\s+|\\s+$"; "")) | map(select(length > 0))
+            ')
+          else
+            IMAGES=$(printf '%s' "$CALLER_MATRIX" | jq -c '[.include[].name]')
+            CHARTS=$(jq -c --argjson images "$IMAGES" '
+              [ ($images[]) as $i
+                | (.chartsPerImage[$i] // [])[]
+              ] | unique
+            ' "$ROUTING_JSON")
+          fi
+
+          # Map each chart to {chart, category, images_csv}.
+          # category is derived from the directory the test script lives in.
+          MATRIX=$(jq -c --argjson charts "$CHARTS" '
+            [ ($charts[]) as $c
+              | { chart: $c, images: (.imagesPerChart[$c] // []) }
+              | select(.images | length > 0)
+              | .images_csv = (.images | join(","))
+              | del(.images)
+            ]
+          ' "$ROUTING_JSON")
+
+          # For each chart, locate the test script and derive category.
+          ENRICHED='[]'
+          for row in $(echo "$MATRIX" | jq -c '.[]'); do
+            CHART=$(echo "$row" | jq -r '.chart')
+            SCRIPT=$(find tests/kind-tests/charts -name "test-${CHART}.sh" -print -quit || true)
+            if [ -z "$SCRIPT" ]; then
+              echo "skip: no test script for chart $CHART"
+              continue
+            fi
+            CATEGORY=$(basename "$(dirname "$SCRIPT")")
+            ENRICHED=$(echo "$ENRICHED" | jq -c --argjson r "$row" --arg cat "$CATEGORY" \
+              '. + [($r + {category: $cat})]')
+          done
+
+          # Empty list → run=false (downstream job skipped).
+          if [ "$(echo "$ENRICHED" | jq 'length')" = "0" ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo 'matrix={"include":[]}' >> "$GITHUB_OUTPUT"
+            echo "No affected charts; skipping"
+            exit 0
+          fi
+
+          echo "run=true" >> "$GITHUB_OUTPUT"
+          # Wrap in {include: [...]} for GH matrix consumption.
+          echo "matrix={\"include\":$ENRICHED}" >> "$GITHUB_OUTPUT"
+          echo "Affected charts:"
+          echo "$ENRICHED" | jq .
+
+  chart-test:
+    needs: [resolve-charts]
+    if: needs.resolve-charts.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix: ${{ fromJSON(needs.resolve-charts.outputs.matrix) }}
+    env:
+      KIND_VERSION: v0.30.0
+      IMAGE_TAG: test
+      CLUSTER_NAME: kind-charts-${{ matrix.chart }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install kind
+        run: |
+          set -euo pipefail
+          sudo curl -sSLo /usr/local/bin/kind \
+            "https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-linux-amd64"
+          sudo chmod +x /usr/local/bin/kind
+          kind version
+
+      - name: Install helm
+        run: |
+          set -euo pipefail
+          curl -fsSL https://get.helm.sh/helm-v3.16.0-linux-amd64.tar.gz | tar -xz -C /tmp
+          sudo mv /tmp/linux-amd64/helm /usr/local/bin/helm
+          helm version
+
+      - name: Build images for chart
+        env:
+          IMAGES_CSV: ${{ matrix.images_csv }}
+        run: |
+          set -euo pipefail
+          IFS=',' read -ra IMAGES <<< "$IMAGES_CSV"
+          for img in "${IMAGES[@]}"; do
+            echo "::group::Build $img"
+            nix build ".#${img}" --print-build-logs
+            nix run ".#${img}.copyTo" -- "docker-daemon:nix-containers/${img}:${IMAGE_TAG}"
+            echo "::endgroup::"
+          done
+
+      - name: Create kind cluster
+        run: |
+          set -euo pipefail
+          kind create cluster --name="${CLUSTER_NAME}" --wait=120s
+          kubectl cluster-info
+
+      - name: Load chart images into kind
+        env:
+          IMAGES_CSV: ${{ matrix.images_csv }}
+        run: |
+          set -euo pipefail
+          IFS=',' read -ra IMAGES <<< "$IMAGES_CSV"
+          for img in "${IMAGES[@]}"; do
+            kind load docker-image "nix-containers/${img}:${IMAGE_TAG}" --name="${CLUSTER_NAME}"
+          done
+
+      - name: Run chart test
+        env:
+          CHART: ${{ matrix.chart }}
+          CATEGORY: ${{ matrix.category }}
+        run: |
+          set -euo pipefail
+          SCRIPT="tests/kind-tests/charts/${CATEGORY}/test-${CHART}.sh"
+          if [ ! -f "$SCRIPT" ]; then
+            echo "ERROR: test script not found: $SCRIPT"
+            exit 1
+          fi
+          bash "$SCRIPT"
+
+      - name: Diagnostics on failure
+        if: failure()
+        env:
+          CHART: ${{ matrix.chart }}
+        run: |
+          echo "=== Pods (all namespaces) ==="
+          kubectl get pods -A || true
+          echo "=== Events (chart namespace) ==="
+          kubectl get events -n "${CHART}" --sort-by=.lastTimestamp || true
+          echo "=== Pod descriptions ==="
+          kubectl describe pods -n "${CHART}" || true
+          echo "=== Pod logs ==="
+          kubectl logs -n "${CHART}" --all-containers=true --tail=200 -l "app.kubernetes.io/instance=${CHART}" || true
+
+      - name: Upload chart-test logs as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kind-charts-${{ matrix.chart }}-logs
+          path: |
+            /tmp/kind-charts-${{ matrix.chart }}.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Tear down kind cluster
+        if: always()
+        run: |
+          kind delete cluster --name="${CLUSTER_NAME}" 2>/dev/null || true

@@ -104,3 +104,30 @@ images, CLIs, anything where "image loads" doesn't prove "image works").
    Ready. The `tests/kind-tests/` framework already has the chart category
    layout for this; it just needs the CI wiring.
 3. Keep the generic-Pod smoke as the first-line baseline.
+
+## Chart tests deferred from 2026-06-27 round
+
+The following helm charts are referenced in `chart-image-mapping.nix` but
+are intentionally not yet covered by `tests/kind-tests/charts/`. Each has
+a specific kind-cluster blocker; revisit one at a time.
+
+- **rook-ceph / rook-ceph-cluster** — chart expects block devices on
+  nodes. Kind's default container nodes don't expose raw block devices.
+  Workaround would be a multi-node kind config + loopback devices wired
+  via hostPath, or moving these to a k3d / minikube-with-libvirt path.
+
+- **kubeflow-trainer** — chart assumes the broader kubeflow CRD set
+  (PyTorchJob, TFJob, etc.) is preinstalled. A standalone install
+  succeeds but the controller's reconciliation loop trips on missing
+  CRDs. Either bundle the upstream `manifests/training-operator` install
+  or add CRD-only pre-step.
+
+- **apache-nifi** — large Java app (NiFi + registry + zookeeper) with
+  cold-start times that routinely exceed helm's default 5m wait. Needs
+  either a much higher timeout or a switch to single-replica with
+  reduced JVM heap.
+
+- **node-local-dns** — chart deploys a daemonset that intercepts
+  cluster DNS by listening on the node's loopback. Kind's default
+  CoreDNS config conflicts; a useful test requires reconfiguring kubelet
+  args (`--cluster-dns`) at cluster create time.

@@ -97,6 +97,7 @@ kind-run-tests [cluster] [category]    # Run tests
 - external-secrets
 
 ### Observability
+- alloy
 - kube-prometheus-stack
 - loki
 - tempo
@@ -120,3 +121,14 @@ kind-run-tests [cluster] [category]    # Run tests
 Test results are written to:
 - `results/test-results.json` - Machine-readable results
 - `results/test-results.log` - Human-readable log
+
+## CI integration
+
+The `.github/workflows/test-images-charts.yml` workflow runs these chart
+tests on PRs. It reverse-looks-up the changed images from
+`chart-image-mapping.nix` via `tests/kind-tests/chart-routing.nix`, then
+runs only the affected chart tests in parallel.
+
+To test a specific chart on demand from the GitHub UI:
+1. Actions → "Test Images on Helm Charts" → Run workflow
+2. Enter comma-separated chart names (e.g. `alloy,reflector,vault`)
