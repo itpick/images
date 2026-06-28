@@ -31,19 +31,44 @@ let
 
   userEnv = nonRoot.mkDefaultUserEnv pkgs [];
 
+  # haproxy refuses to start without a config (server-needs-config in
+  # KNOWN-LIMITATIONS). Bake a minimal, non-root-friendly default: an HTTP
+  # health frontend on 0.0.0.0:8080 (>1024, so the nonRoot user can bind it)
+  # that answers /healthz via monitor-uri. No writable dirs, no chroot, logs
+  # to stdout. Operators override by mounting their own /etc/haproxy/haproxy.cfg.
+  haproxyConfig = pkgs.writeTextDir "etc/haproxy/haproxy.cfg" ''
+    global
+        log stdout format raw local0
+
+    defaults
+        mode http
+        log global
+        timeout connect 5s
+        timeout client 50s
+        timeout server 50s
+
+    frontend health
+        bind 0.0.0.0:8080
+        monitor-uri /healthz
+  '';
+
 in
 nix2container.buildImage {
   name = "haproxy";
-  tag = "latest";
+  # Version-tag the image (matches the org.opencontainers.image.version label).
+  tag = pkgs.haproxy.version;
 
   copyToRoot = [
     (buildEnv {
       name = "haproxy-root";
-      paths = base.basePackages ++ haproxyPackages ++ [ userEnv ];
+      paths = base.basePackages ++ haproxyPackages ++ [ userEnv haproxyConfig ];
     })
   ];
 
   config = nonRoot.defaultConfig // {
+    # Run in the foreground (-db disables daemonization) with the baked config
+    # so the kind-test probe can reach a Running pod with no extra wiring.
+    Cmd = [ "haproxy" "-f" "/etc/haproxy/haproxy.cfg" "-db" ];
     Env = base.defaultEnv ++ nonRoot.userEnv ++ [
       "PATH=${lib.makeBinPath haproxyPackages}"
     ];
