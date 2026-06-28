@@ -213,6 +213,7 @@ jobs:
 
       - name: Create Pull Request
         id: cpr
+        continue-on-error: true   # org policy may block Actions from creating PRs; don't fail the daily run
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -232,6 +233,8 @@ jobs:
             pkgs/**/default.nix
 
       - name: Enable auto-merge
+        if: steps.cpr.outputs.pull-request-number != ''
+        continue-on-error: true
         if: steps.cpr.outputs.pull-request-number
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

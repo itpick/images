@@ -53,31 +53,83 @@
 #   ... and 8 more
 
 let
-  postgresPackages = with pkgs; [
-    postgresql_16
-    bash
-    coreutils
-    findutils
-    which
+  # Standardize on a single postgresql attr so the server binary on PATH, the
+  # tag, and the org.opencontainers.image.version label all agree.
+  postgresql = pkgs.postgresql_16;
+
+  postgresPackages = [
+    postgresql
+    pkgs.bash
+    pkgs.coreutils
+    pkgs.findutils
+    pkgs.which
+    pkgs.gnused
+    pkgs.gzip
+    pkgs.gosu  # drop root -> postgres uid (initdb/postgres refuse to run as root)
   ];
+
+  # docker-library-compatible entrypoint: initdb on first boot, then exec the
+  # server. Built from the sibling postgres image's docker-entrypoint.sh.
+  entrypoint = pkgs.writeShellApplication {
+    name = "docker-entrypoint.sh";
+    runtimeInputs = postgresPackages;
+    text = builtins.readFile ./docker-entrypoint.sh;
+    excludeShellChecks = [ "SC2086" "SC1090" ];
+  };
+
+  # The uid:gid the server actually runs as (postgres can't run as root).
+  postgresUser = { uid = 999; gid = 999; name = "postgres"; home = "/var/lib/postgresql"; };
+  userEnv = nonRoot.mkCustomUserEnv pkgs postgresUser [];
+
+  # Pre-create the writable runtime dirs (data + Unix socket dir), owned by the
+  # postgres uid so the server can write even when started from a fresh volume.
+  pgDirs = pkgs.runCommand "postgres-dirs" {} ''
+    mkdir -p $out/var/lib/postgresql/data
+    mkdir -p $out/var/run/postgresql
+    mkdir -p $out/docker-entrypoint-initdb.d
+    chmod 700 $out/var/lib/postgresql/data
+    chmod 775 $out/var/run/postgresql
+  '';
 
 in
 nix2container.buildImage {
   name = "postgres";
-  tag = "latest";
+  # Version-tag the image (matches the org.opencontainers.image.version label).
+  tag = postgresql.version;
 
   copyToRoot = [
     (buildEnv {
       name = "postgres-root";
-      paths = base.basePackages ++ postgresPackages;
+      paths = base.basePackages ++ postgresPackages ++ [ entrypoint userEnv pgDirs ];
     })
   ];
 
-  # Chainguard runs postgres as root
+  perms = [
+    {
+      path = pgDirs;
+      regex = "/var/lib/postgresql/data";
+      mode = "0700";
+      uid = postgresUser.uid;
+      gid = postgresUser.gid;
+    }
+    {
+      path = pgDirs;
+      regex = "/var/run/postgresql";
+      mode = "0775";
+      uid = postgresUser.uid;
+      gid = postgresUser.gid;
+    }
+  ];
+
+  # Chainguard runs postgres as root; the entrypoint drops to the postgres uid
+  # (via gosu) before initdb/postgres, which refuse to run as root.
   config = nonRoot.rootConfig // {
+    Entrypoint = [ "${entrypoint}/bin/docker-entrypoint.sh" ];
+    Cmd = [ "postgres" ];
     Env = base.defaultEnv ++ nonRoot.rootEnv ++ [
       "PATH=${lib.makeBinPath postgresPackages}"
       "PGDATA=/var/lib/postgresql/data"
+      "PGHOST=/var/run/postgresql"
       "POSTGRES_DB=postgres"
       "POSTGRES_USER=postgres"
     ];
@@ -91,7 +143,7 @@ nix2container.buildImage {
       "org.opencontainers.image.url" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source" = "https://github.com/nix-containers/images";
       "org.opencontainers.image.vendor" = "nix-containers";
-      "org.opencontainers.image.version" = pkgs.postgresql.version;
+      "org.opencontainers.image.version" = postgresql.version;
       "io.nix-containers.image.upstream" = "https://www.postgresql.org/";
       "io.nix-containers.image.category" = "database";
       "io.nix-containers.image.aliases" = "postgres,postgresql,database";
