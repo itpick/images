@@ -8,7 +8,11 @@ mkImage {
   name = "harbor-redis";
   tag = pkgs.redis.version;
   entrypoint = [ "${pkgs.redis}/bin/redis-server" ];
-  cmd = [];
+  # Was empty — redis-server then binds only localhost (protected-mode on), so
+  # the pod isn't reachable. Match the validated images/redis template: bind all
+  # interfaces on :6379 with protected-mode off so the harbor / kind-test probe
+  # can reach it. Operators front it with auth + a PVC-backed dir as needed.
+  cmd = [ "--bind" "0.0.0.0" "--protected-mode" "no" ];
 
   extraPkgs = with pkgs; [
     cacert
