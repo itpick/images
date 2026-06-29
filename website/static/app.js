@@ -63,6 +63,14 @@ function filter() {
 
 function render() {
   const c = document.getElementById('images-container');
+  const counter = document.getElementById('results-count');
+  if (counter) {
+    const shown = filteredImages.length;
+    const total = allImages.length;
+    counter.textContent = shown === total
+      ? `Showing all ${total.toLocaleString()} images`
+      : `Showing ${shown.toLocaleString()} of ${total.toLocaleString()} images`;
+  }
   if (filteredImages.length === 0) {
     c.innerHTML = `<div class="col-span-full text-center py-12 text-fg-muted">
       No images match your filters.
