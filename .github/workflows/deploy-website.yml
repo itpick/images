@@ -134,35 +134,56 @@ jobs:
             # record's tags[], filter out raw 40-char hex SHA tags
             # (build-and-push.yml:163 creates one per push), and sort
             # newest-first.
-            if ! gh api --paginate \
-                  "/orgs/nix-containers/packages/container/${encoded}/versions" \
-                  2>/dev/null \
-                | jq -s '
-                    [ .[][]
-                      | . as $v
-                      | ($v.metadata.container.tags // [])[]
-                      | { tag: ., digest: $v.name, pushed_at: $v.updated_at }
-                    ]
-                    | map(select(.tag | test("^[0-9a-f]{40}$") | not))
-                    | sort_by(.pushed_at) | reverse
-                  ' > "$tmp" 2>/dev/null; then
+            #
+            # GitHub's secondary rate limit punishes concurrent bursts from
+            # the same IP (which we ARE — GHA runners share egress IPs).
+            # First-pass result was 143/189 with a single attempt; with
+            # 3 retries and exponential backoff (1s, 3s, 9s), drops should
+            # be rare.
+            local attempt
+            for attempt in 1 2 3; do
+              if gh api --paginate \
+                    "/orgs/nix-containers/packages/container/${encoded}/versions" \
+                    2>/dev/null \
+                  | jq -s '
+                      [ .[][]
+                        | . as $v
+                        | ($v.metadata.container.tags // [])[]
+                        | { tag: ., digest: $v.name, pushed_at: $v.updated_at }
+                      ]
+                      | map(select(.tag | test("^[0-9a-f]{40}$") | not))
+                      | sort_by(.pushed_at) | reverse
+                    ' > "$tmp" 2>/dev/null \
+                  && [ -s "$tmp" ] \
+                  && [ "$(jq 'length' < "$tmp" 2>/dev/null || echo 0)" -gt 0 ]; then
+                mv "$tmp" "website/tags-data/${img}.json"
+                return
+              fi
               rm -f "$tmp"
-              return
-            fi
-            if [ -s "$tmp" ] && [ "$(jq 'length' < "$tmp")" -gt 0 ]; then
-              mv "$tmp" "website/tags-data/${img}.json"
-            else
-              rm -f "$tmp"
-            fi
+              if [ "$attempt" -lt 3 ]; then
+                sleep $((attempt * attempt))
+              fi
+            done
+            # Final fall-through: log to the summary so we can see what was
+            # missed without spamming stdout per success.
+            printf '%s\n' "$img" >> "$RUNNER_TEMP/tag-fetch-misses.txt"
           }
           export -f fetch_one
-          export GH_TOKEN
-          # 16-way parallelism keeps total wall-time around 1–2 minutes for
-          # ~200 images while staying well under GHCR's per-IP API throttle.
+          export GH_TOKEN RUNNER_TEMP
+          : > "$RUNNER_TEMP/tag-fetch-misses.txt"
+          # 8-way parallelism: drops -P from 16 to reduce secondary-rate-
+          # limit pressure (first deployment with -P 16 saw a ~24% drop
+          # rate on a single attempt). Combined with retries, total
+          # wall-time stays ~2 minutes for ~200 images.
           tr '\n' '\0' < "$IMG_LIST" \
-            | xargs -0 -n 1 -P 16 -I {} bash -c 'fetch_one "$@"' _ {}
+            | xargs -0 -n 1 -P 8 -I {} bash -c 'fetch_one "$@"' _ {}
           WROTE=$(find website/tags-data -name '*.json' | wc -l)
-          echo "Wrote tags-data for $WROTE images."
+          MISSES=$(wc -l < "$RUNNER_TEMP/tag-fetch-misses.txt")
+          echo "Wrote tags-data for $WROTE images. Missed: $MISSES"
+          if [ "$MISSES" -gt 0 ]; then
+            echo "Missed images (post-retry):"
+            sed 's/^/  - /' "$RUNNER_TEMP/tag-fetch-misses.txt"
+          fi
           git config user.email "deploy@nix-containers.local"
           git config user.name "deploy-bot"
           git add -f website/tags-data/
