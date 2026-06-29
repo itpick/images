@@ -1,34 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # influxdb-iamguarded
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.influxdb
+mkImage {
+  drv = pkgs.influxdb;
   name = "influxdb-iamguarded";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "influxdb-iamguarded-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "influxdb-iamguarded";
-      "org.opencontainers.image.description" = "influxdb-iamguarded container image";
-    };
+  tag = "v${pkgs.influxdb.version}";
+  entrypoint = [ (lib.getExe pkgs.influxdb) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "influxdb-iamguarded";
+    "org.opencontainers.image.description" = "influxdb-iamguarded container image (nixpkgs.influxdb)";
+    "org.opencontainers.image.version" = pkgs.influxdb.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

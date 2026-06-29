@@ -1,35 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # percona-server-fips
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.percona-server
+mkImage {
+  drv = pkgs.percona-server;
   name = "percona-server-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "percona-server-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "percona-server-fips";
-      "org.opencontainers.image.description" = "percona-server-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.percona-server.version}";
+  entrypoint = [ (lib.getExe pkgs.percona-server) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "percona-server-fips";
+    "org.opencontainers.image.description" = "percona-server-fips container image (nixpkgs.percona-server)";
+    "org.opencontainers.image.version" = pkgs.percona-server.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # kubo-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.kubo
+mkImage {
+  drv = pkgs.kubo;
   name = "kubo-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "kubo-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "kuuo fips";
-      "org.opencontainers.image.description" = "kubo-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.kubo.version}";
+  entrypoint = [ (lib.getExe pkgs.kubo) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "kubo-fips";
+    "org.opencontainers.image.description" = "kubo-fips container image (nixpkgs.kubo)";
+    "org.opencontainers.image.version" = pkgs.kubo.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

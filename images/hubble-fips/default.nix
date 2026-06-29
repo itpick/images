@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # hubble-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.hubble
+mkImage {
+  drv = pkgs.hubble;
   name = "hubble-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "hubble-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "huuble fips";
-      "org.opencontainers.image.description" = "hubble-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.hubble.version}";
+  entrypoint = [ (lib.getExe pkgs.hubble) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "hubble-fips";
+    "org.opencontainers.image.description" = "hubble-fips container image (nixpkgs.hubble)";
+    "org.opencontainers.image.version" = pkgs.hubble.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

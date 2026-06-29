@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # flannel-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.flannel
+mkImage {
+  drv = pkgs.flannel;
   name = "flannel-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "flannel-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "flannel fips";
-      "org.opencontainers.image.description" = "flannel-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.flannel.version}";
+  entrypoint = [ (lib.getExe pkgs.flannel) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "flannel-fips";
+    "org.opencontainers.image.description" = "flannel-fips container image (nixpkgs.flannel)";
+    "org.opencontainers.image.version" = pkgs.flannel.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

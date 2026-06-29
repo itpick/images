@@ -1,35 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # jdk-fips
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.jdk
+mkImage {
+  drv = pkgs.jdk;
   name = "jdk-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "jdk-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "jdk-fips";
-      "org.opencontainers.image.description" = "jdk-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.jdk.version}";
+  entrypoint = [ (lib.getExe pkgs.jdk) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "jdk-fips";
+    "org.opencontainers.image.description" = "jdk-fips container image (nixpkgs.jdk)";
+    "org.opencontainers.image.version" = pkgs.jdk.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

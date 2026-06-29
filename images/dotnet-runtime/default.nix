@@ -1,34 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # dotnet-runtime
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.dotnet-runtime
+mkImage {
+  drv = pkgs.dotnet-runtime;
   name = "dotnet-runtime";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "dotnet-runtime-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "binary";
-      "io.nix-containers.build-method" = "Pre-built binary packaged with Nix";
-      "org.opencontainers.image.title" = "dotnet-runtime";
-      "org.opencontainers.image.description" = "dotnet-runtime container image";
-    };
+  tag = "v${pkgs.dotnet-runtime.version}";
+  entrypoint = [ (lib.getExe pkgs.dotnet-runtime) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "dotnet-runtime";
+    "org.opencontainers.image.description" = "dotnet-runtime container image (nixpkgs.dotnet-runtime)";
+    "org.opencontainers.image.version" = pkgs.dotnet-runtime.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

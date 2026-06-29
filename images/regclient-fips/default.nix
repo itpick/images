@@ -1,35 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # regclient-fips
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.regclient
+mkImage {
+  drv = pkgs.regclient;
   name = "regclient-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "regclient-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "regclient-fips";
-      "org.opencontainers.image.description" = "regclient-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.regclient.version}";
+  entrypoint = [ (lib.getExe pkgs.regclient) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "regclient-fips";
+    "org.opencontainers.image.description" = "regclient-fips container image (nixpkgs.regclient)";
+    "org.opencontainers.image.version" = pkgs.regclient.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

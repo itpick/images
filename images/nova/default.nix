@@ -1,34 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # nova
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.nova
+mkImage {
+  drv = pkgs.nova;
   name = "nova";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "nova-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "nova";
-      "org.opencontainers.image.description" = "nova container image";
-    };
+  tag = "v${pkgs.nova.version}";
+  entrypoint = [ (lib.getExe pkgs.nova) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "nova";
+    "org.opencontainers.image.description" = "nova container image (nixpkgs.nova)";
+    "org.opencontainers.image.version" = pkgs.nova.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

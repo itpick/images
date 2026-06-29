@@ -1,37 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # zipkin-slim
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.zipkin
+mkImage {
+  drv = pkgs.zipkin;
   name = "zipkin-slim";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "zipkin-slim-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "zipkin slim";
-      "org.opencontainers.image.description" = "zipkin-slim container image";
-      "org.opencontainers.image.version" = version;
-    };
+  tag = "v${pkgs.zipkin.version}";
+  entrypoint = [ (lib.getExe pkgs.zipkin) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "zipkin-slim";
+    "org.opencontainers.image.description" = "zipkin-slim container image (nixpkgs.zipkin)";
+    "org.opencontainers.image.version" = pkgs.zipkin.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

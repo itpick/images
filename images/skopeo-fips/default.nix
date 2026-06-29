@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # skopeo-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.skopeo
+mkImage {
+  drv = pkgs.skopeo;
   name = "skopeo-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "skopeo-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "skopeo fips";
-      "org.opencontainers.image.description" = "skopeo-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.skopeo.version}";
+  entrypoint = [ (lib.getExe pkgs.skopeo) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "skopeo-fips";
+    "org.opencontainers.image.description" = "skopeo-fips container image (nixpkgs.skopeo)";
+    "org.opencontainers.image.version" = pkgs.skopeo.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

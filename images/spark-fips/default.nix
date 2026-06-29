@@ -1,35 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # spark-fips
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.spark
+mkImage {
+  drv = pkgs.spark;
   name = "spark-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "spark-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "spark-fips";
-      "org.opencontainers.image.description" = "spark-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.spark.version}";
+  entrypoint = [ (lib.getExe pkgs.spark) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "spark-fips";
+    "org.opencontainers.image.description" = "spark-fips container image (nixpkgs.spark)";
+    "org.opencontainers.image.version" = pkgs.spark.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

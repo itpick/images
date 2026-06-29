@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # gitaly-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.gitaly
+mkImage {
+  drv = pkgs.gitaly;
   name = "gitaly-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "gitaly-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "gitaly fips";
-      "org.opencontainers.image.description" = "gitaly-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.gitaly.version}";
+  entrypoint = [ (lib.getExe pkgs.gitaly) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "gitaly-fips";
+    "org.opencontainers.image.description" = "gitaly-fips container image (nixpkgs.gitaly)";
+    "org.opencontainers.image.version" = pkgs.gitaly.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

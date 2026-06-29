@@ -1,35 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # node-problem-detector-fips
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.node-problem-detector
+mkImage {
+  drv = pkgs.node-problem-detector;
   name = "node-problem-detector-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "node-problem-detector-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "node-problem-detector-fips";
-      "org.opencontainers.image.description" = "node-problem-detector-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.node-problem-detector.version}";
+  entrypoint = [ (lib.getExe pkgs.node-problem-detector) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "node-problem-detector-fips";
+    "org.opencontainers.image.description" = "node-problem-detector-fips container image (nixpkgs.node-problem-detector)";
+    "org.opencontainers.image.version" = pkgs.node-problem-detector.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

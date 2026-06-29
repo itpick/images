@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # memcached-exporter-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.memcached-exporter
+mkImage {
+  drv = pkgs.memcached-exporter;
   name = "memcached-exporter-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "memcached-exporter-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "memcached exporter fips";
-      "org.opencontainers.image.description" = "memcached-exporter-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.memcached-exporter.version}";
+  entrypoint = [ (lib.getExe pkgs.memcached-exporter) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "memcached-exporter-fips";
+    "org.opencontainers.image.description" = "memcached-exporter-fips container image (nixpkgs.memcached-exporter)";
+    "org.opencontainers.image.version" = pkgs.memcached-exporter.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

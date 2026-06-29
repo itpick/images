@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # syft-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.syft
+mkImage {
+  drv = pkgs.syft;
   name = "syft-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "syft-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "syft fips";
-      "org.opencontainers.image.description" = "syft-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.syft.version}";
+  entrypoint = [ (lib.getExe pkgs.syft) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "syft-fips";
+    "org.opencontainers.image.description" = "syft-fips container image (nixpkgs.syft)";
+    "org.opencontainers.image.version" = pkgs.syft.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

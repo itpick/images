@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # cue-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.cue
+mkImage {
+  drv = pkgs.cue;
   name = "cue-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "cue-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "cue fips";
-      "org.opencontainers.image.description" = "cue-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.cue.version}";
+  entrypoint = [ (lib.getExe pkgs.cue) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "cue-fips";
+    "org.opencontainers.image.description" = "cue-fips container image (nixpkgs.cue)";
+    "org.opencontainers.image.version" = pkgs.cue.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

@@ -1,35 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # librechat-fips
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.librechat
+mkImage {
+  drv = pkgs.librechat;
   name = "librechat-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "librechat-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "librechat-fips";
-      "org.opencontainers.image.description" = "librechat-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.librechat.version}";
+  entrypoint = [ (lib.getExe pkgs.librechat) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "librechat-fips";
+    "org.opencontainers.image.description" = "librechat-fips container image (nixpkgs.librechat)";
+    "org.opencontainers.image.version" = pkgs.librechat.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

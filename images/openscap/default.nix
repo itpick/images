@@ -1,34 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # openscap
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.openscap
+mkImage {
+  drv = pkgs.openscap;
   name = "openscap";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "openscap-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "openscap";
-      "org.opencontainers.image.description" = "openscap container image";
-    };
+  tag = "v${pkgs.openscap.version}";
+  entrypoint = [ (lib.getExe pkgs.openscap) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "openscap";
+    "org.opencontainers.image.description" = "openscap container image (nixpkgs.openscap)";
+    "org.opencontainers.image.version" = pkgs.openscap.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

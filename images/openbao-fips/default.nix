@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # openbao-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.openbao
+mkImage {
+  drv = pkgs.openbao;
   name = "openbao-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "openbao-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "openuao fips";
-      "org.opencontainers.image.description" = "openbao-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.openbao.version}";
+  entrypoint = [ (lib.getExe pkgs.openbao) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "openbao-fips";
+    "org.opencontainers.image.description" = "openbao-fips container image (nixpkgs.openbao)";
+    "org.opencontainers.image.version" = pkgs.openbao.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

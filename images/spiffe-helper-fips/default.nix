@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # spiffe-helper-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.spiffe-helper
+mkImage {
+  drv = pkgs.spiffe-helper;
   name = "spiffe-helper-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "spiffe-helper-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "spiffe helper fips";
-      "org.opencontainers.image.description" = "spiffe-helper-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.spiffe-helper.version}";
+  entrypoint = [ (lib.getExe pkgs.spiffe-helper) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "spiffe-helper-fips";
+    "org.opencontainers.image.description" = "spiffe-helper-fips container image (nixpkgs.spiffe-helper)";
+    "org.opencontainers.image.version" = pkgs.spiffe-helper.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

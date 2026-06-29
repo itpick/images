@@ -1,35 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # gradle-fips
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.gradle
+mkImage {
+  drv = pkgs.gradle;
   name = "gradle-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "gradle-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "gradle-fips";
-      "org.opencontainers.image.description" = "gradle-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.gradle.version}";
+  entrypoint = [ (lib.getExe pkgs.gradle) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "gradle-fips";
+    "org.opencontainers.image.description" = "gradle-fips container image (nixpkgs.gradle)";
+    "org.opencontainers.image.version" = pkgs.gradle.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

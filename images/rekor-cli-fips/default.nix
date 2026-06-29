@@ -1,35 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # rekor-cli-fips
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.rekor-cli
+mkImage {
+  drv = pkgs.rekor-cli;
   name = "rekor-cli-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "rekor-cli-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "rekor-cli-fips";
-      "org.opencontainers.image.description" = "rekor-cli-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.rekor-cli.version}";
+  entrypoint = [ (lib.getExe pkgs.rekor-cli) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "rekor-cli-fips";
+    "org.opencontainers.image.description" = "rekor-cli-fips container image (nixpkgs.rekor-cli)";
+    "org.opencontainers.image.version" = pkgs.rekor-cli.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }
