@@ -145,6 +145,11 @@ pkgs.stdenv.mkDerivation {
     cp -r static/fonts/* $OUT_DIR/static/fonts/
     cp static/app.js $OUT_DIR/static/app.js
 
+    echo "-> Parsing image popularity table..."
+    python3 parse-popularity.py \
+      --in ${../IMAGE-POPULARITY.md} \
+      --out $TMPDIR/popularity.json
+
     echo "-> Rendering pages..."
     SCAN_ARG=""
     if [ -n "''${SCAN_DATA_PATH:-}" ] && [ -d "$SCAN_DATA_PATH" ]; then
@@ -164,6 +169,7 @@ pkgs.stdenv.mkDerivation {
       --out $OUT_DIR \
       --cmark ${pkgs.cmark}/bin/cmark \
       --pygmentize ${pkgs.python3Packages.pygments}/bin/pygmentize \
+      --popularity $TMPDIR/popularity.json \
       $BASE_ARG \
       $SCAN_ARG
 

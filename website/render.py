@@ -83,6 +83,60 @@ def scan_for_image(image_name: str, scan_dir: str | None) -> dict | None:
     return counts
 
 
+# Suffixes folded into a base image when looking up popularity data.
+# Applied in order; first match wins. Mirrors the methodology in
+# IMAGE-POPULARITY.md, where `-fips`, `-iamguarded`, `-nonroot` variants
+# share the popularity record of their base.
+_POPULARITY_VARIANT_SUFFIXES = ("-fips", "-iamguarded", "-nonroot")
+
+
+def lookup_popularity(image_name: str, table: dict) -> dict | None:
+    """Return the popularity record for `image_name`, folding variant suffixes
+    (`-fips`, `-iamguarded`, `-nonroot`) into the base name when an exact
+    match is missing."""
+    if image_name in table:
+        return table[image_name]
+    base = image_name
+    # Strip each known suffix once if present, then re-check. We loop because
+    # a name like `foo-iamguarded-fips` should fall back to `foo`.
+    changed = True
+    while changed:
+        changed = False
+        for suffix in _POPULARITY_VARIANT_SUFFIXES:
+            if base.endswith(suffix) and len(base) > len(suffix):
+                base = base[: -len(suffix)]
+                changed = True
+                if base in table:
+                    return table[base]
+    return None
+
+
+def render_popularity(record: dict | None) -> str:
+    """Render the popularity row HTML for a per-image page. Empty string when
+    the image is not in the ranking table — keeps unranked pages clean."""
+    if not record:
+        return ""
+    parts = [
+        f'<span class="badge bg-accent-ok/20 text-accent-ok font-mono">Rank #{record["rank"]}</span>'
+    ]
+    pulls = record.get("pulls")
+    if pulls:
+        parts.append(f'<span class="font-mono">~{pulls} pulls</span>')
+    stars = record.get("stars")
+    if stars:
+        parts.append(f'<span class="font-mono">{stars} stars</span>')
+    if record.get("used"):
+        parts.append(
+            '<span class="badge bg-neutral-800 text-fg-muted text-xs">used-by-us</span>'
+        )
+    inner = "\n  ".join(parts)
+    return (
+        '<div class="flex items-center gap-3 text-sm text-fg-muted mb-2">\n  '
+        + inner
+        + "\n</div>"
+    )
+
+
 def fill_template(template: str, mapping: dict) -> str:
     """Mustache-style substitution. {{KEY}} -> mapping[KEY]. Raises if any
     placeholder is left unfilled — better to catch typos at build time."""
@@ -105,10 +159,22 @@ def main():
     ap.add_argument("--pygmentize", required=True, help="Path to pygmentize binary")
     ap.add_argument("--scan-data", default=None,
                     help="Optional path to directory of *-trivy.json files")
+    ap.add_argument("--popularity", default=None,
+                    help="Optional path to popularity.json (output of parse-popularity.py)")
     ap.add_argument("--base-path", default="/",
                     help="URL base path (e.g. '/' locally, '/images/' on GH Pages project site). Trailing slash required.")
     args = ap.parse_args()
     base = args.base_path if args.base_path.endswith("/") else args.base_path + "/"
+
+    popularity: dict = {}
+    if args.popularity:
+        try:
+            with open(args.popularity) as f:
+                popularity = json.load(f)
+        except (OSError, json.JSONDecodeError) as e:
+            print(f"render: failed to load popularity data ({e}); continuing without",
+                  file=sys.stderr)
+            popularity = {}
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -127,6 +193,7 @@ def main():
         name = img["name"]
         readme_html = render_markdown(img.get("readme", ""), args.cmark)
         nix_html = render_nix(img.get("nixCode", ""), args.pygmentize)
+        pop_record = lookup_popularity(name, popularity)
         mapping = {
             "NAME": name,
             "DESCRIPTION": img.get("description", ""),
@@ -136,6 +203,7 @@ def main():
             "PULL_COMMAND": img.get("pullCommand", f"docker pull ghcr.io/nix-containers/images/{name}:latest"),
             "README_HTML": readme_html,
             "NIX_HTML": nix_html,
+            "POPULARITY_HTML": render_popularity(pop_record),
             "BUILD_TIME": build_time,
             "BASE": base,
         }
@@ -181,6 +249,10 @@ def main():
             "pullCommand": img.get("pullCommand", ""),
             "usedByCharts": img.get("usedByCharts", []),
             "scan": scan or None,
+            # Popularity fields (rank/pulls/stars/used/tagStatus). null when
+            # the image is not in IMAGE-POPULARITY.md. The index page may
+            # consume these later to surface rank-sorted lists.
+            "popularity": pop_record,
         })
 
     slim_data = {
