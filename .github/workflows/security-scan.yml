@@ -1,5 +1,13 @@
 name: Security Scan
 
+# Three trigger modes:
+#   - workflow_call: invoked by build-containers.yml after build-and-push;
+#     receives the matrix of just-built images.
+#   - schedule (daily): scan the top-N most popular images per
+#     IMAGE-POPULARITY.md, against their :latest tag on ghcr.io. Produces
+#     the security-scan-results artifact that deploy-website consumes.
+#   - workflow_dispatch: same as schedule with an optional override list.
+
 on:
   workflow_call:
     inputs:
@@ -8,6 +16,28 @@ on:
         required: false
         type: string
         default: '[]'
+  schedule:
+    # Daily at 06:00 UTC. Off-peak; not on the :00 minute is fine here
+    # because the scan grows with image count and we don't want hour-
+    # boundary contention with the auto-update cron.
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      images:
+        description: 'Optional CSV of image names (e.g. "redis,postgres,vault"). Empty = top 100 by popularity.'
+        required: false
+        default: ''
+        type: string
+      critical_threshold:
+        description: "Open an issue if total critical CVEs >= this value."
+        required: false
+        default: '1'
+        type: string
+      high_threshold:
+        description: "Open an issue if total high CVEs >= this value."
+        required: false
+        default: '10'
+        type: string
 
 jobs:
   security-scan:
@@ -16,9 +46,12 @@ jobs:
       contents: read
       packages: read
       security-events: write
+      issues: write   # required for the CVE-threshold alert step
     env:
       REGISTRY: ghcr.io
       IMAGE_NAME: ${{ github.repository }}
+      CRITICAL_THRESHOLD: ${{ inputs.critical_threshold || '1' }}
+      HIGH_THRESHOLD: ${{ inputs.high_threshold || '10' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -65,24 +98,40 @@ jobs:
         run: |
           echo "🔍 Starting Trivy security scans..."
           
-          # Get images to scan - either from input or discover all built images
+          # Resolve image list from one of three sources:
+          #  1. workflow_call input (matrix from build-containers).
+          #  2. workflow_dispatch CSV input (manual run).
+          #  3. schedule cron — top-100 from IMAGE-POPULARITY.md, :latest tag.
           IMAGES_TO_SCAN='${{ inputs.images }}'
-          if [ "$IMAGES_TO_SCAN" = "[]" ] || [ -z "$IMAGES_TO_SCAN" ]; then
-            echo "📋 No specific images provided, scanning available Docker images..."
-            # Look for our repository images in Docker
-            AVAILABLE_IMAGES=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "ghcr.io/${{ github.repository }}" | head -5 || echo "")
-            if [ -z "$AVAILABLE_IMAGES" ]; then
-              echo "⚠️  No built images found to scan"
-              echo "This is expected if running locally or if no images were built"
-              exit 0
-            fi
-            IMAGES_TO_SCAN=$(echo "$AVAILABLE_IMAGES" | jq -R . | jq -s .)
-          else
-            # Caller may pass matrix-include objects ({name, path, ...}); coerce to image refs.
+          if [ -n "${IMAGES_TO_SCAN}" ] && [ "$IMAGES_TO_SCAN" != "[]" ] && \
+             echo "$IMAGES_TO_SCAN" | jq -e 'type == "array"' >/dev/null 2>&1; then
+            # workflow_call JSON-array path. Caller passes matrix-include
+            # objects ({name, path, ...}); coerce to ghcr image refs at the
+            # commit SHA.
             IMAGES_TO_SCAN=$(echo "$IMAGES_TO_SCAN" | jq -c \
               --arg repo "${{ github.repository }}" \
               --arg sha "${{ github.sha }}" \
               '[ .[] | if type == "object" then "ghcr.io/\($repo)/\(.name):\($sha)" else . end ]')
+          elif [ -n "${IMAGES_TO_SCAN}" ] && [ "$IMAGES_TO_SCAN" != "[]" ]; then
+            # workflow_dispatch CSV path.
+            IMAGES_TO_SCAN=$(printf '%s' "$IMAGES_TO_SCAN" | jq -Rc \
+              --arg repo "${{ github.repository }}" \
+              'split(",") | map(gsub("^\\s+|\\s+$"; "")) | map(select(length > 0))
+               | map("ghcr.io/\($repo)/\(.):latest")')
+          else
+            # schedule path — derive top-100 from IMAGE-POPULARITY.md.
+            # The table rows look like: | 1 | fluent-bit | fluent/fluent-bit | ...
+            # Extract the second column (image name) for the top 100 ranked.
+            echo "📋 No input given; selecting top-100 popular images from IMAGE-POPULARITY.md"
+            TOP=$(awk -F'|' '/^\| *[0-9]+ +\|/ { gsub(/^ +| +$/, "", $3); print $3 }' \
+                  IMAGE-POPULARITY.md | head -100)
+            if [ -z "$TOP" ]; then
+              echo "⚠️  Could not parse IMAGE-POPULARITY.md; aborting"
+              exit 1
+            fi
+            IMAGES_TO_SCAN=$(printf '%s\n' $TOP | jq -Rc \
+              --arg repo "${{ github.repository }}" \
+              '"ghcr.io/\($repo)/\(.):latest"' | jq -cs '.')
           fi
           
           echo "📋 Images to scan: $IMAGES_TO_SCAN"
@@ -179,50 +228,121 @@ jobs:
           done
 
       - name: Analyze scan results
+        id: analyze
         run: |
           echo "📊 Analyzing security scan results..."
-          
+
           if [ ! -d scan-results ]; then
             echo "⚠️  No scan results directory found"
             exit 0
           fi
-          
-          # Count vulnerabilities by severity
+
           CRITICAL_COUNT=0
           HIGH_COUNT=0
           TOTAL_SCANS=0
-          
+          # Per-image breakdown captured as JSON-lines so we can sort + slice
+          # in the issue-body step without re-parsing trivy.
+          : > scan-results/_per-image.jsonl
+
           for json_file in scan-results/*-trivy.json; do
             if [ -f "$json_file" ]; then
               TOTAL_SCANS=$((TOTAL_SCANS + 1))
-              
-              # Count vulnerabilities by severity
+              IMG=$(basename "$json_file" -trivy.json)
               CRITICAL_IN_FILE=$(jq '[.Results[]?.Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' "$json_file" 2>/dev/null || echo "0")
               HIGH_IN_FILE=$(jq '[.Results[]?.Vulnerabilities[]? | select(.Severity == "HIGH")] | length' "$json_file" 2>/dev/null || echo "0")
-              
               CRITICAL_COUNT=$((CRITICAL_COUNT + CRITICAL_IN_FILE))
               HIGH_COUNT=$((HIGH_COUNT + HIGH_IN_FILE))
-              
-              echo "📊 $(basename "$json_file"): $CRITICAL_IN_FILE critical, $HIGH_IN_FILE high"
+              echo "📊 $IMG: $CRITICAL_IN_FILE critical, $HIGH_IN_FILE high"
+              jq -nc --arg img "$IMG" --argjson c "$CRITICAL_IN_FILE" --argjson h "$HIGH_IN_FILE" \
+                '{image: $img, critical: $c, high: $h}' >> scan-results/_per-image.jsonl
             fi
           done
-          
+
           echo "========================================"
           echo "📊 Security Scan Summary"
           echo "  Total images scanned: $TOTAL_SCANS"
           echo "  Critical vulnerabilities: $CRITICAL_COUNT"
           echo "  High vulnerabilities: $HIGH_COUNT"
-          
-          # Set outputs for other jobs
-          echo "critical_count=$CRITICAL_COUNT" >> $GITHUB_OUTPUT
-          echo "high_count=$HIGH_COUNT" >> $GITHUB_OUTPUT
-          echo "total_scans=$TOTAL_SCANS" >> $GITHUB_OUTPUT
-          
-          # Optional: Fail on critical vulnerabilities (disabled for now)
-          # if [ $CRITICAL_COUNT -gt 0 ]; then
-          #   echo "❌ Critical vulnerabilities found, failing build"
-          #   exit 1
-          # fi
+
+          {
+            echo "critical_count=$CRITICAL_COUNT"
+            echo "high_count=$HIGH_COUNT"
+            echo "total_scans=$TOTAL_SCANS"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Open or update CVE alert issue
+        # Only fire on schedule + dispatch — workflow_call from
+        # build-containers covers a small per-PR slice, not the full repo
+        # CVE picture, so we don't want it churning the rolling issue.
+        if: >-
+          (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+          && (
+            fromJSON(steps.analyze.outputs.critical_count || '0') >= fromJSON(env.CRITICAL_THRESHOLD)
+            || fromJSON(steps.analyze.outputs.high_count || '0') >= fromJSON(env.HIGH_THRESHOLD)
+          )
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CRITICAL: ${{ steps.analyze.outputs.critical_count }}
+          HIGH: ${{ steps.analyze.outputs.high_count }}
+          TOTAL: ${{ steps.analyze.outputs.total_scans }}
+        run: |
+          set -euo pipefail
+          # Build the body fragment first — top 10 offenders by (critical, high).
+          TOP=$(jq -s 'sort_by(-.critical, -.high) | .[0:10]' scan-results/_per-image.jsonl)
+          {
+            echo "## Security scan alert"
+            echo ""
+            echo "Latest scheduled scan found:"
+            echo "- **$CRITICAL critical** CVEs (alert threshold: ${CRITICAL_THRESHOLD})"
+            echo "- **$HIGH high** CVEs (alert threshold: ${HIGH_THRESHOLD})"
+            echo ""
+            echo "across $TOTAL images."
+            echo ""
+            echo "### Top 10 offenders"
+            echo ""
+            echo "| Image | Critical | High |"
+            echo "|---|---:|---:|"
+            echo "$TOP" | jq -r '.[] | "| \(.image) | \(.critical) | \(.high) |"'
+            echo ""
+            echo "Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo ""
+            echo "---"
+            echo "_Auto-updated by \`.github/workflows/security-scan.yml\`._"
+            echo "_Last update: $(date -u +%Y-%m-%dT%H:%M:%SZ)_"
+          } > issue-body.md
+
+          TITLE="Security scan: $CRITICAL critical / $HIGH high CVEs across $TOTAL images"
+
+          # Idempotent: edit the rolling issue if it exists, else create it.
+          # We tag with a single label so we can find it; no per-run drift.
+          EXISTING=$(gh issue list --label security:scan-alert --state open \
+                       --json number --jq '.[0].number // ""')
+          if [ -n "$EXISTING" ]; then
+            echo "Updating existing issue #$EXISTING"
+            gh issue edit "$EXISTING" --title "$TITLE" --body-file issue-body.md
+          else
+            echo "Creating new alert issue (no open one found)"
+            gh label create security:scan-alert --color FF0000 \
+              --description "Auto-generated by security-scan workflow when CVE thresholds are exceeded" \
+              2>/dev/null || true
+            gh issue create --title "$TITLE" --body-file issue-body.md \
+              --label security:scan-alert
+          fi
+
+      - name: Close stale alert issue when thresholds are no longer exceeded
+        if: >-
+          (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+          && fromJSON(steps.analyze.outputs.critical_count || '0') < fromJSON(env.CRITICAL_THRESHOLD)
+          && fromJSON(steps.analyze.outputs.high_count || '0') < fromJSON(env.HIGH_THRESHOLD)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          EXISTING=$(gh issue list --label security:scan-alert --state open \
+                       --json number --jq '.[0].number // ""')
+          if [ -n "$EXISTING" ]; then
+            gh issue close "$EXISTING" -c "All CVE counts are now below the alert thresholds. Closing automatically; will reopen on next breach."
+          fi
 
       - name: Upload scan results
         uses: actions/upload-artifact@v5
