@@ -47,6 +47,13 @@ jobs:
           FLAKEHUB_TOKEN: ${{ secrets.FLAKEHUB_TOKEN }}
         run: |
           set -euo pipefail
+          # ARC runners don't inherit the post-installer PATH that GH-hosted
+          # runners do — `determinate-nixd` is installed under the default
+          # nix profile but isn't on $PATH for subsequent steps unless we
+          # source the profile script (same gotcha deploy-website.yml hits).
+          if [ -f /nix/var/nix/profiles/default/etc/profile.d/nix.sh ]; then
+            . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          fi
           if [ -z "${FLAKEHUB_TOKEN:-}" ]; then
             echo "FLAKEHUB_TOKEN secret not set; the publish step will fail." >&2
             exit 1
