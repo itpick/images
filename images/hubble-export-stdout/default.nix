@@ -1,37 +1,39 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# hubble-export-stdout
-# Container image
-
+# Hubble CLI - observability for Cilium (used for hubble export to stdout)
+# https://github.com/cilium/hubble
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.19.4";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "hubble";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "hubble-export-stdout";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "hubble-export-stdout-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "huuble export stdout";
-      "org.opencontainers.image.description" = "hubble-export-stdout container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/cilium/hubble/releases/download/v${version}/hubble-linux-amd64.tar.gz";
+      hash = "sha256:0iyjbq06zs9iq7rpmrq82n2bpsqwqvndnvaw97ay4apd4xgpmhy7";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 hubble $out/bin/hubble
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "hubble-export-stdout";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/hubble" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "hubble-export-stdout";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

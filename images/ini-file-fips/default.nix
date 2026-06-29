@@ -1,38 +1,41 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# ini-file-fips
-# Container image
+# Bitnami ini-file CLI (fips variant -> same upstream binary)
+# https://github.com/bitnami/ini-file
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.4.9";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "ini-file";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "ini-file-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "ini-file-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "ini file fips";
-      "org.opencontainers.image.description" = "ini-file-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/bitnami/ini-file/releases/download/v${version}/ini-file-linux-amd64.tar.gz";
+      hash = "sha256-Z9WOffuHdyIzgSDDSPSW+YvFY+k5uim6URECXj3O+WM=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 ini-file-linux-amd64 $out/bin/ini-file
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "ini-file-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/ini-file" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "ini-file-fips";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

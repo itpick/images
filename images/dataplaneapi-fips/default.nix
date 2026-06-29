@@ -1,38 +1,42 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# dataplaneapi-fips
-# Container image
+# HAProxy Data Plane API - REST API for dynamic HAProxy configuration
+# https://github.com/haproxytech/dataplaneapi
+# The -fips variant packages the same upstream dataplaneapi binary.
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "3.3.5";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "dataplaneapi";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "dataplaneapi-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "dataplaneapi-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "dataplaneapi fips";
-      "org.opencontainers.image.description" = "dataplaneapi-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/haproxytech/dataplaneapi/releases/download/v${version}/dataplaneapi_${version}_linux_x86_64.tar.gz";
+      hash = "sha256-hWPt7HnZZTm1L7cvDSKthyEwCceQVD8oS6BVZctqDR0=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 dataplaneapi $out/bin/dataplaneapi
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "dataplaneapi-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/dataplaneapi" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "dataplaneapi-fips";
+    "org.opencontainers.image.description" = "HAProxy Data Plane API";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

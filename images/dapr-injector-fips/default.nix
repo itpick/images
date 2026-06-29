@@ -1,38 +1,44 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# dapr-injector-fips
-# Container image
+# dapr-injector-fips - Dapr sidecar injector control-plane service.
+# Packages the upstream Dapr injector binary. No FIPS claim is made here.
+# https://github.com/dapr/dapr
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.18.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "dapr-injector";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "dapr-injector-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "dapr-injector-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "dapr injector fips";
-      "org.opencontainers.image.description" = "dapr-injector-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/dapr/dapr/releases/download/v${version}/injector_linux_amd64.tar.gz";
+      hash = "sha256:0b7b8mdwk24nax352vv8z59b153gqvbi313idfk0c6rfh4zgq0r9";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+    dontStrip = true;
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 injector $out/bin/injector
+      runHook postInstall
+    '';
+  };
+
+in mkImage {
+  inherit drv;
+  name = "dapr-injector-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/injector" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "dapr-injector-fips";
+    "org.opencontainers.image.description" = "Dapr sidecar injector service";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

@@ -1,38 +1,44 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# dapr-placement-fips
-# Container image
+# dapr-placement-fips - Dapr actor placement control-plane service.
+# Packages the upstream Dapr placement binary. No FIPS claim is made here.
+# https://github.com/dapr/dapr
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.18.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "dapr-placement";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "dapr-placement-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "dapr-placement-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "dapr placement fips";
-      "org.opencontainers.image.description" = "dapr-placement-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/dapr/dapr/releases/download/v${version}/placement_linux_amd64.tar.gz";
+      hash = "sha256:1fjld8ypx2fdg174km6vad589zd6xw5y01546k1mp3wy2qly41ad";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+    dontStrip = true;
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 placement $out/bin/placement
+      runHook postInstall
+    '';
+  };
+
+in mkImage {
+  inherit drv;
+  name = "dapr-placement-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/placement" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "dapr-placement-fips";
+    "org.opencontainers.image.description" = "Dapr actor placement service";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

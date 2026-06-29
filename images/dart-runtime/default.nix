@@ -1,37 +1,47 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# dart-runtime
-# Container image
+# dart-runtime - the Dart SDK runtime (official prebuilt SDK release).
+# The dart binary depends on the rest of the SDK tree (snapshots, libs),
+# so the whole dart-sdk directory is installed and bin/ symlinked.
+# https://dart.dev
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "3.12.2";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "dart-runtime";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "dart-runtime";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "dart-runtime-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "dart runtime";
-      "org.opencontainers.image.description" = "dart-runtime container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://storage.googleapis.com/dart-archive/channels/stable/release/${version}/sdk/dartsdk-linux-x64-release.zip";
+      hash = "sha256:0bcw54235hhwxm57823nkk7h2hhp1nxnih2621vkcpq7rx27pr18";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook pkgs.unzip ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = "dart-sdk";
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/dart-sdk
+      cp -r . $out/dart-sdk/
+      mkdir -p $out/bin
+      ln -s $out/dart-sdk/bin/dart $out/bin/dart
+      runHook postInstall
+    '';
+  };
+
+in mkImage {
+  inherit drv;
+  name = "dart-runtime";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/dart" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "dart-runtime";
+    "org.opencontainers.image.description" = "Dart SDK runtime";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

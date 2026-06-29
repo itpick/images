@@ -1,37 +1,40 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# ksops
-# Container image
+# KSOPS - kustomize SOPS plugin
+# https://github.com/viaduct-ai/kustomize-sops
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "4.5.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "ksops";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "ksops";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "ksops-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "ksops";
-      "org.opencontainers.image.description" = "ksops container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/viaduct-ai/kustomize-sops/releases/download/v${version}/ksops_${version}_Linux_x86_64.tar.gz";
+      hash = "sha256-lkHgOjAb8vxLmNDoN6A1HhykQ+zXposl5q8hSfuy7zA=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 ksops $out/bin/ksops
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "ksops";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/ksops" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "ksops";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

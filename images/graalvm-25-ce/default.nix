@@ -1,37 +1,47 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# graalvm-25-ce
-# Container image
-
+# GraalVM Community Edition 25 (CE) - high-performance JDK 25
+# https://github.com/graalvm/graalvm-ce-builds
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
-  name = "graalvm-25-ce";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "graalvm-25-ce-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "binary";
-      "io.nix-containers.build-method" = "Pre-built binary packaged with Nix";
-      "org.opencontainers.image.title" = "graalvm 25 ce";
-      "org.opencontainers.image.description" = "graalvm-25-ce container image";
-      "org.opencontainers.image.version" = version;
+  version = "25.0.2";
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "graalvm-25-ce";
+    inherit version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-${version}/graalvm-community-jdk-${version}_linux-x64_bin.tar.gz";
+      hash = "sha256-4L55HI/aTQO2sKDLgk/vMUlzYXAFezpRUlK0RBlgavA=";
     };
+    sourceRoot = "graalvm-community-openjdk-25.0.2+10.1";
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = with pkgs; [
+      stdenv.cc.cc.lib
+      zlib
+      alsa-lib
+      fontconfig
+      freetype
+      xorg.libX11
+      xorg.libXext
+      xorg.libXi
+      xorg.libXrender
+      xorg.libXtst
+    ];
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out
+      cp -r . $out/
+      runHook postInstall
+    '';
+    dontStrip = true;
+  };
+in mkImage {
+  inherit drv;
+  name = "graalvm-25-ce";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/java" ];
+  cmd = [ "--version" ];
+  labels = {
+    "org.opencontainers.image.title" = "graalvm-25-ce";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }
