@@ -20,7 +20,7 @@ on:
 
 jobs:
   detect:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     outputs:
       changes-detected: ${{ steps.classify.outputs.changes-detected }}
       changed-images: ${{ steps.classify.outputs.changed-images }}

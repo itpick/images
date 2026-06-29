@@ -12,7 +12,7 @@ on:
 
 jobs:
   check-versions:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     outputs:
       changes-detected: ${{ steps.check.outputs.changes-detected }}
       changed-images: ${{ steps.check.outputs.changed-images }}
