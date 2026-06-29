@@ -105,15 +105,6 @@ def generate_readme(image_name, build_time_data, overview_data):
         lines.append(description)
         lines.append("")
 
-    # Build info section
-    lines.append("## Build Information")
-    lines.append("")
-    lines.append(f"| Metric | Value |")
-    lines.append(f"|--------|-------|")
-    lines.append(f"| Build Time | {build_time} |")
-    lines.append(f"| Build Status | {build_status} |")
-    lines.append("")
-
     # Usage section
     lines.append("## Usage")
     lines.append("")
