@@ -1,37 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # aspnet-8-runtime
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.dotnet-aspnetcore_8
+mkImage {
+  drv = pkgs.dotnet-aspnetcore_8;
   name = "aspnet-8-runtime";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "aspnet-8-runtime-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "binary";
-      "io.nix-containers.build-method" = "Pre-built binary packaged with Nix";
-      "org.opencontainers.image.title" = "aspnet 8 runtime";
-      "org.opencontainers.image.description" = "aspnet-8-runtime container image";
-      "org.opencontainers.image.version" = version;
-    };
+  tag = "v${pkgs.dotnet-aspnetcore_8.version}";
+  entrypoint = [ "${pkgs.dotnet-aspnetcore_8}/bin/dotnet" ];
+  cmd = [ "--version" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "aspnet-8-runtime";
+    "org.opencontainers.image.description" = "aspnet-8-runtime container image (nixpkgs.dotnet-aspnetcore_8)";
+    "org.opencontainers.image.version" = pkgs.dotnet-aspnetcore_8.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

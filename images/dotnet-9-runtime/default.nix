@@ -1,37 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # dotnet-9-runtime
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.dotnet-runtime_9
+mkImage {
+  drv = pkgs.dotnet-runtime_9;
   name = "dotnet-9-runtime";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "dotnet-9-runtime-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "dotnet 9 runtime";
-      "org.opencontainers.image.description" = "dotnet-9-runtime container image";
-      "org.opencontainers.image.version" = version;
-    };
+  tag = "v${pkgs.dotnet-runtime_9.version}";
+  entrypoint = [ "${pkgs.dotnet-runtime_9}/bin/dotnet" ];
+  cmd = [ "--version" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "dotnet-9-runtime";
+    "org.opencontainers.image.description" = "dotnet-9-runtime container image (nixpkgs.dotnet-runtime_9)";
+    "org.opencontainers.image.version" = pkgs.dotnet-runtime_9.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

@@ -1,37 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # adoptium-openjdk-25-jre
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.temurin-bin-25
+mkImage {
+  drv = pkgs.temurin-bin-25;
   name = "adoptium-openjdk-25-jre";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "adoptium-openjdk-25-jre-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "binary";
-      "io.nix-containers.build-method" = "Pre-built binary packaged with Nix";
-      "org.opencontainers.image.title" = "adoptium openjdk 25 jre";
-      "org.opencontainers.image.description" = "adoptium-openjdk-25-jre container image";
-      "org.opencontainers.image.version" = version;
-    };
+  tag = "v${pkgs.temurin-bin-25.version}";
+  entrypoint = [ "${pkgs.temurin-bin-25}/bin/java" ];
+  cmd = [ "-version" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "adoptium-openjdk-25-jre";
+    "org.opencontainers.image.description" = "adoptium-openjdk-25-jre container image (nixpkgs.temurin-bin-25)";
+    "org.opencontainers.image.version" = pkgs.temurin-bin-25.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }
