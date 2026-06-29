@@ -91,9 +91,27 @@ jobs:
           echo "iso=$ISO" >> "$GITHUB_OUTPUT"
           echo "Last successful auto-update.yml run: ${ISO:-<none>}"
 
+      - name: Stage scan artifact into the Nix store
+        id: scan-store
+        if: steps.scan.outputs.path != ''
+        run: |
+          set -euo pipefail
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          # The Nix sandbox can't see /home/runner/work/_temp by default
+          # and the runner isn't in trusted-users (so client-side
+          # `--option sandbox false` is silently dropped with "ignoring
+          # the client-specified setting 'sandbox', because it is a
+          # restricted setting and you are not a trusted user").
+          # Instead, add the artifact directory to the Nix store —
+          # /nix/store IS bind-mounted into every build sandbox, so the
+          # resulting path is always readable from inside the build.
+          STORE_PATH=$(nix-store --add "${{ steps.scan.outputs.path }}")
+          echo "Staged scan data at $STORE_PATH"
+          echo "store_path=$STORE_PATH" >> "$GITHUB_OUTPUT"
+
       - name: Build static website
         env:
-          SCAN_DATA_PATH: ${{ steps.scan.outputs.path }}
+          SCAN_DATA_PATH: ${{ steps.scan-store.outputs.store_path }}
           # GH Pages project sites publish at /<repo>/, so absolute asset
           # URLs (/static/css/site.css etc.) need that prefix.
           PAGES_BASE_PATH: /${{ github.event.repository.name }}/
@@ -103,13 +121,12 @@ jobs:
           . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
           # --impure required to read PAGES_BASE_PATH / SCAN_DATA_PATH /
           # LAST_DEP_CHECK_AT via builtins.getEnv in generate-site.nix.
-          # --option sandbox false because SCAN_DATA_PATH points at
-          # /home/runner/work/_temp/scan-data (the downloaded artifact)
-          # which the default Linux sandbox isolates from the build dir.
-          # Without this, render.py inside the build can't see the trivy
-          # JSON files and emits "No scan data; panels omitted" even
-          # though the artifact is present.
-          nix build .#website --impure --option sandbox false --print-build-logs
+          # SCAN_DATA_PATH now points at a /nix/store/ path (staged in
+          # the previous step), which is always visible to the sandbox —
+          # supersedes the earlier '--option sandbox false' attempt from
+          # #158 (which was silently ignored because the runner is not a
+          # trusted user).
+          nix build .#website --impure --print-build-logs
           mkdir -p ./website-build
           cp -r ./result/* ./website-build/
         
