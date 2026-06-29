@@ -1,37 +1,54 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# cerbosctl
-# Container image
+# cerbosctl - command line client for Cerbos
+# https://github.com/cerbos/cerbos
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "0.53.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  cerbosctl = pkgs.stdenv.mkDerivation rec {
+    pname = "cerbosctl";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "cerbosctl";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "cerbosctl-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "ceruosctl";
-      "org.opencontainers.image.description" = "cerbosctl container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/cerbos/cerbos/releases/download/v${version}/cerbosctl_${version}_Linux_x86_64.tar.gz";
+      hash = "sha256-HHel8kULMoKIwfisR6tnz4My+qhJdPFTyqwynY1EDtE=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+
+    buildInputs = with pkgs; [
+      stdenv.cc.cc.lib
+    ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/bin
+      cp cerbosctl $out/bin/cerbosctl
+      chmod +x $out/bin/cerbosctl
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "Command line client for Cerbos";
+      homepage = "https://github.com/cerbos/cerbos";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  drv = cerbosctl;
+  name = "cerbosctl";
+  tag = "v${version}";
+  entrypoint = [ "${cerbosctl}/bin/cerbosctl" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "cerbosctl";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }
