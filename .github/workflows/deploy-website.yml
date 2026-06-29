@@ -32,30 +32,6 @@ jobs:
           . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
           mkdir -p ~/.config/nix
           echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
-          # Belt + suspenders for the runner-can't-see-/home problem:
-          #   1. trusted-users grants the runner the right to override
-          #      restricted settings (otherwise --option sandbox false
-          #      is silently ignored, per #158 + #162 logs).
-          #   2. sandbox = false at the daemon level applies even without
-          #      a client override.
-          #   3. Restart the daemon to pick up both.
-          sudo tee -a /etc/nix/nix.conf <<EOF
-          sandbox = false
-          trusted-users = root runner $(whoami)
-          EOF
-          sudo systemctl restart nix-daemon
-          # Wait for the daemon socket to come back before any nix command
-          # tries to use it (avoid race vs. systemctl returning before
-          # listen-ready).
-          for i in 1 2 3 4 5; do
-            if [ -S /nix/var/nix/daemon-socket/socket ]; then break; fi
-            sleep 1
-          done
-          # Diagnostic: confirm the daemon now sees sandbox=false. If this
-          # prints 'sandbox = true', the restart didn't take effect.
-          echo "Effective sandbox setting:"
-          nix show-config 2>/dev/null | grep -E "^sandbox = " || true
-          nix show-config 2>/dev/null | grep -E "^trusted-users = " || true
           echo "/nix/var/nix/profiles/default/bin" >> $GITHUB_PATH
 
       - name: Download latest non-empty security scan results
@@ -101,6 +77,27 @@ jobs:
           done
           echo "No recent scan run had a non-empty artifact; vulnerability panels will be omitted."
           echo "path=" >> "$GITHUB_OUTPUT"
+
+      - name: Stage scan-data inside the build source tree
+        if: steps.scan.outputs.path != ''
+        run: |
+          set -euo pipefail
+          # The Nix build's sandbox can't read /home/runner/work/_temp,
+          # and every attempt to disable the sandbox in CI has been
+          # ignored (#158/#162/#164). The build's source tree IS
+          # bind-mounted into the sandbox — so copy the artifact in
+          # there and reference it via a relative path.
+          #
+          # Flakes EXCLUDE untracked files from the source archive, so
+          # the copy must be git-added (forced; the dir is gitignored
+          # via website/.gitignore). This is a transient CI stage —
+          # nothing is committed.
+          mkdir -p website/scan-data
+          cp -r "${{ steps.scan.outputs.path }}/." website/scan-data/
+          git config user.email "deploy@nix-containers.local"
+          git config user.name "deploy-bot"
+          git add -f website/scan-data/
+          echo "Staged $(find website/scan-data -name '*-trivy.json' | wc -l) trivy files into website/scan-data/"
 
       - name: Look up last successful auto-update run
         id: depcheck

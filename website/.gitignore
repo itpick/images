@@ -1,0 +1,4 @@
+# Transient scan-data staged into the source tree by deploy-website.yml
+# (force-added to the index for that CI run only, never committed).
+scan-data/
+__pycache__/

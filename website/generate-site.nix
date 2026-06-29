@@ -161,10 +161,15 @@ pkgs.stdenv.mkDerivation {
 
     echo "-> Rendering pages..."
     SCAN_ARG=""
-    if [ -n "''${SCAN_DATA_PATH:-}" ] && [ -d "$SCAN_DATA_PATH" ]; then
+    # Prefer scan-data staged INSIDE the source tree (./scan-data) —
+    # this is what deploy-website.yml uses, because it survives the
+    # Nix sandbox. Fall back to the SCAN_DATA_PATH env var for legacy /
+    # local-dev paths that point outside the sandbox.
+    if [ -d ./scan-data ]; then
+      echo "   Using in-tree scan-data/ ($(ls ./scan-data/*-trivy.json 2>/dev/null | wc -l) trivy files)"
+      SCAN_ARG="--scan-data ./scan-data --sbom-data ./scan-data"
+    elif [ -n "''${SCAN_DATA_PATH:-}" ] && [ -d "$SCAN_DATA_PATH" ]; then
       echo "   Using SCAN_DATA_PATH=$SCAN_DATA_PATH"
-      # Trivy reports and syft SBOMs live in the same directory; render.py
-      # tells them apart by filename pattern.
       SCAN_ARG="--scan-data $SCAN_DATA_PATH --sbom-data $SCAN_DATA_PATH"
     else
       echo "   No scan data; vulnerability + SBOM panels will be omitted"
