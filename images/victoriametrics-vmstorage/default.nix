@@ -13,7 +13,16 @@ mkImage {
   name = "victoriametrics-vmstorage";
   tag = "v${version}";
   entrypoint = [ "${vm-cluster.vmstorage}/bin/vmstorage" ];
-  cmd = [];
+  # Was empty (no command). vmstorage is the cluster storage node: serve the
+  # HTTP API on 0.0.0.0:8482 (and accept vminsert/vmselect on its default
+  # :8400/:8401, which already bind all interfaces) so the kind-test probe can
+  # reach it, and keep -storageDataPath under the writable /tmp — the default
+  # is relative to the read-only nix-store cwd. No config file is needed.
+  # Operators mount a PVC and override -storageDataPath.
+  cmd = [
+    "-httpListenAddr=0.0.0.0:8482"
+    "-storageDataPath=/tmp/vmstorage-data"
+  ];
 
   extraPkgs = with pkgs; [ cacert tzdata ];
 
