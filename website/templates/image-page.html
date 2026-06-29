@@ -32,28 +32,74 @@
     <section class="card mb-6">
       <h2 class="text-sm font-semibold text-fg-muted uppercase tracking-wide mb-3">Get this image</h2>
 
-      <p class="text-xs text-fg-muted mb-1">Pull from registry</p>
-      <div class="flex items-center gap-2 mb-3">
-        <code id="pull-cmd"
-              class="flex-1 bg-bg-base rounded px-3 py-2 text-sm overflow-x-auto">{{PULL_COMMAND}}</code>
-        <button onclick="navigator.clipboard.writeText(document.getElementById('pull-cmd').innerText)"
-                class="bg-bg-input hover:bg-neutral-700 text-sm rounded px-3 py-2">Copy</button>
+      <!-- Variant switch: "minimal" is the base image (no shell, smaller surface).
+           "with shell (-dev)" is the {{NAME}}-dev variant — same image + a shell
+           and common debug tools for interactive use. Same pattern for every image
+           in this repo. -->
+      <div class="flex gap-2 mb-4 text-xs">
+        <button type="button" data-variant="minimal"
+                class="variant-button variant-active bg-bg-input rounded px-3 py-1.5">Minimal (no shell)</button>
+        <button type="button" data-variant="dev"
+                class="variant-button variant-inactive bg-bg-base rounded px-3 py-1.5 border border-neutral-800">With shell (<code class="text-xs">-dev</code>)</button>
       </div>
 
-      <p class="text-xs text-fg-muted mb-1">Build from source (current version: <span class="font-mono text-fg-primary">{{VERSION}}</span>)</p>
-      <div class="flex items-center gap-2 mb-3">
-        <code id="build-cmd"
-              class="flex-1 bg-bg-base rounded px-3 py-2 text-sm overflow-x-auto">nix build github:nix-containers/images#{{NAME}}</code>
-        <button onclick="navigator.clipboard.writeText(document.getElementById('build-cmd').innerText)"
-                class="bg-bg-input hover:bg-neutral-700 text-sm rounded px-3 py-2">Copy</button>
+      <!-- ===== Minimal variant ===== -->
+      <div class="variant-block" data-variant-block="minimal">
+        <p class="text-xs text-fg-muted mb-1">Pull from registry</p>
+        <div class="flex items-center gap-2 mb-3">
+          <code id="pull-cmd"
+                class="flex-1 bg-bg-base rounded px-3 py-2 text-sm overflow-x-auto">{{PULL_COMMAND}}</code>
+          <button onclick="navigator.clipboard.writeText(document.getElementById('pull-cmd').innerText)"
+                  class="bg-bg-input hover:bg-neutral-700 text-sm rounded px-3 py-2">Copy</button>
+        </div>
+
+        <p class="text-xs text-fg-muted mb-1">Build from source (current version: <span class="font-mono text-fg-primary">{{VERSION}}</span>)</p>
+        <div class="flex items-center gap-2 mb-3">
+          <code id="build-cmd"
+                class="flex-1 bg-bg-base rounded px-3 py-2 text-sm overflow-x-auto">nix build github:nix-containers/images#{{NAME}}</code>
+          <button onclick="navigator.clipboard.writeText(document.getElementById('build-cmd').innerText)"
+                  class="bg-bg-input hover:bg-neutral-700 text-sm rounded px-3 py-2">Copy</button>
+        </div>
+
+        <p class="text-xs text-fg-muted mb-1">Load into local Docker</p>
+        <div class="flex items-center gap-2">
+          <code id="load-cmd"
+                class="flex-1 bg-bg-base rounded px-3 py-2 text-sm overflow-x-auto">nix build github:nix-containers/images#load-{{NAME}}-to-docker &amp;&amp; ./result/bin/load-{{NAME}}-to-docker</code>
+          <button onclick="navigator.clipboard.writeText(document.getElementById('load-cmd').innerText)"
+                  class="bg-bg-input hover:bg-neutral-700 text-sm rounded px-3 py-2">Copy</button>
+        </div>
       </div>
 
-      <p class="text-xs text-fg-muted mb-1">Load into local Docker</p>
-      <div class="flex items-center gap-2">
-        <code id="load-cmd"
-              class="flex-1 bg-bg-base rounded px-3 py-2 text-sm overflow-x-auto">nix build github:nix-containers/images#load-{{NAME}}-to-docker &amp;&amp; ./result/bin/load-{{NAME}}-to-docker</code>
-        <button onclick="navigator.clipboard.writeText(document.getElementById('load-cmd').innerText)"
-                class="bg-bg-input hover:bg-neutral-700 text-sm rounded px-3 py-2">Copy</button>
+      <!-- ===== With-shell (-dev) variant ===== -->
+      <div class="variant-block hidden" data-variant-block="dev">
+        <p class="text-xs text-fg-muted mb-1">Pull from registry</p>
+        <div class="flex items-center gap-2 mb-3">
+          <code id="pull-cmd-dev"
+                class="flex-1 bg-bg-base rounded px-3 py-2 text-sm overflow-x-auto">docker pull ghcr.io/nix-containers/images/{{NAME}}-dev:latest</code>
+          <button onclick="navigator.clipboard.writeText(document.getElementById('pull-cmd-dev').innerText)"
+                  class="bg-bg-input hover:bg-neutral-700 text-sm rounded px-3 py-2">Copy</button>
+        </div>
+
+        <p class="text-xs text-fg-muted mb-1">Build from source</p>
+        <div class="flex items-center gap-2 mb-3">
+          <code id="build-cmd-dev"
+                class="flex-1 bg-bg-base rounded px-3 py-2 text-sm overflow-x-auto">nix build github:nix-containers/images#{{NAME}}-dev</code>
+          <button onclick="navigator.clipboard.writeText(document.getElementById('build-cmd-dev').innerText)"
+                  class="bg-bg-input hover:bg-neutral-700 text-sm rounded px-3 py-2">Copy</button>
+        </div>
+
+        <p class="text-xs text-fg-muted mb-1">Load into local Docker</p>
+        <div class="flex items-center gap-2 mb-3">
+          <code id="load-cmd-dev"
+                class="flex-1 bg-bg-base rounded px-3 py-2 text-sm overflow-x-auto">nix build github:nix-containers/images#load-{{NAME}}-dev-to-docker &amp;&amp; ./result/bin/load-{{NAME}}-dev-to-docker</code>
+          <button onclick="navigator.clipboard.writeText(document.getElementById('load-cmd-dev').innerText)"
+                  class="bg-bg-input hover:bg-neutral-700 text-sm rounded px-3 py-2">Copy</button>
+        </div>
+
+        <p class="text-xs text-fg-muted italic">
+          The <code>-dev</code> variant bundles the same software with a shell and common debug tools.
+          May not yet be built for every image — file an issue if you'd like one added.
+        </p>
       </div>
     </section>
 
@@ -124,6 +170,24 @@
           panels.forEach(function (p) {
             const show = p.getAttribute('data-tab-panel') === target;
             p.classList.toggle('hidden', !show);
+          });
+        });
+      });
+
+      // Variant switch (Minimal / With shell -dev) inside the Get-this-image card.
+      const vButtons = document.querySelectorAll('.variant-button[data-variant]');
+      const vBlocks = document.querySelectorAll('.variant-block[data-variant-block]');
+      vButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const target = btn.getAttribute('data-variant');
+          vButtons.forEach(function (b) {
+            const active = b.getAttribute('data-variant') === target;
+            b.classList.toggle('variant-active', active);
+            b.classList.toggle('variant-inactive', !active);
+          });
+          vBlocks.forEach(function (blk) {
+            const show = blk.getAttribute('data-variant-block') === target;
+            blk.classList.toggle('hidden', !show);
           });
         });
       });

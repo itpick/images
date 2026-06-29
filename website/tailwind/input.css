@@ -45,6 +45,18 @@
            hover:border-neutral-600 transition-colors;
   }
 
+  /* Variant switch (Minimal vs With-shell -dev) inside the Get-this-image
+     card. Selected button gets the accent border + brighter text. */
+  .variant-button {
+    @apply cursor-pointer font-medium transition-colors;
+  }
+  .variant-active {
+    @apply text-fg-primary border border-accent-ok;
+  }
+  .variant-inactive {
+    @apply text-fg-muted hover:text-fg-primary;
+  }
+
   /* Tabbed layout used on per-image pages. The tab bar is a horizontal nav
      beneath the always-visible Pull card; the inline script in
      image-page.html toggles `.hidden` on `.tab-content` panels. */
