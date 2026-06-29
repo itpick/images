@@ -1,37 +1,54 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# boring-registry
-# Container image
+# boring-registry - open source Terraform/OpenTofu module & provider registry
+# https://github.com/boring-registry/boring-registry
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "0.18.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  boring-registry = pkgs.stdenv.mkDerivation rec {
+    pname = "boring-registry";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "boring-registry";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "boring-registry-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "uoring registry";
-      "org.opencontainers.image.description" = "boring-registry container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/boring-registry/boring-registry/releases/download/v${version}/boring-registry_${version}_Linux_x86_64.tar.gz";
+      hash = "sha256-W+kVmjpxKTN/VEhacJNKSHQhMMOHnbGP0tPyo1Lvhdk=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+
+    buildInputs = with pkgs; [
+      stdenv.cc.cc.lib
+    ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/bin
+      cp boring-registry $out/bin/boring-registry
+      chmod +x $out/bin/boring-registry
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "Open source Terraform/OpenTofu module and provider registry";
+      homepage = "https://github.com/boring-registry/boring-registry";
+      license = licenses.mit;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  drv = boring-registry;
+  name = "boring-registry";
+  tag = "v${version}";
+  entrypoint = [ "${boring-registry}/bin/boring-registry" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "boring-registry";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

@@ -1,37 +1,51 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# dapr-placement
-# Container image
+# Dapr placement service
+# https://github.com/dapr/dapr
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.18.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  placement = pkgs.stdenv.mkDerivation rec {
+    pname = "dapr-placement";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "dapr-placement";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "dapr-placement-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "dapr placement";
-      "org.opencontainers.image.description" = "dapr-placement container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/dapr/dapr/releases/download/v${version}/placement_linux_amd64.tar.gz";
+      hash = "sha256-TQXiKRaej1vDNKQE4Avvpv2ESlPb1ElOeM2Jfj1qVLo=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/bin
+      install -m755 placement $out/bin/placement
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "Dapr placement service";
+      homepage = "https://github.com/dapr/dapr";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  drv = placement;
+  name = "dapr-placement";
+  tag = "v${version}";
+  entrypoint = [ "${placement}/bin/placement" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "dapr-placement";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }
