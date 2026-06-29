@@ -89,6 +89,122 @@ def scan_for_image(image_name: str, scan_dir: str | None) -> dict | None:
 # share the popularity record of their base.
 _POPULARITY_VARIANT_SUFFIXES = ("-fips", "-iamguarded", "-nonroot")
 
+# Hard cap on SBOM rows rendered per page. Some images (e.g. base OSes with
+# every userland tool) have thousands of packages; rendering them all would
+# bloat the HTML and slow the page. Anything past this is hidden behind a
+# "Showing first N of M" notice.
+_SBOM_MAX_ROWS = 500
+
+
+def sbom_for_image(image_name: str, sbom_dir: str | None) -> list[dict] | None:
+    """Return a list of {name, version, type} package dicts from a syft SBOM,
+    or None if no usable file exists.
+
+    Syft writes one JSON per image alongside trivy reports inside the same
+    artifact, with the name pattern `<image>_<tag>-sbom.json`. When several
+    files match (e.g. multiple tags), we pick the lex-greatest filename — the
+    same tie-breaker `scan_for_image` uses, so the SBOM and vulnerability
+    panels line up.
+    """
+    if not sbom_dir:
+        return None
+    pattern = os.path.join(sbom_dir, f"{image_name}_*-sbom.json")
+    matches = sorted(glob.glob(pattern))
+    if not matches:
+        return None
+    target = matches[-1]
+    try:
+        with open(target) as f:
+            doc = json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return None
+
+    out: list[dict] = []
+    for art in doc.get("artifacts", []) or []:
+        name = art.get("name")
+        if not name:
+            continue
+        out.append({
+            "name": name,
+            "version": art.get("version", "") or "",
+            "type": art.get("type", "") or "",
+        })
+    out.sort(key=lambda r: (r["name"].lower(), r["version"]))
+    return out
+
+
+def lookup_sbom(image_name: str, sbom_dir: str | None) -> list[dict] | None:
+    """Resolve an SBOM for `image_name`, folding `-fips`/`-iamguarded`/`-nonroot`
+    suffixes into the base image when no exact match is found. Mirrors the
+    popularity-lookup methodology so variant images don't show empty SBOMs
+    when only the base was scanned."""
+    if not sbom_dir:
+        return None
+    found = sbom_for_image(image_name, sbom_dir)
+    if found is not None:
+        return found
+    base = image_name
+    changed = True
+    while changed:
+        changed = False
+        for suffix in _POPULARITY_VARIANT_SUFFIXES:
+            if base.endswith(suffix) and len(base) > len(suffix):
+                base = base[: -len(suffix)]
+                changed = True
+                found = sbom_for_image(base, sbom_dir)
+                if found is not None:
+                    return found
+    return None
+
+
+def render_sbom(sbom: list[dict] | None) -> str:
+    """Render the SBOM panel HTML.
+
+    Empty/missing data renders the same italic-muted placeholder used by the
+    vulnerabilities panel for visual consistency. Otherwise produces a table
+    capped at `_SBOM_MAX_ROWS`; if truncated, a tiny note above the table
+    discloses the original count.
+    """
+    if not sbom:
+        return '<p class="text-fg-muted italic text-sm">No SBOM data available.</p>'
+    total = len(sbom)
+    rows = sbom[:_SBOM_MAX_ROWS]
+    truncated_note = ""
+    if total > _SBOM_MAX_ROWS:
+        truncated_note = (
+            f'<p class="text-fg-muted text-xs mb-2">'
+            f'Showing first {_SBOM_MAX_ROWS} of {total} total packages.'
+            f'</p>'
+        )
+    body_rows = "\n".join(
+        f"<tr><td class=\"font-mono\">{_html_escape(r['name'])}</td>"
+        f"<td class=\"font-mono\">{_html_escape(r['version'])}</td>"
+        f"<td class=\"text-fg-muted\">{_html_escape(r['type'])}</td></tr>"
+        for r in rows
+    )
+    return (
+        f'{truncated_note}'
+        f'<div class="prose max-w-none">'
+        f'<table>'
+        f'<thead><tr><th>Name</th><th>Version</th><th>Type</th></tr></thead>'
+        f'<tbody>{body_rows}</tbody>'
+        f'</table>'
+        f'</div>'
+    )
+
+
+def _html_escape(s: str) -> str:
+    """Cheap HTML escape — SBOM fields are bag-of-bytes from upstream
+    ecosystems, so we cannot trust them to be safe to interpolate raw."""
+    return (
+        str(s)
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+        .replace("'", "&#39;")
+    )
+
 
 def lookup_popularity(image_name: str, table: dict) -> dict | None:
     """Return the popularity record for `image_name`, folding variant suffixes
@@ -159,6 +275,9 @@ def main():
     ap.add_argument("--pygmentize", required=True, help="Path to pygmentize binary")
     ap.add_argument("--scan-data", default=None,
                     help="Optional path to directory of *-trivy.json files")
+    ap.add_argument("--sbom-data", default=None,
+                    help="Optional path to directory of *-sbom.json files "
+                         "(typically the same dir as --scan-data)")
     ap.add_argument("--popularity", default=None,
                     help="Optional path to popularity.json (output of parse-popularity.py)")
     ap.add_argument("--base-path", default="/",
@@ -234,6 +353,10 @@ def main():
         else:
             scan_html = '<p class="text-fg-muted italic text-sm">No scan data available.</p>'
         mapping["SCAN_PANEL_HTML"] = scan_html
+
+        sbom = lookup_sbom(name, args.sbom_data)
+        mapping["SBOM_HTML"] = render_sbom(sbom)
+
         page_html = fill_template(image_template, mapping)
         page_dir = out / "images" / name
         page_dir.mkdir(parents=True, exist_ok=True)
@@ -249,6 +372,12 @@ def main():
             "pullCommand": img.get("pullCommand", ""),
             "usedByCharts": img.get("usedByCharts", []),
             "scan": scan or None,
+            # Total package count from the syft SBOM. null when no SBOM data
+            # was provided (local builds) or no matching artifact existed.
+            # Not currently surfaced on the index, but pre-populated here so
+            # a future enhancement can sort/filter by it without re-running
+            # the build.
+            "sbomCount": (len(sbom) if sbom is not None else None),
             # Popularity fields (rank/pulls/stars/used/tagStatus). null when
             # the image is not in IMAGE-POPULARITY.md. The index page may
             # consume these later to surface rank-sorted lists.

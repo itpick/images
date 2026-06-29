@@ -154,9 +154,11 @@ pkgs.stdenv.mkDerivation {
     SCAN_ARG=""
     if [ -n "''${SCAN_DATA_PATH:-}" ] && [ -d "$SCAN_DATA_PATH" ]; then
       echo "   Using SCAN_DATA_PATH=$SCAN_DATA_PATH"
-      SCAN_ARG="--scan-data $SCAN_DATA_PATH"
+      # Trivy reports and syft SBOMs live in the same directory; render.py
+      # tells them apart by filename pattern.
+      SCAN_ARG="--scan-data $SCAN_DATA_PATH --sbom-data $SCAN_DATA_PATH"
     else
-      echo "   No scan data; vulnerability panels will be omitted"
+      echo "   No scan data; vulnerability + SBOM panels will be omitted"
     fi
     BASE_ARG="--base-path /"
     if [ -n "''${PAGES_BASE_PATH:-}" ]; then

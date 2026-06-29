@@ -45,6 +45,26 @@
            hover:border-neutral-600 transition-colors;
   }
 
+  /* Tabbed layout used on per-image pages. The tab bar is a horizontal nav
+     beneath the always-visible Pull card; the inline script in
+     image-page.html toggles `.hidden` on `.tab-content` panels. */
+  .tab-bar {
+    @apply flex flex-wrap gap-1 border-b border-neutral-800 mb-4;
+  }
+  .tab-button {
+    @apply px-4 py-2 text-sm font-medium cursor-pointer bg-transparent
+           border-0 border-b-2 border-transparent -mb-px transition-colors;
+  }
+  .tab-active {
+    @apply border-b-2 border-accent-ok text-fg-primary;
+  }
+  .tab-inactive {
+    @apply text-fg-muted hover:text-fg-primary;
+  }
+  .tab-content {
+    @apply mt-4;
+  }
+
   /* README rendering. We don't load Tailwind's typography plugin; these
      rules give the .prose container readable typography AND wrap long
      strings (URLs, hashes, etc.) so they don't overflow the card. */

@@ -29,7 +29,7 @@
     {{POPULARITY_HTML}}
     <p class="text-fg-muted mb-8">{{DESCRIPTION}}</p>
 
-    <section class="card mb-8">
+    <section class="card mb-6">
       <h2 class="text-sm font-semibold text-fg-muted uppercase tracking-wide mb-2">Pull</h2>
       <div class="flex items-center gap-2">
         <code id="pull-cmd"
@@ -39,33 +39,74 @@
       </div>
     </section>
 
-    <section class="card mb-8">
-      <h2 class="text-sm font-semibold text-fg-muted uppercase tracking-wide mb-4">README</h2>
-      <div class="prose prose-invert max-w-none">{{README_HTML}}</div>
+    <nav class="tab-bar" role="tablist" aria-label="Image details">
+      <button type="button" class="tab-button tab-active" data-tab="description" role="tab" aria-selected="true">Description</button>
+      <button type="button" class="tab-button tab-inactive" data-tab="vulnerabilities" role="tab" aria-selected="false">Vulnerabilities</button>
+      <button type="button" class="tab-button tab-inactive" data-tab="sbom" role="tab" aria-selected="false">SBOM</button>
+      <button type="button" class="tab-button tab-inactive" data-tab="used-by" role="tab" aria-selected="false">Used by</button>
+      <button type="button" class="tab-button tab-inactive" data-tab="source" role="tab" aria-selected="false">Source</button>
+    </nav>
+
+    <section class="tab-content" data-tab-panel="description" role="tabpanel">
+      <div class="card">
+        <div class="prose prose-invert max-w-none">{{README_HTML}}</div>
+      </div>
     </section>
 
-    <section class="card mb-8">
-      <h2 class="text-sm font-semibold text-fg-muted uppercase tracking-wide mb-2">Vulnerabilities</h2>
-      {{SCAN_PANEL_HTML}}
+    <section class="tab-content hidden" data-tab-panel="vulnerabilities" role="tabpanel">
+      <div class="card">
+        {{SCAN_PANEL_HTML}}
+      </div>
     </section>
 
-    <section class="card mb-8">
-      <h2 class="text-sm font-semibold text-fg-muted uppercase tracking-wide mb-2">Used by</h2>
-      {{USED_BY_HTML}}
+    <section class="tab-content hidden" data-tab-panel="sbom" role="tabpanel">
+      <div class="card">
+        {{SBOM_HTML}}
+      </div>
     </section>
 
-    <section class="card mb-8">
-      <h2 class="text-sm font-semibold text-fg-muted uppercase tracking-wide mb-2">Source</h2>
-      <p class="text-fg-muted text-sm mb-4">
-        <a href="https://github.com/nix-containers/images/blob/main/images/{{NAME}}/default.nix"
-           class="text-accent-ok hover:underline">View on GitHub →</a>
-      </p>
-      <div class="text-sm">{{NIX_HTML}}</div>
+    <section class="tab-content hidden" data-tab-panel="used-by" role="tabpanel">
+      <div class="card">
+        {{USED_BY_HTML}}
+      </div>
+    </section>
+
+    <section class="tab-content hidden" data-tab-panel="source" role="tabpanel">
+      <div class="card">
+        <p class="text-fg-muted text-sm mb-4">
+          <a href="https://github.com/nix-containers/images/blob/main/images/{{NAME}}/default.nix"
+             class="text-accent-ok hover:underline">View on GitHub →</a>
+        </p>
+        <div class="text-sm">{{NIX_HTML}}</div>
+      </div>
     </section>
   </main>
 
   <footer class="border-t border-neutral-800 mt-12 py-6 text-center text-fg-muted text-sm">
     Built {{BUILD_TIME}} · <a href="{{BASE}}" class="hover:text-fg-primary">All images</a>
   </footer>
+
+  <script>
+    // Vanilla JS tab switcher; no framework dependency.
+    (function () {
+      const buttons = document.querySelectorAll('.tab-button[data-tab]');
+      const panels = document.querySelectorAll('.tab-content[data-tab-panel]');
+      buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const target = btn.getAttribute('data-tab');
+          buttons.forEach(function (b) {
+            const active = b.getAttribute('data-tab') === target;
+            b.classList.toggle('tab-active', active);
+            b.classList.toggle('tab-inactive', !active);
+            b.setAttribute('aria-selected', active ? 'true' : 'false');
+          });
+          panels.forEach(function (p) {
+            const show = p.getAttribute('data-tab-panel') === target;
+            p.classList.toggle('hidden', !show);
+          });
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
