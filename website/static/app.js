@@ -69,17 +69,38 @@ function render() {
     </div>`;
     return;
   }
-  c.innerHTML = filteredImages.map(i => `
+  c.innerHTML = filteredImages.map(i => {
+    // Green dot when scan + sbom + dep-check are all recent (≤7d).
+    const dot = (i.freshness && i.freshness.isFresh)
+      ? `<span class="inline-block w-2 h-2 rounded-full bg-accent-ok mr-2 align-middle"
+               title="Fresh data: scanned, SBOM available, deps checked within 7 days"></span>`
+      : '';
+    // Rank from IMAGE-POPULARITY.md, when present.
+    const rank = (i.popularity && i.popularity.rank)
+      ? `<span class="text-xs text-fg-muted font-mono">#${i.popularity.rank}</span>`
+      : '';
+    // The registry tag is always 'latest'; the image's OCI label gives
+    // the semver (e.g. "3.4.3"). Show both; collapse to just 'latest' if
+    // no version label or it's still a dynamic-* placeholder.
+    const v = (i.version || '').trim();
+    const showLatestPlusVersion = v && v !== 'latest' && !v.startsWith('dynamic-');
+    const versionLine = showLatestPlusVersion
+      ? `latest, ${escapeHtml(v)}`
+      : 'latest';
+    return `
     <a href="${BASE}images/${escapeAttr(i.name)}/"
        class="card block">
       <div class="flex items-center justify-between mb-2">
-        <div class="font-mono font-bold text-fg-primary">${escapeHtml(i.name)}</div>
-        <span class="badge-cat-${escapeAttr(i.categorySlug || 'unknown')}">${escapeHtml(i.category || 'unknown')}</span>
+        <div class="font-mono font-bold text-fg-primary">${dot}${escapeHtml(i.name)}</div>
+        <div class="flex items-center gap-2">
+          ${rank}
+          <span class="badge-cat-${escapeAttr(i.categorySlug || 'unknown')}">${escapeHtml(i.category || 'unknown')}</span>
+        </div>
       </div>
       <p class="text-sm text-fg-muted line-clamp-2">${escapeHtml(i.description || '')}</p>
-      <div class="mt-3 text-xs text-fg-muted font-mono">${escapeHtml(i.version || '')}</div>
+      <div class="mt-3 text-xs text-fg-muted font-mono">${versionLine}</div>
     </a>
-  `).join('');
+  `;}).join('');
 }
 
 function escapeHtml(s) {

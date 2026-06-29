@@ -126,6 +126,12 @@ pkgs.stdenv.mkDerivation {
   # it empty → render.py defaults to "/". Also requires --impure when set.
   PAGES_BASE_PATH = builtins.getEnv "PAGES_BASE_PATH";
 
+  # ISO timestamp of the last successful auto-update.yml run, populated
+  # by deploy-website.yml. Feeds render.py's freshness check that gates
+  # the green dot on the index. Unset locally → freshness treats deps
+  # as recent (so local builds don't render everything as stale).
+  LAST_DEP_CHECK_AT = builtins.getEnv "LAST_DEP_CHECK_AT";
+
   buildPhase = ''
     runHook preBuild
 
@@ -168,6 +174,11 @@ pkgs.stdenv.mkDerivation {
       echo "   Using PAGES_BASE_PATH=$PAGES_BASE_PATH"
       BASE_ARG="--base-path $PAGES_BASE_PATH"
     fi
+    DEPCHECK_ARG=""
+    if [ -n "''${LAST_DEP_CHECK_AT:-}" ]; then
+      echo "   Using LAST_DEP_CHECK_AT=$LAST_DEP_CHECK_AT"
+      DEPCHECK_ARG="--last-dep-check $LAST_DEP_CHECK_AT"
+    fi
     python3 render.py \
       --data ${imagesJsonFull} \
       --templates ./templates \
@@ -176,7 +187,8 @@ pkgs.stdenv.mkDerivation {
       --pygmentize ${pkgs.python3Packages.pygments}/bin/pygmentize \
       --popularity $TMPDIR/popularity.json \
       $BASE_ARG \
-      $SCAN_ARG
+      $SCAN_ARG \
+      $DEPCHECK_ARG
 
     echo "-> Build complete. Output:"
     ls -la $OUT_DIR/

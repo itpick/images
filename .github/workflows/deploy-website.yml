@@ -63,17 +63,31 @@ jobs:
           echo "Downloaded $(find "$SCAN_DIR" -maxdepth 1 -name '*-trivy.json' 2>/dev/null | wc -l) trivy json files."
           echo "path=$SCAN_DIR" >> "$GITHUB_OUTPUT"
 
+      - name: Look up last successful auto-update run
+        id: depcheck
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          # Used by render.py to mark green-dot freshness on index cards.
+          ISO=$(gh run list --repo "$GITHUB_REPOSITORY" \
+                  --workflow=auto-update.yml --branch=main --status=success \
+                  --limit=1 --json createdAt --jq '.[0].createdAt // ""' || true)
+          echo "iso=$ISO" >> "$GITHUB_OUTPUT"
+          echo "Last successful auto-update.yml run: ${ISO:-<none>}"
+
       - name: Build static website
         env:
           SCAN_DATA_PATH: ${{ steps.scan.outputs.path }}
           # GH Pages project sites publish at /<repo>/, so absolute asset
           # URLs (/static/css/site.css etc.) need that prefix.
           PAGES_BASE_PATH: /${{ github.event.repository.name }}/
+          LAST_DEP_CHECK_AT: ${{ steps.depcheck.outputs.iso }}
         run: |
           set -euo pipefail
           . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-          # --impure required to read PAGES_BASE_PATH (and SCAN_DATA_PATH
-          # if set) via builtins.getEnv in generate-site.nix.
+          # --impure required to read PAGES_BASE_PATH / SCAN_DATA_PATH /
+          # LAST_DEP_CHECK_AT via builtins.getEnv in generate-site.nix.
           nix build .#website --impure --print-build-logs
           mkdir -p ./website-build
           cp -r ./result/* ./website-build/

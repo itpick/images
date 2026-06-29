@@ -89,6 +89,70 @@ def scan_for_image(image_name: str, scan_dir: str | None) -> dict | None:
 # share the popularity record of their base.
 _POPULARITY_VARIANT_SUFFIXES = ("-fips", "-iamguarded", "-nonroot")
 
+
+def next_cve_scan_utc() -> str:
+    """Next scheduled CVE scan, derived from security-scan.yml cron '0 6 * * *'.
+
+    Always 06:00 UTC: today's if we're rendering before 06:00 UTC, else
+    tomorrow's. Static cron, computed at render time.
+    """
+    now = datetime.datetime.now(datetime.timezone.utc)
+    next_run = now.replace(hour=6, minute=0, second=0, microsecond=0)
+    if next_run <= now:
+        next_run += datetime.timedelta(days=1)
+    return next_run.strftime("%Y-%m-%d %H:%M UTC")
+
+
+def format_scan_timestamp(iso: str) -> str:
+    """Trivy's CreatedAt is ISO-with-nanos; trim to human-readable UTC."""
+    if not iso:
+        return "never"
+    try:
+        cleaned = iso.replace("Z", "+00:00")
+        # Drop sub-second precision so the banner stays compact.
+        if "." in cleaned:
+            head, tail = cleaned.split(".", 1)
+            if "+" in tail:
+                cleaned = head + "+" + tail.split("+", 1)[1]
+            else:
+                cleaned = head
+        dt = datetime.datetime.fromisoformat(cleaned)
+        return dt.astimezone(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    except (ValueError, TypeError):
+        return iso  # fall back to whatever we got
+
+
+def is_recent(iso_str: str, days: int = 7) -> bool:
+    """True if iso_str is within `days` days of now (UTC). Lenient on
+    malformed input — returns False so a bad timestamp never *passes*
+    the freshness check (avoids false-positive green dots)."""
+    if not iso_str:
+        return False
+    try:
+        cleaned = iso_str.replace("Z", "+00:00")
+        if "." in cleaned:
+            head, tail = cleaned.split(".", 1)
+            cleaned = head + (("+" + tail.split("+", 1)[1]) if "+" in tail else "")
+        dt = datetime.datetime.fromisoformat(cleaned).astimezone(datetime.timezone.utc)
+        return (datetime.datetime.now(datetime.timezone.utc) - dt) <= datetime.timedelta(days=days)
+    except (ValueError, TypeError):
+        return False
+
+
+def scan_meta_banner_html(scan: dict | None, next_scan: str) -> str:
+    """Last-scan / next-scan info banner.
+
+    Always renders (even with no scan data) so users know when fresh data
+    will arrive. Used at the top of BOTH the Vulnerabilities and SBOM
+    tabs."""
+    last = format_scan_timestamp(scan.get("scannedAt", "")) if scan else "never"
+    return (
+        '<p class="text-xs text-fg-muted mb-3 pb-3 border-b border-neutral-800">'
+        f'Last scan: <span class="font-mono text-fg-primary">{last}</span>'
+        f' · Next scheduled scan: <span class="font-mono text-fg-primary">{next_scan}</span>'
+        '</p>'
+    )
+
 # Hard cap on SBOM rows rendered per page. Some images (e.g. base OSes with
 # every userland tool) have thousands of packages; rendering them all would
 # bloat the HTML and slow the page. Anything past this is hidden behind a
@@ -282,6 +346,8 @@ def main():
                     help="Optional path to popularity.json (output of parse-popularity.py)")
     ap.add_argument("--base-path", default="/",
                     help="URL base path (e.g. '/' locally, '/images/' on GH Pages project site). Trailing slash required.")
+    ap.add_argument("--last-dep-check", default=None,
+                    help="ISO timestamp of the last successful auto-update.yml run. When omitted, freshness-gates assume dep-check is recent.")
     args = ap.parse_args()
     base = args.base_path if args.base_path.endswith("/") else args.base_path + "/"
 
@@ -306,6 +372,14 @@ def main():
     index_template = Path(args.templates, "index.html").read_text()
 
     build_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    next_scan = next_cve_scan_utc()
+    # Whether the auto-update.yml pipeline has had a successful run within
+    # the last 7 days. Passed via --last-dep-check from the deploy workflow.
+    # When unset (local builds), treat as True so the green-dot freshness
+    # check doesn't gate everything on a value we don't have.
+    dep_check_recent = (
+        is_recent(args.last_dep_check) if args.last_dep_check else True
+    )
 
     slim_images = []
     for img in data["images"]:
@@ -340,8 +414,9 @@ def main():
             used_by_html = '<p class="text-fg-muted italic text-sm">Not used by any tracked chart.</p>'
         mapping["USED_BY_HTML"] = used_by_html
         scan = scan_for_image(name, args.scan_data)
+        meta_banner = scan_meta_banner_html(scan, next_scan)
         if scan:
-            scan_html = (
+            scan_body = (
                 '<div class="space-y-1 text-sm">'
                 f'<div class="flex justify-between"><span class="text-accent-bad font-mono">Critical</span><span>{scan["critical"]}</span></div>'
                 f'<div class="flex justify-between"><span class="text-accent-warn font-mono">High</span><span>{scan["high"]}</span></div>'
@@ -351,11 +426,11 @@ def main():
                 '</div>'
             )
         else:
-            scan_html = '<p class="text-fg-muted italic text-sm">No scan data available.</p>'
-        mapping["SCAN_PANEL_HTML"] = scan_html
+            scan_body = '<p class="text-fg-muted italic text-sm">No scan data yet for this image. It will be picked up on the next scheduled run.</p>'
+        mapping["SCAN_PANEL_HTML"] = meta_banner + scan_body
 
         sbom = lookup_sbom(name, args.sbom_data)
-        mapping["SBOM_HTML"] = render_sbom(sbom)
+        mapping["SBOM_HTML"] = meta_banner + render_sbom(sbom)
 
         page_html = fill_template(image_template, mapping)
         page_dir = out / "images" / name
@@ -382,6 +457,18 @@ def main():
             # the image is not in IMAGE-POPULARITY.md. The index page may
             # consume these later to surface rank-sorted lists.
             "popularity": pop_record,
+            # Freshness signals consumed by the index page to render a
+            # green dot next to images whose data is current.
+            "freshness": {
+                "scanRecent": is_recent((scan or {}).get("scannedAt", "")),
+                "hasSbom": bool(sbom),
+                "depCheckRecent": dep_check_recent,
+                "isFresh": (
+                    is_recent((scan or {}).get("scannedAt", ""))
+                    and bool(sbom)
+                    and dep_check_recent
+                ),
+            },
         })
 
     slim_data = {
