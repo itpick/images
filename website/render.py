@@ -49,20 +49,42 @@ def render_nix(nix_text: str, pygmentize_bin: str) -> str:
     return p.stdout
 
 
-def scan_for_image(image_name: str, scan_dir: str | None) -> dict | None:
-    """Return a dict of severity counts (or None if no data exists).
+def _find_scan_file(image_name: str, scan_dir: str, suffix: str) -> str | None:
+    """Locate one *-`suffix` file for `image_name` in scan_dir.
 
-    Trivy artifacts are named like '<image>_<tag>-trivy.json'. When
-    multiple files exist for one image, pick the lex-greatest filename
-    (typically the newest tag).
+    security-scan.yml munges the full image ref (e.g.
+    ghcr.io/nix-containers/images/postgres:latest) into the filename:
+        ghcr.io_nix-containers_images_postgres_latest-trivy.json
+    So a 'startswith image-name' glob never matches. We look for
+    files where the munged registry-prefix segment ends with the
+    image name, then pick the lex-greatest (newest tag).
     """
-    if not scan_dir:
-        return None
-    pattern = os.path.join(scan_dir, f"{image_name}_*-trivy.json")
-    matches = sorted(glob.glob(pattern))
+    # Match files like *_<image>_<tag>-suffix or <image>_<tag>-suffix.
+    # The leading `_` in the first pattern enforces a word boundary so
+    # `postgres` doesn't match `postgres-fips` files.
+    patterns = [
+        os.path.join(scan_dir, f"*_{image_name}_*-{suffix}"),
+        os.path.join(scan_dir, f"{image_name}_*-{suffix}"),
+    ]
+    matches: list[str] = []
+    for p in patterns:
+        matches.extend(glob.glob(p))
     if not matches:
         return None
-    target = matches[-1]
+    # Dedupe + sort. Lex-greatest is typically newest tag (e.g. v2.0 > v1.9
+    # for same prefix) and the registry-prefixed file (long name) sorts
+    # AFTER the bare-name file, so when both exist we prefer the explicit
+    # registry-tagged one — also correct.
+    return sorted(set(matches))[-1]
+
+
+def scan_for_image(image_name: str, scan_dir: str | None) -> dict | None:
+    """Return a dict of severity counts (or None if no data exists)."""
+    if not scan_dir:
+        return None
+    target = _find_scan_file(image_name, scan_dir, "trivy.json")
+    if not target:
+        return None
     try:
         with open(target) as f:
             doc = json.load(f)
@@ -172,11 +194,9 @@ def sbom_for_image(image_name: str, sbom_dir: str | None) -> list[dict] | None:
     """
     if not sbom_dir:
         return None
-    pattern = os.path.join(sbom_dir, f"{image_name}_*-sbom.json")
-    matches = sorted(glob.glob(pattern))
-    if not matches:
+    target = _find_scan_file(image_name, sbom_dir, "sbom.json")
+    if not target:
         return None
-    target = matches[-1]
     try:
         with open(target) as f:
             doc = json.load(f)
