@@ -27,14 +27,21 @@ mkImage {
   # the rust binary's own defaults take over and the server binds to
   # 127.0.0.1 (loopback only), so any k8s probe / Service traffic
   # hitting the pod IP gets refused and the chart's liveness/
-  # readiness probes kill the pod. We don't carry ROCKET_PORT=80 from
-  # upstream because (a) the chart already sets ROCKET_PORT to its
-  # service port (8080 for our HelmRelease) and (b) <1024 binds would
-  # fail under the nonRoot user we set below.
+  # readiness probes kill the pod.
+  #
+  # ROCKET_PORT: vaultwarden's own default is the privileged :80, which the
+  # nonRoot user below can't bind — the bare image would CrashLoop. Default to
+  # 8080 (>1024) so it runs standalone; the chart still overrides this with its
+  # service port via the PodSpec env.
+  # DATA_FOLDER: vaultwarden's default is ./data, relative to the read-only
+  # nix-store cwd — it can't create its SQLite DB / RSA keys there. Point it at
+  # the writable /tmp; operators mount a PVC and override DATA_FOLDER.
   env = {
     WEB_VAULT_FOLDER = "${pkgs.vaultwarden-webvault}/share/vaultwarden/vault";
     ROCKET_ADDRESS = "0.0.0.0";
+    ROCKET_PORT = "8080";
     ROCKET_PROFILE = "release";
+    DATA_FOLDER = "/tmp/vaultwarden";
   };
 
   labels = {
