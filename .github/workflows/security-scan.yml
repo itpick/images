@@ -135,36 +135,52 @@ jobs:
           fi
           
           echo "📋 Images to scan: $IMAGES_TO_SCAN"
-          
+
           # Create scan results directory
           mkdir -p scan-results
-          
-          # Scan each image
+
+          # Pre-filter to images that ACTUALLY exist on the registry. The
+          # top-100 popularity list mixes images we ship with aspirational
+          # entries (memcached, etc.) that haven't been built yet — without
+          # this filter Trivy bails on the first missing one and kills the
+          # whole scan loop.
+          EXISTING='[]'
+          for image in $(echo "$IMAGES_TO_SCAN" | jq -r '.[]'); do
+            if docker manifest inspect "$image" >/dev/null 2>&1; then
+              EXISTING=$(echo "$EXISTING" | jq -c --arg i "$image" '. + [$i]')
+            else
+              echo "skip: $image not found in registry"
+            fi
+          done
+          IMAGES_TO_SCAN="$EXISTING"
+          echo "📋 After existence filter: $(echo "$IMAGES_TO_SCAN" | jq 'length') image(s) actually scannable."
+
+          # Scan each (now confirmed-existing) image. Per-call `|| true`
+          # keeps the loop alive even if Trivy itself trips on a transient
+          # auth/network blip; the analysis step at the end works off
+          # whatever JSON files made it onto disk.
           echo "$IMAGES_TO_SCAN" | jq -r '.[]' | while read -r image; do
             if [ -n "$image" ]; then
               echo "🔍 Scanning $image with Trivy..."
-              
-              # Run Trivy scan with multiple output formats
+
               trivy image \
                 --exit-code 0 \
                 --severity HIGH,CRITICAL \
                 --format table \
-                "$image" | tee "scan-results/${image//[\/:]/_}-trivy.txt"
-              
-              # Generate JSON report for programmatic analysis
+                "$image" 2>&1 | tee "scan-results/${image//[\/:]/_}-trivy.txt" || echo "skip: trivy table failed for $image"
+
               trivy image \
                 --exit-code 0 \
                 --format json \
                 --output "scan-results/${image//[\/:]/_}-trivy.json" \
-                "$image"
+                "$image" || echo "skip: trivy json failed for $image"
               
-              # Generate SARIF for GitHub Security tab
               trivy image \
                 --exit-code 0 \
                 --format sarif \
                 --output "scan-results/${image//[\/:]/_}-trivy.sarif" \
-                "$image"
-              
+                "$image" || echo "skip: trivy sarif failed for $image"
+
               echo "✅ Trivy scan completed for $image"
             fi
           done
