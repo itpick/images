@@ -23,7 +23,17 @@ mkImage {
   name = "dragonfly";
   tag = "v${pkgs.dragonflydb.version}";
   entrypoint = [ "${pkgs.dragonflydb}/bin/dragonfly" ];
-  cmd = [ "--version" ];
+  # Was `--version` (a one-shot). Run the datastore: dragonfly listens on all
+  # interfaces by default (unlike redis), so the dragonfly / kind-test probe
+  # reaches it on :6379 with no --bind. Log to stderr (the helio/glog default
+  # otherwise writes to a temp log dir) and keep snapshots under the writable
+  # /tmp mkImage provides (the default --dir is the non-writable cwd). Operators
+  # mount a PVC and override --dir / add --requirepass.
+  cmd = [
+    "--port" "6379"
+    "--dir" "/tmp"
+    "--logtostderr"
+  ];
 
   extraContents = [ healthcheckCompat ];
 
