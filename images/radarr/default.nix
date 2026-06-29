@@ -8,7 +8,13 @@ mkImage {
   name = "radarr";
   tag = "v${pkgs.radarr.version}";
   entrypoint = [ "${pkgs.radarr}/bin/Radarr" ];
-  cmd = [];
+  # Was empty (no command). Radarr binds *:7878 by default (BindAddress "*"),
+  # but its AppData dir defaults to $HOME/.config/Radarr — which mkImage's
+  # nonroot (65534) user can't write, so it CrashLoops creating config.xml +
+  # radarr.db. Point -data at the writable /tmp (Radarr creates the dir on first
+  # run) and -nobrowser so it doesn't try to launch one. Operators mount a PVC
+  # and override -data for a persistent library.
+  cmd = [ "-nobrowser" "-data=/tmp/radarr" ];
 
   extraPkgs = with pkgs; [ cacert ];
 
