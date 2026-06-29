@@ -150,16 +150,19 @@ jobs:
           SHARDS=$(( SHARDS < TOTAL_EXISTING ? SHARDS : TOTAL_EXISTING ))
           echo "Splitting $TOTAL_EXISTING images across $SHARDS shards"
 
-          # Chunk into roughly-equal slices via jq.
+          # Chunk into roughly-equal slices via jq. The iteration index is
+          # captured into `$i` so the inner `$all | .[…]` slice doesn't
+          # shadow `.` with the whole array (which made `(. * $sz)` evaluate
+          # as "array * number" and aborted resolve-images in #172).
           MATRIX=$(echo "$EXISTING_JSON" | jq -c \
             --argjson shards "$SHARDS" \
             '
               . as $all
               | length as $n
-              | ($n + $shards - 1) / $shards | floor as $sz
-              | [range(0; $shards) | {
-                  shard: (. + 1),
-                  images: ($all | .[(. * $sz):((. + 1) * $sz)])
+              | (($n + $shards - 1) / $shards | floor) as $sz
+              | [range(0; $shards) as $i | {
+                  shard: ($i + 1),
+                  images: $all[($i * $sz):(($i + 1) * $sz)]
                 }]
               | map(select(.images | length > 0))
               | {include: .}
