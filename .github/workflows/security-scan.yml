@@ -3,10 +3,24 @@ name: Security Scan
 # Three trigger modes:
 #   - workflow_call: invoked by build-containers.yml after build-and-push;
 #     receives the matrix of just-built images.
-#   - schedule (daily): scan the top-N most popular images per
-#     IMAGE-POPULARITY.md, against their :latest tag on ghcr.io. Produces
-#     the security-scan-results artifact that deploy-website consumes.
-#   - workflow_dispatch: same as schedule with an optional override list.
+#   - schedule (daily): scan every image we publish to ghcr that the
+#     existence-filter can reach. Produces the security-scan-results
+#     artifact that deploy-website consumes.
+#   - workflow_dispatch: same as schedule with an optional override list
+#     and tunable shard count.
+#
+# Architecture (since the matrix-shard refactor):
+#   1. resolve-images — resolves the candidate list (workflow_call /
+#      dispatch CSV / schedule = full images/*/ enumeration), runs
+#      `docker manifest inspect` in parallel to drop names that aren't
+#      published, splits the survivors into N roughly-equal shards.
+#   2. scan (matrix) — one job per shard. Installs Trivy + Grype + Syft
+#      and scans its slice. Uploads scan-results-shard-<N> artifact.
+#   3. aggregate — downloads all shard artifacts into a single
+#      scan-results/ dir, runs the per-image CVE counts, opens or
+#      closes the rolling CVE-alert issue, uploads the final
+#      security-scan-results artifact (same name as before so
+#      deploy-website.yml keeps working).
 
 on:
   workflow_call:
@@ -24,9 +38,14 @@ on:
   workflow_dispatch:
     inputs:
       images:
-        description: 'Optional CSV of image names (e.g. "redis,postgres,vault"). Empty = top 100 by popularity.'
+        description: 'Optional CSV of image names (e.g. "redis,postgres,vault"). Empty = full repo (existence-filtered).'
         required: false
         default: ''
+        type: string
+      shards:
+        description: "Number of parallel scan jobs (max-parallel = this value, capped at 20 by GH free tier)."
+        required: false
+        default: '20'
         type: string
       critical_threshold:
         description: "Open an issue if total critical CVEs >= this value."
@@ -39,19 +58,17 @@ on:
         default: '10'
         type: string
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
-  security-scan:
+  resolve-images:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: read
-      security-events: write
-      issues: write   # required for the CVE-threshold alert step
-    env:
-      REGISTRY: ghcr.io
-      IMAGE_NAME: ${{ github.repository }}
-      CRITICAL_THRESHOLD: ${{ inputs.critical_threshold || '1' }}
-      HIGH_THRESHOLD: ${{ inputs.high_threshold || '10' }}
+    outputs:
+      matrix: ${{ steps.split.outputs.matrix }}
+      has-work: ${{ steps.split.outputs.has-work }}
+      total: ${{ steps.split.outputs.total }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -59,219 +76,218 @@ jobs:
       - name: Login to Container Registry
         uses: docker/login-action@v4
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install security tools
+      - name: Resolve, existence-filter, and shard the image list
+        id: split
+        env:
+          IMAGES_INPUT: ${{ inputs.images }}
+          SHARDS_INPUT: ${{ inputs.shards || '' }}
+          EVENT: ${{ github.event_name }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
         run: |
-          echo "🔧 Installing security scanning tools..."
-          
-          # Install Trivy
-          sudo apt-get update
-          sudo apt-get install -y wget apt-transport-https gnupg lsb-release
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-          echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
-          sudo apt-get update
-          sudo apt-get install -y trivy
-          
-          # Install Grype
-          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
-          
-          # Install Syft for SBOM generation
-          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-          
-          echo "✅ Security tools installed"
-          trivy version
-          grype version
-          syft version
+          set -euo pipefail
 
-      - name: Setup Docker for local testing
-        run: |
-          # Docker is already available, just ensure it's running
-          sudo systemctl start docker
-          
-          # Add current user to docker group for act compatibility
-          sudo usermod -aG docker $USER || true
-
-      - name: Scan container images with Trivy
-        run: |
-          echo "🔍 Starting Trivy security scans..."
-          
-          # Resolve image list from one of three sources:
-          #  1. workflow_call input (matrix from build-containers).
-          #  2. workflow_dispatch CSV input (manual run).
-          #  3. schedule cron — top-100 from IMAGE-POPULARITY.md, :latest tag.
-          IMAGES_TO_SCAN='${{ inputs.images }}'
-          if [ -n "${IMAGES_TO_SCAN}" ] && [ "$IMAGES_TO_SCAN" != "[]" ] && \
-             echo "$IMAGES_TO_SCAN" | jq -e 'type == "array"' >/dev/null 2>&1; then
-            # workflow_call JSON-array path. Caller passes matrix-include
-            # objects ({name, path, ...}); coerce to ghcr image refs at the
-            # commit SHA.
-            IMAGES_TO_SCAN=$(echo "$IMAGES_TO_SCAN" | jq -c \
-              --arg repo "${{ github.repository }}" \
-              --arg sha "${{ github.sha }}" \
+          # ---- step 1: build the candidate list ----
+          CANDIDATES_JSON="[]"
+          if [ -n "${IMAGES_INPUT:-}" ] && [ "$IMAGES_INPUT" != "[]" ] && \
+             echo "$IMAGES_INPUT" | jq -e 'type == "array"' >/dev/null 2>&1; then
+            # workflow_call JSON-array path: matrix-include objects.
+            CANDIDATES_JSON=$(echo "$IMAGES_INPUT" | jq -c \
+              --arg repo "$REPO" --arg sha "$SHA" \
               '[ .[] | if type == "object" then "ghcr.io/\($repo)/\(.name):\($sha)" else . end ]')
-          elif [ -n "${IMAGES_TO_SCAN}" ] && [ "$IMAGES_TO_SCAN" != "[]" ]; then
+          elif [ -n "${IMAGES_INPUT:-}" ] && [ "$IMAGES_INPUT" != "[]" ]; then
             # workflow_dispatch CSV path.
-            IMAGES_TO_SCAN=$(printf '%s' "$IMAGES_TO_SCAN" | jq -Rc \
-              --arg repo "${{ github.repository }}" \
+            CANDIDATES_JSON=$(printf '%s' "$IMAGES_INPUT" | jq -Rc \
+              --arg repo "$REPO" \
               'split(",") | map(gsub("^\\s+|\\s+$"; "")) | map(select(length > 0))
                | map("ghcr.io/\($repo)/\(.):latest")')
           else
-            # schedule path — derive top-100 from IMAGE-POPULARITY.md.
-            # The table rows look like: | 1 | fluent-bit | fluent/fluent-bit | ...
-            # Extract the second column (image name) for the top 100 ranked.
-            echo "📋 No input given; selecting top-100 popular images from IMAGE-POPULARITY.md"
-            TOP=$(awk -F'|' '/^\| *[0-9]+ +\|/ { gsub(/^ +| +$/, "", $3); print $3 }' \
-                  IMAGE-POPULARITY.md | head -100)
-            if [ -z "$TOP" ]; then
-              echo "⚠️  Could not parse IMAGE-POPULARITY.md; aborting"
-              exit 1
-            fi
-            IMAGES_TO_SCAN=$(printf '%s\n' $TOP | jq -Rc \
-              --arg repo "${{ github.repository }}" \
-              '"ghcr.io/\($repo)/\(.):latest"' | jq -cs '.')
+            # schedule / dispatch-with-no-input: enumerate every image dir
+            # under images/ that has a default.nix. The existence filter
+            # below drops the ~60% that aren't published yet.
+            echo "📋 No input; enumerating images/*/default.nix"
+            CANDIDATES_JSON=$(find images -mindepth 2 -maxdepth 2 -name default.nix -printf '%h\n' \
+              | sed 's|^images/||' \
+              | grep -vE '\.(md|txt|json|yaml|yml|lock|html|sh)$' \
+              | sort -u \
+              | jq -Rc --arg repo "$REPO" '"ghcr.io/\($repo)/\(.):latest"' \
+              | jq -cs '.')
           fi
-          
-          echo "📋 Images to scan: $IMAGES_TO_SCAN"
+          TOTAL_CANDIDATES=$(echo "$CANDIDATES_JSON" | jq 'length')
+          echo "Total candidates: $TOTAL_CANDIDATES"
 
-          # Create scan results directory
+          # ---- step 2: existence-filter in parallel (xargs -P 32) ----
+          # docker manifest inspect is HEAD-like; cheap. Parallelize to keep
+          # the resolve step under a minute even for 3000 candidates.
+          if [ "$TOTAL_CANDIDATES" -eq 0 ]; then
+            EXISTING_JSON="[]"
+          else
+            echo "$CANDIDATES_JSON" | jq -r '.[]' > /tmp/candidates.txt
+            xargs -a /tmp/candidates.txt -I {} -P 32 sh -c '
+              if docker manifest inspect "$1" >/dev/null 2>&1; then echo "$1"; fi
+            ' _ {} > /tmp/existing.txt
+            EXISTING_JSON=$(jq -Rc '.' /tmp/existing.txt | jq -cs '.')
+          fi
+          TOTAL_EXISTING=$(echo "$EXISTING_JSON" | jq 'length')
+          TOTAL_SKIPPED=$((TOTAL_CANDIDATES - TOTAL_EXISTING))
+          echo "After existence filter: $TOTAL_EXISTING scannable ($TOTAL_SKIPPED not yet published)"
+
+          # ---- step 3: shard ----
+          if [ "$TOTAL_EXISTING" -eq 0 ]; then
+            echo "has-work=false" >> "$GITHUB_OUTPUT"
+            echo 'matrix={"include":[]}' >> "$GITHUB_OUTPUT"
+            echo "total=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Default to 20 shards (GH free tier max-parallel limit for
+          # ubuntu-latest on public repos). Never more shards than images.
+          SHARDS="${SHARDS_INPUT:-20}"
+          SHARDS=$(( SHARDS < TOTAL_EXISTING ? SHARDS : TOTAL_EXISTING ))
+          echo "Splitting $TOTAL_EXISTING images across $SHARDS shards"
+
+          # Chunk into roughly-equal slices via jq.
+          MATRIX=$(echo "$EXISTING_JSON" | jq -c \
+            --argjson shards "$SHARDS" \
+            '
+              . as $all
+              | length as $n
+              | ($n + $shards - 1) / $shards | floor as $sz
+              | [range(0; $shards) | {
+                  shard: (. + 1),
+                  images: ($all | .[(. * $sz):((. + 1) * $sz)])
+                }]
+              | map(select(.images | length > 0))
+              | {include: .}
+            ')
+
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+          echo "has-work=true" >> "$GITHUB_OUTPUT"
+          echo "total=$TOTAL_EXISTING" >> "$GITHUB_OUTPUT"
+          echo "Resolved matrix:"
+          echo "$MATRIX" | jq '.include | map({shard, count: (.images | length)})'
+
+  scan:
+    needs: resolve-images
+    if: needs.resolve-images.outputs.has-work == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix: ${{ fromJSON(needs.resolve-images.outputs.matrix) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Trivy + Grype + Syft
+        run: |
+          set -euo pipefail
+          # Trivy via apt
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq wget apt-transport-https gnupg lsb-release
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add - 2>/dev/null
+          echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/trivy.list >/dev/null
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq trivy
+          # Grype + Syft via official installers
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin >/dev/null
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin >/dev/null
+          trivy --version | head -1
+          grype version | head -1
+          syft version | head -1
+
+      - name: Scan shard ${{ matrix.shard }}
+        run: |
+          set -euo pipefail
           mkdir -p scan-results
-
-          # Pre-filter to images that ACTUALLY exist on the registry. The
-          # top-100 popularity list mixes images we ship with aspirational
-          # entries (memcached, etc.) that haven't been built yet — without
-          # this filter Trivy bails on the first missing one and kills the
-          # whole scan loop.
-          EXISTING='[]'
-          for image in $(echo "$IMAGES_TO_SCAN" | jq -r '.[]'); do
-            if docker manifest inspect "$image" >/dev/null 2>&1; then
-              EXISTING=$(echo "$EXISTING" | jq -c --arg i "$image" '. + [$i]')
-            else
-              echo "skip: $image not found in registry"
-            fi
+          IMAGES_JSON=$(jq -nc --argjson xs '${{ toJSON(matrix.images) }}' '$xs')
+          COUNT=$(echo "$IMAGES_JSON" | jq 'length')
+          echo "Shard ${{ matrix.shard }}: scanning $COUNT images"
+          echo "$IMAGES_JSON" | jq -r '.[]' | while read -r image; do
+            [ -z "$image" ] && continue
+            safe="${image//[\/:]/_}"
+            echo "=== $image ==="
+            trivy image --exit-code 0 --severity HIGH,CRITICAL --format table  "$image" 2>&1 | tee "scan-results/${safe}-trivy.txt"    || echo "skip: trivy table   $image"
+            trivy image --exit-code 0 --format json  --output "scan-results/${safe}-trivy.json"  "$image"                                  || echo "skip: trivy json    $image"
+            trivy image --exit-code 0 --format sarif --output "scan-results/${safe}-trivy.sarif" "$image"                                  || echo "skip: trivy sarif   $image"
+            grype "$image" -o table              | tee "scan-results/${safe}-grype.txt" || true
+            grype "$image" -o json   > "scan-results/${safe}-grype.json"               || true
+            syft  "$image" -o json   > "scan-results/${safe}-sbom.json"                || true
+            syft  "$image" -o spdx-json > "scan-results/${safe}-sbom-spdx.json"        || true
           done
-          IMAGES_TO_SCAN="$EXISTING"
-          echo "📋 After existence filter: $(echo "$IMAGES_TO_SCAN" | jq 'length') image(s) actually scannable."
+          echo "Shard ${{ matrix.shard }} produced $(ls scan-results/*-trivy.json 2>/dev/null | wc -l) trivy + $(ls scan-results/*-sbom.json 2>/dev/null | wc -l) sbom files."
 
-          # Share the filtered list with the Grype + SBOM steps below.
-          # They used to re-resolve from `docker images | grep ghcr.io/...`
-          # which returned 0 entries on a fresh runner and short-circuited
-          # with 'No images available' — leaving SBOM + Grype empty.
-          echo "IMAGES_TO_SCAN_JSON<<__SC_EOF__" >> "$GITHUB_ENV"
-          echo "$IMAGES_TO_SCAN" >> "$GITHUB_ENV"
-          echo "__SC_EOF__" >> "$GITHUB_ENV"
+      - name: Upload shard artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: scan-results-shard-${{ matrix.shard }}
+          path: scan-results/
+          retention-days: 30
 
-          # Scan each (now confirmed-existing) image. Per-call `|| true`
-          # keeps the loop alive even if Trivy itself trips on a transient
-          # auth/network blip; the analysis step at the end works off
-          # whatever JSON files made it onto disk.
-          echo "$IMAGES_TO_SCAN" | jq -r '.[]' | while read -r image; do
-            if [ -n "$image" ]; then
-              echo "🔍 Scanning $image with Trivy..."
+  aggregate:
+    needs: [resolve-images, scan]
+    if: ${{ always() && needs.resolve-images.outputs.has-work == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+      security-events: write
+      issues: write   # for the CVE-threshold alert step
+    env:
+      CRITICAL_THRESHOLD: ${{ inputs.critical_threshold || '1' }}
+      HIGH_THRESHOLD: ${{ inputs.high_threshold || '10' }}
+    steps:
+      - name: Download all shard artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: scan-results-shard-*
+          path: scan-results
+          merge-multiple: true
 
-              trivy image \
-                --exit-code 0 \
-                --severity HIGH,CRITICAL \
-                --format table \
-                "$image" 2>&1 | tee "scan-results/${image//[\/:]/_}-trivy.txt" || echo "skip: trivy table failed for $image"
-
-              trivy image \
-                --exit-code 0 \
-                --format json \
-                --output "scan-results/${image//[\/:]/_}-trivy.json" \
-                "$image" || echo "skip: trivy json failed for $image"
-              
-              trivy image \
-                --exit-code 0 \
-                --format sarif \
-                --output "scan-results/${image//[\/:]/_}-trivy.sarif" \
-                "$image" || echo "skip: trivy sarif failed for $image"
-
-              echo "✅ Trivy scan completed for $image"
-            fi
-          done
-
-      - name: Scan with Grype for additional coverage
-        continue-on-error: true
+      - name: Inventory
         run: |
-          echo "🔍 Running Grype vulnerability scans..."
-          # Reuse the existence-filtered list from the Trivy step. The
-          # previous fallback (docker images | grep ghcr.io/...) returned
-          # 0 entries on fresh CI runners and short-circuited.
-          IMAGES_TO_SCAN="${IMAGES_TO_SCAN_JSON:-[]}"
-          if [ "$IMAGES_TO_SCAN" = "[]" ]; then
-            echo "⚠️  No images available for Grype scanning (Trivy step found none)"
-            exit 0
-          fi
-
-          echo "$IMAGES_TO_SCAN" | jq -r '.[]' | while read -r image; do
-            if [ -n "$image" ]; then
-              echo "🔍 Scanning $image with Grype..."
-              grype "$image" -o table | tee "scan-results/${image//[\/:]/_}-grype.txt" || true
-              grype "$image" -o json > "scan-results/${image//[\/:]/_}-grype.json" || true
-              echo "✅ Grype scan completed for $image"
-            fi
-          done
-
-      - name: Generate SBOM with Syft
-        continue-on-error: true
-        run: |
-          echo "📋 Generating Software Bill of Materials (SBOM)..."
-          # Reuse the existence-filtered list from the Trivy step.
-          IMAGES_TO_SCAN="${IMAGES_TO_SCAN_JSON:-[]}"
-          if [ "$IMAGES_TO_SCAN" = "[]" ]; then
-            echo "⚠️  No images available for SBOM generation (Trivy step found none)"
-            exit 0
-          fi
-
-          echo "$IMAGES_TO_SCAN" | jq -r '.[]' | while read -r image; do
-            if [ -n "$image" ]; then
-              echo "📋 Generating SBOM for $image..."
-              syft "$image" -o json > "scan-results/${image//[\/:]/_}-sbom.json" || true
-              syft "$image" -o spdx-json > "scan-results/${image//[\/:]/_}-sbom-spdx.json" || true
-              echo "✅ SBOM generated for $image"
-            fi
-          done
+          echo "Aggregated scan results:"
+          echo "  trivy json: $(ls scan-results/*-trivy.json 2>/dev/null | wc -l)"
+          echo "  sbom json:  $(ls scan-results/*-sbom.json  2>/dev/null | wc -l)"
+          echo "  grype json: $(ls scan-results/*-grype.json 2>/dev/null | wc -l)"
 
       - name: Analyze scan results
         id: analyze
         run: |
-          echo "📊 Analyzing security scan results..."
-
-          if [ ! -d scan-results ]; then
-            echo "⚠️  No scan results directory found"
-            exit 0
-          fi
-
+          set -euo pipefail
           CRITICAL_COUNT=0
           HIGH_COUNT=0
           TOTAL_SCANS=0
-          # Per-image breakdown captured as JSON-lines so we can sort + slice
-          # in the issue-body step without re-parsing trivy.
           : > scan-results/_per-image.jsonl
-
           for json_file in scan-results/*-trivy.json; do
-            if [ -f "$json_file" ]; then
-              TOTAL_SCANS=$((TOTAL_SCANS + 1))
-              IMG=$(basename "$json_file" -trivy.json)
-              CRITICAL_IN_FILE=$(jq '[.Results[]?.Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' "$json_file" 2>/dev/null || echo "0")
-              HIGH_IN_FILE=$(jq '[.Results[]?.Vulnerabilities[]? | select(.Severity == "HIGH")] | length' "$json_file" 2>/dev/null || echo "0")
-              CRITICAL_COUNT=$((CRITICAL_COUNT + CRITICAL_IN_FILE))
-              HIGH_COUNT=$((HIGH_COUNT + HIGH_IN_FILE))
-              echo "📊 $IMG: $CRITICAL_IN_FILE critical, $HIGH_IN_FILE high"
-              jq -nc --arg img "$IMG" --argjson c "$CRITICAL_IN_FILE" --argjson h "$HIGH_IN_FILE" \
-                '{image: $img, critical: $c, high: $h}' >> scan-results/_per-image.jsonl
-            fi
+            [ -f "$json_file" ] || continue
+            TOTAL_SCANS=$((TOTAL_SCANS + 1))
+            IMG=$(basename "$json_file" -trivy.json)
+            CRITICAL_IN_FILE=$(jq '[.Results[]?.Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' "$json_file" 2>/dev/null || echo "0")
+            HIGH_IN_FILE=$(jq '[.Results[]?.Vulnerabilities[]? | select(.Severity == "HIGH")] | length' "$json_file" 2>/dev/null || echo "0")
+            CRITICAL_COUNT=$((CRITICAL_COUNT + CRITICAL_IN_FILE))
+            HIGH_COUNT=$((HIGH_COUNT + HIGH_IN_FILE))
+            jq -nc --arg img "$IMG" --argjson c "$CRITICAL_IN_FILE" --argjson h "$HIGH_IN_FILE" \
+              '{image: $img, critical: $c, high: $h}' >> scan-results/_per-image.jsonl
           done
-
-          echo "========================================"
-          echo "📊 Security Scan Summary"
-          echo "  Total images scanned: $TOTAL_SCANS"
-          echo "  Critical vulnerabilities: $CRITICAL_COUNT"
-          echo "  High vulnerabilities: $HIGH_COUNT"
-
+          echo "Total images scanned: $TOTAL_SCANS"
+          echo "Total critical: $CRITICAL_COUNT"
+          echo "Total high: $HIGH_COUNT"
           {
             echo "critical_count=$CRITICAL_COUNT"
             echo "high_count=$HIGH_COUNT"
@@ -279,9 +295,6 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Open or update CVE alert issue
-        # Only fire on schedule + dispatch — workflow_call from
-        # build-containers covers a small per-PR slice, not the full repo
-        # CVE picture, so we don't want it churning the rolling issue.
         if: >-
           (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
           && (
@@ -295,7 +308,6 @@ jobs:
           TOTAL: ${{ steps.analyze.outputs.total_scans }}
         run: |
           set -euo pipefail
-          # Build the body fragment first — top 10 offenders by (critical, high).
           TOP=$(jq -s 'sort_by(-.critical, -.high) | .[0:10]' scan-results/_per-image.jsonl)
           {
             echo "## Security scan alert"
@@ -318,18 +330,12 @@ jobs:
             echo "_Auto-updated by \`.github/workflows/security-scan.yml\`._"
             echo "_Last update: $(date -u +%Y-%m-%dT%H:%M:%SZ)_"
           } > issue-body.md
-
           TITLE="Security scan: $CRITICAL critical / $HIGH high CVEs across $TOTAL images"
-
-          # Idempotent: edit the rolling issue if it exists, else create it.
-          # We tag with a single label so we can find it; no per-run drift.
           EXISTING=$(gh issue list --label security:scan-alert --state open \
                        --json number --jq '.[0].number // ""')
           if [ -n "$EXISTING" ]; then
-            echo "Updating existing issue #$EXISTING"
             gh issue edit "$EXISTING" --title "$TITLE" --body-file issue-body.md
           else
-            echo "Creating new alert issue (no open one found)"
             gh label create security:scan-alert --color FF0000 \
               --description "Auto-generated by security-scan workflow when CVE thresholds are exceeded" \
               2>/dev/null || true
@@ -352,21 +358,12 @@ jobs:
             gh issue close "$EXISTING" -c "All CVE counts are now below the alert thresholds. Closing automatically; will reopen on next breach."
           fi
 
-      - name: Upload scan results
-        uses: actions/upload-artifact@v5
+      - name: Upload aggregated artifact
+        uses: actions/upload-artifact@v4
         if: always()
         with:
+          # Single artifact name the deploy-website workflow has always
+          # consumed — keeps that wiring unchanged.
           name: security-scan-results
           path: scan-results/
           retention-days: 30
-
-      # SARIF upload is disabled: uploading multiple SARIF files under a single
-      # category started erroring mid-2025 (CodeQL action requires unique
-      # category per file). Re-enable once this job is matrix-ified per image
-      # so each image's SARIF can be uploaded with its own category.
-      # - name: Upload SARIF results to GitHub Security
-      #   uses: github/codeql-action/upload-sarif@v4
-      #   if: always()
-      #   with:
-      #     sarif_file: scan-results/
-      #     category: trivy-container-scan
