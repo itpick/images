@@ -167,20 +167,46 @@
     (function () {
       const buttons = document.querySelectorAll('.tab-button[data-tab]');
       const panels = document.querySelectorAll('.tab-content[data-tab-panel]');
+      const validTabs = Array.from(buttons).map(function (b) {
+        return b.getAttribute('data-tab');
+      });
+
+      function showTab(target, opts) {
+        if (validTabs.indexOf(target) === -1) return false;
+        buttons.forEach(function (b) {
+          const active = b.getAttribute('data-tab') === target;
+          b.classList.toggle('tab-active', active);
+          b.classList.toggle('tab-inactive', !active);
+          b.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        panels.forEach(function (p) {
+          const show = p.getAttribute('data-tab-panel') === target;
+          p.classList.toggle('hidden', !show);
+        });
+        if (opts && opts.updateHash) {
+          // Use replaceState (not pushState) so per-tab nav doesn't litter
+          // the browser back-stack with intra-page hops.
+          history.replaceState(null, '', '#' + target);
+        }
+        return true;
+      }
+
       buttons.forEach(function (btn) {
         btn.addEventListener('click', function () {
-          const target = btn.getAttribute('data-tab');
-          buttons.forEach(function (b) {
-            const active = b.getAttribute('data-tab') === target;
-            b.classList.toggle('tab-active', active);
-            b.classList.toggle('tab-inactive', !active);
-            b.setAttribute('aria-selected', active ? 'true' : 'false');
-          });
-          panels.forEach(function (p) {
-            const show = p.getAttribute('data-tab-panel') === target;
-            p.classList.toggle('hidden', !show);
-          });
+          showTab(btn.getAttribute('data-tab'), { updateHash: true });
         });
+      });
+
+      // Deep-link support: open in the requested tab when the URL has
+      // #vulnerabilities, #sbom, #used-by, #source. Unknown/empty falls
+      // through to the default ("description") already rendered by the HTML.
+      const initial = (location.hash || '').replace(/^#/, '');
+      if (initial) showTab(initial, { updateHash: false });
+
+      // Update the visible tab when the user nav's back/forward between hashes.
+      window.addEventListener('hashchange', function () {
+        const next = (location.hash || '').replace(/^#/, '');
+        if (next) showTab(next, { updateHash: false });
       });
 
       // Variant switch (Minimal / With shell -dev) inside the Get-this-image card.
