@@ -32,18 +32,30 @@ jobs:
           . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
           mkdir -p ~/.config/nix
           echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
-          # Disable sandbox at the daemon level so render.py inside the
-          # build can read /home/runner/work/_temp/scan-data (the
-          # security-scan-results artifact). #158's client-side
-          # `--option sandbox false` was silently ignored on this runner
-          # ("warning: ignoring the client-specified setting 'sandbox',
-          # because it is a restricted setting and you are not a trusted
-          # user"). #160's nix-store --add approach got the artifact
-          # into the store, but env-var-passed store paths aren't
-          # treated as dependencies → still invisible to the sandbox.
-          # Daemon-level setting bypasses all of that.
-          echo "sandbox = false" | sudo tee -a /etc/nix/nix.conf
+          # Belt + suspenders for the runner-can't-see-/home problem:
+          #   1. trusted-users grants the runner the right to override
+          #      restricted settings (otherwise --option sandbox false
+          #      is silently ignored, per #158 + #162 logs).
+          #   2. sandbox = false at the daemon level applies even without
+          #      a client override.
+          #   3. Restart the daemon to pick up both.
+          sudo tee -a /etc/nix/nix.conf <<EOF
+          sandbox = false
+          trusted-users = root runner $(whoami)
+          EOF
           sudo systemctl restart nix-daemon
+          # Wait for the daemon socket to come back before any nix command
+          # tries to use it (avoid race vs. systemctl returning before
+          # listen-ready).
+          for i in 1 2 3 4 5; do
+            if [ -S /nix/var/nix/daemon-socket/socket ]; then break; fi
+            sleep 1
+          done
+          # Diagnostic: confirm the daemon now sees sandbox=false. If this
+          # prints 'sandbox = true', the restart didn't take effect.
+          echo "Effective sandbox setting:"
+          nix show-config 2>/dev/null | grep -E "^sandbox = " || true
+          nix show-config 2>/dev/null | grep -E "^trusted-users = " || true
           echo "/nix/var/nix/profiles/default/bin" >> $GITHUB_PATH
 
       - name: Download latest non-empty security scan results
