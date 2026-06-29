@@ -24,6 +24,12 @@ on:
         type: string
 
 permissions:
+  # id-token: write is required by flakehub-push to get a GitHub-OIDC
+  # bearer for the artifact upload — even though FlakeHub auth itself
+  # uses the FLAKEHUB_TOKEN below (see the auth step). These are two
+  # different uses of "OIDC": the FlakeHub user identity (token), and
+  # the GitHub Actions runner identity (id-token).
+  id-token: write
   contents: read
 
 jobs:
