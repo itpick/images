@@ -120,7 +120,11 @@ jobs:
 
           PKGS='${{ steps.list.outputs.packages }}'
           # Pin nix-update to the same flake-resolved tool used at dev time.
-          NIX_UPDATE="nix --extra-experimental-features nix-command flakes run github:Mic92/nix-update --"
+          # Stored as an array so the multi-word --extra-experimental-features
+          # value survives shell word-splitting at call time (a plain string
+          # variable was being expanded as separate tokens, turning 'flakes'
+          # into a stray subcommand).
+          NIX_UPDATE=(nix --extra-experimental-features "nix-command flakes" run github:Mic92/nix-update --)
 
           UPDATED=()
           FAILED=()
@@ -136,7 +140,7 @@ jobs:
             #   prebuilt-binary derivations anyway).
             # Per-package failure (unresolvable upstream, fixed tarball, hash
             # recompute failure) must NOT fail the job — log + continue.
-            if $NIX_UPDATE -f ./pkgs/_update.nix --version=stable --src-only "$ATTR" > "/tmp/nu-$ATTR.log" 2>&1; then
+            if "${NIX_UPDATE[@]}" -f ./pkgs/_update.nix --version=stable --src-only "$ATTR" > "/tmp/nu-$ATTR.log" 2>&1; then
               AFTER=$(git hash-object "pkgs/$ATTR/default.nix" 2>/dev/null || echo "")
               if [ "$BEFORE" != "$AFTER" ]; then
                 NEWVER=$(grep -oE 'version = "[^"]+"' "pkgs/$ATTR/default.nix" | head -1 | sed 's/version = "//;s/"//')
