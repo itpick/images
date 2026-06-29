@@ -1,37 +1,42 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# ctr
-# Container image
+# ctr - containerd's low-level CLI client (shipped in the containerd release tarball)
+# https://github.com/containerd/containerd
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "2.3.2";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "ctr";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "ctr";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "ctr-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "ctr";
-      "org.opencontainers.image.description" = "ctr container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/containerd/containerd/releases/download/v${version}/containerd-${version}-linux-amd64.tar.gz";
+      hash = "sha256:0ym1f7zcwywncmq63msjkf6lmbrl0nk270cwzgrrbfwmcmpmwqkm";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 bin/ctr $out/bin/ctr
+      runHook postInstall
+    '';
+  };
+
+in mkImage {
+  inherit drv;
+  name = "ctr";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/ctr" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "ctr";
+    "org.opencontainers.image.description" = "containerd CLI client";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

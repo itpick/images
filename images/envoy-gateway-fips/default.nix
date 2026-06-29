@@ -1,38 +1,51 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# envoy-gateway-fips
-# Container image
+# Envoy Gateway - manages Envoy Proxy as a standalone or Kubernetes-based API Gateway
+# https://github.com/envoyproxy/gateway
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.8.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "envoy-gateway";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "envoy-gateway-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "envoy-gateway-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "envoy gateway fips";
-      "org.opencontainers.image.description" = "envoy-gateway-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/envoyproxy/gateway/releases/download/v${version}/envoy-gateway_v${version}_linux_amd64.tar.gz";
+      hash = "sha256-kFE+3YwgbZ8Sia66tFDgddFNTOUVACWILm1wnUJVmLI=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 bin/linux/amd64/envoy-gateway $out/bin/envoy-gateway
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "Manages Envoy Proxy as a standalone or Kubernetes-based API Gateway";
+      homepage = "https://github.com/envoyproxy/gateway";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  inherit drv;
+  name = "envoy-gateway-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/envoy-gateway" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "envoy-gateway-fips";
+    "org.opencontainers.image.description" = "Envoy Gateway - Kubernetes-based API Gateway";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

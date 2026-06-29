@@ -1,38 +1,44 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# dapr-daprd-fips
-# Container image
+# dapr-daprd-fips - Dapr sidecar runtime (daprd).
+# Packages the upstream Dapr daprd binary. No FIPS claim is made here.
+# https://github.com/dapr/dapr
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.18.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "daprd";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "dapr-daprd-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "dapr-daprd-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "dapr daprd fips";
-      "org.opencontainers.image.description" = "dapr-daprd-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/dapr/dapr/releases/download/v${version}/daprd_linux_amd64.tar.gz";
+      hash = "sha256:0l4cka724jxpar2fjrrlkhfvmwmni4ilmkrzshbxqyksb85c08yh";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+    dontStrip = true;
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 daprd $out/bin/daprd
+      runHook postInstall
+    '';
+  };
+
+in mkImage {
+  inherit drv;
+  name = "dapr-daprd-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/daprd" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "dapr-daprd-fips";
+    "org.opencontainers.image.description" = "Dapr sidecar runtime (daprd)";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

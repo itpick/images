@@ -1,37 +1,40 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# kots
-# Container image
+# KOTS - Replicated kots CLI / kubectl plugin
+# https://github.com/replicatedhq/kots
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.130.6";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "kots";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "kots";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "kots-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "kots";
-      "org.opencontainers.image.description" = "kots container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/replicatedhq/kots/releases/download/v${version}/kots_linux_amd64.tar.gz";
+      hash = "sha256-+HnSbfMuoJ7UBG2IoGZAk2RskfjWNZ3vq8Oz+cimxWs=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 kots $out/bin/kots
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "kots";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/kots" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "kots";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

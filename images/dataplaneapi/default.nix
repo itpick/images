@@ -1,37 +1,41 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# dataplaneapi
-# Container image
+# HAProxy Data Plane API - REST API for dynamic HAProxy configuration
+# https://github.com/haproxytech/dataplaneapi
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "3.3.5";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "dataplaneapi";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "dataplaneapi";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "dataplaneapi-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "dataplaneapi";
-      "org.opencontainers.image.description" = "dataplaneapi container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/haproxytech/dataplaneapi/releases/download/v${version}/dataplaneapi_${version}_linux_x86_64.tar.gz";
+      hash = "sha256-hWPt7HnZZTm1L7cvDSKthyEwCceQVD8oS6BVZctqDR0=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 dataplaneapi $out/bin/dataplaneapi
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "dataplaneapi";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/dataplaneapi" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "dataplaneapi";
+    "org.opencontainers.image.description" = "HAProxy Data Plane API";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

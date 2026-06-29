@@ -1,34 +1,63 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# falco
-# Container image
+# Falco - cloud-native runtime security
+# https://github.com/falcosecurity/falco
 
 let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "0.44.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "falco";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "falco";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "falco-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "falco";
-      "org.opencontainers.image.description" = "falco container image";
+    src = pkgs.fetchurl {
+      url = "https://download.falco.org/packages/bin/x86_64/falco-${version}-x86_64.tar.gz";
+      hash = "sha256:09r12d1h5lm8jwb14dw42hjygihk2r3b687w43jr3z16vwxplnxw";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+
+    buildInputs = with pkgs; [
+      stdenv.cc.cc.lib
+      zlib
+      openssl
+      elfutils
+    ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out
+      cp -r falco-${version}-x86_64/usr $out/usr
+      cp -r falco-${version}-x86_64/etc $out/etc
+      mkdir -p $out/bin
+      ln -s $out/usr/bin/falco $out/bin/falco
+      ln -s $out/usr/bin/falcoctl $out/bin/falcoctl
+      runHook postInstall
+    '';
+
+    dontStrip = true;
+
+    meta = with lib; {
+      description = "Cloud-native runtime security tool";
+      homepage = "https://falco.org";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  inherit drv;
+  name = "falco";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/falco" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "falco";
+    "org.opencontainers.image.description" = "Cloud-native runtime security";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

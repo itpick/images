@@ -1,38 +1,58 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# kafka-bridge-fips
-# Container image
+# Strimzi Kafka Bridge - HTTP/AMQP bridge for Apache Kafka
+# https://github.com/strimzi/strimzi-kafka-bridge
+# (-fips variant packages the same upstream release binary)
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.0.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "kafka-bridge-fips";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "kafka-bridge-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "kafka-bridge-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "kafka uridge fips";
-      "org.opencontainers.image.description" = "kafka-bridge-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/strimzi/strimzi-kafka-bridge/releases/download/${version}/kafka-bridge-${version}.tar.gz";
+      hash = "sha256-eOiWLUgSB4PKM7t24H6GK/IXKLY8UHiKwmsySDmVnqU=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib pkgs.zlib ];
+
+    sourceRoot = "kafka-bridge-${version}";
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/opt/kafka-bridge $out/bin
+      cp -r . $out/opt/kafka-bridge/
+      ln -s $out/opt/kafka-bridge/bin/kafka_bridge_run.sh $out/bin/kafka_bridge_run.sh
+      chmod +x $out/opt/kafka-bridge/bin/kafka_bridge_run.sh
+      runHook postInstall
+    '';
+
+    dontStrip = true;
+
+    meta = with lib; {
+      description = "Strimzi HTTP bridge for Apache Kafka";
+      homepage = "https://github.com/strimzi/strimzi-kafka-bridge";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  inherit drv;
+  name = "kafka-bridge-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/kafka_bridge_run.sh" ];
+  cmd = [ ];
+
+  extraPkgs = [ pkgs.jre pkgs.bash ];
+
+  labels = {
+    "org.opencontainers.image.title" = "kafka-bridge-fips";
+    "org.opencontainers.image.description" = "Strimzi HTTP bridge for Apache Kafka";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

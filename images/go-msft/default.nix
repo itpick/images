@@ -1,37 +1,44 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# go-msft
-# Container image
+# Microsoft build of Go - Go toolchain with the OpenSSL crypto backend
+# https://github.com/microsoft/go
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.26.4-1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "go-msft";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "go-msft";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "go-msft-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "go msft";
-      "org.opencontainers.image.description" = "go-msft container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://download.visualstudio.microsoft.com/download/pr/88c9f950-d0f1-46ac-90d0-8e8b4095e743/30d6f3c908b93744d77f0cfcc29a8d0b/go1.26.4-20260602.8.linux-amd64.tar.gz";
+      hash = "sha256:09y9ydz4ax7jkwqfmp3iby57vdpvbz76ggcr18yn659yx3hp4zgy";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib pkgs.zlib pkgs.openssl ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/share $out/bin
+      cp -r go $out/share/go
+      ln -s $out/share/go/bin/go $out/bin/go
+      ln -s $out/share/go/bin/gofmt $out/bin/gofmt
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "go-msft";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/go" ];
+  cmd = [ "version" ];
+  labels = {
+    "org.opencontainers.image.title" = "go-msft";
+    "org.opencontainers.image.description" = "Microsoft build of the Go toolchain";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

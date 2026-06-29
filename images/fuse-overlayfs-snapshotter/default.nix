@@ -1,37 +1,50 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# fuse-overlayfs-snapshotter
-# Container image
+# containerd fuse-overlayfs snapshotter (rootless overlayfs via FUSE)
+# https://github.com/containerd/fuse-overlayfs-snapshotter
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "2.1.7";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "fuse-overlayfs-snapshotter";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "fuse-overlayfs-snapshotter";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "fuse-overlayfs-snapshotter-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "fuse overlayfs snapshotter";
-      "org.opencontainers.image.description" = "fuse-overlayfs-snapshotter container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/containerd/fuse-overlayfs-snapshotter/releases/download/v${version}/containerd-fuse-overlayfs-${version}-linux-amd64.tar.gz";
+      hash = "sha256:1wvn0f4zp7d65ilfp884ciqnh1p465s1capckkw1lf127h24hhfm";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 containerd-fuse-overlayfs-grpc $out/bin/containerd-fuse-overlayfs-grpc
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "containerd snapshotter plugin for fuse-overlayfs";
+      homepage = "https://github.com/containerd/fuse-overlayfs-snapshotter";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  inherit drv;
+  name = "fuse-overlayfs-snapshotter";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/containerd-fuse-overlayfs-grpc" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "fuse-overlayfs-snapshotter";
+    "org.opencontainers.image.description" = "containerd snapshotter plugin for fuse-overlayfs";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

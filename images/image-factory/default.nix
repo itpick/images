@@ -1,37 +1,39 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# image-factory
-# Container image
-
+# image-factory - Talos Linux image factory service (Sidero Labs)
+# https://github.com/siderolabs/image-factory
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.3.3";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "image-factory";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "image-factory";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "image-factory-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "image factory";
-      "org.opencontainers.image.description" = "image-factory container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/siderolabs/image-factory/releases/download/v${version}/image-factory-linux-amd64";
+      hash = "sha256:085s56d5ss2dqmzyrlcjjdm8pmkva3bl423961gqxczyxqg37044";
     };
+
+    dontUnpack = true;
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 $src $out/bin/image-factory
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "image-factory";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/image-factory" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "image-factory";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

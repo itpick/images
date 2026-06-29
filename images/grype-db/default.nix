@@ -1,37 +1,40 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# grype-db
-# Container image
+# grype-db - builds the vulnerability database used by grype
+# https://github.com/anchore/grype-db
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "0.54.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "grype-db";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "grype-db";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "grype-db-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "grype db";
-      "org.opencontainers.image.description" = "grype-db container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/anchore/grype-db/releases/download/v${version}/grype-db_${version}_linux_amd64.tar.gz";
+      hash = "sha256:07yrg3y1cb3acjcvl3r9xas0p96k2ravi8y8np7s03xi7vpmyymn";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 grype-db $out/bin/grype-db
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "grype-db";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/grype-db" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "grype-db";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

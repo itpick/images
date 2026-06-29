@@ -1,37 +1,52 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# just-newuidmap-newgidmap
-# Container image
+# just - a handy command runner (casey/just)
+# https://github.com/casey/just
+# Upstream prebuilt linux x86_64 (musl, static) release binary.
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.55.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "just";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "just-newuidmap-newgidmap";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "just-newuidmap-newgidmap-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "just newuidmap newgidmap";
-      "org.opencontainers.image.description" = "just-newuidmap-newgidmap container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/casey/just/releases/download/${version}/just-${version}-x86_64-unknown-linux-musl.tar.gz";
+      hash = "sha256-l4F42bINIBeufv3SmyBK/CunXRA7SrnSxOGmQHu9ZIo=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 just $out/bin/just
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "Just a command runner";
+      homepage = "https://github.com/casey/just";
+      license = licenses.cc0;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  inherit drv;
+  name = "just-newuidmap-newgidmap";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/just" ];
+  cmd = [ "--help" ];
+
+  extraPkgs = with pkgs; [ shadow ];
+
+  labels = {
+    "org.opencontainers.image.title" = "just";
+    "org.opencontainers.image.description" = "Just a command runner";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }
