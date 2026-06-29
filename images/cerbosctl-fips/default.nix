@@ -1,35 +1,41 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# cerbosctl-fips
-# Container image
-
+# cerbosctl - command-line interface for Cerbos
+# https://github.com/cerbos/cerbos
 let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "0.53.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "cerbosctl";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "cerbosctl-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "cerbosctl-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "cerbosctl-fips";
-      "org.opencontainers.image.description" = "cerbosctl-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/cerbos/cerbos/releases/download/v${version}/cerbosctl_${version}_Linux_x86_64.tar.gz";
+      hash = "sha256-HHel8kULMoKIwfisR6tnz4My+qhJdPFTyqwynY1EDtE=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 cerbosctl $out/bin/cerbosctl
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "cerbosctl-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/cerbosctl" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "cerbosctl-fips";
+    "org.opencontainers.image.description" = "Cerbos command-line interface";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

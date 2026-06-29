@@ -1,37 +1,40 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# containerd-stress
-# Container image
+# containerd-stress - stress testing tool shipped in the containerd release tarball
+# https://github.com/containerd/containerd
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "2.3.2";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "containerd-stress";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "containerd-stress";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "containerd-stress-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "containerd stress";
-      "org.opencontainers.image.description" = "containerd-stress container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/containerd/containerd/releases/download/v${version}/containerd-${version}-linux-amd64.tar.gz";
+      hash = "sha256-dWJeb2WVu5Xz+5yBI6YFNK9KjZtS12FwZZZ7zv5xoXo=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 bin/containerd-stress $out/bin/containerd-stress
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "containerd-stress";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/containerd-stress" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "containerd-stress";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

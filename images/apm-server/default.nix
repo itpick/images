@@ -1,37 +1,42 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# apm-server
-# Container image
+# Elastic APM Server - upstream prebuilt release binary
+# https://github.com/elastic/apm-server / https://www.elastic.co/apm
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "9.4.2";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "apm-server";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "apm-server";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "apm-server-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "apm server";
-      "org.opencontainers.image.description" = "apm-server container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://artifacts.elastic.co/downloads/apm-server/apm-server-${version}-linux-x86_64.tar.gz";
+      hash = "sha256-qg9uCMsYPH5c2no3uCIr9qtNstQp0s/ErE7grXtJw/w=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib pkgs.zlib ];
+
+    sourceRoot = "apm-server-${version}-linux-x86_64";
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/share/apm-server
+      cp -r . $out/share/apm-server/
+      install -Dm755 apm-server $out/bin/apm-server
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "apm-server";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/apm-server" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "apm-server";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

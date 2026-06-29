@@ -1,35 +1,42 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# argo-events-fips
-# Container image
+# Argo Events controller (argo-events-fips variant) - upstream prebuilt release binary
+# https://github.com/argoproj/argo-events
+# The -fips suffix is an upstream naming variant; this packages the upstream argo-events binary.
 
 let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.9.10";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "argo-events";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "argo-events-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "argo-events-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "argo-events-fips";
-      "org.opencontainers.image.description" = "argo-events-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/argoproj/argo-events/releases/download/v${version}/argo-events-linux-amd64.gz";
+      hash = "sha256-sE0sghxpQAguVuFdC/gvKQei0G2PLK1pnDDiy1OFeLE=";
     };
+
+    dontUnpack = true;
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook pkgs.gzip ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    installPhase = ''
+      runHook preInstall
+      gunzip -c $src > argo-events
+      install -Dm755 argo-events $out/bin/argo-events
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "argo-events-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/argo-events" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "argo-events-fips";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

@@ -1,37 +1,51 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# agentbeat
-# Container image
+# agentbeat - consolidated Elastic Beats binary used by Elastic Agent
+# https://www.elastic.co/beats
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "9.2.4";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "agentbeat";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "agentbeat";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "agentbeat-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "agentueat";
-      "org.opencontainers.image.description" = "agentbeat container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://artifacts.elastic.co/downloads/beats/agentbeat/agentbeat-${version}-linux-x86_64.tar.gz";
+      hash = "sha256-BQ08r226RvOtRvMyZAjr6ZzQoQleu0622BeQ1Qt77QA=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+
+    buildInputs = [
+      pkgs.stdenv.cc.cc.lib
+      pkgs.zlib
+    ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      srcdir=agentbeat-${version}-linux-x86_64
+      mkdir -p $out/share/agentbeat
+      cp -r $srcdir/. $out/share/agentbeat/
+      install -Dm755 $srcdir/agentbeat $out/bin/agentbeat
+      runHook postInstall
+    '';
+
+    dontStrip = true;
+  };
+
+in mkImage {
+  inherit drv;
+  name = "agentbeat";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/agentbeat" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "agentbeat";
+    "org.opencontainers.image.description" = "Consolidated Elastic Beats binary";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

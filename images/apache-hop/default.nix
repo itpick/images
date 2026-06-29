@@ -1,37 +1,61 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# apache-hop
-# Container image
+# Apache Hop - data orchestration and data engineering platform
+# https://hop.apache.org/
+# Upstream ships an official prebuilt "client" zip (JVM app); run the launcher
+# scripts with a JRE on PATH.
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "2.18.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "apache-hop";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "apache-hop";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "apache-hop-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "apache hop";
-      "org.opencontainers.image.description" = "apache-hop container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://archive.apache.org/dist/hop/${version}/apache-hop-client-${version}.zip";
+      hash = "sha256:1qdkshqz9scxl88syvkh0d179skfq7skh6mpjxj4ka4ilb60wnrj";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook pkgs.unzip ];
+
+    sourceRoot = "hop";
+
+    dontStrip = true;
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/hop
+      cp -r . $out/hop/
+      chmod +x $out/hop/*.sh
+      mkdir -p $out/bin
+      for s in hop-run hop-conf hop-server hop-gui hop-encrypt hop-import hop-search; do
+        ln -s $out/hop/$s.sh $out/bin/$s
+      done
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "Apache Hop data orchestration and data engineering platform";
+      homepage = "https://hop.apache.org/";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" "aarch64-linux" ];
+    };
+  };
+
+in mkImage {
+  inherit drv;
+  name = "apache-hop";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/hop-run" ];
+  cmd = [ "--help" ];
+
+  extraPkgs = [ pkgs.jre ];
+
+  labels = {
+    "org.opencontainers.image.title" = "apache-hop";
+    "org.opencontainers.image.description" = "Apache Hop data orchestration and data engineering platform";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }
