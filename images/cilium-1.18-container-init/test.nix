@@ -1,0 +1,15 @@
+{ pkgs, image }:
+
+pkgs.writeShellScript "test-cilium-1.18-container-init" ''
+  set -euo pipefail
+  echo "Testing cilium-1.18-container-init image..."
+
+  # Conservative smoke test: the component binaries are long-running
+  # daemons/operators, so we only assert the image has a working shell
+  # and root filesystem (exit 0, expected output).
+  echo "  Checking image shell and filesystem..."
+  out=$(docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'ls -la / >/dev/null && echo ok')
+  [ "$out" = "ok" ]
+
+  echo "All cilium-1.18-container-init tests passed!"
+''

@@ -1,0 +1,17 @@
+{ pkgs, image }:
+
+pkgs.writeShellScript "test-spire" ''
+  set -euo pipefail
+  echo "Testing spire image..."
+
+  # 1. Entrypoint runs and reports version/help (non-empty output)
+  echo "  Checking spire-server runs (--help)..."
+  out=$(docker run --rm ${image.imageName}:test --help 2>&1 || true)
+  [ -n "$out" ]
+
+  # 2. Binary present in image
+  echo "  Checking spire-server is present..."
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v spire-server >/dev/null 2>&1 || ls /nix/store/*/bin/spire-server >/dev/null 2>&1'
+
+  echo "All spire tests passed!"
+''

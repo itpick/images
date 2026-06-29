@@ -223,6 +223,7 @@
                     cp ${pkgs.callPackage testPath { image = images.${imageName}; }} $out/bin/${imageName}-test
                     chmod +x $out/bin/${imageName}-test
                   '';
+                  meta.mainProgram = "${imageName}-test";
                 };
               }
               else null

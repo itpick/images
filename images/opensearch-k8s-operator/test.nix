@@ -1,0 +1,20 @@
+{ pkgs, image }:
+
+pkgs.writeShellScript "test-opensearch-k8s-operator" ''
+  set -euo pipefail
+  echo "Testing opensearch-k8s-operator image..."
+
+  # 1. Shell + coreutils smoke test (image bundles bash + coreutils)
+  echo "  Checking shell + non-root user..."
+  docker run --rm --entrypoint id ${image.imageName}:test -u | grep -qE "^(65532|65534|1000)$"
+
+  # 2. opensearch binary present in image
+  echo "  Checking opensearch binary is present..."
+  docker run --rm --entrypoint bash ${image.imageName}:test -c 'command -v opensearch >/dev/null 2>&1 || ls /nix/store/*/bin/opensearch >/dev/null 2>&1'
+
+  # 3. CA certificates present
+  echo "  Checking CA certificates..."
+  docker run --rm --entrypoint ls ${image.imageName}:test /etc/ssl/certs/ca-bundle.crt >/dev/null
+
+  echo "All opensearch-k8s-operator tests passed!"
+''
