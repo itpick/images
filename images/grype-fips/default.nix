@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # grype-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.grype
+mkImage {
+  drv = pkgs.grype;
   name = "grype-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "grype-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "grype fips";
-      "org.opencontainers.image.description" = "grype-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.grype.version}";
+  entrypoint = [ (lib.getExe pkgs.grype) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "grype-fips";
+    "org.opencontainers.image.description" = "grype-fips container image (nixpkgs.grype)";
+    "org.opencontainers.image.version" = pkgs.grype.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

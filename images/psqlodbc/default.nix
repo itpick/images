@@ -1,34 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # psqlodbc
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.psqlodbc
+mkImage {
+  drv = pkgs.psqlodbc;
   name = "psqlodbc";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "psqlodbc-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "psqlodbc";
-      "org.opencontainers.image.description" = "psqlodbc container image";
-    };
+  tag = "v${pkgs.psqlodbc.version}";
+  entrypoint = [ (lib.getExe pkgs.psqlodbc) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "psqlodbc";
+    "org.opencontainers.image.description" = "psqlodbc container image (nixpkgs.psqlodbc)";
+    "org.opencontainers.image.version" = pkgs.psqlodbc.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

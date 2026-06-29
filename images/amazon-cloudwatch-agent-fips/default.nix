@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # amazon-cloudwatch-agent-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.amazon-cloudwatch-agent
+mkImage {
+  drv = pkgs.amazon-cloudwatch-agent;
   name = "amazon-cloudwatch-agent-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "amazon-cloudwatch-agent-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "amazon cloudwatch agent fips";
-      "org.opencontainers.image.description" = "amazon-cloudwatch-agent-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.amazon-cloudwatch-agent.version}";
+  entrypoint = [ (lib.getExe pkgs.amazon-cloudwatch-agent) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "amazon-cloudwatch-agent-fips";
+    "org.opencontainers.image.description" = "amazon-cloudwatch-agent-fips container image (nixpkgs.amazon-cloudwatch-agent)";
+    "org.opencontainers.image.version" = pkgs.amazon-cloudwatch-agent.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

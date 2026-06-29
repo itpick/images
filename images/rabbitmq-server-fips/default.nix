@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # rabbitmq-server-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.rabbitmq-server
+mkImage {
+  drv = pkgs.rabbitmq-server;
   name = "rabbitmq-server-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "rabbitmq-server-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "raubitmq server fips";
-      "org.opencontainers.image.description" = "rabbitmq-server-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.rabbitmq-server.version}";
+  entrypoint = [ (lib.getExe pkgs.rabbitmq-server) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "rabbitmq-server-fips";
+    "org.opencontainers.image.description" = "rabbitmq-server-fips container image (nixpkgs.rabbitmq-server)";
+    "org.opencontainers.image.version" = pkgs.rabbitmq-server.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

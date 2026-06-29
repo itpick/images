@@ -1,35 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # dotnet-runtime-fips
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.dotnet-runtime
+mkImage {
+  drv = pkgs.dotnet-runtime;
   name = "dotnet-runtime-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "dotnet-runtime-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "binary";
-      "io.nix-containers.build-method" = "Pre-built binary packaged with Nix";
-      "org.opencontainers.image.title" = "dotnet-runtime-fips";
-      "org.opencontainers.image.description" = "dotnet-runtime-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.dotnet-runtime.version}";
+  entrypoint = [ (lib.getExe pkgs.dotnet-runtime) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "dotnet-runtime-fips";
+    "org.opencontainers.image.description" = "dotnet-runtime-fips container image (nixpkgs.dotnet-runtime)";
+    "org.opencontainers.image.version" = pkgs.dotnet-runtime.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

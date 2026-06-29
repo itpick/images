@@ -1,34 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # pgbouncer-iamguarded
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.pgbouncer
+mkImage {
+  drv = pkgs.pgbouncer;
   name = "pgbouncer-iamguarded";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "pgbouncer-iamguarded-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "pgbouncer-iamguarded";
-      "org.opencontainers.image.description" = "pgbouncer-iamguarded container image";
-    };
+  tag = "v${pkgs.pgbouncer.version}";
+  entrypoint = [ (lib.getExe pkgs.pgbouncer) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "pgbouncer-iamguarded";
+    "org.opencontainers.image.description" = "pgbouncer-iamguarded container image (nixpkgs.pgbouncer)";
+    "org.opencontainers.image.version" = pkgs.pgbouncer.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

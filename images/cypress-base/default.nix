@@ -1,34 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # cypress-base
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.cypress
+mkImage {
+  drv = pkgs.cypress;
   name = "cypress-base";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "cypress-base-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "cypress-base";
-      "org.opencontainers.image.description" = "cypress-base container image";
-    };
+  tag = "v${pkgs.cypress.version}";
+  entrypoint = [ (lib.getExe pkgs.cypress) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "cypress-base";
+    "org.opencontainers.image.description" = "cypress-base container image (nixpkgs.cypress)";
+    "org.opencontainers.image.version" = pkgs.cypress.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

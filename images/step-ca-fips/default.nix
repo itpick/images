@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # step-ca-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.step-ca
+mkImage {
+  drv = pkgs.step-ca;
   name = "step-ca-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "step-ca-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "step ca fips";
-      "org.opencontainers.image.description" = "step-ca-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.step-ca.version}";
+  entrypoint = [ (lib.getExe pkgs.step-ca) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "step-ca-fips";
+    "org.opencontainers.image.description" = "step-ca-fips container image (nixpkgs.step-ca)";
+    "org.opencontainers.image.version" = pkgs.step-ca.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

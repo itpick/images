@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # gosu-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.gosu
+mkImage {
+  drv = pkgs.gosu;
   name = "gosu-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "gosu-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "gosu fips";
-      "org.opencontainers.image.description" = "gosu-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.gosu.version}";
+  entrypoint = [ (lib.getExe pkgs.gosu) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "gosu-fips";
+    "org.opencontainers.image.description" = "gosu-fips container image (nixpkgs.gosu)";
+    "org.opencontainers.image.version" = pkgs.gosu.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

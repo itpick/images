@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # opentelemetry-collector-contrib-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.opentelemetry-collector-contrib
+mkImage {
+  drv = pkgs.opentelemetry-collector-contrib;
   name = "opentelemetry-collector-contrib-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "opentelemetry-collector-contrib-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "opentelemetry collector contriu fips";
-      "org.opencontainers.image.description" = "opentelemetry-collector-contrib-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.opentelemetry-collector-contrib.version}";
+  entrypoint = [ (lib.getExe pkgs.opentelemetry-collector-contrib) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "opentelemetry-collector-contrib-fips";
+    "org.opencontainers.image.description" = "opentelemetry-collector-contrib-fips container image (nixpkgs.opentelemetry-collector-contrib)";
+    "org.opencontainers.image.version" = pkgs.opentelemetry-collector-contrib.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

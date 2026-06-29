@@ -1,35 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # bash-fips
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.bash
+mkImage {
+  drv = pkgs.bash;
   name = "bash-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "bash-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "bash-fips";
-      "org.opencontainers.image.description" = "bash-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.bash.version}";
+  entrypoint = [ (lib.getExe pkgs.bash) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "bash-fips";
+    "org.opencontainers.image.description" = "bash-fips container image (nixpkgs.bash)";
+    "org.opencontainers.image.version" = pkgs.bash.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

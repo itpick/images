@@ -1,35 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # openldap-fips
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.openldap
+mkImage {
+  drv = pkgs.openldap;
   name = "openldap-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "openldap-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "openldap-fips";
-      "org.opencontainers.image.description" = "openldap-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.openldap.version}";
+  entrypoint = [ (lib.getExe pkgs.openldap) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "openldap-fips";
+    "org.opencontainers.image.description" = "openldap-fips container image (nixpkgs.openldap)";
+    "org.opencontainers.image.version" = pkgs.openldap.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

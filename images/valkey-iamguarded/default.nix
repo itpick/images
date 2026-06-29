@@ -1,34 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # valkey-iamguarded
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.valkey
+mkImage {
+  drv = pkgs.valkey;
   name = "valkey-iamguarded";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "valkey-iamguarded-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "valkey-iamguarded";
-      "org.opencontainers.image.description" = "valkey-iamguarded container image";
-    };
+  tag = "v${pkgs.valkey.version}";
+  entrypoint = [ (lib.getExe pkgs.valkey) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "valkey-iamguarded";
+    "org.opencontainers.image.description" = "valkey-iamguarded container image (nixpkgs.valkey)";
+    "org.opencontainers.image.version" = pkgs.valkey.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

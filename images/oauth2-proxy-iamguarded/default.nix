@@ -1,34 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # oauth2-proxy-iamguarded
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.oauth2-proxy
+mkImage {
+  drv = pkgs.oauth2-proxy;
   name = "oauth2-proxy-iamguarded";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "oauth2-proxy-iamguarded-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "oauth2-proxy-iamguarded";
-      "org.opencontainers.image.description" = "oauth2-proxy-iamguarded container image";
-    };
+  tag = "v${pkgs.oauth2-proxy.version}";
+  entrypoint = [ (lib.getExe pkgs.oauth2-proxy) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "oauth2-proxy-iamguarded";
+    "org.opencontainers.image.description" = "oauth2-proxy-iamguarded container image (nixpkgs.oauth2-proxy)";
+    "org.opencontainers.image.version" = pkgs.oauth2-proxy.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

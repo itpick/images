@@ -1,37 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # nginx-iamguarded
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.nginx
+mkImage {
+  drv = pkgs.nginx;
   name = "nginx-iamguarded";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "nginx-iamguarded-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "nginx iamguarded";
-      "org.opencontainers.image.description" = "nginx-iamguarded container image";
-      "org.opencontainers.image.version" = version;
-    };
+  tag = "v${pkgs.nginx.version}";
+  entrypoint = [ (lib.getExe pkgs.nginx) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "nginx-iamguarded";
+    "org.opencontainers.image.description" = "nginx-iamguarded container image (nixpkgs.nginx)";
+    "org.opencontainers.image.version" = pkgs.nginx.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

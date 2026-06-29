@@ -1,34 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # openai
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.openai
+mkImage {
+  drv = pkgs.openai;
   name = "openai";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "openai-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "openai";
-      "org.opencontainers.image.description" = "openai container image";
-    };
+  tag = "v${pkgs.openai.version}";
+  entrypoint = [ (lib.getExe pkgs.openai) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "openai";
+    "org.opencontainers.image.description" = "openai container image (nixpkgs.openai)";
+    "org.opencontainers.image.version" = pkgs.openai.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

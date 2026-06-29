@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # grpcurl-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.grpcurl
+mkImage {
+  drv = pkgs.grpcurl;
   name = "grpcurl-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "grpcurl-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "grpcurl fips";
-      "org.opencontainers.image.description" = "grpcurl-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.grpcurl.version}";
+  entrypoint = [ (lib.getExe pkgs.grpcurl) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "grpcurl-fips";
+    "org.opencontainers.image.description" = "grpcurl-fips container image (nixpkgs.grpcurl)";
+    "org.opencontainers.image.version" = pkgs.grpcurl.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

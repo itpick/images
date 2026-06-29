@@ -1,35 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # pdns-recursor-fips
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.pdns-recursor
+mkImage {
+  drv = pkgs.pdns-recursor;
   name = "pdns-recursor-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "pdns-recursor-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "pdns-recursor-fips";
-      "org.opencontainers.image.description" = "pdns-recursor-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.pdns-recursor.version}";
+  entrypoint = [ (lib.getExe pkgs.pdns-recursor) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "pdns-recursor-fips";
+    "org.opencontainers.image.description" = "pdns-recursor-fips container image (nixpkgs.pdns-recursor)";
+    "org.opencontainers.image.version" = pkgs.pdns-recursor.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

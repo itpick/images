@@ -1,37 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # lsb-release-minimal
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.lsb-release
+mkImage {
+  drv = pkgs.lsb-release;
   name = "lsb-release-minimal";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "lsb-release-minimal-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "lsu release minimal";
-      "org.opencontainers.image.description" = "lsb-release-minimal container image";
-      "org.opencontainers.image.version" = version;
-    };
+  tag = "v${pkgs.lsb-release.version}";
+  entrypoint = [ (lib.getExe pkgs.lsb-release) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "lsb-release-minimal";
+    "org.opencontainers.image.description" = "lsb-release-minimal container image (nixpkgs.lsb-release)";
+    "org.opencontainers.image.version" = pkgs.lsb-release.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

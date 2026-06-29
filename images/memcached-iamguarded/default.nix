@@ -1,34 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # memcached-iamguarded
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.memcached
+mkImage {
+  drv = pkgs.memcached;
   name = "memcached-iamguarded";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "memcached-iamguarded-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "memcached-iamguarded";
-      "org.opencontainers.image.description" = "memcached-iamguarded container image";
-    };
+  tag = "v${pkgs.memcached.version}";
+  entrypoint = [ (lib.getExe pkgs.memcached) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "memcached-iamguarded";
+    "org.opencontainers.image.description" = "memcached-iamguarded container image (nixpkgs.memcached)";
+    "org.opencontainers.image.version" = pkgs.memcached.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

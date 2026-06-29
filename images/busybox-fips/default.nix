@@ -1,35 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # busybox-fips
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.busybox
+mkImage {
+  drv = pkgs.busybox;
   name = "busybox-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "busybox-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "busybox-fips";
-      "org.opencontainers.image.description" = "busybox-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.busybox.version}";
+  entrypoint = [ (lib.getExe pkgs.busybox) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "busybox-fips";
+    "org.opencontainers.image.description" = "busybox-fips container image (nixpkgs.busybox)";
+    "org.opencontainers.image.version" = pkgs.busybox.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

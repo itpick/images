@@ -1,34 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # haproxy-iamguarded
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.haproxy
+mkImage {
+  drv = pkgs.haproxy;
   name = "haproxy-iamguarded";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "haproxy-iamguarded-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "haproxy-iamguarded";
-      "org.opencontainers.image.description" = "haproxy-iamguarded container image";
-    };
+  tag = "v${pkgs.haproxy.version}";
+  entrypoint = [ (lib.getExe pkgs.haproxy) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "haproxy-iamguarded";
+    "org.opencontainers.image.description" = "haproxy-iamguarded container image (nixpkgs.haproxy)";
+    "org.opencontainers.image.version" = pkgs.haproxy.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # nats-top-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.nats-top
+mkImage {
+  drv = pkgs.nats-top;
   name = "nats-top-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "nats-top-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "nats top fips";
-      "org.opencontainers.image.description" = "nats-top-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.nats-top.version}";
+  entrypoint = [ (lib.getExe pkgs.nats-top) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "nats-top-fips";
+    "org.opencontainers.image.description" = "nats-top-fips container image (nixpkgs.nats-top)";
+    "org.opencontainers.image.version" = pkgs.nats-top.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

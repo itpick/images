@@ -1,34 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # glibc
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.glibc
+mkImage {
+  drv = pkgs.glibc;
   name = "glibc";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "glibc-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "glibc";
-      "org.opencontainers.image.description" = "glibc container image";
-    };
+  tag = "v${pkgs.glibc.version}";
+  entrypoint = [ (lib.getExe pkgs.glibc) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "glibc";
+    "org.opencontainers.image.description" = "glibc container image (nixpkgs.glibc)";
+    "org.opencontainers.image.version" = pkgs.glibc.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

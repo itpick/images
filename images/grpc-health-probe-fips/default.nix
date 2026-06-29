@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # grpc-health-probe-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.grpc-health-probe
+mkImage {
+  drv = pkgs.grpc-health-probe;
   name = "grpc-health-probe-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "grpc-health-probe-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "grpc health proue fips";
-      "org.opencontainers.image.description" = "grpc-health-probe-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.grpc-health-probe.version}";
+  entrypoint = [ (lib.getExe pkgs.grpc-health-probe) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "grpc-health-probe-fips";
+    "org.opencontainers.image.description" = "grpc-health-probe-fips container image (nixpkgs.grpc-health-probe)";
+    "org.opencontainers.image.version" = pkgs.grpc-health-probe.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # kbld-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.kbld
+mkImage {
+  drv = pkgs.kbld;
   name = "kbld-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "kbld-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "kuld fips";
-      "org.opencontainers.image.description" = "kbld-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.kbld.version}";
+  entrypoint = [ (lib.getExe pkgs.kbld) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "kbld-fips";
+    "org.opencontainers.image.description" = "kbld-fips container image (nixpkgs.kbld)";
+    "org.opencontainers.image.version" = pkgs.kbld.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

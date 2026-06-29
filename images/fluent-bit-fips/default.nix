@@ -1,35 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # fluent-bit-fips
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.fluent-bit
+mkImage {
+  drv = pkgs.fluent-bit;
   name = "fluent-bit-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "fluent-bit-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "fluent-bit-fips";
-      "org.opencontainers.image.description" = "fluent-bit-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.fluent-bit.version}";
+  entrypoint = [ (lib.getExe pkgs.fluent-bit) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "fluent-bit-fips";
+    "org.opencontainers.image.description" = "fluent-bit-fips container image (nixpkgs.fluent-bit)";
+    "org.opencontainers.image.version" = pkgs.fluent-bit.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

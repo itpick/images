@@ -1,34 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # clickhouse-iamguarded
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.clickhouse
+mkImage {
+  drv = pkgs.clickhouse;
   name = "clickhouse-iamguarded";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "clickhouse-iamguarded-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "clickhouse-iamguarded";
-      "org.opencontainers.image.description" = "clickhouse-iamguarded container image";
-    };
+  tag = "v${pkgs.clickhouse.version}";
+  entrypoint = [ (lib.getExe pkgs.clickhouse) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "clickhouse-iamguarded";
+    "org.opencontainers.image.description" = "clickhouse-iamguarded container image (nixpkgs.clickhouse)";
+    "org.opencontainers.image.version" = pkgs.clickhouse.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

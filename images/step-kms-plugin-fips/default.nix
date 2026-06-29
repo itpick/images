@@ -1,38 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # step-kms-plugin-fips
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.step-kms-plugin
+mkImage {
+  drv = pkgs.step-kms-plugin;
   name = "step-kms-plugin-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "step-kms-plugin-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "step kms plugin fips";
-      "org.opencontainers.image.description" = "step-kms-plugin-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
-    };
+  tag = "v${pkgs.step-kms-plugin.version}";
+  entrypoint = [ (lib.getExe pkgs.step-kms-plugin) ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "step-kms-plugin-fips";
+    "org.opencontainers.image.description" = "step-kms-plugin-fips container image (nixpkgs.step-kms-plugin)";
+    "org.opencontainers.image.version" = pkgs.step-kms-plugin.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }
