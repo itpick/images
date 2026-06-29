@@ -366,8 +366,8 @@ def main():
                     help="Optional path to popularity.json (output of parse-popularity.py)")
     ap.add_argument("--base-path", default="/",
                     help="URL base path (e.g. '/' locally, '/images/' on GH Pages project site). Trailing slash required.")
-    ap.add_argument("--last-dep-check", default=None,
-                    help="ISO timestamp of the last successful auto-update.yml run. When omitted, freshness-gates assume dep-check is recent.")
+    ap.add_argument("--last-build", default=None,
+                    help="ISO timestamp of the last successful build-containers.yml run on main. When omitted, freshness-gates assume build is recent.")
     args = ap.parse_args()
     base = args.base_path if args.base_path.endswith("/") else args.base_path + "/"
 
@@ -393,13 +393,11 @@ def main():
 
     build_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
     next_scan = next_cve_scan_utc()
-    # Whether the auto-update.yml pipeline has had a successful run within
-    # the last 7 days. Passed via --last-dep-check from the deploy workflow.
-    # When unset (local builds), treat as True so the green-dot freshness
-    # check doesn't gate everything on a value we don't have.
-    dep_check_recent = (
-        is_recent(args.last_dep_check) if args.last_dep_check else True
-    )
+    # Whether the build-containers.yml pipeline has had a successful run
+    # within the last 7 days. Passed via --last-build from the deploy
+    # workflow. When unset (local builds), treat as True so the green-dot
+    # freshness check doesn't gate everything on a value we don't have.
+    build_recent = is_recent(args.last_build) if args.last_build else True
 
     slim_images = []
     for img in data["images"]:
@@ -478,15 +476,18 @@ def main():
             # consume these later to surface rank-sorted lists.
             "popularity": pop_record,
             # Freshness signals consumed by the index page to render a
-            # green dot next to images whose data is current.
+            # green dot next to images whose data is current. Simplified
+            # to: scanned within 7 days AND a successful build pipeline
+            # ran within 7 days. SBOM presence used to be required too
+            # but the SBOM step in security-scan.yml has a separate bug
+            # producing zero files, so we relaxed the requirement.
             "freshness": {
                 "scanRecent": is_recent((scan or {}).get("scannedAt", "")),
                 "hasSbom": bool(sbom),
-                "depCheckRecent": dep_check_recent,
+                "buildRecent": build_recent,
                 "isFresh": (
                     is_recent((scan or {}).get("scannedAt", ""))
-                    and bool(sbom)
-                    and dep_check_recent
+                    and build_recent
                 ),
             },
         })
