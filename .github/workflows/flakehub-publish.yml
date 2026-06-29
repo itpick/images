@@ -6,15 +6,11 @@ name: Publish to FlakeHub
 #   - Rolling publish on every push to main (always-current pointer)
 #   - Versioned publish on git tags matching v*.*.* (immutable releases)
 #
-# One-time setup required at flakehub.com before the first publish:
-#   1. Sign in at https://flakehub.com with the GitHub account that owns
-#      the nix-containers org.
-#   2. Grant FlakeHub access to the nix-containers/images repo.
-#   3. The flakehub-push action authenticates via GitHub Actions OIDC
-#      (no API token required in this repo's secrets).
-#
-# Until the one-time setup is done, the workflow will fail with a
-# permission error. After setup, no further action needed.
+# Auth: uses a FlakeHub API token stored as the FLAKEHUB_TOKEN repo
+# secret (generated at https://flakehub.com/token/create). We bypass the
+# default OIDC flow by pre-authing determinate-nixd with the token —
+# the OIDC flow requires GitHub org → FlakeHub linking that we don't
+# have set up.
 
 on:
   push:
@@ -28,7 +24,6 @@ on:
         type: string
 
 permissions:
-  id-token: write   # required for OIDC auth to flakehub.com
   contents: read
 
 jobs:
@@ -40,6 +35,18 @@ jobs:
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Authenticate to FlakeHub via API token
+        env:
+          FLAKEHUB_TOKEN: ${{ secrets.FLAKEHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${FLAKEHUB_TOKEN:-}" ]; then
+            echo "FLAKEHUB_TOKEN secret not set; the publish step will fail." >&2
+            exit 1
+          fi
+          printf '%s' "$FLAKEHUB_TOKEN" \
+            | determinate-nixd auth login token --token-file /dev/stdin
 
       - name: Push to FlakeHub
         uses: DeterminateSystems/flakehub-push@main
