@@ -3,15 +3,26 @@
 let
   imagesPath = ../images;
   allFiles = lib.filesystem.listFilesRecursive imagesPath;
+
+  # A directory with a file-extension suffix (e.g. images/PACKAGE_SUMMARY.md/)
+  # is invariably a generation-script artifact, not a real image. Reject so it
+  # never resurfaces on the site. Legitimate image names with version dots
+  # (e.g. argo-cd-3.2-repo-server, cilium-1.18-clustermesh-apiserver) do not
+  # end in one of these extensions, so they pass through.
+  stubExtensions = [ ".md" ".txt" ".json" ".log" ".yaml" ".yml" ".lock" ".html" ".sh" ];
+  endsInStubExt = name: builtins.any (ext: lib.hasSuffix ext name) stubExtensions;
+
   imageFiles = builtins.filter (path:
     let
       pathStr = toString path;
       relativePath = lib.removePrefix (toString imagesPath + "/") pathStr;
       parts = lib.splitString "/" relativePath;
+      dirname = builtins.elemAt parts 0;
     in
       builtins.length parts == 2 &&
       builtins.elemAt parts 1 == "default.nix" &&
-      !(builtins.any (part: part == "fake_nixpkgs" || part == "root" || part == "patches") parts)
+      !(builtins.any (part: part == "fake_nixpkgs" || part == "root" || part == "patches") parts) &&
+      !(endsInStubExt dirname)
   ) allFiles;
 
   imageNames = lib.lists.unique (map (path:
