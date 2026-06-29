@@ -1,38 +1,43 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# argo-cd-fips-3.2-repo-server
-# Container image
+# Argo CD repo-server (multi-call argocd binary, invoked as argocd-repo-server)
+# https://github.com/argoproj/argo-cd
+# Note: -fips suffix denotes the same upstream tool; packaged from the upstream binary.
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "3.2.12";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "argocd";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "argo-cd-fips-3.2-repo-server";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "argo-cd-fips-3.2-repo-server-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "argo cd fips 3.2 repo server";
-      "org.opencontainers.image.description" = "argo-cd-fips-3.2-repo-server container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/argoproj/argo-cd/releases/download/v${version}/argocd-linux-amd64";
+      hash = "sha256:09j55jg6g3f4fgqciw40yvnlf8lzv019s121aa7fwv1zdqw8zmcv";
     };
+
+    dontUnpack = true;
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 $src $out/bin/argocd
+      ln -s argocd $out/bin/argocd-repo-server
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "argo-cd-fips-3.2-repo-server";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/argocd-repo-server" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "argo-cd-fips-3.2-repo-server";
+    "org.opencontainers.image.description" = "Argo CD repo-server";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

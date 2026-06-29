@@ -1,37 +1,48 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# dapr-scheduler
-# Container image
+# Dapr scheduler - control plane component of the Dapr distributed runtime
+# https://github.com/dapr/dapr
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.18.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "dapr-scheduler";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "dapr-scheduler";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "dapr-scheduler-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "dapr scheduler";
-      "org.opencontainers.image.description" = "dapr-scheduler container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/dapr/dapr/releases/download/v${version}/scheduler_linux_amd64.tar.gz";
+      hash = "sha256-L9FVqAauntUBvCfer5ogI0ozKfG4tUA0AXNxpHi19y8=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 scheduler $out/bin/scheduler
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "Dapr scheduler control plane component";
+      homepage = "https://github.com/dapr/dapr";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  inherit drv;
+  name = "dapr-scheduler";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/scheduler" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "dapr-scheduler";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

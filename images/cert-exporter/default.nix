@@ -1,37 +1,41 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# cert-exporter
-# Container image
-
+# cert-exporter - Prometheus exporter for certificate expiry metrics (upstream binary)
+# https://github.com/joe-elliott/cert-exporter
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "2.18.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "cert-exporter";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "cert-exporter";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "cert-exporter-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "cert exporter";
-      "org.opencontainers.image.description" = "cert-exporter container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/joe-elliott/cert-exporter/releases/download/v${version}/cert-exporter_${version}_linux_amd64.tar.gz";
+      hash = "sha256-GYBSDBD2VXIX1STMsfDkL9ZmuFA3Va8hz0HqUKIFFOg=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 cert-exporter $out/bin/cert-exporter
+      runHook postInstall
+    '';
+  };
+in
+mkImage {
+  inherit drv;
+  name = "cert-exporter";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/cert-exporter" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "cert-exporter";
+    "org.opencontainers.image.description" = "Prometheus exporter for certificate expiry metrics";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

@@ -1,37 +1,51 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# dumb-init-privileged-netbindservice
-# Container image
+# dumb-init - a simple process supervisor and init system for containers
+# https://github.com/Yelp/dumb-init
+# Upstream ships a prebuilt static linux x86_64 binary release.
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.2.5";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "dumb-init";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "dumb-init-privileged-netbindservice";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "dumb-init-privileged-netbindservice-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "dumu init privileged netuindservice";
-      "org.opencontainers.image.description" = "dumb-init-privileged-netbindservice container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/Yelp/dumb-init/releases/download/v${version}/dumb-init_${version}_x86_64";
+      hash = "sha256-6HS1XzJ5ykFBXSkMUSp7qdCPmAQbKK58KssZpUXxxN8=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    dontUnpack = true;
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 $src $out/bin/dumb-init
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "Simple process supervisor and init system for containers";
+      homepage = "https://github.com/Yelp/dumb-init";
+      license = licenses.mit;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  inherit drv;
+  name = "dumb-init-privileged-netbindservice";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/dumb-init" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "dumb-init-privileged-netbindservice";
+    "org.opencontainers.image.description" = "Simple process supervisor and init system for containers";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

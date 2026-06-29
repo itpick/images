@@ -1,34 +1,39 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# cloud-provider-azure-node-manager
-# Container image
-
+# Azure cloud node manager - Kubernetes cloud-provider for Azure
+# https://github.com/kubernetes-sigs/cloud-provider-azure
 let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.36.2";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "cloud-provider-azure-node-manager";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "cloud-provider-azure-node-manager";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "cloud-provider-azure-node-manager-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "cloud-provider-azure-node-manager";
-      "org.opencontainers.image.description" = "cloud-provider-azure-node-manager container image";
+    src = pkgs.fetchurl {
+      url = "https://github.com/kubernetes-sigs/cloud-provider-azure/releases/download/v${version}/azure-cloud-node-manager-linux-amd64";
+      hash = "sha256:19yv504sfjplz8p6ch2l99pnvzd1v20ga9hg32650v2qijr44jhx";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    dontUnpack = true;
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 $src $out/bin/azure-cloud-node-manager
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "cloud-provider-azure-node-manager";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/azure-cloud-node-manager" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "cloud-provider-azure-node-manager";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

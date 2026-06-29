@@ -1,37 +1,42 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# azure-service-operator
-# Container image
+# asoctl - CLI for Azure Service Operator
+# https://github.com/Azure/azure-service-operator
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "2.20.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "asoctl";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "azure-service-operator";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "azure-service-operator-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "azure service operator";
-      "org.opencontainers.image.description" = "azure-service-operator container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/Azure/azure-service-operator/releases/download/v${version}/asoctl-linux-amd64.gz";
+      hash = "sha256-u2SxKYboX/q9uCS+HQRSq4C3cEGzQLXOjEOe1A4w6vQ=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    dontUnpack = true;
+
+    installPhase = ''
+      runHook preInstall
+      gunzip -c $src > asoctl
+      install -Dm755 asoctl $out/bin/asoctl
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "azure-service-operator";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/asoctl" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "azure-service-operator";
+    "org.opencontainers.image.description" = "asoctl CLI for Azure Service Operator";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

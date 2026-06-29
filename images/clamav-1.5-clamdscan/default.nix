@@ -1,37 +1,50 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# clamav-1.5-clamdscan
-# Container image
+# ClamAV - open source antivirus engine (clamdscan - scan via the clamd daemon)
+# https://github.com/Cisco-Talos/clamav
+# Packaged from the official upstream linux x86_64 .deb release asset.
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.5.2";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "clamav-clamdscan";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "clamav-1.5-clamdscan";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "clamav-1.5-clamdscan-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "clamav 1.5 clamdscan";
-      "org.opencontainers.image.description" = "clamav-1.5-clamdscan container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/Cisco-Talos/clamav/releases/download/clamav-${version}/clamav-${version}.linux.x86_64.deb";
+      hash = "sha256-6SsPHlUpu6pNlTSkKcTREz2/5He3YDZaET5jtUxdzXU=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook pkgs.dpkg ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    unpackPhase = ''
+      runHook preUnpack
+      dpkg-deb -x $src clamav-root
+      runHook postUnpack
+    '';
+
+    sourceRoot = "clamav-root";
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/bin $out/lib
+      cp -P usr/local/lib/*.so* $out/lib/
+      install -Dm755 usr/local/bin/clamdscan $out/bin/clamdscan
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "clamav-1.5-clamdscan";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/clamdscan" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "clamav-1.5-clamdscan";
+    "org.opencontainers.image.description" = "ClamAV clamdscan client for the clamd scanning daemon";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }
