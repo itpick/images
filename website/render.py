@@ -242,15 +242,36 @@ def scan_meta_banner_html(scan: dict | None, next_scan: str) -> str:
 _SBOM_MAX_ROWS = 500
 
 
+def _extract_license(art: dict) -> str:
+    """Best-effort license display string from a syft artifact entry.
+
+    Syft's native JSON gives a `licenses[]` array where each entry has
+    `spdxExpression` (preferred — canonical SPDX form) and a free-text
+    `value` fallback. We dedupe across the array and join with commas;
+    empty arrays render as an empty string so the caller can fall back
+    to "—" for visual consistency in the table.
+    """
+    seen: list[str] = []
+    for lic in art.get("licenses") or []:
+        token = (lic.get("spdxExpression") or lic.get("value") or "").strip()
+        if token and token not in seen:
+            seen.append(token)
+    return ", ".join(seen)
+
+
 def sbom_for_image(image_name: str, sbom_dir: str | None) -> list[dict] | None:
-    """Return a list of {name, version, type} package dicts from a syft SBOM,
-    or None if no usable file exists.
+    """Return a list of {name, version, type, license} package dicts from a syft
+    SBOM, or None if no usable file exists.
 
     Syft writes one JSON per image alongside trivy reports inside the same
     artifact, with the name pattern `<image>_<tag>-sbom.json`. When several
     files match (e.g. multiple tags), we pick the lex-greatest filename — the
     same tie-breaker `scan_for_image` uses, so the SBOM and vulnerability
     panels line up.
+
+    License coverage is sparse for our Nix-built packages — most rows render
+    as empty. Upstream Go/NPM/etc. packages picked up by syft typically have
+    SPDX licenses populated.
     """
     if not sbom_dir:
         return None
@@ -272,6 +293,7 @@ def sbom_for_image(image_name: str, sbom_dir: str | None) -> list[dict] | None:
             "name": name,
             "version": art.get("version", "") or "",
             "type": art.get("type", "") or "",
+            "license": _extract_license(art),
         })
     out.sort(key=lambda r: (r["name"].lower(), r["version"]))
     return out
@@ -323,14 +345,15 @@ def render_sbom(sbom: list[dict] | None) -> str:
     body_rows = "\n".join(
         f"<tr><td class=\"font-mono\">{_html_escape(r['name'])}</td>"
         f"<td class=\"font-mono\">{_html_escape(r['version'])}</td>"
-        f"<td class=\"text-fg-muted\">{_html_escape(r['type'])}</td></tr>"
+        f"<td class=\"text-fg-muted\">{_html_escape(r['type'])}</td>"
+        f"<td class=\"text-fg-muted text-xs\">{_html_escape(r.get('license', '')) or '<span class=\"opacity-60\">—</span>'}</td></tr>"
         for r in rows
     )
     return (
         f'{truncated_note}'
         f'<div class="prose max-w-none">'
         f'<table>'
-        f'<thead><tr><th>Name</th><th>Version</th><th>Type</th></tr></thead>'
+        f'<thead><tr><th>Name</th><th>Version</th><th>Type</th><th>License</th></tr></thead>'
         f'<tbody>{body_rows}</tbody>'
         f'</table>'
         f'</div>'
