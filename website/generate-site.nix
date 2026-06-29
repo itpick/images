@@ -143,6 +143,9 @@ pkgs.stdenv.mkDerivation {
     echo "-> Copying static assets..."
     mkdir -p $OUT_DIR/static/fonts
     cp -r static/fonts/* $OUT_DIR/static/fonts/
+
+    mkdir -p $OUT_DIR/static/favicon
+    cp -r static/favicon/* $OUT_DIR/static/favicon/
     cp static/app.js $OUT_DIR/static/app.js
 
     echo "-> Parsing image popularity table..."
