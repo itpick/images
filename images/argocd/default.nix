@@ -70,7 +70,8 @@ let
       hash = "sha256-AkHGhRHd2ybGYdgy6rNGBdS5YaHZKL4M9oKdqPxWYO0=";
     };
 
-    vendorHash = null;  # TODO: Update after first build
+    vendorHash = "sha256-TmqnAPaOtBfgp9I+k1NVt6k5W1u7pP5ut91Szi4/6kk=";
+    proxyVendor = true;
 
     env.CGO_ENABLED = 0;
 
