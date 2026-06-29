@@ -44,4 +44,45 @@
     @apply bg-bg-elevated rounded-lg border border-neutral-800 p-4
            hover:border-neutral-600 transition-colors;
   }
+
+  /* README rendering. We don't load Tailwind's typography plugin; these
+     rules give the .prose container readable typography AND wrap long
+     strings (URLs, hashes, etc.) so they don't overflow the card. */
+  .prose {
+    @apply break-words;
+    overflow-wrap: anywhere;
+  }
+  .prose pre {
+    @apply bg-bg-base rounded p-3 text-sm overflow-x-auto my-3;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .prose code {
+    @apply bg-bg-input rounded px-1 py-0.5 text-sm;
+    word-break: break-word;
+  }
+  .prose pre code {
+    @apply bg-transparent px-0 py-0;
+  }
+  .prose a {
+    @apply text-accent-ok hover:underline;
+    word-break: break-all;
+  }
+  .prose img { @apply max-w-full h-auto; }
+  .prose h1 { @apply text-2xl font-mono font-bold mt-6 mb-3; }
+  .prose h2 { @apply text-xl font-mono font-bold mt-5 mb-2; }
+  .prose h3 { @apply text-lg font-mono font-bold mt-4 mb-2; }
+  .prose h4 { @apply text-base font-mono font-bold mt-3 mb-2; }
+  .prose p { @apply my-3; }
+  .prose ul { @apply list-disc pl-6 my-3; }
+  .prose ol { @apply list-decimal pl-6 my-3; }
+  .prose blockquote {
+    @apply border-l-4 border-neutral-700 pl-4 my-3 italic text-fg-muted;
+  }
+  .prose table { @apply w-full my-3 border-collapse text-sm; }
+  .prose th, .prose td {
+    @apply border border-neutral-800 px-3 py-2 text-left;
+  }
+  .prose th { @apply bg-bg-elevated font-bold; }
+  .prose hr { @apply border-neutral-800 my-6; }
 }
