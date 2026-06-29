@@ -1,35 +1,40 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# cloud-provider-azure-controller-manager-fips
-# Container image
-
+# Azure cloud controller manager - Kubernetes cloud-provider for Azure
+# https://github.com/kubernetes-sigs/cloud-provider-azure
+# (-fips image variant; packages the upstream binary)
 let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.36.2";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "cloud-provider-azure-controller-manager-fips";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "cloud-provider-azure-controller-manager-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "cloud-provider-azure-controller-manager-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "cloud-provider-azure-controller-manager-fips";
-      "org.opencontainers.image.description" = "cloud-provider-azure-controller-manager-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/kubernetes-sigs/cloud-provider-azure/releases/download/v${version}/azure-cloud-controller-manager-linux-amd64";
+      hash = "sha256:1k4228b01jkzih5w70gqadnjlqlp4kmr4nlccrqvivyidh2czsd3";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    dontUnpack = true;
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 $src $out/bin/azure-cloud-controller-manager
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "cloud-provider-azure-controller-manager-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/azure-cloud-controller-manager" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "cloud-provider-azure-controller-manager-fips";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

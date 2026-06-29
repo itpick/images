@@ -1,38 +1,42 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# cert-exporter-fips
-# Container image
-
+# cert-exporter (fips variant) - Prometheus exporter for certificate expiry metrics
+# Upstream prebuilt binary; same upstream as cert-exporter.
+# https://github.com/joe-elliott/cert-exporter
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "2.18.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "cert-exporter-fips";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "cert-exporter-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "cert-exporter-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "cert exporter fips";
-      "org.opencontainers.image.description" = "cert-exporter-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/joe-elliott/cert-exporter/releases/download/v${version}/cert-exporter_${version}_linux_amd64.tar.gz";
+      hash = "sha256-GYBSDBD2VXIX1STMsfDkL9ZmuFA3Va8hz0HqUKIFFOg=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 cert-exporter $out/bin/cert-exporter
+      runHook postInstall
+    '';
+  };
+in
+mkImage {
+  inherit drv;
+  name = "cert-exporter-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/cert-exporter" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "cert-exporter-fips";
+    "org.opencontainers.image.description" = "Prometheus exporter for certificate expiry metrics";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

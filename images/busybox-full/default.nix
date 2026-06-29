@@ -1,37 +1,47 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# busybox-full
-# Container image
+# BusyBox - "The Swiss Army Knife of Embedded Linux"
+# Upstream prebuilt static (musl) x86_64 binary from busybox.net
+# https://busybox.net/downloads/binaries/
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.35.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "busybox-full";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "busybox-full";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "busybox-full-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "uusyuox full";
-      "org.opencontainers.image.description" = "busybox-full container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://busybox.net/downloads/binaries/${version}-x86_64-linux-musl/busybox";
+      hash = "sha256:0j0k66x8p1gv6hz8v7mrh99i698ab10qjkgrn7lw3a0269zkw4kf";
     };
+
+    # Single static binary, not an archive.
+    dontUnpack = true;
+
+    # Static musl binary - autoPatchelfHook is a harmless no-op.
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+
+    dontStrip = true;
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 $src $out/bin/busybox
+      runHook postInstall
+    '';
+  };
+
+in mkImage {
+  inherit drv;
+  name = "busybox-full";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/busybox" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "busybox-full";
+    "org.opencontainers.image.description" = "The Swiss Army Knife of Embedded Linux (full static build)";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

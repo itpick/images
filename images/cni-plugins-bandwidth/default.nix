@@ -1,37 +1,48 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# cni-plugins-bandwidth
-# Container image
+# CNI bandwidth plugin (from containernetworking/plugins release bundle)
+# https://github.com/containernetworking/plugins
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.9.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "cni-plugins-bandwidth";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "cni-plugins-bandwidth";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "cni-plugins-bandwidth-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "cni plugins uandwidth";
-      "org.opencontainers.image.description" = "cni-plugins-bandwidth container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/containernetworking/plugins/releases/download/v${version}/cni-plugins-linux-amd64-v${version}.tgz";
+      hash = "sha256-uY90oPhSLwqDhnF4cpwapw8hWPkMRaLKj6eR2xx2swM=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 ./bandwidth $out/bin/bandwidth
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "CNI bandwidth plugin";
+      homepage = "https://github.com/containernetworking/plugins";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  inherit drv;
+  name = "cni-plugins-bandwidth";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/bandwidth" ];
+  cmd = [];
+  labels = {
+    "org.opencontainers.image.title" = "cni-plugins-bandwidth";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

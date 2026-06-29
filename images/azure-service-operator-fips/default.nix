@@ -1,38 +1,43 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# azure-service-operator-fips
-# Container image
+# Azure Service Operator - asoctl CLI
+# https://github.com/Azure/azure-service-operator
+# Note: upstream prebuilt binary; FIPS compliance is not claimed.
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "2.20.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "azure-service-operator-fips";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "azure-service-operator-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "azure-service-operator-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "azure service operator fips";
-      "org.opencontainers.image.description" = "azure-service-operator-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/Azure/azure-service-operator/releases/download/v${version}/asoctl-linux-amd64.gz";
+      hash = "sha256:1x7a607d97j3ik7bah5k85qbg05ba821vgi4p2yzlpz8hqlv2r5v";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook pkgs.gzip ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    dontUnpack = true;
+
+    installPhase = ''
+      runHook preInstall
+      gunzip -c $src > asoctl
+      install -Dm755 asoctl $out/bin/asoctl
+      runHook postInstall
+    '';
+  };
+
+in mkImage {
+  inherit drv;
+  name = "azure-service-operator-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/asoctl" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "azure-service-operator-fips";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

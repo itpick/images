@@ -1,37 +1,41 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# containerd-shim-runc-v2
-# Container image
-
+# containerd-shim-runc-v2 (from containerd/containerd static release)
+# https://github.com/containerd/containerd
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "2.3.2";
+  binary = "containerd-shim-runc-v2";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = binary;
+    inherit version;
 
-in nix2container.buildImage {
-  name = "containerd-shim-runc-v2";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "containerd-shim-runc-v2-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "containerd shim runc v2";
-      "org.opencontainers.image.description" = "containerd-shim-runc-v2 container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/containerd/containerd/releases/download/v${version}/containerd-static-${version}-linux-amd64.tar.gz";
+      hash = "sha256-9GThhDIfi1dhcL3HPcFV9I5rUJMdcY89zJRXRtUhOPo=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 bin/${binary} $out/bin/${binary}
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "containerd-shim-runc-v2";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/${binary}" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "containerd-shim-runc-v2";
+    "org.opencontainers.image.description" = "containerd runc v2 runtime shim";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }
