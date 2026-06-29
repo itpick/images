@@ -1,37 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # corretto-21-default-jdk
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.corretto21
+mkImage {
+  drv = pkgs.corretto21;
   name = "corretto-21-default-jdk";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "corretto-21-default-jdk-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "binary";
-      "io.nix-containers.build-method" = "Pre-built binary packaged with Nix";
-      "org.opencontainers.image.title" = "corretto 21 default jdk";
-      "org.opencontainers.image.description" = "corretto-21-default-jdk container image";
-      "org.opencontainers.image.version" = version;
-    };
+  tag = "v${pkgs.corretto21.version}";
+  entrypoint = [ "${pkgs.corretto21}/bin/java" ];
+  cmd = [ "-version" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "corretto-21-default-jdk";
+    "org.opencontainers.image.description" = "corretto-21-default-jdk container image (nixpkgs.corretto21)";
+    "org.opencontainers.image.version" = pkgs.corretto21.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }

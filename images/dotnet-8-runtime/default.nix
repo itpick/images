@@ -1,37 +1,18 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # dotnet-8-runtime
-# Container image
-
-let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+# Container image packaging nixpkgs.dotnet-runtime_8
+mkImage {
+  drv = pkgs.dotnet-runtime_8;
   name = "dotnet-8-runtime";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "dotnet-8-runtime-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "dotnet 8 runtime";
-      "org.opencontainers.image.description" = "dotnet-8-runtime container image";
-      "org.opencontainers.image.version" = version;
-    };
+  tag = "v${pkgs.dotnet-runtime_8.version}";
+  entrypoint = [ "${pkgs.dotnet-runtime_8}/bin/dotnet" ];
+  cmd = [ "--version" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "dotnet-8-runtime";
+    "org.opencontainers.image.description" = "dotnet-8-runtime container image (nixpkgs.dotnet-runtime_8)";
+    "org.opencontainers.image.version" = pkgs.dotnet-runtime_8.version;
+    "io.nix-containers.source" = "nixpkgs";
   };
 }
