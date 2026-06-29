@@ -104,6 +104,70 @@ jobs:
           git add -f website/scan-data/
           echo "Staged $(find website/scan-data -name '*-trivy.json' | wc -l) trivy files into website/scan-data/"
 
+      - name: Fetch curated tag list per scanned image
+        id: tags
+        if: steps.scan.outputs.path != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          # Source the image set from the scan-data artifact (= the set of
+          # images actually published to GHCR). We can't iterate `images/`
+          # — it contains ~3137 entries, only ~200 of which are published,
+          # and GHCR 404s would burn rate limit budget.
+          mkdir -p website/tags-data
+          # filenames are like `ghcr.io_nix-containers_images_<NAME>_latest-trivy.json`
+          # so we slice off the prefix/suffix to recover <NAME>.
+          IMG_LIST=$(mktemp)
+          find website/scan-data -maxdepth 1 -name '*-trivy.json' -printf '%f\n' \
+            | sed -E 's/^ghcr\.io_nix-containers_images_([^_]+(_[^_]+)*)_latest-trivy\.json$/\1/' \
+            | sort -u > "$IMG_LIST"
+          COUNT=$(wc -l < "$IMG_LIST")
+          echo "Fetching tags for $COUNT scanned images..."
+          fetch_one() {
+            local img="$1"
+            local encoded="images%2F${img}"
+            local tmp="website/tags-data/${img}.json.tmp"
+            # `gh api --paginate` writes JSON arrays back-to-back (one per
+            # page). `jq -s` reads them as a stream, `[.[][]]` flattens
+            # into one array of version records. We then explode each
+            # record's tags[], filter out raw 40-char hex SHA tags
+            # (build-and-push.yml:163 creates one per push), and sort
+            # newest-first.
+            if ! gh api --paginate \
+                  "/orgs/nix-containers/packages/container/${encoded}/versions" \
+                  2>/dev/null \
+                | jq -s '
+                    [ .[][]
+                      | . as $v
+                      | ($v.metadata.container.tags // [])[]
+                      | { tag: ., digest: $v.name, pushed_at: $v.updated_at }
+                    ]
+                    | map(select(.tag | test("^[0-9a-f]{40}$") | not))
+                    | sort_by(.pushed_at) | reverse
+                  ' > "$tmp" 2>/dev/null; then
+              rm -f "$tmp"
+              return
+            fi
+            if [ -s "$tmp" ] && [ "$(jq 'length' < "$tmp")" -gt 0 ]; then
+              mv "$tmp" "website/tags-data/${img}.json"
+            else
+              rm -f "$tmp"
+            fi
+          }
+          export -f fetch_one
+          export GH_TOKEN
+          # 16-way parallelism keeps total wall-time around 1–2 minutes for
+          # ~200 images while staying well under GHCR's per-IP API throttle.
+          tr '\n' '\0' < "$IMG_LIST" \
+            | xargs -0 -n 1 -P 16 -I {} bash -c 'fetch_one "$@"' _ {}
+          WROTE=$(find website/tags-data -name '*.json' | wc -l)
+          echo "Wrote tags-data for $WROTE images."
+          git config user.email "deploy@nix-containers.local"
+          git config user.name "deploy-bot"
+          git add -f website/tags-data/
+          echo "wrote=$WROTE" >> "$GITHUB_OUTPUT"
+
       - name: Look up last successful build-containers run
         id: buildcheck
         env:

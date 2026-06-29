@@ -114,6 +114,7 @@
 
     <nav class="tab-bar" role="tablist" aria-label="Image details">
       <button type="button" class="tab-button tab-active" data-tab="description" role="tab" aria-selected="true">Description</button>
+      <button type="button" class="tab-button tab-inactive" data-tab="tags" role="tab" aria-selected="false">Tags</button>
       <button type="button" class="tab-button tab-inactive" data-tab="vulnerabilities" role="tab" aria-selected="false">Vulnerabilities</button>
       <button type="button" class="tab-button tab-inactive" data-tab="sbom" role="tab" aria-selected="false">SBOM</button>
       <button type="button" class="tab-button tab-inactive" data-tab="used-by" role="tab" aria-selected="false">Used by</button>
@@ -123,6 +124,12 @@
     <section class="tab-content" data-tab-panel="description" role="tabpanel">
       <div class="card">
         <div class="prose prose-invert max-w-none">{{README_HTML}}</div>
+      </div>
+    </section>
+
+    <section class="tab-content hidden" data-tab-panel="tags" role="tabpanel">
+      <div class="card">
+        {{TAGS_HTML}}
       </div>
     </section>
 

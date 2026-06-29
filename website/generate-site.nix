@@ -176,6 +176,16 @@ pkgs.stdenv.mkDerivation {
     else
       echo "   No scan data; vulnerability + SBOM panels will be omitted"
     fi
+    # Tags data is staged into the source tree by deploy-website.yml's
+    # GHCR-API fetcher step. Optional: when absent (local builds), the
+    # Tags tab renders a "not yet built" placeholder.
+    TAGS_ARG=""
+    if [ -d ./tags-data ]; then
+      echo "   Using in-tree tags-data/ ($(ls ./tags-data/*.json 2>/dev/null | wc -l) tag files)"
+      TAGS_ARG="--tags-data ./tags-data"
+    else
+      echo "   No tags data; Tags tab will show empty placeholder"
+    fi
     BASE_ARG="--base-path /"
     if [ -n "''${PAGES_BASE_PATH:-}" ]; then
       echo "   Using PAGES_BASE_PATH=$PAGES_BASE_PATH"
@@ -195,6 +205,7 @@ pkgs.stdenv.mkDerivation {
       --popularity $TMPDIR/popularity.json \
       $BASE_ARG \
       $SCAN_ARG \
+      $TAGS_ARG \
       $BUILD_ARG
 
     echo "-> Build complete. Output:"

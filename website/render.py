@@ -323,6 +323,115 @@ def lookup_sbom(image_name: str, sbom_dir: str | None) -> list[dict] | None:
     return None
 
 
+# How many tags to render at the top of the Tags panel before stuffing the
+# remainder into a collapsible. Most images have well under 10, but heavy
+# branch-tagging history can push it higher; cap keeps the page snappy.
+_TAGS_MAX_ROWS = 30
+
+
+def tags_for_image(image_name: str, tags_dir: str | None) -> list[dict] | None:
+    """Return a list of {tag, digest, pushed_at} dicts written by
+    deploy-website.yml's GHCR-API fetcher, or None if the file is absent
+    or unreadable. Empty arrays return as None — the caller's placeholder
+    handles the "no tags yet" state."""
+    if not tags_dir:
+        return None
+    target = os.path.join(tags_dir, f"{image_name}.json")
+    if not os.path.isfile(target):
+        return None
+    try:
+        with open(target) as f:
+            doc = json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return None
+    if not isinstance(doc, list) or not doc:
+        return None
+    return doc
+
+
+def lookup_tags(image_name: str, tags_dir: str | None) -> list[dict] | None:
+    """Same variant-folding as `lookup_sbom`: -fips/-iamguarded/-nonroot
+    suffixes fall through to the base image when no exact tags file is
+    present."""
+    if not tags_dir:
+        return None
+    found = tags_for_image(image_name, tags_dir)
+    if found is not None:
+        return found
+    base = image_name
+    changed = True
+    while changed:
+        changed = False
+        for suffix in _POPULARITY_VARIANT_SUFFIXES:
+            if base.endswith(suffix) and len(base) > len(suffix):
+                base = base[: -len(suffix)]
+                changed = True
+                found = tags_for_image(base, tags_dir)
+                if found is not None:
+                    return found
+    return None
+
+
+def _format_digest(digest: str) -> str:
+    """Trim sha256:abcdef0123… → abcdef012345 for display, keeping the
+    full digest available as a tooltip."""
+    if not digest:
+        return ""
+    short = digest.split(":", 1)[1] if ":" in digest else digest
+    return short[:12]
+
+
+def render_tags_panel(tags: list[dict] | None, image_name: str) -> str:
+    """Render the Tags panel HTML — table of tag/digest/pushed-at.
+
+    Missing data shows a placeholder that explains the image hasn't been
+    published yet (vs. "no data available"); empties from a published
+    image are rare since `latest` is always present.
+    """
+    if not tags:
+        return (
+            '<p class="text-fg-muted italic text-sm">'
+            'No published tags yet — image hasn\'t been built or hasn\'t '
+            'finished its first publish.'
+            '</p>'
+        )
+    total = len(tags)
+    rows = tags[:_TAGS_MAX_ROWS]
+    note = ""
+    if total > _TAGS_MAX_ROWS:
+        note = (
+            f'<p class="text-fg-muted text-xs mb-2">'
+            f'Showing first {_TAGS_MAX_ROWS} of {total} tags.'
+            f'</p>'
+        )
+    body_rows = "\n".join(
+        f"<tr>"
+        f"<td class=\"font-mono\"><code class=\"text-fg-primary\">{_html_escape(t.get('tag', ''))}</code></td>"
+        f"<td class=\"font-mono text-fg-muted text-xs\" title=\"{_html_escape(t.get('digest', ''))}\">{_html_escape(_format_digest(t.get('digest', '')))}</td>"
+        f"<td class=\"text-fg-muted text-xs\">{_html_escape(format_scan_timestamp(t.get('pushed_at', '')))}</td>"
+        f"</tr>"
+        for t in rows
+    )
+    pull_hint = (
+        f'<p class="text-xs text-fg-muted mb-3">'
+        f'Pull any tag with '
+        f'<code class="font-mono text-fg-primary">'
+        f'docker pull ghcr.io/nix-containers/images/{_html_escape(image_name)}:&lt;tag&gt;'
+        f'</code>'
+        f'</p>'
+    )
+    return (
+        f'{pull_hint}'
+        f'{note}'
+        f'<div class="prose max-w-none">'
+        f'<table>'
+        f'<thead><tr><th>Tag</th><th>Digest</th><th>Pushed</th></tr></thead>'
+        f'<tbody>{body_rows}</tbody>'
+        f'</table>'
+        f'</div>'
+    )
+
+
 def render_sbom(sbom: list[dict] | None) -> str:
     """Render the SBOM panel HTML.
 
@@ -445,6 +554,10 @@ def main():
     ap.add_argument("--sbom-data", default=None,
                     help="Optional path to directory of *-sbom.json files "
                          "(typically the same dir as --scan-data)")
+    ap.add_argument("--tags-data", default=None,
+                    help="Optional path to directory of <image>.json files "
+                         "(written by deploy-website.yml from GHCR API). "
+                         "Drives the Tags tab on per-image pages.")
     ap.add_argument("--popularity", default=None,
                     help="Optional path to popularity.json (output of parse-popularity.py)")
     ap.add_argument("--base-path", default="/",
@@ -541,6 +654,9 @@ def main():
 
         sbom = lookup_sbom(name, args.sbom_data)
         mapping["SBOM_HTML"] = meta_banner + render_sbom(sbom)
+
+        tags = lookup_tags(name, args.tags_data)
+        mapping["TAGS_HTML"] = render_tags_panel(tags, name)
 
         page_html = fill_template(image_template, mapping)
         page_dir = out / "images" / name
