@@ -40,16 +40,21 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          # Walk recent successful runs until we find one whose artifact
-          # actually contains scan files. Ad-hoc dispatches that target a
-          # not-yet-published image (e.g. "scan only act") produce a
-          # zero-file artifact that succeeds — without this loop, the
-          # latest such run would shadow the most recent full scan.
+          # Walk recent COMPLETED runs (success OR failure) until we find
+          # one whose artifact actually contains scan files.
+          #
+          # Why include failures: the aggregate job in security-scan.yml
+          # uploads the artifact with `if: always()`, so even when the
+          # CVE-issue step throws, the trivy/sbom JSONs land in the
+          # artifact. We've lost data this way once already (a failed
+          # aggregate step shadowed an otherwise-perfect 189-image
+          # artifact). The non-empty-file check below guards against
+          # picking up genuinely empty/aborted runs.
           RUNS=$(gh run list \
             --repo "$GITHUB_REPOSITORY" \
             --workflow=security-scan.yml \
             --branch=main \
-            --status=success \
+            --status=completed \
             --limit=10 \
             --json databaseId \
             --jq '.[].databaseId' || true)
