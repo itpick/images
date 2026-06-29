@@ -32,6 +32,18 @@ jobs:
           . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
           mkdir -p ~/.config/nix
           echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+          # Disable sandbox at the daemon level so render.py inside the
+          # build can read /home/runner/work/_temp/scan-data (the
+          # security-scan-results artifact). #158's client-side
+          # `--option sandbox false` was silently ignored on this runner
+          # ("warning: ignoring the client-specified setting 'sandbox',
+          # because it is a restricted setting and you are not a trusted
+          # user"). #160's nix-store --add approach got the artifact
+          # into the store, but env-var-passed store paths aren't
+          # treated as dependencies → still invisible to the sandbox.
+          # Daemon-level setting bypasses all of that.
+          echo "sandbox = false" | sudo tee -a /etc/nix/nix.conf
+          sudo systemctl restart nix-daemon
           echo "/nix/var/nix/profiles/default/bin" >> $GITHUB_PATH
 
       - name: Download latest non-empty security scan results
@@ -91,27 +103,12 @@ jobs:
           echo "iso=$ISO" >> "$GITHUB_OUTPUT"
           echo "Last successful auto-update.yml run: ${ISO:-<none>}"
 
-      - name: Stage scan artifact into the Nix store
-        id: scan-store
-        if: steps.scan.outputs.path != ''
-        run: |
-          set -euo pipefail
-          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-          # The Nix sandbox can't see /home/runner/work/_temp by default
-          # and the runner isn't in trusted-users (so client-side
-          # `--option sandbox false` is silently dropped with "ignoring
-          # the client-specified setting 'sandbox', because it is a
-          # restricted setting and you are not a trusted user").
-          # Instead, add the artifact directory to the Nix store —
-          # /nix/store IS bind-mounted into every build sandbox, so the
-          # resulting path is always readable from inside the build.
-          STORE_PATH=$(nix-store --add "${{ steps.scan.outputs.path }}")
-          echo "Staged scan data at $STORE_PATH"
-          echo "store_path=$STORE_PATH" >> "$GITHUB_OUTPUT"
-
       - name: Build static website
         env:
-          SCAN_DATA_PATH: ${{ steps.scan-store.outputs.store_path }}
+          # Direct path to the downloaded artifact dir; sandbox=false in
+          # the daemon (set during Install Nix) means render.py inside
+          # the build can read it.
+          SCAN_DATA_PATH: ${{ steps.scan.outputs.path }}
           # GH Pages project sites publish at /<repo>/, so absolute asset
           # URLs (/static/css/site.css etc.) need that prefix.
           PAGES_BASE_PATH: /${{ github.event.repository.name }}/
