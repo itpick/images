@@ -29,12 +29,45 @@ def category_slug(category: str) -> str:
     return s if s in allowed else "unknown"
 
 
+def _strip_build_info_section(md_text: str) -> str:
+    """Drop the `## Build Information` section from a README.
+
+    scripts/generate-readmes.py emits a boilerplate "Build Information"
+    table into every generated README with placeholder values (`N/A`,
+    `unknown`) or stale local-build snapshots (e.g. `Build Time | 2s`).
+    None of that is meaningful to the site, so the description tab on
+    every per-image page renders an empty-looking section.
+
+    This strips the section by line-walking: when we hit a heading
+    matching `## Build Information` (case-insensitive), skip lines until
+    the next `## ` heading or EOF. Trailing blank lines from the section
+    boundary are collapsed so the next heading doesn't acquire weird
+    spacing.
+    """
+    out: list[str] = []
+    in_section = False
+    for line in md_text.splitlines():
+        stripped = line.strip()
+        if not in_section and stripped.lower() == "## build information":
+            in_section = True
+            continue
+        if in_section:
+            if stripped.startswith("## "):
+                in_section = False
+                # fall through so this next heading is kept
+            else:
+                continue
+        out.append(line)
+    return "\n".join(out)
+
+
 def render_markdown(md_text: str, cmark_bin: str) -> str:
     """Convert markdown to HTML using cmark."""
     if not md_text or not md_text.strip():
         return "<p class='text-fg-muted italic'>No README available.</p>"
+    cleaned = _strip_build_info_section(md_text)
     p = subprocess.run([cmark_bin, "--unsafe"],
-                       input=md_text, capture_output=True, text=True, check=True)
+                       input=cleaned, capture_output=True, text=True, check=True)
     return p.stdout
 
 
