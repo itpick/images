@@ -34,34 +34,49 @@ jobs:
           echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
           echo "/nix/var/nix/profiles/default/bin" >> $GITHUB_PATH
 
-      - name: Download latest security scan results
+      - name: Download latest non-empty security scan results
         id: scan
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          RUN_ID=$(gh run list \
+          # Walk recent successful runs until we find one whose artifact
+          # actually contains scan files. Ad-hoc dispatches that target a
+          # not-yet-published image (e.g. "scan only act") produce a
+          # zero-file artifact that succeeds — without this loop, the
+          # latest such run would shadow the most recent full scan.
+          RUNS=$(gh run list \
+            --repo "$GITHUB_REPOSITORY" \
             --workflow=security-scan.yml \
             --branch=main \
             --status=success \
-            --limit=1 \
+            --limit=10 \
             --json databaseId \
-            --jq '.[0].databaseId' || true)
-          if [ -z "${RUN_ID:-}" ] || [ "${RUN_ID}" = "null" ]; then
+            --jq '.[].databaseId' || true)
+          if [ -z "${RUNS:-}" ]; then
             echo "No successful security-scan.yml run found; vulnerability panels will be omitted."
             echo "path=" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          echo "Using security-scan.yml run $RUN_ID"
           SCAN_DIR="$RUNNER_TEMP/scan-data"
-          mkdir -p "$SCAN_DIR"
-          gh run download "$RUN_ID" -n security-scan-results -D "$SCAN_DIR" || {
-            echo "Download failed; vulnerability panels will be omitted."
-            echo "path=" >> "$GITHUB_OUTPUT"
-            exit 0
-          }
-          echo "Downloaded $(find "$SCAN_DIR" -maxdepth 1 -name '*-trivy.json' 2>/dev/null | wc -l) trivy json files."
-          echo "path=$SCAN_DIR" >> "$GITHUB_OUTPUT"
+          for RUN_ID in $RUNS; do
+            echo "Trying security-scan.yml run $RUN_ID..."
+            rm -rf "$SCAN_DIR"
+            mkdir -p "$SCAN_DIR"
+            if ! gh run download "$RUN_ID" -n security-scan-results -D "$SCAN_DIR" 2>&1; then
+              echo "  download failed; skipping"
+              continue
+            fi
+            COUNT=$(find "$SCAN_DIR" -maxdepth 1 -name '*-trivy.json' 2>/dev/null | wc -l)
+            echo "  $COUNT trivy json files"
+            if [ "$COUNT" -gt 0 ]; then
+              echo "Using run $RUN_ID ($COUNT scanned images)."
+              echo "path=$SCAN_DIR" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          done
+          echo "No recent scan run had a non-empty artifact; vulnerability panels will be omitted."
+          echo "path=" >> "$GITHUB_OUTPUT"
 
       - name: Look up last successful auto-update run
         id: depcheck
