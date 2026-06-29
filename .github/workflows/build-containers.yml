@@ -236,6 +236,12 @@ jobs:
       contents: read
       packages: read
       security-events: write
+      # security-scan.yml opens/updates a rolling CVE-alert issue
+      # (PR #135). Reusable workflows can only USE permissions the
+      # CALLER grants. Without this, GitHub fails workflow validation
+      # at load time → startup_failure on the whole build-containers
+      # run (no jobs created, no visible error).
+      issues: write
     with:
       # security-scan expects a JSON ARRAY of image entries; select-matrix's
       # `matrix` output is `{"include":[...]}` (the matrix shape). Unwrap to
