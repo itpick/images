@@ -155,6 +155,14 @@ jobs:
           IMAGES_TO_SCAN="$EXISTING"
           echo "📋 After existence filter: $(echo "$IMAGES_TO_SCAN" | jq 'length') image(s) actually scannable."
 
+          # Share the filtered list with the Grype + SBOM steps below.
+          # They used to re-resolve from `docker images | grep ghcr.io/...`
+          # which returned 0 entries on a fresh runner and short-circuited
+          # with 'No images available' — leaving SBOM + Grype empty.
+          echo "IMAGES_TO_SCAN_JSON<<__SC_EOF__" >> "$GITHUB_ENV"
+          echo "$IMAGES_TO_SCAN" >> "$GITHUB_ENV"
+          echo "__SC_EOF__" >> "$GITHUB_ENV"
+
           # Scan each (now confirmed-existing) image. Per-call `|| true`
           # keeps the loop alive even if Trivy itself trips on a transient
           # auth/network blip; the analysis step at the end works off
@@ -189,20 +197,13 @@ jobs:
         continue-on-error: true
         run: |
           echo "🔍 Running Grype vulnerability scans..."
-          
-          IMAGES_TO_SCAN='${{ inputs.images }}'
-          if [ "$IMAGES_TO_SCAN" = "[]" ] || [ -z "$IMAGES_TO_SCAN" ]; then
-            AVAILABLE_IMAGES=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "ghcr.io/${{ github.repository }}" | head -3 || echo "")
-            if [ -z "$AVAILABLE_IMAGES" ]; then
-              echo "⚠️  No images available for Grype scanning"
-              exit 0
-            fi
-            IMAGES_TO_SCAN=$(echo "$AVAILABLE_IMAGES" | jq -R . | jq -s .)
-          else
-            IMAGES_TO_SCAN=$(echo "$IMAGES_TO_SCAN" | jq -c \
-              --arg repo "${{ github.repository }}" \
-              --arg sha "${{ github.sha }}" \
-              '[ .[] | if type == "object" then "ghcr.io/\($repo)/\(.name):\($sha)" else . end ]')
+          # Reuse the existence-filtered list from the Trivy step. The
+          # previous fallback (docker images | grep ghcr.io/...) returned
+          # 0 entries on fresh CI runners and short-circuited.
+          IMAGES_TO_SCAN="${IMAGES_TO_SCAN_JSON:-[]}"
+          if [ "$IMAGES_TO_SCAN" = "[]" ]; then
+            echo "⚠️  No images available for Grype scanning (Trivy step found none)"
+            exit 0
           fi
 
           echo "$IMAGES_TO_SCAN" | jq -r '.[]' | while read -r image; do
@@ -218,20 +219,11 @@ jobs:
         continue-on-error: true
         run: |
           echo "📋 Generating Software Bill of Materials (SBOM)..."
-          
-          IMAGES_TO_SCAN='${{ inputs.images }}'
-          if [ "$IMAGES_TO_SCAN" = "[]" ] || [ -z "$IMAGES_TO_SCAN" ]; then
-            AVAILABLE_IMAGES=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "ghcr.io/${{ github.repository }}" | head -3 || echo "")
-            if [ -z "$AVAILABLE_IMAGES" ]; then
-              echo "⚠️  No images available for SBOM generation"
-              exit 0
-            fi
-            IMAGES_TO_SCAN=$(echo "$AVAILABLE_IMAGES" | jq -R . | jq -s .)
-          else
-            IMAGES_TO_SCAN=$(echo "$IMAGES_TO_SCAN" | jq -c \
-              --arg repo "${{ github.repository }}" \
-              --arg sha "${{ github.sha }}" \
-              '[ .[] | if type == "object" then "ghcr.io/\($repo)/\(.name):\($sha)" else . end ]')
+          # Reuse the existence-filtered list from the Trivy step.
+          IMAGES_TO_SCAN="${IMAGES_TO_SCAN_JSON:-[]}"
+          if [ "$IMAGES_TO_SCAN" = "[]" ]; then
+            echo "⚠️  No images available for SBOM generation (Trivy step found none)"
+            exit 0
           fi
 
           echo "$IMAGES_TO_SCAN" | jq -r '.[]' | while read -r image; do
