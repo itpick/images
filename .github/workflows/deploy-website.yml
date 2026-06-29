@@ -103,7 +103,13 @@ jobs:
           . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
           # --impure required to read PAGES_BASE_PATH / SCAN_DATA_PATH /
           # LAST_DEP_CHECK_AT via builtins.getEnv in generate-site.nix.
-          nix build .#website --impure --print-build-logs
+          # --option sandbox false because SCAN_DATA_PATH points at
+          # /home/runner/work/_temp/scan-data (the downloaded artifact)
+          # which the default Linux sandbox isolates from the build dir.
+          # Without this, render.py inside the build can't see the trivy
+          # JSON files and emits "No scan data; panels omitted" even
+          # though the artifact is present.
+          nix build .#website --impure --option sandbox false --print-build-logs
           mkdir -p ./website-build
           cp -r ./result/* ./website-build/
         
