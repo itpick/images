@@ -9,7 +9,15 @@ mkImage {
   name = "victoria-logs";
   tag = "v${pkgs.victorialogs.version}";
   entrypoint = [ "${pkgs.victorialogs}/bin/victoria-logs" ];
-  cmd = [];
+  # Was empty (no command). Mirror the sibling victoria-metrics completion:
+  # serve the HTTP API/UI on 0.0.0.0:9428 and keep -storageDataPath (the
+  # flock.lock + data dirs noted below) under the writable /tmp — the default
+  # is relative to the read-only nix-store cwd. No config file is needed.
+  # Operators mount a PVC and override -storageDataPath.
+  cmd = [
+    "-httpListenAddr=0.0.0.0:9428"
+    "-storageDataPath=/tmp/victoria-logs-data"
+  ];
 
   # Match upstream's User (root) so the image is drop-in compatible
   # with existing PVCs. The upstream victoriametrics/victoria-logs
