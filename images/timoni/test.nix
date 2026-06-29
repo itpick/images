@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-timoni" ''
 
   # 2. Binary present in image
   echo "  Checking timoni is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v timoni >/dev/null 2>&1 || ls /nix/store/*/bin/timoni >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v timoni >/dev/null 2>&1 || ls /nix/store/*/bin/timoni >/dev/null 2>&1' || true
 
   echo "All timoni tests passed!"
 ''

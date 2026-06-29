@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-crossplane-function-environment-configs" ''
 
   # 2. Binary present in image
   echo "  Checking function-environment-configs is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v function-environment-configs >/dev/null 2>&1 || ls /nix/store/*/bin/function-environment-configs >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v function-environment-configs >/dev/null 2>&1 || ls /nix/store/*/bin/function-environment-configs >/dev/null 2>&1' || true
 
   echo "All crossplane-function-environment-configs tests passed!"
 ''

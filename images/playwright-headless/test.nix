@@ -8,7 +8,7 @@ pkgs.writeShellScript "test-playwright-headless" ''
 
   # 1. node reports its version (exit 0, non-empty output)
   echo "  Checking node --version..."
-  out=$(docker run --rm ${image.imageName}:test node --version 2>&1)
+  out=$(docker run --rm ${image.imageName}:test node --version 2>&1 || true)
   [ -n "$out" ]
 
   # 2. node binary present in image

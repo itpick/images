@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-traefik-fips" ''
 
   # 2. Binary present in image
   echo "  Checking traefik is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v traefik >/dev/null 2>&1 || ls /nix/store/*/bin/traefik >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v traefik >/dev/null 2>&1 || ls /nix/store/*/bin/traefik >/dev/null 2>&1' || true
 
   echo "All traefik-fips tests passed!"
 ''

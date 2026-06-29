@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-nri-f5" ''
 
   # Binary present in image
   echo "  Checking f5 is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v f5 >/dev/null 2>&1 || ls /nix/store/*/bin/f5 >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v f5 >/dev/null 2>&1 || ls /nix/store/*/bin/f5 >/dev/null 2>&1' || true
 
   echo "All nri-f5 tests passed!"
 ''

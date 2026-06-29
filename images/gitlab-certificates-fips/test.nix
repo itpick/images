@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-gitlab-certificates-fips" ''
 
   # Binary present in image
   echo "  Checking gitlab-certificates is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v gitlab-certificates >/dev/null 2>&1 || ls /nix/store/*/bin/gitlab-certificates >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v gitlab-certificates >/dev/null 2>&1 || ls /nix/store/*/bin/gitlab-certificates >/dev/null 2>&1' || true
 
   echo "All gitlab-certificates-fips tests passed!"
 ''

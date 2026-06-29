@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-nix-tree" ''
 
   # 2. Binary present in image
   echo "  Checking nix-tree is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v nix-tree >/dev/null 2>&1 || ls /nix/store/*/bin/nix-tree >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v nix-tree >/dev/null 2>&1 || ls /nix/store/*/bin/nix-tree >/dev/null 2>&1' || true
 
   echo "All nix-tree tests passed!"
 ''

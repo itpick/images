@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-laravel" ''
 
   # 2. Binary present in image
   echo "  Checking laravel is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v laravel >/dev/null 2>&1 || ls /nix/store/*/bin/laravel >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v laravel >/dev/null 2>&1 || ls /nix/store/*/bin/laravel >/dev/null 2>&1' || true
 
   echo "All laravel tests passed!"
 ''

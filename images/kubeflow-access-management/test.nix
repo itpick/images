@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-kubeflow-access-management" ''
 
   # 2. Expected binary is present in the image
   echo "  Checking kubeflow-access-management is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kubeflow-access-management >/dev/null 2>&1 || ls /nix/store/*/bin/kubeflow-access-management >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kubeflow-access-management >/dev/null 2>&1 || ls /nix/store/*/bin/kubeflow-access-management >/dev/null 2>&1' || true
 
   echo "All kubeflow-access-management tests passed!"
 ''

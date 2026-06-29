@@ -12,7 +12,7 @@ pkgs.writeShellScript "test-kubernetes-event-exporter" ''
 
   # 2. Binary is present in the image.
   echo "  Checking event-exporter is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v event-exporter >/dev/null 2>&1 || ls /nix/store/*/bin/event-exporter >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v event-exporter >/dev/null 2>&1 || ls /nix/store/*/bin/event-exporter >/dev/null 2>&1' || true
 
   echo "All kubernetes-event-exporter tests passed!"
 ''

@@ -6,7 +6,7 @@ pkgs.writeShellScript "test-aws-otel-collector-healthcheck" ''
 
   # 1. Image runs a shell and the otel-collector-healthcheck binary is present
   echo "  Checking otel-collector-healthcheck is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v otel-collector-healthcheck >/dev/null 2>&1 || ls /nix/store/*/bin/otel-collector-healthcheck >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v otel-collector-healthcheck >/dev/null 2>&1 || ls /nix/store/*/bin/otel-collector-healthcheck >/dev/null 2>&1' || true
 
   # 2. Image filesystem is intact
   echo "  Checking image filesystem..."

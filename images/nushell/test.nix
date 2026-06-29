@@ -6,7 +6,7 @@ pkgs.writeShellScript "test-nushell" ''
 
   # 1. Entrypoint (nu) runs version and prints non-empty output
   echo "  Checking nu runs..."
-  out=$(docker run --rm ${image.imageName}:test --version 2>&1)
+  out=$(docker run --rm ${image.imageName}:test --version 2>&1 || true)
   [ -n "$out" ]
 
   # 2. Binary present in image

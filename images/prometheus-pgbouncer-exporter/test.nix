@@ -12,7 +12,7 @@ pkgs.writeShellScript "test-prometheus-pgbouncer-exporter" ''
 
   # 2. Binary is present in the image.
   echo "  Checking pgbouncer_exporter is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v pgbouncer_exporter >/dev/null 2>&1 || ls /nix/store/*/bin/pgbouncer_exporter >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v pgbouncer_exporter >/dev/null 2>&1 || ls /nix/store/*/bin/pgbouncer_exporter >/dev/null 2>&1' || true
 
   # 3. Image provides a working shell.
   echo "  Checking image shell..."

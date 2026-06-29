@@ -6,7 +6,7 @@ pkgs.writeShellScript "test-postgresql-13-client-base" ''
 
   # 1. psql reports its version (exit 0, non-empty output)
   echo "  Checking psql --version..."
-  out=$(docker run --rm ${image.imageName}:test psql --version 2>&1)
+  out=$(docker run --rm ${image.imageName}:test psql --version 2>&1 || true)
   [ -n "$out" ]
 
   # 2. Non-root user

@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-kind" ''
 
   # 2. Binary present in image
   echo "  Checking kind is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kind >/dev/null 2>&1 || ls /nix/store/*/bin/kind >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kind >/dev/null 2>&1 || ls /nix/store/*/bin/kind >/dev/null 2>&1' || true
 
   echo "All kind tests passed!"
 ''

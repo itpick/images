@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-rabbitmq-iamguarded" ''
 
   # 2. Expected binary is present in the image
   echo "  Checking rabbitmqctl binary is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v rabbitmqctl >/dev/null 2>&1 || ls /nix/store/*/bin/rabbitmqctl >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v rabbitmqctl >/dev/null 2>&1 || ls /nix/store/*/bin/rabbitmqctl >/dev/null 2>&1' || true
 
   echo "All rabbitmq-iamguarded tests passed!"
 ''

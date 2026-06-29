@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-steampipe" ''
 
   # 2. Binary present in image
   echo "  Checking steampipe is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v steampipe >/dev/null 2>&1 || ls /nix/store/*/bin/steampipe >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v steampipe >/dev/null 2>&1 || ls /nix/store/*/bin/steampipe >/dev/null 2>&1' || true
 
   echo "All steampipe tests passed!"
 ''

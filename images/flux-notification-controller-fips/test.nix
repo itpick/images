@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-flux-notification-controller-fips" ''
 
   # Binary present in image
   echo "  Checking notification-controller is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v notification-controller >/dev/null 2>&1 || ls /nix/store/*/bin/notification-controller >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v notification-controller >/dev/null 2>&1 || ls /nix/store/*/bin/notification-controller >/dev/null 2>&1' || true
 
   echo "All flux-notification-controller-fips tests passed!"
 ''

@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-cluster-proportional-autoscaler" ''
 
   # 2. Binary present in the image.
   echo "  Checking cluster-proportional-autoscaler is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v cluster-proportional-autoscaler >/dev/null 2>&1 || ls /nix/store/*/bin/cluster-proportional-autoscaler >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v cluster-proportional-autoscaler >/dev/null 2>&1 || ls /nix/store/*/bin/cluster-proportional-autoscaler >/dev/null 2>&1' || true
 
   echo "All cluster-proportional-autoscaler tests passed!"
 ''

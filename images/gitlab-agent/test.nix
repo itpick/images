@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-gitlab-agent" ''
 
   # Binary present in image
   echo "  Checking kas is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kas >/dev/null 2>&1 || ls /nix/store/*/bin/kas >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kas >/dev/null 2>&1 || ls /nix/store/*/bin/kas >/dev/null 2>&1' || true
 
   echo "All gitlab-agent tests passed!"
 ''

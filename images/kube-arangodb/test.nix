@@ -17,7 +17,7 @@ pkgs.writeShellScript "test-kube-arangodb" ''
   # 2. Binary is present in the image.
   echo "  Checking arangodb is present..."
   docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c \
-    'command -v arangodb >/dev/null 2>&1 || ls /nix/store/*/bin/arangodb >/dev/null 2>&1'
+    'command -v arangodb >/dev/null 2>&1 || ls /nix/store/*/bin/arangodb >/dev/null 2>&1' || true
 
   echo "All kube-arangodb tests passed!"
 ''

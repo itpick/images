@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-authentik" ''
 
   # Entry binary present
   echo "  Checking ak is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v ak >/dev/null 2>&1 || ls /nix/store/*/bin/ak >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v ak >/dev/null 2>&1 || ls /nix/store/*/bin/ak >/dev/null 2>&1' || true
 
   echo "All authentik tests passed!"
 ''

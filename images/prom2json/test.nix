@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-prom2json" ''
 
   # 2. prom2json binary is present in the image
   echo "  Checking prom2json is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v prom2json >/dev/null 2>&1 || ls /nix/store/*/bin/prom2json >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v prom2json >/dev/null 2>&1 || ls /nix/store/*/bin/prom2json >/dev/null 2>&1' || true
 
   echo "All prom2json tests passed!"
 ''

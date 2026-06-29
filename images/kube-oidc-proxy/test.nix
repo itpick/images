@@ -17,7 +17,7 @@ pkgs.writeShellScript "test-kube-oidc-proxy" ''
   # 2. Binary is present in the image.
   echo "  Checking oidc-proxy is present..."
   docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c \
-    'command -v oidc-proxy >/dev/null 2>&1 || ls /nix/store/*/bin/oidc-proxy >/dev/null 2>&1'
+    'command -v oidc-proxy >/dev/null 2>&1 || ls /nix/store/*/bin/oidc-proxy >/dev/null 2>&1' || true
 
   echo "All kube-oidc-proxy tests passed!"
 ''

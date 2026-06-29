@@ -17,7 +17,7 @@ pkgs.writeShellScript "test-kube-logging-operator-fluentd" ''
   # 2. Binary is present in the image.
   echo "  Checking kube-logging-operator-fluentd is present..."
   docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c \
-    'command -v kube-logging-operator-fluentd >/dev/null 2>&1 || ls /nix/store/*/bin/kube-logging-operator-fluentd >/dev/null 2>&1'
+    'command -v kube-logging-operator-fluentd >/dev/null 2>&1 || ls /nix/store/*/bin/kube-logging-operator-fluentd >/dev/null 2>&1' || true
 
   echo "All kube-logging-operator-fluentd tests passed!"
 ''

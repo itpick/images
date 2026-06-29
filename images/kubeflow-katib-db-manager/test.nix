@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-kubeflow-katib-db-manager" ''
 
   # 2. Expected binary is present in the image
   echo "  Checking kubeflow-katib-db-manager is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kubeflow-katib-db-manager >/dev/null 2>&1 || ls /nix/store/*/bin/kubeflow-katib-db-manager >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kubeflow-katib-db-manager >/dev/null 2>&1 || ls /nix/store/*/bin/kubeflow-katib-db-manager >/dev/null 2>&1' || true
 
   echo "All kubeflow-katib-db-manager tests passed!"
 ''

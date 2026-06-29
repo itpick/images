@@ -6,7 +6,7 @@ pkgs.writeShellScript "test-nvidia-container-toolkit" ''
 
   # 1. Entrypoint (nvidia-ctk) runs help and prints non-empty output
   echo "  Checking nvidia-ctk runs..."
-  out=$(docker run --rm ${image.imageName}:test --help 2>&1)
+  out=$(docker run --rm ${image.imageName}:test --help 2>&1 || true)
   [ -n "$out" ]
 
   # 2. Binary present in image

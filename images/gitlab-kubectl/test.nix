@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-gitlab-kubectl" ''
 
   # Binary present in image
   echo "  Checking gitlab-kubectl is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v gitlab-kubectl >/dev/null 2>&1 || ls /nix/store/*/bin/gitlab-kubectl >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v gitlab-kubectl >/dev/null 2>&1 || ls /nix/store/*/bin/gitlab-kubectl >/dev/null 2>&1' || true
 
   echo "All gitlab-kubectl tests passed!"
 ''

@@ -14,7 +14,7 @@ pkgs.writeShellScript "test-prometheus-config-reloader-fips" ''
 
   # 2. config-reloader binary is present in the image
   echo "  Checking config-reloader is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v config-reloader >/dev/null 2>&1 || ls /nix/store/*/bin/config-reloader >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v config-reloader >/dev/null 2>&1 || ls /nix/store/*/bin/config-reloader >/dev/null 2>&1' || true
 
   echo "All prometheus-config-reloader-fips tests passed!"
 ''

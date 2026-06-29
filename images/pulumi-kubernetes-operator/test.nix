@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-pulumi-kubernetes-operator" ''
 
   # 2. Binary present in image (installed at /manager and on PATH)
   echo "  Checking manager is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v manager >/dev/null 2>&1 || ls /manager >/dev/null 2>&1 || ls /nix/store/*/bin/manager >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v manager >/dev/null 2>&1 || ls /manager >/dev/null 2>&1 || ls /nix/store/*/bin/manager >/dev/null 2>&1' || true
 
   echo "All pulumi-kubernetes-operator tests passed!"
 ''

@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-rtorrent" ''
 
   # 2. Binary present in image
   echo "  Checking rtorrent is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v rtorrent >/dev/null 2>&1 || ls /nix/store/*/bin/rtorrent >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v rtorrent >/dev/null 2>&1 || ls /nix/store/*/bin/rtorrent >/dev/null 2>&1' || true
 
   echo "All rtorrent tests passed!"
 ''

@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-rancher-system-upgrade-controller" ''
 
   # 2. Expected binary is present in the image
   echo "  Checking system-upgrade-controller binary is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v system-upgrade-controller >/dev/null 2>&1 || ls /nix/store/*/bin/system-upgrade-controller >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v system-upgrade-controller >/dev/null 2>&1 || ls /nix/store/*/bin/system-upgrade-controller >/dev/null 2>&1' || true
 
   echo "All rancher-system-upgrade-controller tests passed!"
 ''

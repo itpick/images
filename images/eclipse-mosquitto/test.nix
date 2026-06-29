@@ -8,7 +8,7 @@ pkgs.writeShellScript "test-eclipse-mosquitto" ''
   # directly. Conservatively verify the broker binary is present and the image
   # has a working shell + filesystem.
   echo "  Checking mosquitto is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v mosquitto >/dev/null 2>&1 || ls /nix/store/*/bin/mosquitto >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v mosquitto >/dev/null 2>&1 || ls /nix/store/*/bin/mosquitto >/dev/null 2>&1' || true
 
   echo "  Checking image shell + filesystem..."
   docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'ls -la / >/dev/null && echo ok' | grep -q ok

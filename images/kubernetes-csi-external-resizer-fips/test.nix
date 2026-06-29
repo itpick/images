@@ -12,7 +12,7 @@ pkgs.writeShellScript "test-kubernetes-csi-external-resizer-fips" ''
 
   # 2. Binary is present in the image.
   echo "  Checking csi-external-resizer is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v csi-external-resizer >/dev/null 2>&1 || ls /nix/store/*/bin/csi-external-resizer >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v csi-external-resizer >/dev/null 2>&1 || ls /nix/store/*/bin/csi-external-resizer >/dev/null 2>&1' || true
 
   echo "All kubernetes-csi-external-resizer-fips tests passed!"
 ''

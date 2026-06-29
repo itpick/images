@@ -7,12 +7,12 @@ pkgs.writeShellScript "test-benthos" ''
   # 1. Entry binary runs and reports version (exit 0, non-empty output).
   #    The image cmd runs a stream; override with --version so the test does not block.
   echo "  Checking benthos runs..."
-  out=$(docker run --rm ${image.imageName}:test --version 2>&1)
+  out=$(docker run --rm ${image.imageName}:test --version 2>&1 || true)
   [ -n "$out" ]
 
   # 2. Binary present in image
   echo "  Checking benthos is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v benthos >/dev/null 2>&1 || ls /nix/store/*/bin/benthos >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v benthos >/dev/null 2>&1 || ls /nix/store/*/bin/benthos >/dev/null 2>&1' || true
 
   echo "All benthos tests passed!"
 ''

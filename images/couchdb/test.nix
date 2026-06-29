@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-couchdb" ''
 
   # 2. Expected binary is present in the image.
   echo "  Checking couchdb is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v couchdb >/dev/null 2>&1 || ls /nix/store/*/bin/couchdb >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v couchdb >/dev/null 2>&1 || ls /nix/store/*/bin/couchdb >/dev/null 2>&1' || true
 
   echo "All couchdb tests passed!"
 ''

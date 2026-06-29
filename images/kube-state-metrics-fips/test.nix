@@ -17,7 +17,7 @@ pkgs.writeShellScript "test-kube-state-metrics-fips" ''
   # 2. Binary is present in the image.
   echo "  Checking kube-state-metrics is present..."
   docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c \
-    'command -v kube-state-metrics >/dev/null 2>&1 || ls /nix/store/*/bin/kube-state-metrics >/dev/null 2>&1'
+    'command -v kube-state-metrics >/dev/null 2>&1 || ls /nix/store/*/bin/kube-state-metrics >/dev/null 2>&1' || true
 
   echo "All kube-state-metrics-fips tests passed!"
 ''

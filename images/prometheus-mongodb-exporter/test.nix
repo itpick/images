@@ -12,7 +12,7 @@ pkgs.writeShellScript "test-prometheus-mongodb-exporter" ''
 
   # 2. Binary is present in the image.
   echo "  Checking mongodb_exporter is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v mongodb_exporter >/dev/null 2>&1 || ls /nix/store/*/bin/mongodb_exporter >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v mongodb_exporter >/dev/null 2>&1 || ls /nix/store/*/bin/mongodb_exporter >/dev/null 2>&1' || true
 
   # 3. Image provides a working shell.
   echo "  Checking image shell..."

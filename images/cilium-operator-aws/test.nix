@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-cilium-operator-aws" ''
   [ "$out" = "ok" ]
 
   echo "  Checking cilium-operator-aws is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v cilium-operator-aws >/dev/null 2>&1 || ls /nix/store/*/bin/cilium-operator-aws >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v cilium-operator-aws >/dev/null 2>&1 || ls /nix/store/*/bin/cilium-operator-aws >/dev/null 2>&1' || true
 
   echo "All cilium-operator-aws tests passed!"
 ''

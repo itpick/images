@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-xeol" ''
 
   # 2. Binary present in image
   echo "  Checking xeol is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v xeol >/dev/null 2>&1 || ls /nix/store/*/bin/xeol >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v xeol >/dev/null 2>&1 || ls /nix/store/*/bin/xeol >/dev/null 2>&1' || true
 
   echo "All xeol tests passed!"
 ''

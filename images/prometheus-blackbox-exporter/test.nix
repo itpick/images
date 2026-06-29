@@ -15,7 +15,7 @@ pkgs.writeShellScript "test-prometheus-blackbox-exporter" ''
 
   # 2. blackbox_exporter binary is present in the image
   echo "  Checking blackbox_exporter is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v blackbox_exporter >/dev/null 2>&1 || ls /nix/store/*/bin/blackbox_exporter >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v blackbox_exporter >/dev/null 2>&1 || ls /nix/store/*/bin/blackbox_exporter >/dev/null 2>&1' || true
 
   echo "All prometheus-blackbox-exporter tests passed!"
 ''

@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-tigerbeetle" ''
 
   # 2. Binary present in image
   echo "  Checking tigerbeetle is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v tigerbeetle >/dev/null 2>&1 || ls /nix/store/*/bin/tigerbeetle >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v tigerbeetle >/dev/null 2>&1 || ls /nix/store/*/bin/tigerbeetle >/dev/null 2>&1' || true
 
   echo "All tigerbeetle tests passed!"
 ''

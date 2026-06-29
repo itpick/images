@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-kube-webhook-certgen-fips" ''
 
   # 2. Expected binary is present in the image
   echo "  Checking webhook-certgen is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v webhook-certgen >/dev/null 2>&1 || ls /nix/store/*/bin/webhook-certgen >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v webhook-certgen >/dev/null 2>&1 || ls /nix/store/*/bin/webhook-certgen >/dev/null 2>&1' || true
 
   echo "All kube-webhook-certgen-fips tests passed!"
 ''

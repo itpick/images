@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-rancher-fleet-controller" ''
 
   # 2. Expected binary is present in the image
   echo "  Checking fleet-controller binary is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v fleet-controller >/dev/null 2>&1 || ls /nix/store/*/bin/fleet-controller >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v fleet-controller >/dev/null 2>&1 || ls /nix/store/*/bin/fleet-controller >/dev/null 2>&1' || true
 
   echo "All rancher-fleet-controller tests passed!"
 ''

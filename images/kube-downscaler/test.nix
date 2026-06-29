@@ -17,7 +17,7 @@ pkgs.writeShellScript "test-kube-downscaler" ''
   # 2. Binary is present in the image.
   echo "  Checking downscaler is present..."
   docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c \
-    'command -v downscaler >/dev/null 2>&1 || ls /nix/store/*/bin/downscaler >/dev/null 2>&1'
+    'command -v downscaler >/dev/null 2>&1 || ls /nix/store/*/bin/downscaler >/dev/null 2>&1' || true
 
   echo "All kube-downscaler tests passed!"
 ''

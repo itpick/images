@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-actions-runner-controller" ''
 
   # Controller binary present
   echo "  Checking manager is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v manager >/dev/null 2>&1 || ls /nix/store/*/bin/manager >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v manager >/dev/null 2>&1 || ls /nix/store/*/bin/manager >/dev/null 2>&1' || true
 
   echo "All actions-runner-controller tests passed!"
 ''

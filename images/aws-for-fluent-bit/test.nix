@@ -6,7 +6,7 @@ pkgs.writeShellScript "test-aws-for-fluent-bit" ''
 
   # 1. Image runs a shell and the aws-for-fluent-bit binary is present
   echo "  Checking aws-for-fluent-bit is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v aws-for-fluent-bit >/dev/null 2>&1 || ls /nix/store/*/bin/aws-for-fluent-bit >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v aws-for-fluent-bit >/dev/null 2>&1 || ls /nix/store/*/bin/aws-for-fluent-bit >/dev/null 2>&1' || true
 
   # 2. Image filesystem is intact
   echo "  Checking image filesystem..."

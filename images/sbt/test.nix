@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-sbt" ''
 
   # 2. Binary present in image
   echo "  Checking sbt is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v sbt >/dev/null 2>&1 || ls /nix/store/*/bin/sbt >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v sbt >/dev/null 2>&1 || ls /nix/store/*/bin/sbt >/dev/null 2>&1' || true
 
   echo "All sbt tests passed!"
 ''

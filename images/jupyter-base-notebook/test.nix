@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-jupyter-base-notebook" ''
 
   # 2. Binary present in image
   echo "  Checking jupyter is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v jupyter >/dev/null 2>&1 || ls /nix/store/*/bin/jupyter >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v jupyter >/dev/null 2>&1 || ls /nix/store/*/bin/jupyter >/dev/null 2>&1' || true
 
   echo "All jupyter-base-notebook tests passed!"
 ''

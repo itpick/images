@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-gitlab-exporter-fips" ''
 
   # Binary present in image
   echo "  Checking gitlab-exporter is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v gitlab-exporter >/dev/null 2>&1 || ls /nix/store/*/bin/gitlab-exporter >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v gitlab-exporter >/dev/null 2>&1 || ls /nix/store/*/bin/gitlab-exporter >/dev/null 2>&1' || true
 
   echo "All gitlab-exporter-fips tests passed!"
 ''

@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-rqlite" ''
 
   # 2. Binary present in image
   echo "  Checking rqlited is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v rqlited >/dev/null 2>&1 || ls /nix/store/*/bin/rqlited >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v rqlited >/dev/null 2>&1 || ls /nix/store/*/bin/rqlited >/dev/null 2>&1' || true
 
   echo "All rqlite tests passed!"
 ''

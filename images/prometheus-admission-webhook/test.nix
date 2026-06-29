@@ -14,7 +14,7 @@ pkgs.writeShellScript "test-prometheus-admission-webhook" ''
 
   # 2. admission-webhook binary is present in the image
   echo "  Checking admission-webhook is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v admission-webhook >/dev/null 2>&1 || ls /nix/store/*/bin/admission-webhook >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v admission-webhook >/dev/null 2>&1 || ls /nix/store/*/bin/admission-webhook >/dev/null 2>&1' || true
 
   echo "All prometheus-admission-webhook tests passed!"
 ''

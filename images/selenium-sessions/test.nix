@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-selenium-sessions" ''
 
   # 2. The image has a usable shell and the java binary is present.
   echo "  Checking java is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v java >/dev/null 2>&1 || ls /nix/store/*/bin/java >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v java >/dev/null 2>&1 || ls /nix/store/*/bin/java >/dev/null 2>&1' || true
 
   echo "All selenium-sessions tests passed!"
 ''

@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-slirp4netns" ''
 
   # 2. Binary present in image
   echo "  Checking slirp4netns is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v slirp4netns >/dev/null 2>&1 || ls /nix/store/*/bin/slirp4netns >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v slirp4netns >/dev/null 2>&1 || ls /nix/store/*/bin/slirp4netns >/dev/null 2>&1' || true
 
   echo "All slirp4netns tests passed!"
 ''

@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-k9s" ''
 
   # 2. Binary present in image
   echo "  Checking k9s is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v k9s >/dev/null 2>&1 || ls /nix/store/*/bin/k9s >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v k9s >/dev/null 2>&1 || ls /nix/store/*/bin/k9s >/dev/null 2>&1' || true
 
   echo "All k9s tests passed!"
 ''

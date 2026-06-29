@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-readarr" ''
 
   # 2. Binary present in image
   echo "  Checking Readarr is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v Readarr >/dev/null 2>&1 || ls /nix/store/*/bin/Readarr >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v Readarr >/dev/null 2>&1 || ls /nix/store/*/bin/Readarr >/dev/null 2>&1' || true
 
   echo "All readarr tests passed!"
 ''

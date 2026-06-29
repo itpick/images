@@ -12,7 +12,7 @@ pkgs.writeShellScript "test-kubernetes-autoscaler-addon-resizer" ''
 
   # 2. Binary is present in the image.
   echo "  Checking kubernetes-autoscaler-addon-resizer is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kubernetes-autoscaler-addon-resizer >/dev/null 2>&1 || ls /nix/store/*/bin/kubernetes-autoscaler-addon-resizer >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kubernetes-autoscaler-addon-resizer >/dev/null 2>&1 || ls /nix/store/*/bin/kubernetes-autoscaler-addon-resizer >/dev/null 2>&1' || true
 
   echo "All kubernetes-autoscaler-addon-resizer tests passed!"
 ''

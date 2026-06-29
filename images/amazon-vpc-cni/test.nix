@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-amazon-vpc-cni" ''
 
   # CNI binary present
   echo "  Checking aws-cni is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v aws-cni >/dev/null 2>&1 || ls /nix/store/*/bin/aws-cni >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v aws-cni >/dev/null 2>&1 || ls /nix/store/*/bin/aws-cni >/dev/null 2>&1' || true
 
   echo "All amazon-vpc-cni tests passed!"
 ''

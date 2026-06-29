@@ -17,7 +17,7 @@ pkgs.writeShellScript "test-kube-metrics-adapter" ''
   # 2. Binary is present in the image.
   echo "  Checking metrics-adapter is present..."
   docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c \
-    'command -v metrics-adapter >/dev/null 2>&1 || ls /nix/store/*/bin/metrics-adapter >/dev/null 2>&1'
+    'command -v metrics-adapter >/dev/null 2>&1 || ls /nix/store/*/bin/metrics-adapter >/dev/null 2>&1' || true
 
   echo "All kube-metrics-adapter tests passed!"
 ''

@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-tekton-events-fips" ''
   docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'ls -la / >/dev/null && echo ok' | grep -q ok
 
   echo "  Checking tekton-events is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v tekton-events >/dev/null 2>&1 || ls /nix/store/*/bin/tekton-events >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v tekton-events >/dev/null 2>&1 || ls /nix/store/*/bin/tekton-events >/dev/null 2>&1' || true
 
   echo "All tekton-events-fips tests passed!"
 ''

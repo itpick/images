@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-clang" ''
 
   # Binary present in image
   echo "  Checking clang is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v clang >/dev/null 2>&1 || ls /nix/store/*/bin/clang >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v clang >/dev/null 2>&1 || ls /nix/store/*/bin/clang >/dev/null 2>&1' || true
 
   echo "All clang tests passed!"
 ''

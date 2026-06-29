@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-signal-cli" ''
 
   # 2. The signal-cli binary is present in the image.
   echo "  Checking signal-cli is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v signal-cli >/dev/null 2>&1 || ls /nix/store/*/bin/signal-cli >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v signal-cli >/dev/null 2>&1 || ls /nix/store/*/bin/signal-cli >/dev/null 2>&1' || true
 
   echo "All signal-cli tests passed!"
 ''

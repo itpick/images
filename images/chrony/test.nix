@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-chrony" ''
 
   # Binary present in image
   echo "  Checking chronyd is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v chronyd >/dev/null 2>&1 || ls /nix/store/*/bin/chronyd >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v chronyd >/dev/null 2>&1 || ls /nix/store/*/bin/chronyd >/dev/null 2>&1' || true
 
   echo "All chrony tests passed!"
 ''

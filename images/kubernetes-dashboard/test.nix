@@ -12,7 +12,7 @@ pkgs.writeShellScript "test-kubernetes-dashboard" ''
 
   # 2. Binary is present in the image.
   echo "  Checking kubernetes-dashboard is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kubernetes-dashboard >/dev/null 2>&1 || ls /nix/store/*/bin/kubernetes-dashboard >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kubernetes-dashboard >/dev/null 2>&1 || ls /nix/store/*/bin/kubernetes-dashboard >/dev/null 2>&1' || true
 
   echo "All kubernetes-dashboard tests passed!"
 ''

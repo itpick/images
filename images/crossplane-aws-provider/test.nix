@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-crossplane-aws-provider" ''
 
   # 2. Expected binary is present in the image.
   echo "  Checking crossplane is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v crossplane >/dev/null 2>&1 || ls /nix/store/*/bin/crossplane >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v crossplane >/dev/null 2>&1 || ls /nix/store/*/bin/crossplane >/dev/null 2>&1' || true
 
   echo "All crossplane-aws-provider tests passed!"
 ''

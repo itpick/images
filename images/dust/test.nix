@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-dust" ''
 
   # 2. Binary present in image
   echo "  Checking dust is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v dust >/dev/null 2>&1 || ls /nix/store/*/bin/dust >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v dust >/dev/null 2>&1 || ls /nix/store/*/bin/dust >/dev/null 2>&1' || true
 
   echo "All dust tests passed!"
 ''

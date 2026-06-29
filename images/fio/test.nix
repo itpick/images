@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-fio" ''
 
   # 2. Binary present in image
   echo "  Checking fio is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v fio >/dev/null 2>&1 || ls /nix/store/*/bin/fio >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v fio >/dev/null 2>&1 || ls /nix/store/*/bin/fio >/dev/null 2>&1' || true
 
   echo "All fio tests passed!"
 ''

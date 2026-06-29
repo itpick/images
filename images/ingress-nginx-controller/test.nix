@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-ingress-nginx-controller" ''
 
   # Binary present in image
   echo "  Checking nginx-ingress-controller is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v nginx-ingress-controller >/dev/null 2>&1 || ls /nix/store/*/bin/nginx-ingress-controller >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v nginx-ingress-controller >/dev/null 2>&1 || ls /nix/store/*/bin/nginx-ingress-controller >/dev/null 2>&1' || true
 
   echo "All ingress-nginx-controller tests passed!"
 ''

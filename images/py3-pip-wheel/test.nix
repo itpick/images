@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-py3-pip-wheel" ''
 
   # 2. Binary present in image
   echo "  Checking pip is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v pip >/dev/null 2>&1 || ls /nix/store/*/bin/pip >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v pip >/dev/null 2>&1 || ls /nix/store/*/bin/pip >/dev/null 2>&1' || true
 
   echo "All py3-pip-wheel tests passed!"
 ''

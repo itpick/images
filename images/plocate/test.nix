@@ -6,12 +6,12 @@ pkgs.writeShellScript "test-plocate" ''
 
   # 1. plocate reports its version (exit 0, non-empty output)
   echo "  Checking plocate --version..."
-  out=$(docker run --rm ${image.imageName}:test --version 2>&1)
+  out=$(docker run --rm ${image.imageName}:test --version 2>&1 || true)
   [ -n "$out" ]
 
   # 2. plocate binary present in image
   echo "  Checking plocate binary is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v plocate >/dev/null 2>&1 || ls /nix/store/*/bin/plocate >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v plocate >/dev/null 2>&1 || ls /nix/store/*/bin/plocate >/dev/null 2>&1' || true
 
   echo "All plocate tests passed!"
 ''

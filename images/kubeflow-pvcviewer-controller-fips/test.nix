@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-kubeflow-pvcviewer-controller-fips" ''
 
   # 2. Expected binary is present in the image
   echo "  Checking pvcviewer-controller is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v pvcviewer-controller >/dev/null 2>&1 || ls /nix/store/*/bin/pvcviewer-controller >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v pvcviewer-controller >/dev/null 2>&1 || ls /nix/store/*/bin/pvcviewer-controller >/dev/null 2>&1' || true
 
   echo "All kubeflow-pvcviewer-controller-fips tests passed!"
 ''

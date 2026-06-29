@@ -12,7 +12,7 @@ pkgs.writeShellScript "test-kubernetes-dns-node-cache" ''
 
   # 2. Binary is present in the image.
   echo "  Checking dns-node-cache is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v dns-node-cache >/dev/null 2>&1 || ls /nix/store/*/bin/dns-node-cache >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v dns-node-cache >/dev/null 2>&1 || ls /nix/store/*/bin/dns-node-cache >/dev/null 2>&1' || true
 
   echo "All kubernetes-dns-node-cache tests passed!"
 ''

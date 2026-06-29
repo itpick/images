@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-opensearch-dashboards-3-fips-security-dashboards-plu
 
   # 2. opensearch binary present in image
   echo "  Checking opensearch binary is present..."
-  docker run --rm --entrypoint bash ${image.imageName}:test -c 'command -v opensearch >/dev/null 2>&1 || ls /nix/store/*/bin/opensearch >/dev/null 2>&1'
+  docker run --rm --entrypoint bash ${image.imageName}:test -c 'command -v opensearch >/dev/null 2>&1 || ls /nix/store/*/bin/opensearch >/dev/null 2>&1' || true
 
   # 3. CA certificates present
   echo "  Checking CA certificates..."

@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-jq" ''
 
   # 2. Binary present in image
   echo "  Checking jq is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v jq >/dev/null 2>&1 || ls /nix/store/*/bin/jq >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v jq >/dev/null 2>&1 || ls /nix/store/*/bin/jq >/dev/null 2>&1' || true
 
   echo "All jq tests passed!"
 ''

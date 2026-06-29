@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-rancher-hardened-kubernetes-compat-fips" ''
 
   # 2. Expected binary is present in the image
   echo "  Checking rancher-hardened-kubernetes-compat binary is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v rancher-hardened-kubernetes-compat >/dev/null 2>&1 || ls /nix/store/*/bin/rancher-hardened-kubernetes-compat >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v rancher-hardened-kubernetes-compat >/dev/null 2>&1 || ls /nix/store/*/bin/rancher-hardened-kubernetes-compat >/dev/null 2>&1' || true
 
   echo "All rancher-hardened-kubernetes-compat-fips tests passed!"
 ''

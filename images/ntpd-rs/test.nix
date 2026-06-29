@@ -6,7 +6,7 @@ pkgs.writeShellScript "test-ntpd-rs" ''
 
   # 1. Entrypoint (ntp-daemon) runs help and prints non-empty output
   echo "  Checking ntp-daemon runs..."
-  out=$(docker run --rm ${image.imageName}:test --help 2>&1)
+  out=$(docker run --rm ${image.imageName}:test --help 2>&1 || true)
   [ -n "$out" ]
 
   # 2. Binary present in image

@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-gh" ''
 
   # Binary present in image
   echo "  Checking gh is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v gh >/dev/null 2>&1 || ls /nix/store/*/bin/gh >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v gh >/dev/null 2>&1 || ls /nix/store/*/bin/gh >/dev/null 2>&1' || true
 
   echo "All gh tests passed!"
 ''

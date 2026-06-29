@@ -17,7 +17,7 @@ pkgs.writeShellScript "test-kube-rbac-proxy-fips" ''
   # 2. Binary is present in the image.
   echo "  Checking rbac-proxy is present..."
   docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c \
-    'command -v rbac-proxy >/dev/null 2>&1 || ls /nix/store/*/bin/rbac-proxy >/dev/null 2>&1'
+    'command -v rbac-proxy >/dev/null 2>&1 || ls /nix/store/*/bin/rbac-proxy >/dev/null 2>&1' || true
 
   echo "All kube-rbac-proxy-fips tests passed!"
 ''

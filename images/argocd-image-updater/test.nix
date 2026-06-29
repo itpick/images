@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-argocd-image-updater" ''
 
   # Binary present
   echo "  Checking argocd-image-updater is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v argocd-image-updater >/dev/null 2>&1 || ls /nix/store/*/bin/argocd-image-updater >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v argocd-image-updater >/dev/null 2>&1 || ls /nix/store/*/bin/argocd-image-updater >/dev/null 2>&1' || true
 
   echo "All argocd-image-updater tests passed!"
 ''

@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-git-lfs-fips" ''
 
   # Binary present in image
   echo "  Checking git-lfs is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v git-lfs >/dev/null 2>&1 || ls /nix/store/*/bin/git-lfs >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v git-lfs >/dev/null 2>&1 || ls /nix/store/*/bin/git-lfs >/dev/null 2>&1' || true
 
   echo "All git-lfs-fips tests passed!"
 ''

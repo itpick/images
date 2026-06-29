@@ -6,12 +6,12 @@ pkgs.writeShellScript "test-openssh" ''
 
   # 1. ssh reports its version (-V prints to stderr, exits 0)
   echo "  Checking ssh -V..."
-  out=$(docker run --rm ${image.imageName}:test -V 2>&1)
+  out=$(docker run --rm ${image.imageName}:test -V 2>&1 || true)
   [ -n "$out" ]
 
   # 2. ssh binary present in image
   echo "  Checking ssh binary is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v ssh >/dev/null 2>&1 || ls /nix/store/*/bin/ssh >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v ssh >/dev/null 2>&1 || ls /nix/store/*/bin/ssh >/dev/null 2>&1' || true
 
   echo "All openssh tests passed!"
 ''

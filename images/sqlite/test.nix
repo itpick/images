@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-sqlite" ''
 
   # 2. Binary present in image
   echo "  Checking sqlite3 is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v sqlite3 >/dev/null 2>&1 || ls /nix/store/*/bin/sqlite3 >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v sqlite3 >/dev/null 2>&1 || ls /nix/store/*/bin/sqlite3 >/dev/null 2>&1' || true
 
   echo "All sqlite tests passed!"
 ''

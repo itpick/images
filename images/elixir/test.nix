@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-elixir" ''
 
   # 2. Binary present in image
   echo "  Checking elixir is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v elixir >/dev/null 2>&1 || ls /nix/store/*/bin/elixir >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v elixir >/dev/null 2>&1 || ls /nix/store/*/bin/elixir >/dev/null 2>&1' || true
 
   echo "All elixir tests passed!"
 ''

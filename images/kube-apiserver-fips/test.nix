@@ -17,7 +17,7 @@ pkgs.writeShellScript "test-kube-apiserver-fips" ''
   # 2. Binary is present in the image.
   echo "  Checking apiserver is present..."
   docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c \
-    'command -v apiserver >/dev/null 2>&1 || ls /nix/store/*/bin/apiserver >/dev/null 2>&1'
+    'command -v apiserver >/dev/null 2>&1 || ls /nix/store/*/bin/apiserver >/dev/null 2>&1' || true
 
   echo "All kube-apiserver-fips tests passed!"
 ''

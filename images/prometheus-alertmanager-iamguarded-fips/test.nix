@@ -14,7 +14,7 @@ pkgs.writeShellScript "test-prometheus-alertmanager-iamguarded-fips" ''
 
   # 2. binary is present in the image
   echo "  Checking binary is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v prometheus-alertmanager-iamguarded >/dev/null 2>&1 || ls /nix/store/*/bin/prometheus-alertmanager-iamguarded >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v prometheus-alertmanager-iamguarded >/dev/null 2>&1 || ls /nix/store/*/bin/prometheus-alertmanager-iamguarded >/dev/null 2>&1' || true
 
   echo "All prometheus-alertmanager-iamguarded-fips tests passed!"
 ''

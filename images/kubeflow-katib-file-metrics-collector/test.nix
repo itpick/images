@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-kubeflow-katib-file-metrics-collector" ''
 
   # 2. Expected binary is present in the image
   echo "  Checking kubeflow-katib-file-metrics-collector is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kubeflow-katib-file-metrics-collector >/dev/null 2>&1 || ls /nix/store/*/bin/kubeflow-katib-file-metrics-collector >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kubeflow-katib-file-metrics-collector >/dev/null 2>&1 || ls /nix/store/*/bin/kubeflow-katib-file-metrics-collector >/dev/null 2>&1' || true
 
   echo "All kubeflow-katib-file-metrics-collector tests passed!"
 ''

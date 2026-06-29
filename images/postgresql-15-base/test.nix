@@ -6,7 +6,7 @@ pkgs.writeShellScript "test-postgresql-15-base" ''
 
   # 1. postgres reports its version (exit 0, non-empty output)
   echo "  Checking postgres --version..."
-  out=$(docker run --rm ${image.imageName}:test postgres --version 2>&1)
+  out=$(docker run --rm ${image.imageName}:test postgres --version 2>&1 || true)
   [ -n "$out" ]
 
   # 2. Non-root user

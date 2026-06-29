@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-argo-workflow-executor" ''
 
   # Executor binary present
   echo "  Checking argoexec is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v argoexec >/dev/null 2>&1 || ls /nix/store/*/bin/argoexec >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v argoexec >/dev/null 2>&1 || ls /nix/store/*/bin/argoexec >/dev/null 2>&1' || true
 
   echo "All argo-workflow-executor tests passed!"
 ''

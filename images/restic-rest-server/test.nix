@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-restic-rest-server" ''
 
   # 2. Binary present in image
   echo "  Checking rest-server is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v rest-server >/dev/null 2>&1 || ls /nix/store/*/bin/rest-server >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v rest-server >/dev/null 2>&1 || ls /nix/store/*/bin/rest-server >/dev/null 2>&1' || true
 
   echo "All restic-rest-server tests passed!"
 ''

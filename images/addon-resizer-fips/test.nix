@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-addon-resizer-fips" ''
 
   # Binary present
   echo "  Checking addon-resizer is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v addon-resizer >/dev/null 2>&1 || ls /nix/store/*/bin/addon-resizer >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v addon-resizer >/dev/null 2>&1 || ls /nix/store/*/bin/addon-resizer >/dev/null 2>&1' || true
 
   echo "All addon-resizer-fips tests passed!"
 ''

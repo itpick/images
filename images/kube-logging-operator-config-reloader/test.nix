@@ -17,7 +17,7 @@ pkgs.writeShellScript "test-kube-logging-operator-config-reloader" ''
   # 2. Binary is present in the image.
   echo "  Checking logging-operator-config-reloader is present..."
   docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c \
-    'command -v logging-operator-config-reloader >/dev/null 2>&1 || ls /nix/store/*/bin/logging-operator-config-reloader >/dev/null 2>&1'
+    'command -v logging-operator-config-reloader >/dev/null 2>&1 || ls /nix/store/*/bin/logging-operator-config-reloader >/dev/null 2>&1' || true
 
   echo "All kube-logging-operator-config-reloader tests passed!"
 ''

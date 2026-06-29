@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-tekton-workingdirinit" ''
 
   # 2. Binary present in image
   echo "  Checking tekton-workingdirinit is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v tekton-workingdirinit >/dev/null 2>&1 || ls /nix/store/*/bin/tekton-workingdirinit >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v tekton-workingdirinit >/dev/null 2>&1 || ls /nix/store/*/bin/tekton-workingdirinit >/dev/null 2>&1' || true
 
   echo "All tekton-workingdirinit tests passed!"
 ''

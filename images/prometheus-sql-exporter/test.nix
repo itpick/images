@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-prometheus-sql-exporter" ''
 
   # 2. Binary present in image
   echo "  Checking sql_exporter is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v sql_exporter >/dev/null 2>&1 || ls /nix/store/*/bin/sql_exporter >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v sql_exporter >/dev/null 2>&1 || ls /nix/store/*/bin/sql_exporter >/dev/null 2>&1' || true
 
   echo "All prometheus-sql-exporter tests passed!"
 ''

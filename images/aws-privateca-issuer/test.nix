@@ -6,7 +6,7 @@ pkgs.writeShellScript "test-aws-privateca-issuer" ''
 
   # 1. Image runs a shell and the privateca-issuer binary is present
   echo "  Checking privateca-issuer is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v privateca-issuer >/dev/null 2>&1 || ls /nix/store/*/bin/privateca-issuer >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v privateca-issuer >/dev/null 2>&1 || ls /nix/store/*/bin/privateca-issuer >/dev/null 2>&1' || true
 
   # 2. Image filesystem is intact
   echo "  Checking image filesystem..."

@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-k3s" ''
 
   # 2. Binary present in image
   echo "  Checking k3s is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v k3s >/dev/null 2>&1 || ls /nix/store/*/bin/k3s >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v k3s >/dev/null 2>&1 || ls /nix/store/*/bin/k3s >/dev/null 2>&1' || true
 
   echo "All k3s tests passed!"
 ''

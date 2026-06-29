@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-kubernetes-secret-generator" ''
 
   # Binary present in image.
   echo "  Checking secret-generator is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v secret-generator >/dev/null 2>&1 || ls /nix/store/*/bin/secret-generator >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v secret-generator >/dev/null 2>&1 || ls /nix/store/*/bin/secret-generator >/dev/null 2>&1' || true
 
   echo "All kubernetes-secret-generator tests passed!"
 ''

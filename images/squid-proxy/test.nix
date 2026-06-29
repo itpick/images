@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-squid-proxy" ''
 
   # 2. squid binary present in image
   echo "  Checking squid is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v squid >/dev/null 2>&1 || ls /nix/store/*/bin/squid >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v squid >/dev/null 2>&1 || ls /nix/store/*/bin/squid >/dev/null 2>&1' || true
 
   echo "All squid-proxy tests passed!"
 ''

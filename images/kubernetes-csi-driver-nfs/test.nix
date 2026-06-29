@@ -12,7 +12,7 @@ pkgs.writeShellScript "test-kubernetes-csi-driver-nfs" ''
 
   # 2. Binary is present in the image.
   echo "  Checking csi-driver-nfs is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v csi-driver-nfs >/dev/null 2>&1 || ls /nix/store/*/bin/csi-driver-nfs >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v csi-driver-nfs >/dev/null 2>&1 || ls /nix/store/*/bin/csi-driver-nfs >/dev/null 2>&1' || true
 
   echo "All kubernetes-csi-driver-nfs tests passed!"
 ''

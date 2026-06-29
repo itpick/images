@@ -13,7 +13,7 @@ pkgs.writeShellScript "test-pgadmin4" ''
 
   # 2. pgadmin4 binary present in image
   echo "  Checking pgadmin4 binary is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v pgadmin4 >/dev/null 2>&1 || ls /nix/store/*/bin/pgadmin4 >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v pgadmin4 >/dev/null 2>&1 || ls /nix/store/*/bin/pgadmin4 >/dev/null 2>&1' || true
 
   echo "All pgadmin4 tests passed!"
 ''

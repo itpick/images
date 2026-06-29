@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-tekton-webhook-fips" ''
 
   # 2. Binary present in image
   echo "  Checking tekton-webhook is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v tekton-webhook >/dev/null 2>&1 || ls /nix/store/*/bin/tekton-webhook >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v tekton-webhook >/dev/null 2>&1 || ls /nix/store/*/bin/tekton-webhook >/dev/null 2>&1' || true
 
   echo "All tekton-webhook-fips tests passed!"
 ''

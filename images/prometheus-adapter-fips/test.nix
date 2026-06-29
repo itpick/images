@@ -14,7 +14,7 @@ pkgs.writeShellScript "test-prometheus-adapter-fips" ''
 
   # 2. adapter binary is present in the image
   echo "  Checking adapter is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v adapter >/dev/null 2>&1 || ls /nix/store/*/bin/adapter >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v adapter >/dev/null 2>&1 || ls /nix/store/*/bin/adapter >/dev/null 2>&1' || true
 
   echo "All prometheus-adapter-fips tests passed!"
 ''

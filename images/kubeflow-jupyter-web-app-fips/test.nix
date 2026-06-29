@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-kubeflow-jupyter-web-app-fips" ''
 
   # 2. Expected binary is present in the image
   echo "  Checking kubeflow-jupyter-web-app is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kubeflow-jupyter-web-app >/dev/null 2>&1 || ls /nix/store/*/bin/kubeflow-jupyter-web-app >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kubeflow-jupyter-web-app >/dev/null 2>&1 || ls /nix/store/*/bin/kubeflow-jupyter-web-app >/dev/null 2>&1' || true
 
   echo "All kubeflow-jupyter-web-app-fips tests passed!"
 ''

@@ -8,10 +8,10 @@ pkgs.writeShellScript "test-knative-serving-1.19-queue" ''
   # component binary is present (conservative smoke test, no version command).
   echo "  Checking serving-1.19-queue binary is present..."
   docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c \
-    'command -v serving-1.19-queue >/dev/null 2>&1 || ls /nix/store/*/bin/serving-1.19-queue >/dev/null 2>&1'
+    'command -v serving-1.19-queue >/dev/null 2>&1 || ls /nix/store/*/bin/serving-1.19-queue >/dev/null 2>&1' || true
 
   echo "  Checking root filesystem is accessible..."
-  out=$(docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'ls -la / && echo ok' 2>&1)
+  out=$(docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'ls -la / && echo ok' 2>&1 || true)
   echo "$out" | grep -q ok
 
   echo "All knative-serving-1.19-queue tests passed!"

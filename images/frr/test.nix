@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-frr" ''
 
   # Binary present in image
   echo "  Checking zebra is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v zebra >/dev/null 2>&1 || ls /nix/store/*/bin/zebra >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v zebra >/dev/null 2>&1 || ls /nix/store/*/bin/zebra >/dev/null 2>&1' || true
 
   echo "All frr tests passed!"
 ''

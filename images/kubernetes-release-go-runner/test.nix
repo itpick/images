@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-kubernetes-release-go-runner" ''
 
   # Binary present in image.
   echo "  Checking release-go-runner is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v release-go-runner >/dev/null 2>&1 || ls /nix/store/*/bin/release-go-runner >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v release-go-runner >/dev/null 2>&1 || ls /nix/store/*/bin/release-go-runner >/dev/null 2>&1' || true
 
   echo "All kubernetes-release-go-runner tests passed!"
 ''

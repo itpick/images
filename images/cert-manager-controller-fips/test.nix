@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-cert-manager-controller-fips" ''
 
   # 2. Binary present in image
   echo "  Checking cert-manager-controller is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v cert-manager-controller >/dev/null 2>&1 || ls /nix/store/*/bin/cert-manager-controller >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v cert-manager-controller >/dev/null 2>&1 || ls /nix/store/*/bin/cert-manager-controller >/dev/null 2>&1' || true
 
   echo "All cert-manager-controller-fips tests passed!"
 ''

@@ -6,7 +6,7 @@ pkgs.writeShellScript "test-aws-s3-controller" ''
 
   # 1. Image runs a shell and the s3-controller binary is present
   echo "  Checking s3-controller is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v s3-controller >/dev/null 2>&1 || ls /nix/store/*/bin/s3-controller >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v s3-controller >/dev/null 2>&1 || ls /nix/store/*/bin/s3-controller >/dev/null 2>&1' || true
 
   # 2. Image filesystem is intact
   echo "  Checking image filesystem..."

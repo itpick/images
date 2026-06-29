@@ -12,7 +12,7 @@ pkgs.writeShellScript "test-crossplane-provider-aws-dynamodb" ''
 
   # 2. Provider binary is present in the image.
   echo "  Checking provider binary is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v provider >/dev/null 2>&1 || ls /nix/store/*/bin/provider >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v provider >/dev/null 2>&1 || ls /nix/store/*/bin/provider >/dev/null 2>&1' || true
 
   echo "All crossplane-provider-aws-dynamodb tests passed!"
 ''

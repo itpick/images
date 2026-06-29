@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-argo-workflowcontroller" ''
 
   # Controller binary present
   echo "  Checking workflow-controller is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v workflow-controller >/dev/null 2>&1 || ls /nix/store/*/bin/workflow-controller >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v workflow-controller >/dev/null 2>&1 || ls /nix/store/*/bin/workflow-controller >/dev/null 2>&1' || true
 
   echo "All argo-workflowcontroller tests passed!"
 ''

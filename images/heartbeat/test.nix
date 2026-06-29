@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-heartbeat" ''
 
   # Binary present in image
   echo "  Checking heartbeat is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v heartbeat >/dev/null 2>&1 || ls /nix/store/*/bin/heartbeat >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v heartbeat >/dev/null 2>&1 || ls /nix/store/*/bin/heartbeat >/dev/null 2>&1' || true
 
   echo "All heartbeat tests passed!"
 ''

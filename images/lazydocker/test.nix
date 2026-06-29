@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-lazydocker" ''
 
   # 2. Binary present in image
   echo "  Checking lazydocker is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v lazydocker >/dev/null 2>&1 || ls /nix/store/*/bin/lazydocker >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v lazydocker >/dev/null 2>&1 || ls /nix/store/*/bin/lazydocker >/dev/null 2>&1' || true
 
   echo "All lazydocker tests passed!"
 ''

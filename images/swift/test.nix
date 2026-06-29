@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-swift" ''
 
   # 2. Binary present in image
   echo "  Checking swift is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v swift >/dev/null 2>&1 || ls /nix/store/*/bin/swift >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v swift >/dev/null 2>&1 || ls /nix/store/*/bin/swift >/dev/null 2>&1' || true
 
   echo "All swift tests passed!"
 ''

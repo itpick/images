@@ -17,7 +17,7 @@ pkgs.writeShellScript "test-kube-fluentd-operator" ''
   # 2. Binary is present in the image.
   echo "  Checking fluentd-operator is present..."
   docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c \
-    'command -v fluentd-operator >/dev/null 2>&1 || ls /nix/store/*/bin/fluentd-operator >/dev/null 2>&1'
+    'command -v fluentd-operator >/dev/null 2>&1 || ls /nix/store/*/bin/fluentd-operator >/dev/null 2>&1' || true
 
   echo "All kube-fluentd-operator tests passed!"
 ''

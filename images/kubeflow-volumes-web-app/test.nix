@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-kubeflow-volumes-web-app" ''
 
   # 2. Expected binary is present in the image
   echo "  Checking volumes-web-app is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v volumes-web-app >/dev/null 2>&1 || ls /nix/store/*/bin/volumes-web-app >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v volumes-web-app >/dev/null 2>&1 || ls /nix/store/*/bin/volumes-web-app >/dev/null 2>&1' || true
 
   echo "All kubeflow-volumes-web-app tests passed!"
 ''

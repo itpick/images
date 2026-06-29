@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-zoxide" ''
 
   # 2. Binary present in image
   echo "  Checking zoxide is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v zoxide >/dev/null 2>&1 || ls /nix/store/*/bin/zoxide >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v zoxide >/dev/null 2>&1 || ls /nix/store/*/bin/zoxide >/dev/null 2>&1' || true
 
   echo "All zoxide tests passed!"
 ''

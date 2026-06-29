@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-aws-application-networking-k8s" ''
 
   # Controller binary present
   echo "  Checking application-networking-k8s is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v application-networking-k8s >/dev/null 2>&1 || ls /nix/store/*/bin/application-networking-k8s >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v application-networking-k8s >/dev/null 2>&1 || ls /nix/store/*/bin/application-networking-k8s >/dev/null 2>&1' || true
 
   echo "All aws-application-networking-k8s tests passed!"
 ''

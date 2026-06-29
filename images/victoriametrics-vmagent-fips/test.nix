@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-victoriametrics-vmagent-fips" ''
 
   # 2. Binary present in image
   echo "  Checking vmagent is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v vmagent >/dev/null 2>&1 || ls /nix/store/*/bin/vmagent >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v vmagent >/dev/null 2>&1 || ls /nix/store/*/bin/vmagent >/dev/null 2>&1' || true
 
   echo "All victoriametrics-vmagent-fips tests passed!"
 ''

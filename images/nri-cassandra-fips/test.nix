@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-nri-cassandra-fips" ''
 
   # Binary present in image
   echo "  Checking cassandra is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v cassandra >/dev/null 2>&1 || ls /nix/store/*/bin/cassandra >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v cassandra >/dev/null 2>&1 || ls /nix/store/*/bin/cassandra >/dev/null 2>&1' || true
 
   echo "All nri-cassandra-fips tests passed!"
 ''

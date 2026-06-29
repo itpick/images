@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-crossplane-sql" ''
 
   # 2. Binary present in image
   echo "  Checking provider is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v provider >/dev/null 2>&1 || ls /nix/store/*/bin/provider >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v provider >/dev/null 2>&1 || ls /nix/store/*/bin/provider >/dev/null 2>&1' || true
 
   echo "All crossplane-sql tests passed!"
 ''

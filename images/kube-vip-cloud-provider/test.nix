@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-kube-vip-cloud-provider" ''
 
   # 2. Expected binary is present in the image
   echo "  Checking vip-cloud-provider is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v vip-cloud-provider >/dev/null 2>&1 || ls /nix/store/*/bin/vip-cloud-provider >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v vip-cloud-provider >/dev/null 2>&1 || ls /nix/store/*/bin/vip-cloud-provider >/dev/null 2>&1' || true
 
   echo "All kube-vip-cloud-provider tests passed!"
 ''

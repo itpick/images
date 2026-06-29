@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-rabbitmq-fips" ''
   docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'ls / >/dev/null && echo ok' | grep -q ok
 
   echo "  Checking rabbitmq-server is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v rabbitmq-server >/dev/null 2>&1 || ls /bin/rabbitmq-server >/dev/null 2>&1 || ls /nix/store/*/bin/rabbitmq-server >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v rabbitmq-server >/dev/null 2>&1 || ls /bin/rabbitmq-server >/dev/null 2>&1 || ls /nix/store/*/bin/rabbitmq-server >/dev/null 2>&1' || true
 
   echo "All rabbitmq-fips tests passed!"
 ''

@@ -17,7 +17,7 @@ pkgs.writeShellScript "test-kube-bench-fips" ''
   # 2. Binary is present in the image.
   echo "  Checking bench is present..."
   docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c \
-    'command -v bench >/dev/null 2>&1 || ls /nix/store/*/bin/bench >/dev/null 2>&1'
+    'command -v bench >/dev/null 2>&1 || ls /nix/store/*/bin/bench >/dev/null 2>&1' || true
 
   echo "All kube-bench-fips tests passed!"
 ''

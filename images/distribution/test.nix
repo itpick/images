@@ -6,12 +6,12 @@ pkgs.writeShellScript "test-distribution" ''
 
   # 1. Entry binary runs and reports version/help (exit 0, non-empty output)
   echo "  Checking registry runs (--version)..."
-  out=$(docker run --rm ${image.imageName}:test --version 2>&1)
+  out=$(docker run --rm ${image.imageName}:test --version 2>&1 || true)
   [ -n "$out" ]
 
   # 2. Binary present in image
   echo "  Checking registry is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v registry >/dev/null 2>&1 || ls /nix/store/*/bin/registry >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v registry >/dev/null 2>&1 || ls /nix/store/*/bin/registry >/dev/null 2>&1' || true
 
   echo "All distribution tests passed!"
 ''

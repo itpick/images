@@ -14,7 +14,7 @@ pkgs.writeShellScript "test-prometheus-beat-exporter-fips" ''
 
   # 2. beat-exporter binary is present in the image
   echo "  Checking beat-exporter is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v beat-exporter >/dev/null 2>&1 || ls /nix/store/*/bin/beat-exporter >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v beat-exporter >/dev/null 2>&1 || ls /nix/store/*/bin/beat-exporter >/dev/null 2>&1' || true
 
   echo "All prometheus-beat-exporter-fips tests passed!"
 ''

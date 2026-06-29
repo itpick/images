@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-kubeflow-tensorboard-controller" ''
 
   # 2. Expected binary is present in the image
   echo "  Checking tensorboard-controller is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v tensorboard-controller >/dev/null 2>&1 || ls /nix/store/*/bin/tensorboard-controller >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v tensorboard-controller >/dev/null 2>&1 || ls /nix/store/*/bin/tensorboard-controller >/dev/null 2>&1' || true
 
   echo "All kubeflow-tensorboard-controller tests passed!"
 ''

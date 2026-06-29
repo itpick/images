@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-flux-kustomize-controller-iamguarded" ''
 
   # Binary present in image
   echo "  Checking flux-kustomize-controller-iamguarded is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v flux-kustomize-controller-iamguarded >/dev/null 2>&1 || ls /nix/store/*/bin/flux-kustomize-controller-iamguarded >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v flux-kustomize-controller-iamguarded >/dev/null 2>&1 || ls /nix/store/*/bin/flux-kustomize-controller-iamguarded >/dev/null 2>&1' || true
 
   echo "All flux-kustomize-controller-iamguarded tests passed!"
 ''

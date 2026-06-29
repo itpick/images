@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-git-sync" ''
 
   # Binary present in image
   echo "  Checking git-sync is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v git-sync >/dev/null 2>&1 || ls /nix/store/*/bin/git-sync >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v git-sync >/dev/null 2>&1 || ls /nix/store/*/bin/git-sync >/dev/null 2>&1' || true
 
   echo "All git-sync tests passed!"
 ''

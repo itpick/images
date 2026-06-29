@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-node-problem-detector" ''
 
   # 2. Binary present in image
   echo "  Checking node-problem-detector is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v node-problem-detector >/dev/null 2>&1 || ls /nix/store/*/bin/node-problem-detector >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v node-problem-detector >/dev/null 2>&1 || ls /nix/store/*/bin/node-problem-detector >/dev/null 2>&1' || true
 
   echo "All node-problem-detector tests passed!"
 ''

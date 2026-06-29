@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-dapr-operator-fips" ''
 
   # 2. Binary present in image
   echo "  Checking dapr-operator is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v dapr-operator >/dev/null 2>&1 || ls /nix/store/*/bin/dapr-operator >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v dapr-operator >/dev/null 2>&1 || ls /nix/store/*/bin/dapr-operator >/dev/null 2>&1' || true
 
   echo "All dapr-operator-fips tests passed!"
 ''

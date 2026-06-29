@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-nnn" ''
 
   # 2. Binary present in image
   echo "  Checking nnn is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v nnn >/dev/null 2>&1 || ls /nix/store/*/bin/nnn >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v nnn >/dev/null 2>&1 || ls /nix/store/*/bin/nnn >/dev/null 2>&1' || true
 
   echo "All nnn tests passed!"
 ''

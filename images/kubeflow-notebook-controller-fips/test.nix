@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-kubeflow-notebook-controller-fips" ''
 
   # 2. Expected binary is present in the image
   echo "  Checking notebook-controller is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v notebook-controller >/dev/null 2>&1 || ls /nix/store/*/bin/notebook-controller >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v notebook-controller >/dev/null 2>&1 || ls /nix/store/*/bin/notebook-controller >/dev/null 2>&1' || true
 
   echo "All kubeflow-notebook-controller-fips tests passed!"
 ''

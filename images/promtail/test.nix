@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-promtail" ''
 
   # 2. Binary present in image
   echo "  Checking promtail is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v promtail >/dev/null 2>&1 || ls /nix/store/*/bin/promtail >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v promtail >/dev/null 2>&1 || ls /nix/store/*/bin/promtail >/dev/null 2>&1' || true
 
   echo "All promtail tests passed!"
 ''

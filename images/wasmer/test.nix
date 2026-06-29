@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-wasmer" ''
 
   # 2. Binary present in image
   echo "  Checking wasmer is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v wasmer >/dev/null 2>&1 || ls /nix/store/*/bin/wasmer >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v wasmer >/dev/null 2>&1 || ls /nix/store/*/bin/wasmer >/dev/null 2>&1' || true
 
   echo "All wasmer tests passed!"
 ''

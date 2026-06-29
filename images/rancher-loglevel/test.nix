@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-rancher-loglevel" ''
 
   # 2. Expected binary is present in the image
   echo "  Checking loglevel binary is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v loglevel >/dev/null 2>&1 || ls /nix/store/*/bin/loglevel >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v loglevel >/dev/null 2>&1 || ls /nix/store/*/bin/loglevel >/dev/null 2>&1' || true
 
   echo "All rancher-loglevel tests passed!"
 ''

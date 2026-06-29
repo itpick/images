@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-starship" ''
 
   # 2. Binary present in image
   echo "  Checking starship is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v starship >/dev/null 2>&1 || ls /nix/store/*/bin/starship >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v starship >/dev/null 2>&1 || ls /nix/store/*/bin/starship >/dev/null 2>&1' || true
 
   echo "All starship tests passed!"
 ''

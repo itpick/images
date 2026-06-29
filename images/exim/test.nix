@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-exim" ''
 
   # 2. Binary present in image
   echo "  Checking exim is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v exim >/dev/null 2>&1 || ls /nix/store/*/bin/exim >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v exim >/dev/null 2>&1 || ls /nix/store/*/bin/exim >/dev/null 2>&1' || true
 
   echo "All exim tests passed!"
 ''

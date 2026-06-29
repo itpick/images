@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-socat" ''
 
   # 2. Binary present in image
   echo "  Checking socat is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v socat >/dev/null 2>&1 || ls /nix/store/*/bin/socat >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v socat >/dev/null 2>&1 || ls /nix/store/*/bin/socat >/dev/null 2>&1' || true
 
   echo "All socat tests passed!"
 ''

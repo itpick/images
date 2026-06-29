@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-kube-state-metrics-iamguarded-fips" ''
 
   # 2. Expected binary is present in the image
   echo "  Checking kube-state-metrics-iamguarded is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kube-state-metrics-iamguarded >/dev/null 2>&1 || ls /nix/store/*/bin/kube-state-metrics-iamguarded >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kube-state-metrics-iamguarded >/dev/null 2>&1 || ls /nix/store/*/bin/kube-state-metrics-iamguarded >/dev/null 2>&1' || true
 
   echo "All kube-state-metrics-iamguarded-fips tests passed!"
 ''

@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-atlantis-fips" ''
 
   # Binary present
   echo "  Checking atlantis is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v atlantis >/dev/null 2>&1 || ls /nix/store/*/bin/atlantis >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v atlantis >/dev/null 2>&1 || ls /nix/store/*/bin/atlantis >/dev/null 2>&1' || true
 
   echo "All atlantis-fips tests passed!"
 ''

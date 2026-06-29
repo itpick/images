@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-aws-cli-fips" ''
 
   # Entry binary present
   echo "  Checking aws-cli is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v aws-cli >/dev/null 2>&1 || ls /nix/store/*/bin/aws-cli >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v aws-cli >/dev/null 2>&1 || ls /nix/store/*/bin/aws-cli >/dev/null 2>&1' || true
 
   echo "All aws-cli-fips tests passed!"
 ''

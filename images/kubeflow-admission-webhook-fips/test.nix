@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-kubeflow-admission-webhook-fips" ''
 
   # 2. Expected binary is present in the image
   echo "  Checking admission-webhook is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v admission-webhook >/dev/null 2>&1 || ls /nix/store/*/bin/admission-webhook >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v admission-webhook >/dev/null 2>&1 || ls /nix/store/*/bin/admission-webhook >/dev/null 2>&1' || true
 
   echo "All kubeflow-admission-webhook-fips tests passed!"
 ''

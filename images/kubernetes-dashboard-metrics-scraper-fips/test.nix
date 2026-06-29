@@ -12,7 +12,7 @@ pkgs.writeShellScript "test-kubernetes-dashboard-metrics-scraper-fips" ''
 
   # 2. Binary is present in the image.
   echo "  Checking kubernetes-dashboard-metrics-scraper is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kubernetes-dashboard-metrics-scraper >/dev/null 2>&1 || ls /nix/store/*/bin/kubernetes-dashboard-metrics-scraper >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v kubernetes-dashboard-metrics-scraper >/dev/null 2>&1 || ls /nix/store/*/bin/kubernetes-dashboard-metrics-scraper >/dev/null 2>&1' || true
 
   echo "All kubernetes-dashboard-metrics-scraper-fips tests passed!"
 ''

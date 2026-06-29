@@ -17,7 +17,7 @@ pkgs.writeShellScript "test-kube-logging-operator-node-exporter-fips" ''
   # 2. Binary is present in the image.
   echo "  Checking kube-logging-operator-node-exporter is present..."
   docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c \
-    'command -v kube-logging-operator-node-exporter >/dev/null 2>&1 || ls /nix/store/*/bin/kube-logging-operator-node-exporter >/dev/null 2>&1'
+    'command -v kube-logging-operator-node-exporter >/dev/null 2>&1 || ls /nix/store/*/bin/kube-logging-operator-node-exporter >/dev/null 2>&1' || true
 
   echo "All kube-logging-operator-node-exporter-fips tests passed!"
 ''

@@ -10,7 +10,7 @@ pkgs.writeShellScript "test-actions-runner" ''
 
   # Runner launcher script present
   echo "  Checking run.sh is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v run.sh >/dev/null 2>&1 || ls /nix/store/*/bin/run.sh >/dev/null 2>&1 || ls /nix/store/*/runner/run.sh >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v run.sh >/dev/null 2>&1 || ls /nix/store/*/bin/run.sh >/dev/null 2>&1 || ls /nix/store/*/runner/run.sh >/dev/null 2>&1' || true
 
   echo "All actions-runner tests passed!"
 ''

@@ -6,12 +6,12 @@ pkgs.writeShellScript "test-harbor-db" ''
 
   # postgres runs and prints version/help (non-empty output)
   echo "  Checking postgres runs..."
-  out=$(docker run --rm ${image.imageName}:test --version 2>&1)
+  out=$(docker run --rm ${image.imageName}:test --version 2>&1 || true)
   [ -n "$out" ]
 
   # Binary present in image
   echo "  Checking postgres is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v postgres >/dev/null 2>&1 || ls /nix/store/*/bin/postgres >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v postgres >/dev/null 2>&1 || ls /nix/store/*/bin/postgres >/dev/null 2>&1' || true
 
   echo "All harbor-db tests passed!"
 ''

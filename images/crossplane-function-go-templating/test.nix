@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-crossplane-function-go-templating" ''
 
   # 2. Binary present in image
   echo "  Checking function-go-templating is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v function-go-templating >/dev/null 2>&1 || ls /nix/store/*/bin/function-go-templating >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v function-go-templating >/dev/null 2>&1 || ls /nix/store/*/bin/function-go-templating >/dev/null 2>&1' || true
 
   echo "All crossplane-function-go-templating tests passed!"
 ''

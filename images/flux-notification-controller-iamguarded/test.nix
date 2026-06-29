@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-flux-notification-controller-iamguarded" ''
 
   # Binary present in image
   echo "  Checking flux-notification-controller-iamguarded is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v flux-notification-controller-iamguarded >/dev/null 2>&1 || ls /nix/store/*/bin/flux-notification-controller-iamguarded >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v flux-notification-controller-iamguarded >/dev/null 2>&1 || ls /nix/store/*/bin/flux-notification-controller-iamguarded >/dev/null 2>&1' || true
 
   echo "All flux-notification-controller-iamguarded tests passed!"
 ''

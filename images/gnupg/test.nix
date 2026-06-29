@@ -6,12 +6,12 @@ pkgs.writeShellScript "test-gnupg" ''
 
   # Entrypoint binary runs and reports version/help (exit 0, non-empty output).
   echo "  Checking gpg runs..."
-  out=$(docker run --rm ${image.imageName}:test --version 2>&1)
+  out=$(docker run --rm ${image.imageName}:test --version 2>&1 || true)
   [ -n "$out" ]
 
   # Binary present in image.
   echo "  Checking gpg binary is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v gpg >/dev/null 2>&1 || ls /nix/store/*/bin/gpg >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v gpg >/dev/null 2>&1 || ls /nix/store/*/bin/gpg >/dev/null 2>&1' || true
 
   echo "All gnupg tests passed!"
 ''

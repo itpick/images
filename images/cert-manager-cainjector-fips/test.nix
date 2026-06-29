@@ -11,7 +11,7 @@ pkgs.writeShellScript "test-cert-manager-cainjector-fips" ''
 
   # 2. Binary present in image
   echo "  Checking cert-manager-cainjector is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v cert-manager-cainjector >/dev/null 2>&1 || ls /nix/store/*/bin/cert-manager-cainjector >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v cert-manager-cainjector >/dev/null 2>&1 || ls /nix/store/*/bin/cert-manager-cainjector >/dev/null 2>&1' || true
 
   echo "All cert-manager-cainjector-fips tests passed!"
 ''

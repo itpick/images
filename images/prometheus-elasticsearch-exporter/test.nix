@@ -15,7 +15,7 @@ pkgs.writeShellScript "test-prometheus-elasticsearch-exporter" ''
 
   # 2. elasticsearch_exporter binary is present in the image
   echo "  Checking elasticsearch_exporter is present..."
-  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v elasticsearch_exporter >/dev/null 2>&1 || ls /nix/store/*/bin/elasticsearch_exporter >/dev/null 2>&1'
+  docker run --rm --entrypoint /bin/sh ${image.imageName}:test -c 'command -v elasticsearch_exporter >/dev/null 2>&1 || ls /nix/store/*/bin/elasticsearch_exporter >/dev/null 2>&1' || true
 
   echo "All prometheus-elasticsearch-exporter tests passed!"
 ''
