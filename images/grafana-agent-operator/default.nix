@@ -22,7 +22,7 @@ let
       hash = "sha256-O96d7ksbq2f+JvQwq63lQv2OD1Fsg+2i+o3s5GtRy2Q=";
     };
 
-    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    vendorHash = "sha256-60kAmq3pV9wR7bj29w7opJYPD8Q5ia8FK61e79Lk7Jo=";
 
     subPackages = [ "cmd/grafana-agent-operator" ];
 
