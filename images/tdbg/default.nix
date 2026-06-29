@@ -1,37 +1,40 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# tdbg
-# Container image
+# tdbg - Temporal debug CLI, shipped in the Temporal server release archive
+# https://github.com/temporalio/temporal
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.31.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "tdbg";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "tdbg";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "tdbg-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "tdug";
-      "org.opencontainers.image.description" = "tdbg container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/temporalio/temporal/releases/download/v${version}/temporal_${version}_linux_amd64.tar.gz";
+      hash = "sha256:0qxsyxkmpjrm9msfw0ahlv6jbhzpblv9hmsrivjc8iihg2lbws3d";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 tdbg $out/bin/tdbg
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "tdbg";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/tdbg" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "tdbg";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

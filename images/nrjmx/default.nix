@@ -1,37 +1,53 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# nrjmx
-# Container image
+# nrjmx - New Relic JMX fetcher (JMX -> JSON bridge for the Infrastructure agent)
+# https://github.com/newrelic/nrjmx
+# Upstream ships a noarch (Java) tarball; we install the jar and wrap it with a JRE.
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "2.12.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "nrjmx";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "nrjmx";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "nrjmx-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "nrjmx";
-      "org.opencontainers.image.description" = "nrjmx container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/newrelic/nrjmx/releases/download/v${version}/nrjmx_linux_${version}_noarch.tar.gz";
+      hash = "sha256-AnXinmYAkxtqQ/GoT6sMwcpmJe2YmlvuA3gqVfnqtqU=";
     };
+
+    sourceRoot = ".";
+
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/lib/nrjmx
+      cp -r usr/lib/nrjmx/. $out/lib/nrjmx/
+      makeWrapper ${pkgs.jre}/bin/java $out/bin/nrjmx \
+        --add-flags "-cp '$out/lib/nrjmx/*:$out/lib/nrjmx/connectors/*' org.newrelic.nrjmx.Application"
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "New Relic JMX fetcher";
+      homepage = "https://github.com/newrelic/nrjmx";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  inherit drv;
+  name = "nrjmx";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/nrjmx" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "nrjmx";
+    "org.opencontainers.image.description" = "New Relic JMX fetcher";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

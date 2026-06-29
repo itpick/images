@@ -1,37 +1,51 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# monstache
-# Container image
+# monstache - sync daemon from MongoDB to Elasticsearch
+# https://github.com/rwynn/monstache  (prebuilt Linux x86_64 release binary)
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "6.8.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "monstache";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "monstache";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "monstache-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "monstache";
-      "org.opencontainers.image.description" = "monstache container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/rwynn/monstache/releases/download/v${version}/monstache_v${version}_linux_x86_64.tar.gz";
+      hash = "sha256-zGcm3HcQgCGWJyYfSi3IDp+Zv9divaXR5wMcFO2zqBQ=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 monstache $out/bin/monstache
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "Sync daemon that keeps Elasticsearch/OpenSearch in sync with MongoDB";
+      homepage = "https://github.com/rwynn/monstache";
+      license = licenses.mit;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  inherit drv;
+  name = "monstache";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/monstache" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "monstache";
+    "org.opencontainers.image.description" = "Sync daemon from MongoDB to Elasticsearch";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

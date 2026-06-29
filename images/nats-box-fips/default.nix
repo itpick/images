@@ -1,35 +1,51 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# nats-box-fips
-# Container image
+# nats-box-fips - same upstream tool as nats-box: the `nats` CLI (natscli)
+# https://github.com/nats-io/natscli
 
 let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "0.4.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "natscli";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "nats-box-fips";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "nats-box-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "nats-box-fips";
-      "org.opencontainers.image.description" = "nats-box-fips container image";
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/nats-io/natscli/releases/download/v${version}/nats-${version}-linux-amd64.zip";
+      hash = "sha256-jb1DfIJrlT29dDLPiQ7yK6PDPczD3OXnGz6NBVQnhJw=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook pkgs.unzip ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = "nats-${version}-linux-amd64";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 nats $out/bin/nats
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "NATS command line interface (nats-box)";
+      homepage = "https://github.com/nats-io/natscli";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  inherit drv;
+  name = "nats-box-fips";
+  tag = "v${version}";
+  buildType = "binary";
+  entrypoint = [ "${drv}/bin/nats" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "nats-box-fips";
+    "org.opencontainers.image.description" = "NATS utility box (nats CLI)";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

@@ -1,38 +1,52 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# nats-fips
-# Container image
+# NATS Server - high-performance messaging system
+# https://github.com/nats-io/nats-server
+# (nats-fips: packages the upstream nats-server release binary)
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "2.14.3";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "nats-server";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "nats-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "nats-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "nats fips";
-      "org.opencontainers.image.description" = "nats-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/nats-io/nats-server/releases/download/v${version}/nats-server-v${version}-linux-amd64.tar.gz";
+      hash = "sha256-89DIIMdJ+B1xcxD7ANSQORnnDj5msmi9NSoIi5eI65M=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = "nats-server-v${version}-linux-amd64";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 nats-server $out/bin/nats-server
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "High-performance messaging server (NATS)";
+      homepage = "https://github.com/nats-io/nats-server";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  inherit drv;
+  name = "nats-fips";
+  tag = "v${version}";
+  buildType = "binary";
+  entrypoint = [ "${drv}/bin/nats-server" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "nats-fips";
+    "org.opencontainers.image.description" = "NATS messaging server";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

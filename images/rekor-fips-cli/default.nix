@@ -1,38 +1,39 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# rekor-fips-cli
-# Container image
-
+# rekor-cli — upstream prebuilt release binary
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.5.2";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "rekor-cli";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "rekor-fips-cli";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "rekor-fips-cli-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "rekor fips cli";
-      "org.opencontainers.image.description" = "rekor-fips-cli container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/sigstore/rekor/releases/download/v1.5.2/rekor-cli-linux-amd64";
+      hash = "sha256-5R4MeBWfg9OhcTmQ4JqxkESVBLCpFLqJu6U6UuWnYfk=";
     };
+
+    dontUnpack = true;
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 $src $out/bin/rekor-cli
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "rekor-fips-cli";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/rekor-cli" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "rekor-fips-cli";
+    "org.opencontainers.image.description" = "Sigstore Rekor CLI";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

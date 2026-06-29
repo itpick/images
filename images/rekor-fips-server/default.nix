@@ -1,38 +1,39 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# rekor-fips-server
-# Container image
-
+# rekor-server — upstream prebuilt release binary
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.5.2";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "rekor-server";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "rekor-fips-server";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "rekor-fips-server-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "rekor fips server";
-      "org.opencontainers.image.description" = "rekor-fips-server container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/sigstore/rekor/releases/download/v1.5.2/rekor-server-linux-amd64";
+      hash = "sha256-L1FxtLiing4VeTwqK2Ki0SZoVQ+bWA661qdieyfecXA=";
     };
+
+    dontUnpack = true;
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 $src $out/bin/rekor-server
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "rekor-fips-server";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/rekor-server" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "rekor-fips-server";
+    "org.opencontainers.image.description" = "Sigstore Rekor transparency log server";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

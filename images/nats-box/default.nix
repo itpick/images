@@ -1,37 +1,51 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# nats-box
-# Container image
+# nats-box - NATS utility box; its primary tool is the `nats` CLI (natscli)
+# https://github.com/nats-io/natscli
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "0.4.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "natscli";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "nats-box";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "nats-box-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "nats uox";
-      "org.opencontainers.image.description" = "nats-box container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/nats-io/natscli/releases/download/v${version}/nats-${version}-linux-amd64.zip";
+      hash = "sha256-jb1DfIJrlT29dDLPiQ7yK6PDPczD3OXnGz6NBVQnhJw=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook pkgs.unzip ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = "nats-${version}-linux-amd64";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 nats $out/bin/nats
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "NATS command line interface (nats-box)";
+      homepage = "https://github.com/nats-io/natscli";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  inherit drv;
+  name = "nats-box";
+  tag = "v${version}";
+  buildType = "binary";
+  entrypoint = [ "${drv}/bin/nats" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "nats-box";
+    "org.opencontainers.image.description" = "NATS utility box (nats CLI)";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

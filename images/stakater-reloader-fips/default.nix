@@ -1,38 +1,33 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# stakater-reloader-fips
-# Container image
-
+# Stakater Reloader - https://github.com/stakater/Reloader
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
-  name = "stakater-reloader-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "stakater-reloader-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "stakater reloader fips";
-      "org.opencontainers.image.description" = "stakater-reloader-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+  version = "1.4.17";
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "reloader";
+    inherit version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/stakater/Reloader/releases/download/v${version}/Reloader_v${version}_linux_amd64.tar.gz";
+      hash = "sha256:1ak8aj1z8c6aybrdyapwrx22hcnsizpyn4brp9ayi01wllncxp3b";
     };
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+    sourceRoot = ".";
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 Reloader $out/bin/reloader
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "stakater-reloader-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/reloader" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "stakater-reloader-fips";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

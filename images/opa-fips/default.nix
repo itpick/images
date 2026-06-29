@@ -1,38 +1,42 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# opa-fips
-# Container image
+# Open Policy Agent (OPA) - general-purpose policy engine
+# https://github.com/open-policy-agent/opa
+# opa-fips packages the upstream opa linux/amd64 binary.
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.18.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "opa-fips";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "opa-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "opa-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "opa fips";
-      "org.opencontainers.image.description" = "opa-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/open-policy-agent/opa/releases/download/v${version}/opa_linux_amd64";
+      sha256 = "1vga16l04mnn64n0nqjl6sb86y8vzkf3kmq0h6x0gp1zzsiqbaqz";
     };
+
+    dontUnpack = true;
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 $src $out/bin/opa
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "opa-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/opa" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "opa-fips";
+    "org.opencontainers.image.description" = "Open Policy Agent policy engine";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }
