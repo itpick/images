@@ -1,37 +1,50 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# sealed-secrets-kubeseal
-# Container image
+# kubeseal - client for Bitnami Sealed Secrets
+# https://github.com/bitnami-labs/sealed-secrets
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "0.38.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "sealed-secrets-kubeseal";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "sealed-secrets-kubeseal";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "sealed-secrets-kubeseal-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "sealed secrets kuueseal";
-      "org.opencontainers.image.description" = "sealed-secrets-kubeseal container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/bitnami-labs/sealed-secrets/releases/download/v${version}/kubeseal-${version}-linux-amd64.tar.gz";
+      hash = "sha256:0bbcqyimib72vqj1v4w4f2r9sxmf3122lz1y2lkmjrr61jziwybi";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 kubeseal $out/bin/kubeseal
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "Client tool for Bitnami Sealed Secrets";
+      homepage = "https://github.com/bitnami-labs/sealed-secrets";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  inherit drv;
+  name = "sealed-secrets-kubeseal";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/kubeseal" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "sealed-secrets-kubeseal";
+    "org.opencontainers.image.description" = "Client (kubeseal) for Bitnami Sealed Secrets";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

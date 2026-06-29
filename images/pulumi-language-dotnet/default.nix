@@ -1,37 +1,41 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# pulumi-language-dotnet
-# Container image
+# pulumi-language-dotnet - Pulumi .NET language host plugin
+# https://github.com/pulumi/pulumi-dotnet
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "3.107.2";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "pulumi-language-dotnet";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "pulumi-language-dotnet";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "pulumi-language-dotnet-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "pulumi language dotnet";
-      "org.opencontainers.image.description" = "pulumi-language-dotnet container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/pulumi/pulumi-dotnet/releases/download/v${version}/pulumi-language-dotnet-v${version}-linux-amd64.tar.gz";
+      hash = "sha256-Zu9gRE+zA6D4DD1EWtfpIV6FqENI5d1cBbephYWIOXo=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 pulumi-language-dotnet $out/bin/pulumi-language-dotnet
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "pulumi-language-dotnet";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/pulumi-language-dotnet" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "pulumi-language-dotnet";
+    "org.opencontainers.image.description" = "Pulumi .NET language host plugin";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

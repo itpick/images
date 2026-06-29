@@ -1,37 +1,40 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# splunk-otel-collector
-# Container image
+# Splunk OpenTelemetry Collector
+# https://github.com/signalfx/splunk-otel-collector
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "0.154.2";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "splunk-otel-collector";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "splunk-otel-collector";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "splunk-otel-collector-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "splunk otel collector";
-      "org.opencontainers.image.description" = "splunk-otel-collector container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/signalfx/splunk-otel-collector/releases/download/v${version}/otelcol_linux_amd64";
+      hash = "sha256:19jq6mgkxklblz24svglj0wy7cw5qjj1h91k5zgag9dvspwb2zcr";
     };
+
+    dontUnpack = true;
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 $src $out/bin/otelcol
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "splunk-otel-collector";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/otelcol" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "splunk-otel-collector";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

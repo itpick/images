@@ -1,37 +1,39 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# regclient-regbot
-# Container image
-
+# regbot — upstream prebuilt release binary
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "0.11.5";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "regbot";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "regclient-regbot";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "regclient-regbot-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "regclient reguot";
-      "org.opencontainers.image.description" = "regclient-regbot container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/regclient/regclient/releases/download/v0.11.5/regbot-linux-amd64";
+      hash = "sha256-ax9XzT7rUa8mB7I/ROJvG2vw5bS23qDTZIBKu5PLwRI=";
     };
+
+    dontUnpack = true;
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 $src $out/bin/regbot
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "regclient-regbot";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/regbot" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "regclient-regbot";
+    "org.opencontainers.image.description" = "regclient regbot - registry automation tool";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

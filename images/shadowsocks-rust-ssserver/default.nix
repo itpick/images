@@ -1,37 +1,40 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# shadowsocks-rust-ssserver
-# Container image
+# shadowsocks-rust - ssserver (remote server)
+# https://github.com/shadowsocks/shadowsocks-rust
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.24.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "shadowsocks-rust-ssserver";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "shadowsocks-rust-ssserver";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "shadowsocks-rust-ssserver-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "shadowsocks rust ssserver";
-      "org.opencontainers.image.description" = "shadowsocks-rust-ssserver container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/shadowsocks/shadowsocks-rust/releases/download/v${version}/shadowsocks-v${version}.x86_64-unknown-linux-gnu.tar.xz";
+      hash = "sha256:0razn3q6g2klbgxhs90sdn7wzs3nrj6m6saw5wsk5rsi9vxqwljz";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib pkgs.zlib pkgs.openssl ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 ssserver $out/bin/ssserver
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "shadowsocks-rust-ssserver";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/ssserver" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "shadowsocks-rust-ssserver";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

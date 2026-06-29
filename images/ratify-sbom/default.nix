@@ -1,37 +1,34 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# ratify-sbom
-# Container image
-
+# Ratify SBOM verifier plugin
+# https://github.com/notaryproject/ratify
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
-  name = "ratify-sbom";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "ratify-sbom-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "ratify suom";
-      "org.opencontainers.image.description" = "ratify-sbom container image";
-      "org.opencontainers.image.version" = version;
+  version = "1.4.0";
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "ratify-sbom";
+    inherit version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/notaryproject/ratify/releases/download/v${version}/ratify_${version}_linux_amd64.tar.gz";
+      hash = "sha256-23Ois9IL0X22bz+lJ3pgee1YcjpcmKONgcyofo9mZxo=";
     };
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+    sourceRoot = ".";
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 sbom $out/bin/sbom
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "ratify-sbom";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/sbom" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "ratify-sbom";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

@@ -1,34 +1,48 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# metrics-server-iamguarded
-# Container image
+# Kubernetes Metrics Server - scalable, efficient source of container resource metrics
+# https://github.com/kubernetes-sigs/metrics-server
+# (iamguarded variant packages the upstream prebuilt binary)
 
 let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "0.8.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "metrics-server";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "metrics-server-iamguarded";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "metrics-server-iamguarded-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "metrics-server-iamguarded";
-      "org.opencontainers.image.description" = "metrics-server-iamguarded container image";
+    src = pkgs.fetchurl {
+      url = "https://github.com/kubernetes-sigs/metrics-server/releases/download/v${version}/metrics-server-linux-amd64";
+      hash = "sha256:0v19z9hlzhp3hyz1n5kzz4wnsnviiz6rnzszgsmhl41dj2jma96x";
     };
+
+    dontUnpack = true;
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 $src $out/bin/metrics-server
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "Kubernetes Metrics Server";
+      homepage = "https://github.com/kubernetes-sigs/metrics-server";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+in mkImage {
+  inherit drv;
+  name = "metrics-server-iamguarded";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/metrics-server" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "metrics-server-iamguarded";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

@@ -1,38 +1,41 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# spegel-fips
-# Container image
+# Spegel - stateless cluster local OCI registry mirror
+# https://github.com/spegel-org/spegel
+# Note: packages the upstream spegel binary (no FIPS claim made).
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "0.7.2";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "spegel";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "spegel-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "spegel-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "spegel fips";
-      "org.opencontainers.image.description" = "spegel-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/spegel-org/spegel/releases/download/v${version}/spegel_${version}_linux_amd64.tar.gz";
+      hash = "sha256:0vgdffil1ql9kxakjsbqzq0cgd7ppymv3yh1vibncapi14qcssvh";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 spegel_linux_amd64/spegel $out/bin/spegel
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "spegel-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/spegel" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "spegel-fips";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

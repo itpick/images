@@ -1,37 +1,42 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# pushprox
-# Container image
+# pushprox - proxy enabling Prometheus to scrape through NAT/firewalls
+# https://github.com/prometheus-community/PushProx
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "0.2.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "pushprox";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "pushprox";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "pushprox-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "pushprox";
-      "org.opencontainers.image.description" = "pushprox container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/prometheus-community/PushProx/releases/download/v${version}/PushProx-${version}.linux-amd64.tar.gz";
+      hash = "sha256-x1zAXQeNWVcbi9plYDlYTcS3vpX8irUzK/q7AsLIBqM=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = "PushProx-${version}.linux-amd64";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 pushprox-proxy $out/bin/pushprox-proxy
+      install -Dm755 pushprox-client $out/bin/pushprox-client
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "pushprox";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/pushprox-proxy" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "pushprox";
+    "org.opencontainers.image.description" = "PushProx proxy for scraping Prometheus targets behind NAT/firewalls";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

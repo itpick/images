@@ -1,38 +1,42 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# omni-fips
-# Container image
+# Omni - Sidero Labs Kubernetes/Talos management platform
+# https://github.com/siderolabs/omni
+# omni-fips packages the upstream omni linux/amd64 binary.
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.9.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "omni-fips";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "omni-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "omni-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "omni fips";
-      "org.opencontainers.image.description" = "omni-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/siderolabs/omni/releases/download/v${version}/omni-linux-amd64";
+      sha256 = "1bzh9gvkdy9bx376bjmwnq1q2dmqjwlkbinw44pwg0jfw5q5s5p8";
     };
+
+    dontUnpack = true;
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib pkgs.zlib ];
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 $src $out/bin/omni
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "omni-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/omni" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "omni-fips";
+    "org.opencontainers.image.description" = "Sidero Labs Omni management platform";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

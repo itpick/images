@@ -1,34 +1,61 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# nacos
-# Container image
+# Nacos - dynamic service discovery, configuration and service management
+# https://github.com/alibaba/nacos
+# Packaged from the upstream prebuilt server release tarball (Java application).
 
 let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "3.2.2";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "nacos";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "nacos";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "nacos-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "nacos";
-      "org.opencontainers.image.description" = "nacos container image";
+    src = pkgs.fetchurl {
+      url = "https://github.com/alibaba/nacos/releases/download/${version}/nacos-server-${version}.tar.gz";
+      hash = "sha256-+ue8ZBQp3WYAhP8kImvckq6aD0DicT9G9iheW9nQJOs=";
     };
+
+    # No ELF binaries in the distribution (pure-Java); autoPatchelfHook is a no-op.
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+
+    sourceRoot = "nacos";
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/nacos
+      cp -r . $out/nacos/
+      chmod +x $out/nacos/bin/*.sh
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "Dynamic service discovery, configuration and service management";
+      homepage = "https://github.com/alibaba/nacos";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  inherit drv;
+  name = "nacos";
+  tag = "v${version}";
+  buildType = "binary";
+
+  entrypoint = [ "${pkgs.bash}/bin/bash" "${drv}/nacos/bin/startup.sh" "-m" "standalone" ];
+  cmd = [];
+
+  env = {
+    JAVA_HOME = "${pkgs.jre}";
+  };
+
+  extraPkgs = [ pkgs.jre pkgs.bash ];
+
+  labels = {
+    "org.opencontainers.image.title" = "nacos";
+    "org.opencontainers.image.description" = "Nacos service discovery and configuration server";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

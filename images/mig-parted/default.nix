@@ -1,37 +1,48 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# mig-parted
-# Container image
+# NVIDIA MIG Partition Editor (nvidia-mig-parted)
+# https://github.com/NVIDIA/mig-parted
+# Packaged from the upstream nvidia-mig-manager release tarball.
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "0.14.2";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "mig-parted";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "mig-parted";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "mig-parted-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "mig parted";
-      "org.opencontainers.image.description" = "mig-parted container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/NVIDIA/mig-parted/releases/download/v${version}/nvidia-mig-manager-${version}-1.x86_64.tar.gz";
+      hash = "sha256:10xl27brc2701kznpyc1pksqfp7xqc4gv4gnnmn32dxd2yxpdrx3";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = "nvidia-mig-manager-${version}-1";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 nvidia-mig-parted $out/bin/nvidia-mig-parted
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "NVIDIA MIG Partition Editor";
+      homepage = "https://github.com/NVIDIA/mig-parted";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+in mkImage {
+  inherit drv;
+  name = "mig-parted";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/nvidia-mig-parted" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "mig-parted";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

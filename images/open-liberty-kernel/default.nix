@@ -1,37 +1,53 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# open-liberty-kernel
-# Container image
+# Open Liberty (kernel) - minimal Open Liberty runtime kernel
+# https://github.com/OpenLiberty/open-liberty
+# Official kernel zip distributed via Maven Central.
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "26.0.0.6";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "open-liberty-kernel";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "open-liberty-kernel";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "open-liberty-kernel-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "open liuerty kernel";
-      "org.opencontainers.image.description" = "open-liberty-kernel container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://repo1.maven.org/maven2/io/openliberty/openliberty-kernel/${version}/openliberty-kernel-${version}.zip";
+      sha256 = "0sn0nah9r5y64y28skgpbxbpbyh6yav0krhsn2jvjcbjfgch5sxc";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook pkgs.unzip ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out
+      cp -r wlp $out/wlp
+      mkdir -p $out/bin
+      ln -s $out/wlp/bin/server $out/bin/server
+      runHook postInstall
+    '';
+
+    dontStrip = true;
+  };
+in mkImage {
+  inherit drv;
+  name = "open-liberty-kernel";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/server" ];
+  cmd = [ "help" ];
+
+  extraPkgs = with pkgs; [
+    jdk17_headless
+    bash
+  ];
+
+  labels = {
+    "org.opencontainers.image.title" = "open-liberty-kernel";
+    "org.opencontainers.image.description" = "Open Liberty runtime kernel";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }
