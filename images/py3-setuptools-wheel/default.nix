@@ -12,7 +12,7 @@ mkImage {
   labels = {
     "org.opencontainers.image.title" = "py3-setuptools-wheel";
     "org.opencontainers.image.description" = "py3-setuptools-wheel container image";
-    "org.opencontainers.image.version" = setuptools.version or "latest";
+    "org.opencontainers.image.version" = pkgs.python3Packages.setuptools.version or "latest";
   };
   
   user = nonRoot.userString;

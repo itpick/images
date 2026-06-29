@@ -1,4 +1,4 @@
-{ mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
+{ mkImage, fetchFromGitHub, buildGoModule, lib, libcap, ... }:
 
 
 # Chainguard SBOM packages for vault-k8s:
