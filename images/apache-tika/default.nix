@@ -1,37 +1,53 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# apache-tika
-# Container image
+# Apache Tika - content analysis / detection & extraction toolkit
+# https://tika.apache.org  (tika-server standard distribution)
+# Upstream prebuilt binary distribution: tika-server-standard-<ver>-bin.tgz
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "3.3.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "apache-tika-server";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "apache-tika";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "apache-tika-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "apache tika";
-      "org.opencontainers.image.description" = "apache-tika container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://archive.apache.org/dist/tika/${version}/tika-server-standard-${version}-bin.tgz";
+      hash = "sha256-yteqiB3CWBe2DIbWjePTio5pj2w9Y8ztw3ZPhceXjUk=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook pkgs.makeWrapper ];
+
+    sourceRoot = "tika-server-standard-${version}-bin";
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/share/tika
+      cp tika-server.jar $out/share/tika/tika-server.jar
+      makeWrapper ${pkgs.jdk17_headless}/bin/java $out/bin/tika-server \
+        --add-flags "-jar $out/share/tika/tika-server.jar"
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "Apache Tika Server - content detection and extraction";
+      homepage = "https://tika.apache.org";
+      license = licenses.asl20;
+      platforms = [ "x86_64-linux" ];
+    };
+  };
+
+in mkImage {
+  inherit drv;
+  name = "apache-tika";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/tika-server" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "apache-tika";
+    "org.opencontainers.image.description" = "Apache Tika Server content extraction toolkit";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

@@ -1,37 +1,41 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# crac-criu
-# Container image
+# CRaC CRIU - Checkpoint/Restore In Userspace, CRaC (Coordinated Restore at Checkpoint) build
+# https://github.com/CRaC/criu
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.5.2";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "crac-criu";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "crac-criu";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "crac-criu-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "crac criu";
-      "org.opencontainers.image.description" = "crac-criu container image";
-      "org.opencontainers.image.version" = version;
+    src = pkgs.fetchurl {
+      url = "https://github.com/CRaC/criu/releases/download/release-${version}/criu-crac-release-${version}.tar.gz";
+      hash = "sha256-gXSCswPoX7+apbRBpkpc5V6rwjVJrxa+mOVsSpKKGZs=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = "criu-crac-release-${version}";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 sbin/criu $out/bin/criu
+      install -Dm755 sbin/criu-ns $out/bin/criu-ns
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "crac-criu";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/criu" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "crac-criu";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

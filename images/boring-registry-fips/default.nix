@@ -1,38 +1,39 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# boring-registry-fips
-# Container image
-
+# boring-registry - open source Terraform/OpenTofu module and provider registry
+# https://github.com/boring-registry/boring-registry
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "0.18.0";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "boring-registry";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "boring-registry-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "boring-registry-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "uoring registry fips";
-      "org.opencontainers.image.description" = "boring-registry-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/boring-registry/boring-registry/releases/download/v${version}/boring-registry_${version}_Linux_x86_64.tar.gz";
+      hash = "sha256-W+kVmjpxKTN/VEhacJNKSHQhMMOHnbGP0tPyo1Lvhdk=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 boring-registry $out/bin/boring-registry
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "boring-registry-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/boring-registry" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "boring-registry";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

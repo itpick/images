@@ -1,38 +1,39 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# azcopy-fips
-# Container image
-
+# azcopy - Azure Storage data transfer command-line utility
+# https://github.com/Azure/azure-storage-azcopy
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "10.32.4";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "azcopy";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "azcopy-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "azcopy-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "azcopy fips";
-      "org.opencontainers.image.description" = "azcopy-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/Azure/azure-storage-azcopy/releases/download/v${version}/azcopy_linux_amd64_${version}.tar.gz";
+      hash = "sha256-j4WaDbvBF2YMJJ+zVpaU/IoPM7aHAfWyuSzMAB7lB4Q=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = "azcopy_linux_amd64_${version}";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 azcopy $out/bin/azcopy
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "azcopy-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/azcopy" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "azcopy";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

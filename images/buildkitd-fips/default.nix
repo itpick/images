@@ -1,38 +1,49 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# buildkitd-fips
-# Container image
+# buildkitd - concurrent, cache-efficient, and Dockerfile-agnostic builder daemon
+# Upstream prebuilt release binary from https://github.com/moby/buildkit
+# Note: the "-fips" suffix denotes the same upstream tool; no FIPS claim is made.
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "0.31.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "buildkitd-fips";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "buildkitd-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "buildkitd-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "uuildkitd fips";
-      "org.opencontainers.image.description" = "buildkitd-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/moby/buildkit/releases/download/v${version}/buildkit-v${version}.linux-amd64.tar.gz";
+      hash = "sha256:0vp1a5s4cgl2azipkkg8754vs1v83mahng4sg4cdqsy9s188giqz";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+
+    buildInputs = [
+      pkgs.stdenv.cc.cc.lib
+      pkgs.zlib
+    ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/bin
+      install -Dm755 bin/* -t $out/bin
+      runHook postInstall
+    '';
+  };
+
+in mkImage {
+  inherit drv;
+  name = "buildkitd-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/buildkitd" ];
+  cmd = [ "--help" ];
+
+  labels = {
+    "org.opencontainers.image.title" = "buildkitd-fips";
+    "org.opencontainers.image.description" = "BuildKit builder daemon (moby/buildkit upstream binary)";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

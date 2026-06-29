@@ -1,38 +1,44 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# consul-k8s-fips
-# Container image
+# consul-k8s CLI - control plane for Consul on Kubernetes
+# https://github.com/hashicorp/consul-k8s
+# Official prebuilt binary from releases.hashicorp.com.
+# The -fips suffix denotes the same upstream tool (no FIPS claim made here).
 
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.8.14";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "consul-k8s-fips";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "consul-k8s-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "consul-k8s-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "consul k8s fips";
-      "org.opencontainers.image.description" = "consul-k8s-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://releases.hashicorp.com/consul-k8s/${version}/consul-k8s_${version}_linux_amd64.zip";
+      hash = "sha256-1vn3fsmnpVleu2GQNsIwI+8PJ5nWoVjhxaec+32Og7c=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook pkgs.unzip ];
+
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 consul-k8s $out/bin/consul-k8s
+      runHook postInstall
+    '';
+  };
+
+in mkImage {
+  inherit drv;
+  name = "consul-k8s-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/consul-k8s" ];
+  cmd = [ "version" ];
+  labels = {
+    "org.opencontainers.image.title" = "consul-k8s-fips";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }

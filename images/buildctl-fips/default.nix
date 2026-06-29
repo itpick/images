@@ -1,38 +1,39 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
-# buildctl-fips
-# Container image
-
+# buildctl - BuildKit client CLI (from moby/buildkit)
+# https://github.com/moby/buildkit
 let
-  version = "latest";
-  
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "0.31.1";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  drv = pkgs.stdenv.mkDerivation {
+    pname = "buildctl";
+    inherit version;
 
-in nix2container.buildImage {
-  name = "buildctl-fips";
-  tag = version;
-  copyToRoot = [
-    (buildEnv {
-      name = "buildctl-fips-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "uuildctl fips";
-      "org.opencontainers.image.description" = "buildctl-fips container image";
-      "org.opencontainers.image.version" = version;
-    "io.nix-containers.compliance" = "FIPS-140-2";
+    src = pkgs.fetchurl {
+      url = "https://github.com/moby/buildkit/releases/download/v${version}/buildkit-v${version}.linux-amd64.tar.gz";
+      hash = "sha256-H8eHUNDJa9wYeZo8C1UdaAe9STnozXnjV4I+RnRR4W4=";
     };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 bin/buildctl $out/bin/buildctl
+      runHook postInstall
+    '';
+  };
+in mkImage {
+  inherit drv;
+  name = "buildctl-fips";
+  tag = "v${version}";
+  entrypoint = [ "${drv}/bin/buildctl" ];
+  cmd = [ "--help" ];
+  labels = {
+    "org.opencontainers.image.title" = "buildctl";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.source" = "upstream-binary";
   };
 }
