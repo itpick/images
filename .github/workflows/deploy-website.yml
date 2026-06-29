@@ -66,14 +66,15 @@ jobs:
       - name: Build static website
         env:
           SCAN_DATA_PATH: ${{ steps.scan.outputs.path }}
+          # GH Pages project sites publish at /<repo>/, so absolute asset
+          # URLs (/static/css/site.css etc.) need that prefix.
+          PAGES_BASE_PATH: /${{ github.event.repository.name }}/
         run: |
           set -euo pipefail
           . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-          if [ -n "${SCAN_DATA_PATH:-}" ]; then
-            nix build .#website --impure --print-build-logs
-          else
-            nix build .#website --print-build-logs
-          fi
+          # --impure required to read PAGES_BASE_PATH (and SCAN_DATA_PATH
+          # if set) via builtins.getEnv in generate-site.nix.
+          nix build .#website --impure --print-build-logs
           mkdir -p ./website-build
           cp -r ./result/* ./website-build/
         

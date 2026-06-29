@@ -105,7 +105,10 @@ def main():
     ap.add_argument("--pygmentize", required=True, help="Path to pygmentize binary")
     ap.add_argument("--scan-data", default=None,
                     help="Optional path to directory of *-trivy.json files")
+    ap.add_argument("--base-path", default="/",
+                    help="URL base path (e.g. '/' locally, '/images/' on GH Pages project site). Trailing slash required.")
     args = ap.parse_args()
+    base = args.base_path if args.base_path.endswith("/") else args.base_path + "/"
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -134,6 +137,7 @@ def main():
             "README_HTML": readme_html,
             "NIX_HTML": nix_html,
             "BUILD_TIME": build_time,
+            "BASE": base,
         }
         used_by = img.get("usedByCharts", []) or []
         if used_by:
@@ -186,7 +190,7 @@ def main():
     }
     (out / "images-data.json").write_text(json.dumps(slim_data))
 
-    rendered_index = index_template  # No global placeholders to fill today
+    rendered_index = fill_template(index_template, {"BASE": base})
     (out / "index.html").write_text(rendered_index)
 
     print(f"Rendered {len(slim_images)} per-image pages + index -> {out}",
