@@ -81,4 +81,4 @@ These files require manual correction of either:
 - Only source hashes were updated (first occurrence in each file)
 - vendorHash fields remain unchanged with placeholder values as requested
 - All updated files have been verified with git diff
-- A full processing log is available at: `/Users/lucaspick/workspace/drduker/nix-containers/images/crossplane_hash_fix.log`
+- A full processing log is available at: `data-gathering/crossplane_hash_fix.log`

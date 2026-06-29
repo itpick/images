@@ -7,9 +7,10 @@ TOTAL=$(echo "$IMAGES" | wc -l | tr -d ' ')
 echo "Building $TOTAL images..."
 echo "Start: $(date)"
 
-# Initialize log files 
-SUCCESS_LOG="build-success.log"
-FAIL_LOG="build-fail.log"
+# Initialize log files
+SUCCESS_LOG="data-gathering/build-success.log"
+FAIL_LOG="data-gathering/build-fail.log"
+mkdir -p data-gathering
 > "$SUCCESS_LOG"
 > "$FAIL_LOG"
 

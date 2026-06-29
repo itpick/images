@@ -96,7 +96,7 @@ Alternatively, add these as hardcoded versions instead of dynamic lookups.
 
 ## Failed Images
 
-See `build-fail.log` for the complete list of 1175 failed images.
+See `data-gathering/build-fail.log` for the complete list of 1175 failed images.
 
 ## Fix Applied
 
