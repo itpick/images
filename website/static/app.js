@@ -1,5 +1,6 @@
 let allImages = [];
 let filteredImages = [];
+const BASE = window.SITE_BASE || '/';
 
 document.addEventListener('DOMContentLoaded', () => {
   loadImages();
@@ -10,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadImages() {
   try {
-    const r = await fetch('/images-data.json');
+    const r = await fetch(BASE + 'images-data.json');
     const data = await r.json();
     allImages = data.images || [];
     filteredImages = [...allImages];
@@ -69,7 +70,7 @@ function render() {
     return;
   }
   c.innerHTML = filteredImages.map(i => `
-    <a href="/images/${escapeAttr(i.name)}/"
+    <a href="${BASE}images/${escapeAttr(i.name)}/"
        class="card block">
       <div class="flex items-center justify-between mb-2">
         <div class="font-mono font-bold text-fg-primary">${escapeHtml(i.name)}</div>

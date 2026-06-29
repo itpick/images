@@ -110,6 +110,11 @@ pkgs.stdenv.mkDerivation {
   # Requires --impure to read the env var; CI passes that flag.
   SCAN_DATA_PATH = builtins.getEnv "SCAN_DATA_PATH";
 
+  # URL base path for the deployed site. GitHub Pages project sites live
+  # at /<repo>/, so CI sets PAGES_BASE_PATH=/images/. Local builds leave
+  # it empty → render.py defaults to "/". Also requires --impure when set.
+  PAGES_BASE_PATH = builtins.getEnv "PAGES_BASE_PATH";
+
   buildPhase = ''
     runHook preBuild
 
@@ -137,12 +142,18 @@ pkgs.stdenv.mkDerivation {
     else
       echo "   No scan data; vulnerability panels will be omitted"
     fi
+    BASE_ARG="--base-path /"
+    if [ -n "''${PAGES_BASE_PATH:-}" ]; then
+      echo "   Using PAGES_BASE_PATH=$PAGES_BASE_PATH"
+      BASE_ARG="--base-path $PAGES_BASE_PATH"
+    fi
     python3 render.py \
       --data ${imagesJsonFull} \
       --templates ./templates \
       --out $OUT_DIR \
       --cmark ${pkgs.cmark}/bin/cmark \
       --pygmentize ${pkgs.python3Packages.pygments}/bin/pygmentize \
+      $BASE_ARG \
       $SCAN_ARG
 
     echo "-> Build complete. Output:"

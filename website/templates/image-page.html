@@ -4,16 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{NAME}} — nix-containers</title>
-  <link rel="stylesheet" href="/static/css/site.css">
+  <link rel="stylesheet" href="{{BASE}}static/css/site.css">
 </head>
 <body class="bg-bg-base text-fg-primary min-h-screen">
   <header class="border-b border-neutral-800 bg-bg-elevated">
     <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-      <a href="/" class="font-mono text-lg font-bold text-accent-ok">
+      <a href="{{BASE}}" class="font-mono text-lg font-bold text-accent-ok">
         nix-containers
       </a>
       <nav class="text-sm text-fg-muted space-x-4">
-        <a href="/" class="hover:text-fg-primary">All images</a>
+        <a href="{{BASE}}" class="hover:text-fg-primary">All images</a>
         <a href="https://github.com/nix-containers/images"
            class="hover:text-fg-primary">GitHub</a>
       </nav>
@@ -64,7 +64,7 @@
   </main>
 
   <footer class="border-t border-neutral-800 mt-12 py-6 text-center text-fg-muted text-sm">
-    Built {{BUILD_TIME}} · <a href="/" class="hover:text-fg-primary">All images</a>
+    Built {{BUILD_TIME}} · <a href="{{BASE}}" class="hover:text-fg-primary">All images</a>
   </footer>
 </body>
 </html>
