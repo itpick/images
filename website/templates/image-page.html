@@ -30,11 +30,29 @@
     <p class="text-fg-muted mb-8">{{DESCRIPTION}}</p>
 
     <section class="card mb-6">
-      <h2 class="text-sm font-semibold text-fg-muted uppercase tracking-wide mb-2">Pull</h2>
-      <div class="flex items-center gap-2">
+      <h2 class="text-sm font-semibold text-fg-muted uppercase tracking-wide mb-3">Get this image</h2>
+
+      <p class="text-xs text-fg-muted mb-1">Pull from registry</p>
+      <div class="flex items-center gap-2 mb-3">
         <code id="pull-cmd"
               class="flex-1 bg-bg-base rounded px-3 py-2 text-sm overflow-x-auto">{{PULL_COMMAND}}</code>
         <button onclick="navigator.clipboard.writeText(document.getElementById('pull-cmd').innerText)"
+                class="bg-bg-input hover:bg-neutral-700 text-sm rounded px-3 py-2">Copy</button>
+      </div>
+
+      <p class="text-xs text-fg-muted mb-1">Build from source (current version: <span class="font-mono text-fg-primary">{{VERSION}}</span>)</p>
+      <div class="flex items-center gap-2 mb-3">
+        <code id="build-cmd"
+              class="flex-1 bg-bg-base rounded px-3 py-2 text-sm overflow-x-auto">nix build github:nix-containers/images#{{NAME}}</code>
+        <button onclick="navigator.clipboard.writeText(document.getElementById('build-cmd').innerText)"
+                class="bg-bg-input hover:bg-neutral-700 text-sm rounded px-3 py-2">Copy</button>
+      </div>
+
+      <p class="text-xs text-fg-muted mb-1">Load into local Docker</p>
+      <div class="flex items-center gap-2">
+        <code id="load-cmd"
+              class="flex-1 bg-bg-base rounded px-3 py-2 text-sm overflow-x-auto">nix build github:nix-containers/images#load-{{NAME}}-to-docker &amp;&amp; ./result/bin/load-{{NAME}}-to-docker</code>
+        <button onclick="navigator.clipboard.writeText(document.getElementById('load-cmd').innerText)"
                 class="bg-bg-input hover:bg-neutral-700 text-sm rounded px-3 py-2">Copy</button>
       </div>
     </section>
@@ -61,6 +79,9 @@
 
     <section class="tab-content hidden" data-tab-panel="sbom" role="tabpanel">
       <div class="card">
+        <p class="text-xs text-fg-muted mb-3">Packages contained in
+          <span class="font-mono text-fg-primary">{{NAME}}</span> at version
+          <span class="font-mono text-fg-primary">{{VERSION}}</span>.</p>
         {{SBOM_HTML}}
       </div>
     </section>

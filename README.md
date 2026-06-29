@@ -2,6 +2,8 @@
 
 A collection of container images built with nix2container, featuring dynamic discovery and multi-layer architecture.
 
+**Browse all images:** **[nix-containers.github.io/images](https://nix-containers.github.io/images/)** — searchable catalog with per-image pages showing descriptions, vulnerability scans, SBOMs, chart usage, and source.
+
 ## Build Times
 
 *Generated: 2025-12-11 on x86_64-linux (NixOS)*
