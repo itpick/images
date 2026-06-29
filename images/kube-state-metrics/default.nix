@@ -11,7 +11,18 @@ mkImage {
   name = "kube-state-metrics";
   tag = "v${pkgs.kube-state-metrics.version}";
   entrypoint = [ "${pkgs.kube-state-metrics}/bin/kube-state-metrics" ];
-  cmd = [ "--help" ];
+  # Was `--help` (a one-shot). Serve the object-metrics endpoint on
+  # 0.0.0.0:8080 and the self-telemetry endpoint on 0.0.0.0:8081 so the
+  # kube-prometheus-stack / kind-test probe can reach it. KSM uses in-cluster
+  # config (available to every pod) and starts its HTTP servers immediately;
+  # the resource informers retry in the background, so it stays up even before
+  # RBAC is granted. Operators add a ClusterRole/binding for real metrics.
+  cmd = [
+    "--host=0.0.0.0"
+    "--port=8080"
+    "--telemetry-host=0.0.0.0"
+    "--telemetry-port=8081"
+  ];
 
   extraPkgs = with pkgs; [
     tzdata
