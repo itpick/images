@@ -10,7 +10,18 @@ mkImage {
   name = "thanos";
   tag = "v${pkgs.thanos.version}";
   entrypoint = [ "${pkgs.thanos}/bin/thanos" ];
-  cmd = [ "--help" ];
+  # Was `--help` (a one-shot). Run the Querier — the one thanos component that
+  # needs no object-store config or local storage. It starts with zero upstream
+  # Store endpoints (an empty querier that simply returns no data) and serves
+  # its HTTP UI/API + gRPC immediately, so it stays up under the kind-test
+  # probe. The HTTP/gRPC flags already default to 0.0.0.0 (set them explicitly
+  # to document the ports). Operators pick a component (query/store/sidecar/...)
+  # and add --endpoint / object-store config.
+  cmd = [
+    "query"
+    "--http-address=0.0.0.0:10902"
+    "--grpc-address=0.0.0.0:10901"
+  ];
 
   labels = {
     "org.opencontainers.image.title" = "Thanos";
