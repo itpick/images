@@ -78,8 +78,12 @@ def _find_scan_file(image_name: str, scan_dir: str, suffix: str) -> str | None:
     return sorted(set(matches))[-1]
 
 
+_CVE_LIST_MAX = 100  # cap per-image; truncation note disclosed in UI.
+_SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3, "unknown": 4}
+
+
 def scan_for_image(image_name: str, scan_dir: str | None) -> dict | None:
-    """Return a dict of severity counts (or None if no data exists)."""
+    """Return a dict of severity counts + per-CVE detail (or None)."""
     if not scan_dir:
         return None
     target = _find_scan_file(image_name, scan_dir, "trivy.json")
@@ -92,6 +96,7 @@ def scan_for_image(image_name: str, scan_dir: str | None) -> dict | None:
         return None
 
     counts = {"critical": 0, "high": 0, "medium": 0, "low": 0, "unknown": 0}
+    cves: list[dict] = []
     for result in doc.get("Results", []) or []:
         for vuln in result.get("Vulnerabilities", []) or []:
             sev = (vuln.get("Severity") or "UNKNOWN").lower()
@@ -99,10 +104,65 @@ def scan_for_image(image_name: str, scan_dir: str | None) -> dict | None:
                 counts[sev] += 1
             else:
                 counts["unknown"] += 1
+            cves.append({
+                "id": vuln.get("VulnerabilityID", "") or "",
+                "severity": (vuln.get("Severity") or "UNKNOWN").upper(),
+                "package": vuln.get("PkgName", "") or "",
+                "installed": vuln.get("InstalledVersion", "") or "",
+                "fixed": vuln.get("FixedVersion", "") or "",
+                "title": vuln.get("Title", "") or vuln.get("Description", "") or "",
+            })
+    # Sort by severity (critical first) then CVE ID descending.
+    cves.sort(key=lambda v: (_SEVERITY_ORDER.get(v["severity"].lower(), 99), v["id"]),
+              reverse=False)
     counts["total"] = sum(counts[s] for s in ("critical", "high", "medium", "low", "unknown"))
     counts["scannedAt"] = doc.get("CreatedAt", "")
     counts["sourceFile"] = os.path.basename(target)
+    counts["cves"] = cves
     return counts
+
+
+def render_cve_list(cves: list[dict]) -> str:
+    """Render a `<details>`-wrapped table of CVE rows (collapsed by default).
+
+    CVE IDs link to NIST NVD detail pages. Capped at _CVE_LIST_MAX entries with
+    a truncation note above the table when exceeded."""
+    if not cves:
+        return ""
+    total = len(cves)
+    shown = cves[:_CVE_LIST_MAX]
+    truncated_note = ""
+    if total > _CVE_LIST_MAX:
+        truncated_note = (
+            f'<p class="text-xs text-fg-muted mb-2 italic">Showing first '
+            f'{_CVE_LIST_MAX} of {total} total CVEs (sorted critical → low).</p>'
+        )
+    rows = "\n".join(
+        f"<tr>"
+        f'<td><a href="https://nvd.nist.gov/vuln/detail/{_html_escape(c["id"])}" '
+        f'target="_blank" rel="noopener" class="text-accent-ok hover:underline font-mono">'
+        f'{_html_escape(c["id"])}</a></td>'
+        f'<td class="font-mono uppercase text-xs">{_html_escape(c["severity"])}</td>'
+        f"<td>{_html_escape(c['package'])}</td>"
+        f"<td class=\"font-mono text-xs\">{_html_escape(c['installed'])}</td>"
+        f"<td class=\"font-mono text-xs\">{_html_escape(c['fixed']) or '—'}</td>"
+        f"<td>{_html_escape(c['title'])}</td>"
+        f"</tr>"
+        for c in shown
+    )
+    return (
+        f'<details class="mt-4">'
+        f'<summary class="cursor-pointer text-sm font-semibold text-fg-primary mb-2">'
+        f'Show vulnerability list ({total} CVE{"s" if total != 1 else ""})'
+        f'</summary>'
+        f'{truncated_note}'
+        f'<table class="prose mt-3">'
+        f'<thead><tr><th>CVE</th><th>Severity</th><th>Package</th>'
+        f'<th>Installed</th><th>Fixed</th><th>Title</th></tr></thead>'
+        f'<tbody>{rows}</tbody>'
+        f'</table>'
+        f'</details>'
+    )
 
 
 # Suffixes folded into a base image when looking up popularity data.
@@ -440,8 +500,17 @@ def main():
                 f'<div class="flex justify-between"><span class="text-accent-warn font-mono">High</span><span>{scan["high"]}</span></div>'
                 f'<div class="flex justify-between"><span class="text-fg-muted font-mono">Medium</span><span>{scan["medium"]}</span></div>'
                 f'<div class="flex justify-between"><span class="text-fg-muted font-mono">Low</span><span>{scan["low"]}</span></div>'
-                f'<div class="text-xs text-fg-muted mt-2">Source: {scan["sourceFile"]}</div>'
+                '<div class="text-xs text-fg-muted mt-2">'
+                'Source: '
+                # Link the source filename to the security-scan workflow page
+                # where the artifact came from. Clicking takes the user to a
+                # list of runs; the latest contains the JSON used here.
+                f'<a href="https://github.com/nix-containers/images/actions/workflows/security-scan.yml" '
+                f'target="_blank" rel="noopener" class="text-accent-ok hover:underline font-mono">'
+                f'{_html_escape(scan["sourceFile"])}</a>'
                 '</div>'
+                '</div>'
+                f'{render_cve_list(scan.get("cves", []))}'
             )
         else:
             scan_body = '<p class="text-fg-muted italic text-sm">No scan data yet for this image. It will be picked up on the next scheduled run.</p>'
