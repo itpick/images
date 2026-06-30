@@ -66,73 +66,84 @@
     el.scrollTop = el.scrollHeight;
   }
 
-  // List every container package the session can see, paged 100/page.
-  async function listAllPackages() {
-    const out = [];
-    for (let page = 1; ; page++) {
-      const resp = await fetch(
-        `/api/v3/orgs/${ORG}/packages?package_type=${PACKAGE_TYPE}&per_page=100&page=${page}`,
-        { credentials: 'include', headers: { Accept: 'application/vnd.github+json' } }
-      ).catch(() => null);
-      // /api/v3 is the GHES path; on github.com the same routes also live
-      // at /api/v3 but may redirect to api.github.com under an Accept
-      // header. Try the api.github.com host as a fallback when /api/v3
-      // returns 404.
-      let json = null;
-      if (resp && resp.ok) {
-        json = await resp.json().catch(() => null);
-      }
-      if (!json) {
-        const r2 = await fetch(
-          `https://api.github.com/orgs/${ORG}/packages?package_type=${PACKAGE_TYPE}&per_page=100&page=${page}`,
-          { credentials: 'include', headers: { Accept: 'application/vnd.github+json' } }
-        ).catch(() => null);
-        if (r2 && r2.ok) json = await r2.json().catch(() => null);
-      }
-      if (!Array.isArray(json) || json.length === 0) break;
-      out.push(...json);
-      if (json.length < 100) break;
+  // Scrape the LIVE DOM of the current page. React has already
+  // hydrated the package cards by the time Tampermonkey fires at
+  // document-idle, so the anchors are present.
+  function scrapeCurrentPage() {
+    const items = [];
+    const seenThisPage = new Set();
+    const anchors = Array.from(
+      document.querySelectorAll(`a[href*="/orgs/${ORG}/packages/container/"]`)
+    );
+    for (const a of anchors) {
+      const m = a.getAttribute('href').match(
+        new RegExp(`/orgs/${ORG}/packages/container/(?:package/)?([^/?#]+)`)
+      );
+      if (!m) continue;
+      const encoded = m[1];
+      let name;
+      try { name = decodeURIComponent(encoded); } catch { name = encoded; }
+      if (seenThisPage.has(name)) continue;
+      seenThisPage.add(name);
+      const card = a.closest('li, article, div');
+      const txt = (card ? card.textContent : '').toLowerCase();
+      const isPrivate = /\bprivate\b/.test(txt);
+      const isInternal = !isPrivate && /\binternal\b/.test(txt);
+      const visibility = isPrivate ? 'private' : (isInternal ? 'internal' : 'public');
+      items.push({ name, visibility });
     }
-    return out;
+    return items;
   }
 
+  // localStorage keys for the cross-page-navigation state machine.
+  const LS_KEY = 'nc-bulk-flip-state';
+  function loadState() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || 'null'); }
+    catch { return null; }
+  }
+  function saveState(s) { localStorage.setItem(LS_KEY, JSON.stringify(s)); }
+  function clearState() { localStorage.removeItem(LS_KEY); }
+
   // Flip one package to public. Returns 'flipped', 'already-public',
-  // 'error: <reason>'. Uses the per-package settings page to discover
-  // the form action + CSRF token, since the URL isn't documented.
+  // 'error: <reason>'. Confirmed via inspection of the settings page
+  // HTML (the visibility-change form is the one whose action ends in
+  // /settings/change_visibility).
   async function flipPackagePublic(name) {
     const encoded = encodeURIComponent(name);
     const settingsUrl = `/orgs/${ORG}/packages/${PACKAGE_TYPE}/${encoded}/settings`;
     const r = await fetch(settingsUrl, { credentials: 'include' });
     if (!r.ok) return `error: settings GET ${r.status}`;
     const html = await r.text();
-    // The visibility-change form lives under a section that posts to
-    // /orgs/.../packages/.../visibility (the suffix varies by GitHub
-    // release). Locate any form whose action contains "visibility".
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
-    const formEls = Array.from(doc.querySelectorAll('form'));
-    const form = formEls.find(f => /visibility/i.test(f.getAttribute('action') || ''));
-    if (!form) return 'error: no visibility form on settings page';
-    const action = form.getAttribute('action');
+    const action = `/orgs/${ORG}/packages/${PACKAGE_TYPE}/${encoded}/settings/change_visibility`;
+    // Find the form whose action exactly matches the change_visibility
+    // route so we pick up its CSRF token.
+    const form = Array.from(doc.querySelectorAll('form'))
+      .find(f => (f.getAttribute('action') || '').endsWith('/settings/change_visibility'));
+    if (!form) {
+      return 'error: settings page lacks change_visibility form (already-public?)';
+    }
     const csrf = form.querySelector('input[name="authenticity_token"]');
     if (!csrf) return 'error: no CSRF token in form';
-    // The form may declare its body fields differently depending on the
-    // GitHub release; we send a superset of plausible field names. Extra
-    // fields are ignored by Rails strong-params.
+    // Three fields the modal submits, confirmed via the rendered HTML:
+    //   visibility=public
+    //   verify=<full package name like "images/zoxide">
+    //   authenticity_token=<csrf>
     const fd = new FormData();
-    fd.append('_method', 'patch');
     fd.append('authenticity_token', csrf.value);
     fd.append('visibility', 'public');
-    fd.append('package[visibility]', 'public');
-    fd.append('confirm_string', name);
-    fd.append('confirm', name);
+    fd.append('verify', name);
     const submit = await fetch(action, {
       method: 'POST',
       credentials: 'include',
       body: fd,
+      // GitHub returns 302 on success — capture rather than auto-follow
+      // so we can detect the outcome cleanly.
+      redirect: 'manual',
       headers: { 'Accept': 'text/html' },
     });
-    if (submit.ok || submit.status === 302 || submit.status === 303) {
+    if (submit.ok || submit.status === 0 || submit.status === 302 || submit.status === 303) {
       return 'flipped';
     }
     return `error: submit ${submit.status}`;
@@ -153,34 +164,88 @@
     host.prepend(btn);
   }
 
+  // Phase 1 of bulk: listing. Auto-navigates page by page, scraping the
+  // live DOM at each step. State persists in localStorage so a navigation
+  // doesn't lose our progress. When we hit an empty page (no anchors),
+  // transitions to phase 'flipping' and reloads to start phase 2.
+  async function continueListing(state) {
+    log(`Listing… page ${state.currentPage}, collected ${state.collected.length} so far`);
+    const items = scrapeCurrentPage();
+    let added = 0;
+    const seen = new Set(state.collected.map(p => p.name));
+    for (const it of items) {
+      if (seen.has(it.name)) continue;
+      seen.add(it.name);
+      state.collected.push(it);
+      added++;
+    }
+    log(`page ${state.currentPage}: +${added} (running total ${state.collected.length})`);
+    if (added === 0 || items.length === 0) {
+      // End of listing — switch to flipping.
+      const targets = state.collected
+        .filter(p => p.visibility === 'private' && p.name.startsWith('images/'))
+        .map(p => p.name);
+      state.phase = 'flipping';
+      state.targets = targets;
+      state.flipIndex = 0;
+      state.ok = 0;
+      state.skipped = 0;
+      state.failed = 0;
+      saveState(state);
+      log(`Total: ${state.collected.length} packages. Private under images/: ${targets.length}.`);
+      log('Starting flip phase…');
+      // Phase 2 doesn't navigate; continues on this page.
+      await continueFlipping(state);
+      return;
+    }
+    state.currentPage++;
+    saveState(state);
+    // Throttle to be polite, then navigate.
+    await new Promise(r => setTimeout(r, 500));
+    window.location.href = `/orgs/${ORG}/packages?page=${state.currentPage}`;
+  }
+
+  // Phase 2: flipping. Iterates state.targets and POSTs each through
+  // flipPackagePublic. Stays on the same page; no navigation needed.
+  async function continueFlipping(state) {
+    while (state.flipIndex < state.targets.length) {
+      const i = state.flipIndex;
+      const name = state.targets[i];
+      try {
+        const res = await flipPackagePublic(name);
+        if (res === 'flipped') state.ok++;
+        else if (res === 'already-public') state.skipped++;
+        else { state.failed++; log(`[${i + 1}/${state.targets.length}] ${name} → ${res}`); }
+      } catch (e) {
+        state.failed++;
+        log(`[${i + 1}/${state.targets.length}] ${name} → exception ${e.message}`);
+      }
+      state.flipIndex++;
+      if (state.flipIndex % 50 === 0) {
+        log(`progress: ${state.flipIndex}/${state.targets.length} — ok=${state.ok} skipped=${state.skipped} failed=${state.failed}`);
+        saveState(state);
+      }
+      await new Promise(r => setTimeout(r, 250));
+    }
+    log(`Done. flipped=${state.ok} skipped=${state.skipped} failed=${state.failed}`);
+    clearState();
+  }
+
   async function runBulk() {
     const btn = document.getElementById('nc-bulk-flip-btn');
     if (btn) btn.disabled = true;
-    log('Listing packages…');
-    const all = await listAllPackages();
-    log(`Total: ${all.length} container packages.`);
-    const targets = all
-      .filter(p => p.visibility === 'private' && p.name.startsWith('images/'))
-      .map(p => p.name);
-    log(`Private under images/: ${targets.length}`);
-    let ok = 0, skipped = 0, failed = 0;
-    for (let i = 0; i < targets.length; i++) {
-      const name = targets[i];
-      try {
-        const res = await flipPackagePublic(name);
-        if (res === 'flipped') ok++;
-        else if (res === 'already-public') skipped++;
-        else { failed++; log(`[${i + 1}/${targets.length}] ${name} → ${res}`); }
-      } catch (e) {
-        failed++; log(`[${i + 1}/${targets.length}] ${name} → exception ${e.message}`);
-      }
-      if ((i + 1) % 50 === 0) {
-        log(`progress: ${i + 1}/${targets.length} — ok=${ok} skipped=${skipped} failed=${failed}`);
-      }
-      // Throttle so we don't overwhelm GitHub's rate limits.
-      await new Promise(r => setTimeout(r, 250));
+    let state = loadState();
+    if (state) {
+      log('Found in-progress state; resuming.');
+    } else {
+      state = { phase: 'listing', collected: [], currentPage: 1 };
+      saveState(state);
     }
-    log(`Done. flipped=${ok} skipped=${skipped} failed=${failed}`);
+    if (state.phase === 'listing') {
+      await continueListing(state);
+    } else if (state.phase === 'flipping') {
+      await continueFlipping(state);
+    }
     if (btn) btn.disabled = false;
   }
 
@@ -210,8 +275,16 @@
   }
 
   // Pick the right injector based on the current path.
-  if (/\/packages\/?(\?|$)/.test(window.location.pathname + window.location.search)) {
+  const pathAndQuery = window.location.pathname + window.location.search;
+  if (/\/packages\/?(\?|$)/.test(pathAndQuery)) {
     injectBulkButton();
+    // Auto-resume if an in-progress state exists (we got here via the
+    // listing phase auto-navigation, not a fresh click).
+    const state = loadState();
+    if (state) {
+      // Give React a moment to populate the page before scraping.
+      setTimeout(() => runBulk(), 1500);
+    }
   } else if (/\/packages\/container\/.+\/settings$/.test(window.location.pathname)) {
     injectSingleButton();
   }
