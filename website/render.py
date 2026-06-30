@@ -31,6 +31,39 @@ def category_slug(category: str) -> str:
     return s if s in allowed else "unknown"
 
 
+# One-line descriptions for each catalog category, shown as hover text on the
+# category badge (cards + image pages). Keyed by the raw category label.
+CATEGORY_DESCRIPTIONS = {
+    "base": "Minimal base images other images build on top of",
+    "build-env": "Build environments, compilers, and toolchains",
+    "ci-cd": "Continuous integration and delivery tooling",
+    "data-flow": "Data streaming and pipeline / flow tools",
+    "data-processing": "Batch and stream data-processing engines",
+    "database": "Databases, caches, and data stores",
+    "devops-tool": "DevOps and infrastructure tooling",
+    "identity": "Authentication, authorization, and identity management",
+    "message-queue": "Message brokers and event streaming",
+    "monitoring": "Monitoring and alerting",
+    "networking": "Networking, proxies, ingress, and service mesh",
+    "observability,profiling": "Observability, tracing, and profiling",
+    "operator": "Kubernetes operators and controllers",
+    "runtime": "Language runtimes and execution environments",
+    "security,networking": "Security and network protection",
+    "security": "Security scanning, policy, and secrets management",
+    "shell": "Shells and command-line utilities",
+    "storage": "Storage drivers and volume management",
+    "utility": "General-purpose utilities",
+    "visualization": "Dashboards and data visualization",
+    "web-service": "Web servers and application services",
+    "unknown": "Uncategorized",
+}
+
+
+def category_description(category: str) -> str:
+    """Hover text for a category badge (empty string if we have none)."""
+    return CATEGORY_DESCRIPTIONS.get((category or "").strip().lower(), "")
+
+
 def _strip_build_info_section(md_text: str) -> str:
     """Drop the `## Build Information` section from a README.
 
@@ -172,11 +205,20 @@ def render_cve_list(cves: list[dict]) -> str:
             f'<p class="text-xs text-fg-muted mb-2 italic">Showing first '
             f'{_CVE_LIST_MAX} of {total} total CVEs (sorted critical → low).</p>'
         )
+    # A vulnerability ID may be a GHSA advisory (not in NVD); link those to
+    # GitHub's advisory DB, everything else to NIST NVD.
+    def _cve_link(cid):
+        base = ("https://github.com/advisories/" if cid.upper().startswith("GHSA-")
+                else "https://nvd.nist.gov/vuln/detail/")
+        return (f'<a href="{base}{_html_escape(cid)}" target="_blank" rel="noopener" '
+                f'class="text-accent-ok hover:underline font-mono">{_html_escape(cid)}</a>')
+
     rows = "\n".join(
-        f"<tr>"
-        f'<td><a href="https://nvd.nist.gov/vuln/detail/{_html_escape(c["id"])}" '
-        f'target="_blank" rel="noopener" class="text-accent-ok hover:underline font-mono">'
-        f'{_html_escape(c["id"])}</a></td>'
+        f'<tr data-severity="{_html_escape(c["severity"].lower())}">'
+        # Checkbox = a remediation todo; state persists per image+CVE (JS).
+        f'<td><input type="checkbox" class="cve-todo" data-cve="{_html_escape(c["id"])}" '
+        f'aria-label="mark {_html_escape(c["id"])} done"></td>'
+        f'<td>{_cve_link(c["id"])}</td>'
         f'<td class="font-mono uppercase text-xs">{_html_escape(c["severity"])}</td>'
         f"<td>{_html_escape(c['package'])}</td>"
         f"<td class=\"font-mono text-xs\">{_html_escape(c['installed'])}</td>"
@@ -185,18 +227,21 @@ def render_cve_list(cves: list[dict]) -> str:
         f"</tr>"
         for c in shown
     )
+    has_crit = any(c["severity"].lower() == "critical" for c in shown)
     return (
-        f'<details class="mt-4">'
-        f'<summary class="cursor-pointer text-sm font-semibold text-fg-primary mb-2">'
-        f'Show vulnerability list ({total} CVE{"s" if total != 1 else ""})'
-        f'</summary>'
+        f'<div class="mt-4" id="cve-list" data-cve-list>'
+        f'<div class="flex items-center justify-between mb-2">'
+        f'<span class="text-sm font-semibold text-fg-primary">Vulnerability todo '
+        f'({total} CVE{"s" if total != 1 else ""})</span>'
+        f'<button type="button" data-cve-filter="all" class="text-xs text-fg-muted hover:underline">show all</button>'
+        f'</div>'
         f'{truncated_note}'
-        f'<table class="prose mt-3">'
-        f'<thead><tr><th>CVE</th><th>Severity</th><th>Package</th>'
+        f'<table class="prose mt-1">'
+        f'<thead><tr><th>✓</th><th>CVE</th><th>Severity</th><th>Package</th>'
         f'<th>Installed</th><th>Fixed</th><th>Title</th></tr></thead>'
         f'<tbody>{rows}</tbody>'
         f'</table>'
-        f'</details>'
+        f'</div>'
     )
 
 
@@ -790,6 +835,7 @@ def main():
             "DESCRIPTION": img.get("description", ""),
             "CATEGORY": img.get("category", "unknown"),
             "CATEGORY_SLUG": category_slug(img.get("category", "")),
+            "CATEGORY_DESC": category_description(img.get("category", "")),
             "VERSION": display_version,
             "PULL_COMMAND": img.get("pullCommand", f"docker pull ghcr.io/nix-containers/images/{name}:latest"),
             "README_HTML": readme_html,
@@ -823,23 +869,32 @@ def main():
                 'title="No known CVEs in the latest scan">0 CVE</span>'
             )
         if scan:
+            # Severity counts double as filters: clicking one shows just those
+            # CVEs in the list below (click again to clear). data-cve-filter is
+            # wired up by the tab JS in image-page.html.
+            def _sev_row(label, key, color):
+                n = scan[key]
+                clickable = ' cursor-pointer hover:bg-bg-input rounded px-1 -mx-1' if n else ''
+                attrs = f' data-cve-filter="{key}"' if n else ''
+                return (
+                    f'<div class="flex justify-between{clickable}"{attrs}>'
+                    f'<span class="{color} font-mono">{label}</span><span>{n}</span></div>'
+                )
+            source_link = (
+                '<div class="text-xs text-fg-muted mt-2">Source: '
+                '<a href="https://github.com/nix-containers/images/actions/workflows/security-scan.yml" '
+                'target="_blank" rel="noopener" class="text-accent-ok hover:underline font-mono">'
+                f'{_html_escape(scan["sourceFile"])}</a></div>'
+            )
             scan_body = (
-                '<div class="space-y-1 text-sm">'
-                f'<div class="flex justify-between"><span class="text-accent-bad font-mono">Critical</span><span>{scan["critical"]}</span></div>'
-                f'<div class="flex justify-between"><span class="text-accent-warn font-mono">High</span><span>{scan["high"]}</span></div>'
-                f'<div class="flex justify-between"><span class="text-fg-muted font-mono">Medium</span><span>{scan["medium"]}</span></div>'
-                f'<div class="flex justify-between"><span class="text-fg-muted font-mono">Low</span><span>{scan["low"]}</span></div>'
-                '<div class="text-xs text-fg-muted mt-2">'
-                'Source: '
-                # Link the source filename to the security-scan workflow page
-                # where the artifact came from. Clicking takes the user to a
-                # list of runs; the latest contains the JSON used here.
-                f'<a href="https://github.com/nix-containers/images/actions/workflows/security-scan.yml" '
-                f'target="_blank" rel="noopener" class="text-accent-ok hover:underline font-mono">'
-                f'{_html_escape(scan["sourceFile"])}</a>'
-                '</div>'
-                '</div>'
-                f'{render_cve_list(scan.get("cves", []))}'
+                '<div class="space-y-1 text-sm" data-cve-counts>'
+                + _sev_row("Critical", "critical", "text-accent-bad")
+                + _sev_row("High", "high", "text-accent-warn")
+                + _sev_row("Medium", "medium", "text-fg-muted")
+                + _sev_row("Low", "low", "text-fg-muted")
+                + source_link
+                + '</div>'
+                + render_cve_list(scan.get("cves", []))
             )
         else:
             scan_body = '<p class="text-fg-muted italic text-sm">No scan data yet for this image. It will be picked up on the next scheduled run.</p>'
@@ -893,6 +948,7 @@ def main():
             "description": img.get("description", ""),
             "category": img.get("category", "unknown"),
             "categorySlug": category_slug(img.get("category", "")),
+            "categoryDesc": category_description(img.get("category", "")),
             "version": display_version,
             "hasTest": img.get("hasTest", False),
             "fromNixpkgs": img.get("fromNixpkgs", False),
