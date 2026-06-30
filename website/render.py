@@ -703,6 +703,7 @@ def main():
             "categorySlug": category_slug(img.get("category", "")),
             "version": img.get("version", "latest"),
             "hasTest": img.get("hasTest", False),
+            "fromNixpkgs": img.get("fromNixpkgs", False),
             "pullCommand": img.get("pullCommand", ""),
             "usedByCharts": img.get("usedByCharts", []),
             "scan": scan or None,
