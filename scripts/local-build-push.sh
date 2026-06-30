@@ -52,6 +52,14 @@ REGISTRY="ghcr.io/nix-containers/images"
 # Captured once so all images in the run share the same value.
 COMMIT_SHA=$(git rev-parse HEAD)
 
+# nix2container's copyTo invokes skopeo, which reads
+# /etc/containers/registries.conf. On some hosts (including the
+# laptop this script was written for) that file is in the legacy v1
+# format and skopeo refuses to load it ("registries.conf must be in
+# v2 format but is in v1"). Pointing skopeo at /dev/null keeps it
+# from looking — auth comes from ~/.docker/config.json regardless.
+export CONTAINERS_REGISTRIES_CONF=/dev/null
+
 # Periodic-GC: each build adds to /nix/store; without GC the disk
 # fills mid-run. Worker tracks images processed since last GC via a
 # shared counter file under STATE_DIR.
@@ -129,7 +137,7 @@ process_one() {
   ) 9>"$LOCK_FILE"
 }
 export -f process_one
-export STATE_DIR REGISTRY GC_AFTER COUNTER_FILE LOCK_FILE COMMIT_SHA
+export STATE_DIR REGISTRY GC_AFTER COUNTER_FILE LOCK_FILE COMMIT_SHA CONTAINERS_REGISTRIES_CONF
 
 START=$(date +%s)
 TOTAL=$(wc -l < "$LIST")
