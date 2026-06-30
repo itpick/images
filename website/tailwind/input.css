@@ -39,6 +39,9 @@
   .badge-cat-utility { @apply badge bg-neutral-700 text-neutral-200; }
   .badge-cat-shell { @apply badge bg-yellow-900/40 text-yellow-300; }
   .badge-cat-unknown { @apply badge bg-neutral-800 text-neutral-400; }
+  /* "Nix" badge: image packaged directly from nixpkgs. Ringed to read as a
+     provenance marker rather than another category pill. */
+  .badge-nix { @apply badge bg-sky-900/40 text-sky-300 ring-1 ring-sky-500/30; }
 
   .card {
     @apply bg-bg-elevated rounded-lg border border-neutral-800 p-4

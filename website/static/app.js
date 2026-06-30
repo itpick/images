@@ -87,6 +87,10 @@ function render() {
     const rank = (i.popularity && i.popularity.rank)
       ? `<span class="text-xs text-fg-muted font-mono">#${i.popularity.rank}</span>`
       : '';
+    // "Nix" badge when the image packages a tool directly from nixpkgs.
+    const nixBadge = i.fromNixpkgs
+      ? `<span class="badge-nix" title="Packaged directly from nixpkgs">Nix</span>`
+      : '';
     // The registry tag is always 'latest'; the image's OCI label gives
     // the semver (e.g. "3.4.3"). Show both; collapse to just 'latest' if
     // no version label or it's still a dynamic-* placeholder.
@@ -102,6 +106,7 @@ function render() {
         <div class="font-mono font-bold text-fg-primary">${dot}${escapeHtml(i.name)}</div>
         <div class="flex items-center gap-2">
           ${rank}
+          ${nixBadge}
           <span class="badge-cat-${escapeAttr(i.categorySlug || 'unknown')}">${escapeHtml(i.category || 'unknown')}</span>
         </div>
       </div>

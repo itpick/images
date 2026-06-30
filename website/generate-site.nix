@@ -90,6 +90,13 @@ let
       upstream = extractLabel nixContent "io\\.nix-containers\\.image\\.upstream" "";
       aliases = extractLabel nixContent "io\\.nix-containers\\.image\\.aliases" imageName;
       hasTest = builtins.pathExists testPath;
+      # True when the image packages a tool directly from nixpkgs
+      # (drv = pkgs.<attr>), as opposed to an upstream binary download
+      # (drv = pkgs.stdenv.mkDerivation/fetchurl) or a from-source build
+      # (drv = <let-bound buildGoModule/...>). Drives the "Nix" catalog badge.
+      fromNixpkgs = (lib.hasInfix "drv = pkgs." nixContent)
+        && !(lib.hasInfix "drv = pkgs.stdenv" nixContent)
+        && !(lib.hasInfix "drv = pkgs.fetchurl" nixContent);
       readme = readmeContent;
       pullCommand = "docker pull ghcr.io/nix-containers/images/${imageName}:latest";
       nixCode = nixContent;
