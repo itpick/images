@@ -1,0 +1,113 @@
+name: Build Shard
+
+# Manual kickoff to build (and optionally push) a SHARD of the catalog —
+# every image whose name starts with a given prefix — feeding the same
+# reusable test-images / build-and-push pipelines the normal change-gated
+# build uses.
+#
+# Why this exists: the full catalog (3000+ images) blows past GitHub's 256-job
+# matrix limit, so there is no single "build everything" run. Sharding by an
+# alphabet prefix keeps each run under the cap. Big letters (c, k, p, a, s, …)
+# exceed 256 on their own, so use a longer prefix to sub-shard them — the job
+# refuses to run an oversized shard and prints the 2-char sub-prefixes + counts
+# so you know how to split it.
+#
+# Examples: prefix "r" (all r*), prefix "ca" (all ca*), prefix "argo".
+
+on:
+  workflow_dispatch:
+    inputs:
+      prefix:
+        description: 'Image name prefix to build, e.g. "r", "ca", "argo". Empty = ERROR (would be the whole catalog).'
+        required: true
+        type: string
+      mode:
+        description: 'What to run for the shard'
+        required: true
+        default: 'test'
+        type: choice
+        options:
+          - test           # build + load + run per-image tests
+          - push           # build + push to the registry
+          - both
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  # One run per prefix; a re-kick of the same shard supersedes the old one.
+  group: build-shard-${{ github.event.inputs.prefix }}
+  cancel-in-progress: true
+
+jobs:
+  shard-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set.outputs.matrix }}
+      count: ${{ steps.set.outputs.count }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build shard matrix
+        id: set
+        env:
+          PREFIX: ${{ github.event.inputs.prefix }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PREFIX}" ]; then
+            echo "::error::prefix is empty — that would select the whole catalog (>256 jobs). Give a prefix like 'r' or 'ca'."
+            exit 1
+          fi
+
+          # Image dirs (those with a default.nix) whose name starts with PREFIX.
+          mapfile -t NAMES < <(
+            find images -mindepth 2 -maxdepth 2 -name default.nix -printf '%h\n' \
+              | sed 's#images/##' | sort -u | grep -E "^$(printf '%s' "$PREFIX" | sed 's/[.[\*^$]/\\&/g')" || true
+          )
+          COUNT=${#NAMES[@]}
+          echo "Shard '${PREFIX}' matches ${COUNT} image(s)."
+          echo "count=${COUNT}" >> "$GITHUB_OUTPUT"
+
+          if [ "$COUNT" -eq 0 ]; then
+            echo "## Build shard \`${PREFIX}\`" >> "$GITHUB_STEP_SUMMARY"
+            echo "No images match this prefix." >> "$GITHUB_STEP_SUMMARY"
+            echo 'matrix={"include":[]}' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ "$COUNT" -gt 256 ]; then
+            echo "::error::Shard '${PREFIX}' has ${COUNT} images (> 256-job matrix limit). Use a longer prefix to sub-shard."
+            {
+              echo "## Shard \`${PREFIX}\` too large (${COUNT} > 256)"
+              echo "Sub-shard with a longer prefix. Counts by 2-char prefix:"
+              echo '```'
+              printf '%s\n' "${NAMES[@]}" | cut -c1-$(( ${#PREFIX} + 1 )) | sort | uniq -c | sort -rn
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+          MATRIX=$(printf '%s\n' "${NAMES[@]}" \
+            | jq -R '{name: ., path: ("images/" + .)}' \
+            | jq -s '{include: .}' -c)
+          echo "matrix=${MATRIX}" >> "$GITHUB_OUTPUT"
+          {
+            echo "## Build shard \`${PREFIX}\` — ${COUNT} image(s)"
+            echo "Mode: \`${{ github.event.inputs.mode }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  test:
+    needs: shard-matrix
+    if: needs.shard-matrix.outputs.count != '0' && (github.event.inputs.mode == 'test' || github.event.inputs.mode == 'both')
+    uses: ./.github/workflows/test-images.yml
+    with:
+      matrix: ${{ needs.shard-matrix.outputs.matrix }}
+
+  push:
+    needs: shard-matrix
+    if: needs.shard-matrix.outputs.count != '0' && (github.event.inputs.mode == 'push' || github.event.inputs.mode == 'both')
+    uses: ./.github/workflows/build-and-push.yml
+    with:
+      matrix: ${{ needs.shard-matrix.outputs.matrix }}
+    secrets: inherit
