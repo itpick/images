@@ -47,6 +47,11 @@ mkdir -p "$STATE_DIR"
 
 REGISTRY="ghcr.io/nix-containers/images"
 
+# Commit SHA used as an immutable per-build tag (mirrors what
+# build-and-push.yml does at .github/workflows/build-and-push.yml:163).
+# Captured once so all images in the run share the same value.
+COMMIT_SHA=$(git rev-parse HEAD)
+
 # Periodic-GC: each build adds to /nix/store; without GC the disk
 # fills mid-run. Worker tracks images processed since last GC via a
 # shared counter file under STATE_DIR.
@@ -84,24 +89,28 @@ process_one() {
     tag="latest"
   fi
 
-  # Push :latest always
-  if ! nix run ".#${image}.copyTo" -- "docker://${REGISTRY}/${image}:latest" >/dev/null 2>&1; then
-    echo "fail-push" > "$state_file"
-    echo "[$image] fail-push (latest)" >&2
-    return
+  # Tags to push: latest, commit-sha (immutable per build), and the
+  # image's declared version when distinct. Matches what
+  # build-and-push.yml writes (lines 162-176): every push gets
+  # :latest + :<sha> + :<version-if-known>. The commit SHA tag is
+  # what guarantees every image — even those without a static version
+  # label — gets at least one immutable tag.
+  local push_tags=("latest" "$COMMIT_SHA")
+  if [ -n "$tag" ] && [ "$tag" != "latest" ] && [ "$tag" != "$COMMIT_SHA" ]; then
+    push_tags+=("$tag")
   fi
 
-  # Push version-tagged if distinct
-  if [ "$tag" != "latest" ]; then
-    if ! nix run ".#${image}.copyTo" -- "docker://${REGISTRY}/${image}:${tag}" >/dev/null 2>&1; then
+  local t
+  for t in "${push_tags[@]}"; do
+    if ! nix run ".#${image}.copyTo" -- "docker://${REGISTRY}/${image}:${t}" >/dev/null 2>&1; then
       echo "fail-push" > "$state_file"
-      echo "[$image] fail-push ($tag)" >&2
+      echo "[$image] fail-push (:$t)" >&2
       return
     fi
-  fi
+  done
 
   echo "ok" > "$state_file"
-  echo "[$image] ok ($tag)" >&2
+  echo "[$image] ok (tags: ${push_tags[*]})" >&2
 
   # Periodic GC. Use flock so only one worker runs it at a time;
   # the others skip and continue.
@@ -120,7 +129,7 @@ process_one() {
   ) 9>"$LOCK_FILE"
 }
 export -f process_one
-export STATE_DIR REGISTRY GC_AFTER COUNTER_FILE LOCK_FILE
+export STATE_DIR REGISTRY GC_AFTER COUNTER_FILE LOCK_FILE COMMIT_SHA
 
 START=$(date +%s)
 TOTAL=$(wc -l < "$LIST")
