@@ -1,0 +1,105 @@
+name: Check Upstream Versions
+
+# Runs nvchecker against nvchecker.toml to detect new upstream releases for
+# every tracked image/package (nixpkgs-sourced images are covered separately
+# by auto-update.yml's flake.lock bump; this fills the gap for the inline-fetch
+# images — those that pin their own version + src in images/<name>/default.nix).
+#
+# It only CHECKS and reports (job summary + a single rolling tracking issue);
+# it does not modify package definitions. nvcmp lists old -> new for anything
+# whose upstream has advanced past the version recorded in old_versions.json.
+
+on:
+  schedule:
+    # Daily at 06:42 UTC — off the :00 cron stampede, after auto-update (05:17).
+    - cron: '42 6 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: check-upstream-versions
+  cancel-in-progress: true
+
+jobs:
+  check-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install Nix
+        run: |
+          curl --connect-timeout 30 --max-time 300 -fsSL https://nixos.org/nix/install | sh -s -- --daemon --yes
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          mkdir -p ~/.config/nix
+          echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+          echo "access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}" >> ~/.config/nix/nix.conf
+          echo "/nix/var/nix/profiles/default/bin" >> "$GITHUB_PATH"
+
+      - name: Run nvchecker + nvcmp
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          set -euo pipefail
+
+          # nvchecker reads its GitHub token from a keyfile (avoids the 60/hr
+          # unauthenticated rate limit; 436+ repos need an authenticated run).
+          printf '[keys]\ngithub = "%s"\n' "${GH_TOKEN}" > keyfile.toml
+          trap 'rm -f keyfile.toml' EXIT
+
+          echo "-> nvchecker (querying upstreams)..."
+          nix shell nixpkgs#nvchecker -c nvchecker -c nvchecker.toml --keyfile keyfile.toml || true
+
+          echo "-> nvcmp (old -> new diff)..."
+          # nvcmp prints one line per package whose newver differs from oldver.
+          nix shell nixpkgs#nvchecker -c nvcmp -c nvchecker.toml > nvcmp.out 2>/dev/null || true
+          # Drop empty lines; keep "name old -> new" rows.
+          grep -E '\->' nvcmp.out > outdated.txt || true
+
+          COUNT=$(wc -l < outdated.txt | tr -d ' ')
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          echo "## Upstream version check" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$COUNT" -gt 0 ]; then
+            echo "**$COUNT** tracked upstream(s) have a newer release:" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            cat outdated.txt >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "All tracked upstreams are up to date. 🎉" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Open or update tracking issue
+        if: steps.check.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TITLE="📦 Upstream updates available"
+          {
+            echo "The following tracked upstreams have a newer release than the"
+            echo "version pinned in this repo (per \`nvchecker\` / \`old_versions.json\`)."
+            echo "nixpkgs-sourced images update automatically via \`auto-update.yml\`;"
+            echo "the entries below are mostly inline-fetch images that pin their own"
+            echo "version + src and need a manual (or scripted) bump."
+            echo
+            echo '| package | current → latest |'
+            echo '| --- | --- |'
+            sed -E 's/^([^ ]+) +(.*)$/| `\1` | \2 |/' outdated.txt
+            echo
+            echo "_Updated $(date -u +%Y-%m-%dT%H:%MZ) by check-upstream-versions.yml_"
+          } > issue-body.md
+
+          NUM=$(gh issue list --state open --search "$TITLE in:title" --json number,title \
+                  --jq ".[] | select(.title == \"$TITLE\") | .number" | head -1 || true)
+          if [ -n "${NUM:-}" ]; then
+            gh issue edit "$NUM" --body-file issue-body.md
+            echo "Updated issue #$NUM"
+          else
+            gh issue create --title "$TITLE" --body-file issue-body.md --label dependencies 2>/dev/null \
+              || gh issue create --title "$TITLE" --body-file issue-body.md
+          fi

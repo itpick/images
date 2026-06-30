@@ -1232,3 +1232,1430 @@ source = "github"
 github = "loft-sh/vcluster"
 use_latest_release = true
 prefix = "v"
+
+# ============================================
+# Inline-fetch images (auto-generated from images/*/default.nix)
+# ============================================
+
+[aznfs-mount]
+source = "github"
+github = "Azure/AZNFS-mount"
+use_latest_release = true
+
+[azure-service-operator]
+source = "github"
+github = "Azure/azure-service-operator"
+use_latest_release = true
+prefix = "v"
+
+[azure-storage-azcopy]
+source = "github"
+github = "Azure/azure-storage-azcopy"
+use_latest_release = true
+prefix = "v"
+
+[criu]
+source = "github"
+github = "CRaC/criu"
+use_latest_release = true
+
+[openjdk-builds]
+source = "github"
+github = "CRaC/openjdk-builds"
+use_latest_release = true
+
+[clamav]
+source = "github"
+github = "Cisco-Talos/clamav"
+use_latest_release = true
+
+[apache_exporter]
+source = "github"
+github = "Lusitaniae/apache_exporter"
+use_latest_release = true
+prefix = "v"
+
+[mig-parted]
+source = "github"
+github = "NVIDIA/mig-parted"
+use_latest_release = true
+prefix = "v"
+
+[dumb-init]
+source = "github"
+github = "Yelp/dumb-init"
+use_latest_release = true
+prefix = "v"
+
+[nacos]
+source = "github"
+github = "alibaba/nacos"
+use_latest_release = true
+
+[grype-db]
+source = "github"
+github = "anchore/grype-db"
+use_latest_release = true
+prefix = "v"
+
+[harbor-scanner-trivy]
+source = "github"
+github = "aquasecurity/harbor-scanner-trivy"
+use_latest_release = true
+prefix = "v"
+
+[argocd-extension-installer]
+source = "github"
+github = "argoproj-labs/argocd-extension-installer"
+use_latest_release = true
+prefix = "v"
+
+[s3-controller]
+source = "github"
+github = "aws-controllers-k8s/s3-controller"
+use_latest_release = true
+prefix = "v"
+
+[aws-otel-collector]
+source = "github"
+github = "aws-observability/aws-otel-collector"
+use_latest_release = true
+prefix = "v"
+
+[aws-application-networking-k8s]
+source = "github"
+github = "aws/aws-application-networking-k8s"
+use_latest_release = true
+prefix = "v"
+
+[aws-for-fluent-bit]
+source = "github"
+github = "aws/aws-for-fluent-bit"
+use_latest_release = true
+prefix = "v"
+
+[aws-network-policy-agent]
+source = "github"
+github = "aws/aws-network-policy-agent"
+use_latest_release = true
+prefix = "v"
+
+[aws-sdk-go]
+source = "github"
+github = "aws/aws-sdk-go"
+use_latest_release = true
+prefix = "v"
+
+[aws-signer-notation-plugin]
+source = "github"
+github = "aws/aws-signer-notation-plugin"
+use_latest_release = true
+prefix = "v"
+
+[eks-pod-identity-agent]
+source = "github"
+github = "aws/eks-pod-identity-agent"
+use_latest_release = true
+prefix = "v"
+
+[flb-cloudwatch]
+source = "github"
+github = "aws/flb-cloudwatch"
+use_latest_release = true
+prefix = "v"
+
+[flb-firehose]
+source = "github"
+github = "aws/flb-firehose"
+use_latest_release = true
+prefix = "v"
+
+[flb-kinesis]
+source = "github"
+github = "aws/flb-kinesis"
+use_latest_release = true
+prefix = "v"
+
+[aws-sigv4-proxy]
+source = "github"
+github = "awslabs/aws-sigv4-proxy"
+use_latest_release = true
+prefix = "v"
+
+[volume-modifier-for-k8s]
+source = "github"
+github = "awslabs/volume-modifier-for-k8s"
+use_latest_release = true
+prefix = "v"
+
+[liberica]
+source = "github"
+github = "bell-sw/Liberica"
+use_latest_release = true
+
+[ini-file]
+source = "github"
+github = "bitnami/ini-file"
+use_latest_release = true
+prefix = "v"
+
+[sdk]
+source = "github"
+github = "bitwarden/sdk"
+use_latest_release = true
+prefix = "v"
+
+[boring-registry]
+source = "github"
+github = "boring-registry/boring-registry"
+use_latest_release = true
+prefix = "v"
+
+[fixuid]
+source = "github"
+github = "boxboat/fixuid"
+use_latest_release = true
+prefix = "v"
+
+[sql_exporter]
+source = "github"
+github = "burningalchemist/sql_exporter"
+use_latest_release = true
+
+[camunda]
+source = "github"
+github = "camunda/camunda"
+use_latest_release = true
+
+[just]
+source = "github"
+github = "casey/just"
+use_latest_release = true
+
+[cerbos]
+source = "github"
+github = "cerbos/cerbos"
+use_latest_release = true
+prefix = "v"
+
+[aws-privateca-issuer]
+source = "github"
+github = "cert-manager/aws-privateca-issuer"
+use_latest_release = true
+prefix = "v"
+
+[hubble]
+source = "github"
+github = "cilium/hubble"
+use_latest_release = true
+prefix = "v"
+
+[tetragon]
+source = "github"
+github = "cilium/tetragon"
+use_latest_release = true
+prefix = "v"
+
+[cfssl]
+source = "github"
+github = "cloudflare/cfssl"
+use_latest_release = true
+prefix = "v"
+
+[fuse-overlayfs-snapshotter]
+source = "github"
+github = "containerd/fuse-overlayfs-snapshotter"
+use_latest_release = true
+prefix = "v"
+
+[plugins]
+source = "github"
+github = "containernetworking/plugins"
+use_latest_release = true
+prefix = "v"
+
+[cortex]
+source = "github"
+github = "cortexproject/cortex"
+use_latest_release = true
+prefix = "v"
+
+[function-auto-ready]
+source = "github"
+github = "crossplane-contrib/function-auto-ready"
+use_latest_release = true
+prefix = "v"
+
+[function-environment-configs]
+source = "github"
+github = "crossplane-contrib/function-environment-configs"
+use_latest_release = true
+prefix = "v"
+
+[function-go-templating]
+source = "github"
+github = "crossplane-contrib/function-go-templating"
+use_latest_release = true
+prefix = "v"
+
+[provider-aws]
+source = "github"
+github = "crossplane-contrib/provider-aws"
+use_latest_release = true
+prefix = "v"
+
+[provider-aws-cloudfront]
+source = "github"
+github = "crossplane-contrib/provider-aws-cloudfront"
+use_latest_release = true
+prefix = "v"
+
+[provider-aws-cloudwatchlogs]
+source = "github"
+github = "crossplane-contrib/provider-aws-cloudwatchlogs"
+use_latest_release = true
+prefix = "v"
+
+[provider-aws-dynamodb]
+source = "github"
+github = "crossplane-contrib/provider-aws-dynamodb"
+use_latest_release = true
+prefix = "v"
+
+[provider-aws-ec2]
+source = "github"
+github = "crossplane-contrib/provider-aws-ec2"
+use_latest_release = true
+prefix = "v"
+
+[provider-aws-eks]
+source = "github"
+github = "crossplane-contrib/provider-aws-eks"
+use_latest_release = true
+prefix = "v"
+
+[provider-aws-firehose]
+source = "github"
+github = "crossplane-contrib/provider-aws-firehose"
+use_latest_release = true
+prefix = "v"
+
+[provider-aws-iam]
+source = "github"
+github = "crossplane-contrib/provider-aws-iam"
+use_latest_release = true
+prefix = "v"
+
+[provider-aws-kinesis]
+source = "github"
+github = "crossplane-contrib/provider-aws-kinesis"
+use_latest_release = true
+prefix = "v"
+
+[provider-aws-kms]
+source = "github"
+github = "crossplane-contrib/provider-aws-kms"
+use_latest_release = true
+prefix = "v"
+
+[provider-aws-lambda]
+source = "github"
+github = "crossplane-contrib/provider-aws-lambda"
+use_latest_release = true
+prefix = "v"
+
+[provider-aws-rds]
+source = "github"
+github = "crossplane-contrib/provider-aws-rds"
+use_latest_release = true
+prefix = "v"
+
+[provider-aws-route53]
+source = "github"
+github = "crossplane-contrib/provider-aws-route53"
+use_latest_release = true
+prefix = "v"
+
+[provider-aws-s3]
+source = "github"
+github = "crossplane-contrib/provider-aws-s3"
+use_latest_release = true
+prefix = "v"
+
+[provider-aws-sns]
+source = "github"
+github = "crossplane-contrib/provider-aws-sns"
+use_latest_release = true
+prefix = "v"
+
+[provider-aws-sqs]
+source = "github"
+github = "crossplane-contrib/provider-aws-sqs"
+use_latest_release = true
+prefix = "v"
+
+[provider-azure]
+source = "github"
+github = "crossplane-contrib/provider-azure"
+use_latest_release = true
+prefix = "v"
+
+[provider-azure-authorization]
+source = "github"
+github = "crossplane-contrib/provider-azure-authorization"
+use_latest_release = true
+prefix = "v"
+
+[provider-azure-family]
+source = "github"
+github = "crossplane-contrib/provider-azure-family"
+use_latest_release = true
+prefix = "v"
+
+[provider-azure-sql]
+source = "github"
+github = "crossplane-contrib/provider-azure-sql"
+use_latest_release = true
+prefix = "v"
+
+[provider-azure-storage]
+source = "github"
+github = "crossplane-contrib/provider-azure-storage"
+use_latest_release = true
+prefix = "v"
+
+[provider-family-aws]
+source = "github"
+github = "crossplane-contrib/provider-family-aws"
+use_latest_release = true
+prefix = "v"
+
+[provider-family-gcp]
+source = "github"
+github = "crossplane-contrib/provider-family-gcp"
+use_latest_release = true
+prefix = "v"
+
+[provider-gcp]
+source = "github"
+github = "crossplane-contrib/provider-gcp"
+use_latest_release = true
+prefix = "v"
+
+[provider-gcp-cloudplatform]
+source = "github"
+github = "crossplane-contrib/provider-gcp-cloudplatform"
+use_latest_release = true
+prefix = "v"
+
+[provider-gcp-compute]
+source = "github"
+github = "crossplane-contrib/provider-gcp-compute"
+use_latest_release = true
+prefix = "v"
+
+[provider-gcp-container]
+source = "github"
+github = "crossplane-contrib/provider-gcp-container"
+use_latest_release = true
+prefix = "v"
+
+[provider-gcp-dns]
+source = "github"
+github = "crossplane-contrib/provider-gcp-dns"
+use_latest_release = true
+prefix = "v"
+
+[provider-gcp-kms]
+source = "github"
+github = "crossplane-contrib/provider-gcp-kms"
+use_latest_release = true
+prefix = "v"
+
+[provider-gcp-pubsub]
+source = "github"
+github = "crossplane-contrib/provider-gcp-pubsub"
+use_latest_release = true
+prefix = "v"
+
+[provider-gcp-storage]
+source = "github"
+github = "crossplane-contrib/provider-gcp-storage"
+use_latest_release = true
+prefix = "v"
+
+[provider-gitlab]
+source = "github"
+github = "crossplane-contrib/provider-gitlab"
+use_latest_release = true
+prefix = "v"
+
+[provider-keycloak]
+source = "github"
+github = "crossplane-contrib/provider-keycloak"
+use_latest_release = true
+prefix = "v"
+
+[provider-kubernetes]
+source = "github"
+github = "crossplane-contrib/provider-kubernetes"
+use_latest_release = true
+prefix = "v"
+
+[provider-sql]
+source = "github"
+github = "crossplane-contrib/provider-sql"
+use_latest_release = true
+prefix = "v"
+
+[provider-terraform]
+source = "github"
+github = "crossplane-contrib/provider-terraform"
+use_latest_release = true
+prefix = "v"
+
+[pg_timetable]
+source = "github"
+github = "cybertec-postgresql/pg_timetable"
+use_latest_release = true
+prefix = "v"
+
+[pgwatch]
+source = "github"
+github = "cybertec-postgresql/pgwatch"
+use_latest_release = true
+prefix = "v"
+
+[kafka_exporter]
+source = "github"
+github = "danielqsj/kafka_exporter"
+use_latest_release = true
+prefix = "v"
+
+[dapr]
+source = "github"
+github = "dapr/dapr"
+use_latest_release = true
+prefix = "v"
+
+[distribution]
+source = "github"
+github = "distribution/distribution"
+use_latest_release = true
+prefix = "v"
+
+[falcosidekick]
+source = "github"
+github = "falcosecurity/falcosidekick"
+use_latest_release = true
+
+[fluxcd-flux]
+source = "github"
+github = "fluxcd/flux"
+use_latest_release = true
+prefix = "v"
+
+[helm-controller]
+source = "github"
+github = "fluxcd/helm-controller"
+use_latest_release = true
+prefix = "v"
+
+[image-automation-controller]
+source = "github"
+github = "fluxcd/image-automation-controller"
+use_latest_release = true
+prefix = "v"
+
+[image-reflector-controller]
+source = "github"
+github = "fluxcd/image-reflector-controller"
+use_latest_release = true
+prefix = "v"
+
+[notification-controller]
+source = "github"
+github = "fluxcd/notification-controller"
+use_latest_release = true
+prefix = "v"
+
+[operator]
+source = "github"
+github = "fluxcd/operator"
+use_latest_release = true
+prefix = "v"
+
+[source-controller]
+source = "github"
+github = "fluxcd/source-controller"
+use_latest_release = true
+prefix = "v"
+
+[git-lfs]
+source = "github"
+github = "git-lfs/git-lfs"
+use_latest_release = true
+prefix = "v"
+
+[gogatekeeper-gatekeeper]
+source = "github"
+github = "gogatekeeper/gatekeeper"
+use_latest_release = true
+
+[goharbor-harbor-scanner-trivy]
+source = "github"
+github = "goharbor/harbor-scanner-trivy"
+use_latest_release = true
+prefix = "v"
+
+[graalvm-ce-builds]
+source = "github"
+github = "graalvm/graalvm-ce-builds"
+use_latest_release = true
+
+[agent]
+source = "github"
+github = "grafana/agent"
+use_latest_release = true
+prefix = "v"
+
+[alloy-operator]
+source = "github"
+github = "grafana/alloy-operator"
+use_latest_release = true
+
+[beyla]
+source = "github"
+github = "grafana/beyla"
+use_latest_release = true
+prefix = "v"
+
+[grafana-image-renderer]
+source = "github"
+github = "grafana/grafana-image-renderer"
+use_latest_release = true
+prefix = "v"
+
+[grafana-operator]
+source = "github"
+github = "grafana/grafana-operator"
+use_latest_release = true
+prefix = "v"
+
+[pyroscope]
+source = "github"
+github = "grafana/pyroscope"
+use_latest_release = true
+prefix = "v"
+
+[rollout-operator]
+source = "github"
+github = "grafana/rollout-operator"
+use_latest_release = true
+prefix = "v"
+
+[health-checker]
+source = "github"
+github = "gruntwork-io/health-checker"
+use_latest_release = true
+prefix = "v"
+
+[dataplaneapi]
+source = "github"
+github = "haproxytech/dataplaneapi"
+use_latest_release = true
+prefix = "v"
+
+[vault-csi-provider]
+source = "github"
+github = "hashicorp/vault-csi-provider"
+use_latest_release = true
+prefix = "v"
+
+[vault-k8s]
+source = "github"
+github = "hashicorp/vault-k8s"
+use_latest_release = true
+prefix = "v"
+
+[helm-mapkubeapis]
+source = "github"
+github = "helm/helm-mapkubeapis"
+use_latest_release = true
+prefix = "v"
+
+[authservice]
+source = "github"
+github = "istio-ecosystem/authservice"
+use_latest_release = true
+prefix = "v"
+
+[promxy]
+source = "github"
+github = "jacksontj/promxy"
+use_latest_release = true
+prefix = "v"
+
+[jaeger]
+source = "github"
+github = "jaegertracing/jaeger"
+use_latest_release = true
+prefix = "v"
+
+[kube-webhook-certgen]
+source = "github"
+github = "jet/kube-webhook-certgen"
+use_latest_release = true
+prefix = "v"
+
+[paranoia]
+source = "github"
+github = "jetstack/paranoia"
+use_latest_release = true
+prefix = "v"
+
+[cert-exporter]
+source = "github"
+github = "joe-elliott/cert-exporter"
+use_latest_release = true
+prefix = "v"
+
+[helm-set-status]
+source = "github"
+github = "josegonzalez/helm-set-status"
+use_latest_release = true
+prefix = "v"
+
+[dockerize]
+source = "github"
+github = "jwilder/dockerize"
+use_latest_release = true
+prefix = "v"
+
+[k3s]
+source = "github"
+github = "k3s-io/k3s"
+use_latest_release = true
+prefix = "v"
+
+[kiali]
+source = "github"
+github = "kiali/kiali"
+use_latest_release = true
+prefix = "v"
+
+[kiali-operator]
+source = "github"
+github = "kiali/kiali-operator"
+use_latest_release = true
+prefix = "v"
+
+[k8s-sidecar]
+source = "github"
+github = "kiwigrid/k8s-sidecar"
+use_latest_release = true
+
+[serving]
+source = "github"
+github = "knative/serving"
+use_latest_release = true
+
+[katib]
+source = "github"
+github = "kubeflow/katib"
+use_latest_release = true
+prefix = "v"
+
+[pipelines]
+source = "github"
+github = "kubeflow/pipelines"
+use_latest_release = true
+
+[spark-operator]
+source = "github"
+github = "kubeflow/spark-operator"
+use_latest_release = true
+prefix = "v"
+
+[trainer]
+source = "github"
+github = "kubeflow/trainer"
+use_latest_release = true
+prefix = "v"
+
+[training-operator]
+source = "github"
+github = "kubeflow/training-operator"
+use_latest_release = true
+prefix = "v"
+
+[cloud-provider-azure]
+source = "github"
+github = "kubernetes-sigs/cloud-provider-azure"
+use_latest_release = true
+prefix = "v"
+
+[cluster-api]
+source = "github"
+github = "kubernetes-sigs/cluster-api"
+use_latest_release = true
+prefix = "v"
+
+[cri-tools]
+source = "github"
+github = "kubernetes-sigs/cri-tools"
+use_latest_release = true
+prefix = "v"
+
+[headlamp]
+source = "github"
+github = "kubernetes-sigs/headlamp"
+use_latest_release = true
+prefix = "v"
+
+[jobset]
+source = "github"
+github = "kubernetes-sigs/jobset"
+use_latest_release = true
+prefix = "v"
+
+[dns]
+source = "github"
+github = "kubernetes/dns"
+use_latest_release = true
+
+[git-sync]
+source = "github"
+github = "kubernetes/git-sync"
+use_latest_release = true
+prefix = "v"
+
+[node-problem-detector]
+source = "github"
+github = "kubernetes/node-problem-detector"
+use_latest_release = true
+prefix = "v"
+
+[policy-reporter]
+source = "github"
+github = "kyverno/policy-reporter"
+use_latest_release = true
+
+[policy-reporter-kyverno-plugin]
+source = "github"
+github = "kyverno/policy-reporter-kyverno-plugin"
+use_latest_release = true
+prefix = "v"
+
+[policy-reporter-ui]
+source = "github"
+github = "kyverno/policy-reporter-ui"
+use_latest_release = true
+prefix = "v"
+
+[linkerd-await]
+source = "github"
+github = "linkerd/linkerd-await"
+use_latest_release = true
+
+[linkerd2-proxy-init]
+source = "github"
+github = "linkerd/linkerd2-proxy-init"
+use_latest_release = true
+prefix = "v"
+
+[livekit]
+source = "github"
+github = "livekit/livekit"
+use_latest_release = true
+prefix = "v"
+
+[llvm-project]
+source = "github"
+github = "llvm/llvm-project"
+use_latest_release = true
+
+[mattermost-operator]
+source = "github"
+github = "mattermost/mattermost-operator"
+use_latest_release = true
+prefix = "v"
+
+[metacontroller]
+source = "github"
+github = "metacontroller/metacontroller"
+use_latest_release = true
+prefix = "v"
+
+[minio-operator]
+source = "github"
+github = "minio/operator"
+use_latest_release = true
+prefix = "v"
+
+[natscli]
+source = "github"
+github = "nats-io/natscli"
+use_latest_release = true
+prefix = "v"
+
+[registry-adapter]
+source = "github"
+github = "neuvector/registry-adapter"
+use_latest_release = true
+prefix = "v"
+
+[scanner]
+source = "github"
+github = "neuvector/scanner"
+use_latest_release = true
+prefix = "v"
+
+[nri-apache]
+source = "github"
+github = "newrelic/nri-apache"
+use_latest_release = true
+prefix = "v"
+
+[nri-cassandra]
+source = "github"
+github = "newrelic/nri-cassandra"
+use_latest_release = true
+prefix = "v"
+
+[nri-consul]
+source = "github"
+github = "newrelic/nri-consul"
+use_latest_release = true
+prefix = "v"
+
+[nri-couchbase]
+source = "github"
+github = "newrelic/nri-couchbase"
+use_latest_release = true
+prefix = "v"
+
+[nri-discovery-kubernetes]
+source = "github"
+github = "newrelic/nri-discovery-kubernetes"
+use_latest_release = true
+prefix = "v"
+
+[nri-elasticsearch]
+source = "github"
+github = "newrelic/nri-elasticsearch"
+use_latest_release = true
+prefix = "v"
+
+[nri-f5]
+source = "github"
+github = "newrelic/nri-f5"
+use_latest_release = true
+prefix = "v"
+
+[nri-haproxy]
+source = "github"
+github = "newrelic/nri-haproxy"
+use_latest_release = true
+prefix = "v"
+
+[nri-jmx]
+source = "github"
+github = "newrelic/nri-jmx"
+use_latest_release = true
+prefix = "v"
+
+[nri-kafka]
+source = "github"
+github = "newrelic/nri-kafka"
+use_latest_release = true
+prefix = "v"
+
+[nri-kubernetes]
+source = "github"
+github = "newrelic/nri-kubernetes"
+use_latest_release = true
+prefix = "v"
+
+[nri-memcached]
+source = "github"
+github = "newrelic/nri-memcached"
+use_latest_release = true
+prefix = "v"
+
+[nri-mongodb]
+source = "github"
+github = "newrelic/nri-mongodb"
+use_latest_release = true
+prefix = "v"
+
+[nri-mssql]
+source = "github"
+github = "newrelic/nri-mssql"
+use_latest_release = true
+prefix = "v"
+
+[nri-mysql]
+source = "github"
+github = "newrelic/nri-mysql"
+use_latest_release = true
+prefix = "v"
+
+[nri-nagios]
+source = "github"
+github = "newrelic/nri-nagios"
+use_latest_release = true
+prefix = "v"
+
+[nri-nginx]
+source = "github"
+github = "newrelic/nri-nginx"
+use_latest_release = true
+prefix = "v"
+
+[nri-postgresql]
+source = "github"
+github = "newrelic/nri-postgresql"
+use_latest_release = true
+prefix = "v"
+
+[nri-prometheus]
+source = "github"
+github = "newrelic/nri-prometheus"
+use_latest_release = true
+prefix = "v"
+
+[nri-rabbitmq]
+source = "github"
+github = "newrelic/nri-rabbitmq"
+use_latest_release = true
+prefix = "v"
+
+[nri-redis]
+source = "github"
+github = "newrelic/nri-redis"
+use_latest_release = true
+prefix = "v"
+
+[nrjmx]
+source = "github"
+github = "newrelic/nrjmx"
+use_latest_release = true
+prefix = "v"
+
+[ratify]
+source = "github"
+github = "notaryproject/ratify"
+use_latest_release = true
+prefix = "v"
+
+[opa]
+source = "github"
+github = "open-policy-agent/opa"
+use_latest_release = true
+prefix = "v"
+
+[k8s_gateway]
+source = "github"
+github = "ori-edge/k8s_gateway"
+use_latest_release = true
+prefix = "v"
+
+[policy-bot]
+source = "github"
+github = "palantir/policy-bot"
+use_latest_release = true
+prefix = "v"
+
+[pgpool2_exporter]
+source = "github"
+github = "pgpool/pgpool2_exporter"
+use_latest_release = true
+prefix = "v"
+
+[pushprox]
+source = "github"
+github = "prometheus-community/PushProx"
+use_latest_release = true
+prefix = "v"
+
+[adapter]
+source = "github"
+github = "prometheus/adapter"
+use_latest_release = true
+prefix = "v"
+
+[admission-webhook]
+source = "github"
+github = "prometheus/admission-webhook"
+use_latest_release = true
+prefix = "v"
+
+[beat-exporter]
+source = "github"
+github = "prometheus/beat-exporter"
+use_latest_release = true
+prefix = "v"
+
+[blackbox-exporter]
+source = "github"
+github = "prometheus/blackbox-exporter"
+use_latest_release = true
+prefix = "v"
+
+[config-reloader]
+source = "github"
+github = "prometheus/config-reloader"
+use_latest_release = true
+prefix = "v"
+
+[elasticsearch-exporter]
+source = "github"
+github = "prometheus/elasticsearch-exporter"
+use_latest_release = true
+prefix = "v"
+
+[jmx-exporter]
+source = "github"
+github = "prometheus/jmx-exporter"
+use_latest_release = true
+prefix = "v"
+
+[mongodb-exporter]
+source = "github"
+github = "prometheus/mongodb-exporter"
+use_latest_release = true
+prefix = "v"
+
+[mysqld-exporter]
+source = "github"
+github = "prometheus/mysqld-exporter"
+use_latest_release = true
+prefix = "v"
+
+[node-exporter]
+source = "github"
+github = "prometheus/node-exporter"
+use_latest_release = true
+prefix = "v"
+
+[pgbouncer-exporter]
+source = "github"
+github = "prometheus/pgbouncer-exporter"
+use_latest_release = true
+prefix = "v"
+
+[podman-exporter]
+source = "github"
+github = "prometheus/podman-exporter"
+use_latest_release = true
+prefix = "v"
+
+[postgres-exporter]
+source = "github"
+github = "prometheus/postgres-exporter"
+use_latest_release = true
+prefix = "v"
+
+[process-exporter]
+source = "github"
+github = "prometheus/process-exporter"
+use_latest_release = true
+prefix = "v"
+
+[pushgateway]
+source = "github"
+github = "prometheus/pushgateway"
+use_latest_release = true
+prefix = "v"
+
+[redis-exporter]
+source = "github"
+github = "prometheus/redis-exporter"
+use_latest_release = true
+prefix = "v"
+
+[statsd-exporter]
+source = "github"
+github = "prometheus/statsd-exporter"
+use_latest_release = true
+prefix = "v"
+
+[pulumi]
+source = "github"
+github = "pulumi/pulumi"
+use_latest_release = true
+prefix = "v"
+
+[pulumi-dotnet]
+source = "github"
+github = "pulumi/pulumi-dotnet"
+use_latest_release = true
+prefix = "v"
+
+[pulumi-java]
+source = "github"
+github = "pulumi/pulumi-java"
+use_latest_release = true
+prefix = "v"
+
+[pulumi-kubernetes-operator]
+source = "github"
+github = "pulumi/pulumi-kubernetes-operator"
+use_latest_release = true
+prefix = "v"
+
+[pulumi-yaml]
+source = "github"
+github = "pulumi/pulumi-yaml"
+use_latest_release = true
+prefix = "v"
+
+[rancher-agent]
+source = "github"
+github = "rancher/agent"
+use_latest_release = true
+prefix = "v"
+
+[api-ui]
+source = "github"
+github = "rancher/api-ui"
+use_latest_release = true
+prefix = "v"
+
+[dashboard]
+source = "github"
+github = "rancher/dashboard"
+use_latest_release = true
+prefix = "v"
+
+[fleet]
+source = "github"
+github = "rancher/fleet"
+use_latest_release = true
+prefix = "v"
+
+[fleet-agent]
+source = "github"
+github = "rancher/fleet-agent"
+use_latest_release = true
+prefix = "v"
+
+[fleet-cli]
+source = "github"
+github = "rancher/fleet-cli"
+use_latest_release = true
+prefix = "v"
+
+[fleet-controller]
+source = "github"
+github = "rancher/fleet-controller"
+use_latest_release = true
+prefix = "v"
+
+[fleet-termination-log]
+source = "github"
+github = "rancher/fleet-termination-log"
+use_latest_release = true
+prefix = "v"
+
+[rancher-helm]
+source = "github"
+github = "rancher/helm"
+use_latest_release = true
+prefix = "v"
+
+[kontainer-driver-metadata]
+source = "github"
+github = "rancher/kontainer-driver-metadata"
+use_latest_release = true
+prefix = "v"
+
+[local-path-provisioner]
+source = "github"
+github = "rancher/local-path-provisioner"
+use_latest_release = true
+prefix = "v"
+
+[loglevel]
+source = "github"
+github = "rancher/loglevel"
+use_latest_release = true
+prefix = "v"
+
+[machine]
+source = "github"
+github = "rancher/machine"
+use_latest_release = true
+prefix = "v"
+
+[rancher]
+source = "github"
+github = "rancher/rancher"
+use_latest_release = true
+prefix = "v"
+
+[rke2]
+source = "github"
+github = "rancher/rke2"
+use_latest_release = true
+prefix = "v"
+
+[security-scan]
+source = "github"
+github = "rancher/security-scan"
+use_latest_release = true
+prefix = "v"
+
+[shell]
+source = "github"
+github = "rancher/shell"
+use_latest_release = true
+prefix = "v"
+
+[system-upgrade-controller]
+source = "github"
+github = "rancher/system-upgrade-controller"
+use_latest_release = true
+prefix = "v"
+
+[telemetry]
+source = "github"
+github = "rancher/telemetry"
+use_latest_release = true
+prefix = "v"
+
+[ui]
+source = "github"
+github = "rancher/ui"
+use_latest_release = true
+prefix = "v"
+
+[ui-driver-linode]
+source = "github"
+github = "rancher/ui-driver-linode"
+use_latest_release = true
+prefix = "v"
+
+[webhook]
+source = "github"
+github = "rancher/webhook"
+use_latest_release = true
+prefix = "v"
+
+[redpanda]
+source = "github"
+github = "redpanda-data/redpanda"
+use_latest_release = true
+prefix = "v"
+
+[regclient]
+source = "github"
+github = "regclient/regclient"
+use_latest_release = true
+prefix = "v"
+
+[kots]
+source = "github"
+github = "replicatedhq/kots"
+use_latest_release = true
+prefix = "v"
+
+[rook]
+source = "github"
+github = "rook/rook"
+use_latest_release = true
+prefix = "v"
+
+[monstache]
+source = "github"
+github = "rwynn/monstache"
+use_latest_release = true
+prefix = "v"
+
+[shadowsocks-rust]
+source = "github"
+github = "shadowsocks/shadowsocks-rust"
+use_latest_release = true
+prefix = "v"
+
+[image-factory]
+source = "github"
+github = "siderolabs/image-factory"
+use_latest_release = true
+prefix = "v"
+
+[omni]
+source = "github"
+github = "siderolabs/omni"
+use_latest_release = true
+prefix = "v"
+
+[splunk-otel-collector]
+source = "github"
+github = "signalfx/splunk-otel-collector"
+use_latest_release = true
+prefix = "v"
+
+[strimzi-kafka-bridge]
+source = "github"
+github = "strimzi/strimzi-kafka-bridge"
+use_latest_release = true
+
+[akhq]
+source = "github"
+github = "tchiotludo/akhq"
+use_latest_release = true
+
+[pipeline]
+source = "github"
+github = "tektoncd/pipeline"
+use_latest_release = true
+prefix = "v"
+
+[temporal]
+source = "github"
+github = "temporalio/temporal"
+use_latest_release = true
+prefix = "v"
+
+[archive-envoy]
+source = "github"
+github = "tetratelabs/archive-envoy"
+use_latest_release = true
+prefix = "v"
+
+[cassandra-reaper]
+source = "github"
+github = "thelastpickle/cassandra-reaper"
+use_latest_release = true
+
+[kustomize-sops]
+source = "github"
+github = "viaduct-ai/kustomize-sops"
+use_latest_release = true
+prefix = "v"
+
+[velero-plugin-for-aws]
+source = "github"
+github = "vmware-tanzu/velero-plugin-for-aws"
+use_latest_release = true
+prefix = "v"
+
+[velero-plugin-for-csi]
+source = "github"
+github = "vmware-tanzu/velero-plugin-for-csi"
+use_latest_release = true
+prefix = "v"
+
+[velero-plugin-for-microsoft-azure]
+source = "github"
+github = "vmware-tanzu/velero-plugin-for-microsoft-azure"
+use_latest_release = true
+prefix = "v"
+
+[zitadel]
+source = "github"
+github = "zitadel/zitadel"
+use_latest_release = true
+prefix = "v"
