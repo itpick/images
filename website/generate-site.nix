@@ -162,6 +162,7 @@ pkgs.stdenv.mkDerivation {
     mkdir -p $OUT_DIR/static/favicon
     cp -r static/favicon/* $OUT_DIR/static/favicon/
     cp static/app.js $OUT_DIR/static/app.js
+    cp static/packages.js $OUT_DIR/static/packages.js
 
     echo "-> Parsing image popularity table..."
     python3 parse-popularity.py \

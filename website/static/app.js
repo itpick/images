@@ -58,6 +58,21 @@ function updateStats(data) {
     if (uncEl) uncEl.textContent = '';
     if (cmpEl) cmpEl.textContent = 'No tags-data available';
   }
+
+  // Packages stat card. Two numbers: unique names (e.g. one entry per
+  // openssl regardless of version), and total instances (raw sum across
+  // every image's SBOM). The card links to the /packages/ directory
+  // so a click drills into the searchable list.
+  const pkgUnique = data.totalPackageUniqueNames || 0;
+  const pkgInstances = data.totalPackageInstances || 0;
+  const pkgEl = document.getElementById('total-packages');
+  const pkgInstEl = document.getElementById('total-package-instances');
+  if (pkgEl) {
+    pkgEl.textContent = pkgUnique > 0 ? pkgUnique.toLocaleString() : '–';
+  }
+  if (pkgInstEl && pkgInstances > 0) {
+    pkgInstEl.textContent = `${pkgInstances.toLocaleString()} instances`;
+  }
 }
 
 function humanBytes(n) {
@@ -127,14 +142,13 @@ function render() {
     const nixBadge = i.fromNixpkgs
       ? `<span class="badge-nix" title="Packaged directly from nixpkgs">Nix</span>`
       : '';
-    // The registry tag is always 'latest'; the image's OCI label gives
-    // the semver (e.g. "3.4.3"). Show both; collapse to just 'latest' if
-    // no version label or it's still a dynamic-* placeholder.
+    // Show the actual semver when we have it (resolved from the
+    // pushed :version tag via tags-data). Falls back to "latest" only
+    // when no real version is known — bare "latest" is uninformative
+    // in the catalog so we hide it whenever possible.
     const v = (i.version || '').trim();
-    const showLatestPlusVersion = v && v !== 'latest' && !v.startsWith('dynamic-');
-    const versionLine = showLatestPlusVersion
-      ? `latest, ${escapeHtml(v)}`
-      : 'latest';
+    const hasRealVersion = v && v !== 'latest' && !v.startsWith('dynamic-');
+    const versionLine = hasRealVersion ? escapeHtml(v) : 'latest';
     return `
     <a href="${BASE}images/${escapeAttr(i.name)}/"
        class="card block">

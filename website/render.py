@@ -17,6 +17,7 @@ import re
 import subprocess
 import sys
 import datetime
+import urllib.parse
 from pathlib import Path
 
 
@@ -406,6 +407,16 @@ def lookup_tags(image_name: str, tags_dir: str | None) -> list[dict] | None:
     return None
 
 
+def _looks_like_commit_sha(tag: str) -> bool:
+    """A bare 40-hex tag is the commit-SHA tag that local-build-push.sh
+    writes per build. Useless on a catalog card (e.g.
+    '91bee4f56879ec28c0d0a93fac12cafa09172832'); the version-tag is what
+    we want. Cheaper than importing re for a one-shot check."""
+    if len(tag) != 40:
+        return False
+    return all(c in "0123456789abcdef" for c in tag.lower())
+
+
 def _format_digest(digest: str) -> str:
     """Trim sha256:abcdef0123… → abcdef012345 for display, keeping the
     full digest available as a tooltip."""
@@ -488,13 +499,15 @@ def render_tags_panel(tags: list[dict] | None, image_name: str) -> str:
     )
 
 
-def render_sbom(sbom: list[dict] | None) -> str:
+def render_sbom(sbom: list[dict] | None, *, image_name: str | None = None,
+                link_packages: bool = False, base: str = "/") -> str:
     """Render the SBOM panel HTML.
 
-    Empty/missing data renders the same italic-muted placeholder used by the
-    vulnerabilities panel for visual consistency. Otherwise produces a table
-    capped at `_SBOM_MAX_ROWS`; if truncated, a tiny note above the table
-    discloses the original count.
+    When `link_packages` is true, each package name links to
+    `<base>packages/?q=<name>` so a user can click through to see every
+    other image that includes the same package. The query-string route
+    is handled client-side by packages/index.html — no per-package
+    HTML page needed.
     """
     if not sbom:
         return '<p class="text-fg-muted italic text-sm">No SBOM data available.</p>'
@@ -507,8 +520,20 @@ def render_sbom(sbom: list[dict] | None) -> str:
             f'Showing first {_SBOM_MAX_ROWS} of {total} total packages.'
             f'</p>'
         )
+
+    def _name_cell(name_text: str) -> str:
+        esc = _html_escape(name_text)
+        if link_packages and name_text:
+            href = f"{base}packages/?q={urllib.parse.quote(name_text)}"
+            return (
+                f'<a href="{href}" '
+                f'class="text-accent-ok hover:underline font-mono" '
+                f'title="See other images that include {esc}">{esc}</a>'
+            )
+        return esc
+
     body_rows = "\n".join(
-        f"<tr><td class=\"font-mono\">{_html_escape(r['name'])}</td>"
+        f"<tr><td class=\"font-mono\">{_name_cell(r['name'])}</td>"
         f"<td class=\"font-mono\">{_html_escape(r['version'])}</td>"
         f"<td class=\"text-fg-muted\">{_html_escape(r['type'])}</td>"
         f"<td class=\"text-fg-muted text-xs\">{_html_escape(r.get('license', '')) or '<span class=\"opacity-60\">—</span>'}</td></tr>"
@@ -694,6 +719,12 @@ def main():
     total_compressed_bytes = 0
     total_uncompressed_bytes = 0
     sized_image_count = 0
+    # Packages index: aggregate every image's SBOM into a map of
+    # (name, version, type) → set of images that include it. Drives
+    # both the homepage 'unique packages' stat card and the searchable
+    # /packages/ directory page generated below.
+    pkg_index: dict[tuple[str, str, str], set[str]] = {}
+    total_package_instances = 0
     for img in data["images"]:
         name = img["name"]
         readme_html = render_markdown(img.get("readme", ""), args.cmark)
@@ -705,13 +736,27 @@ def main():
             f'class="text-accent-ok hover:underline">Upstream ↗</a>'
             if upstream else ""
         )
+        # Resolve the version we display on the per-image page (and reuse
+        # for the catalog card later). Pull from tags-data when we have
+        # a real :version tag; otherwise fall back to whatever generate-site.nix
+        # could extract statically. See _looks_like_commit_sha for filtering
+        # out the immutable 40-hex commit-SHA tag local-build-push.sh writes.
+        tags_for_version = lookup_tags(name, args.tags_data)
+        static_version = img.get("version", "latest")
+        display_version = static_version
+        if (display_version == "latest" or display_version.startswith("dynamic-")) and tags_for_version:
+            for t in tags_for_version:
+                tag_name = t.get("tag", "")
+                if tag_name and tag_name != "latest" and not _looks_like_commit_sha(tag_name):
+                    display_version = tag_name
+                    break
         mapping = {
             "NAME": name,
             "UPSTREAM_HTML": upstream_html,
             "DESCRIPTION": img.get("description", ""),
             "CATEGORY": img.get("category", "unknown"),
             "CATEGORY_SLUG": category_slug(img.get("category", "")),
-            "VERSION": img.get("version", "latest"),
+            "VERSION": display_version,
             "PULL_COMMAND": img.get("pullCommand", f"docker pull ghcr.io/nix-containers/images/{name}:latest"),
             "README_HTML": readme_html,
             "NIX_HTML": nix_html,
@@ -758,9 +803,19 @@ def main():
         mapping["SCAN_PANEL_HTML"] = meta_banner + scan_body
 
         sbom = lookup_sbom(name, args.sbom_data)
-        mapping["SBOM_HTML"] = meta_banner + render_sbom(sbom)
+        mapping["SBOM_HTML"] = meta_banner + render_sbom(
+            sbom, image_name=name, link_packages=True, base=base
+        )
+        if sbom:
+            total_package_instances += len(sbom)
+            for pkg in sbom:
+                key = (pkg.get("name", ""), pkg.get("version", ""), pkg.get("type", ""))
+                if not key[0]:
+                    continue
+                pkg_index.setdefault(key, set()).add(name)
 
-        tags = lookup_tags(name, args.tags_data)
+        # tags-data was already fetched up top for version resolution.
+        tags = tags_for_version
         mapping["TAGS_HTML"] = render_tags_panel(tags, name)
 
         # Capture this image's "minimal size" from the latest tag —
@@ -795,7 +850,7 @@ def main():
             "description": img.get("description", ""),
             "category": img.get("category", "unknown"),
             "categorySlug": category_slug(img.get("category", "")),
-            "version": img.get("version", "latest"),
+            "version": display_version,
             "hasTest": img.get("hasTest", False),
             "fromNixpkgs": img.get("fromNixpkgs", False),
             "upstreamUrl": upstream,
@@ -836,6 +891,24 @@ def main():
     # representative multiplier — 4.5x — so the comparison number is
     # accurate to within a factor of two for the published set.
     _UPSTREAM_SIZE_MULTIPLIER = 4.5
+    # Materialize the packages index. One entry per unique
+    # (name, version, type) tuple; `images` is the sorted list of
+    # image names that include this exact package.
+    packages_list = sorted(
+        [
+            {
+                "name": k[0],
+                "version": k[1],
+                "type": k[2],
+                "images": sorted(images),
+                "imageCount": len(images),
+            }
+            for k, images in pkg_index.items()
+        ],
+        key=lambda p: (p["name"].lower(), p["version"]),
+    )
+    unique_package_names = len({p["name"] for p in packages_list})
+
     slim_data = {
         "totalCount": len(slim_images),
         "images": slim_images,
@@ -848,14 +921,46 @@ def main():
         "sizedImageCount": sized_image_count,
         "estimatedUpstreamBytes": int(total_compressed_bytes * _UPSTREAM_SIZE_MULTIPLIER),
         "upstreamSizeMultiplier": _UPSTREAM_SIZE_MULTIPLIER,
+        # Packages stat-card numbers. `uniqueNames` counts distinct
+        # software names (e.g. one for `openssl` regardless of how many
+        # versions or types appear). `totalEntries` is every
+        # (name, version, type) tuple. `totalInstances` is the raw sum
+        # across all images' SBOMs — useful for "how many packages are
+        # in the entire fleet, counting duplicates per image."
+        "totalPackageUniqueNames": unique_package_names,
+        "totalPackageEntries": len(packages_list),
+        "totalPackageInstances": total_package_instances,
     }
     (out / "images-data.json").write_text(json.dumps(slim_data))
+
+    # Separate, larger packages.json so the homepage doesn't pay the
+    # download cost. ~3000 entries × ~5 fields each = ~500 KB.
+    (out / "packages.json").write_text(json.dumps({
+        "packages": packages_list,
+        "uniqueNames": unique_package_names,
+        "totalEntries": len(packages_list),
+        "totalInstances": total_package_instances,
+        "lastUpdated": build_time,
+    }))
 
     rendered_index = fill_template(index_template, {"BASE": base})
     (out / "index.html").write_text(rendered_index)
 
-    print(f"Rendered {len(slim_images)} per-image pages + index -> {out}",
-          file=sys.stderr)
+    # The packages directory page — same template-fill machinery as
+    # the index. Client-side JS in /static/packages.js loads packages.json
+    # and renders the searchable list; this template is just the shell.
+    packages_template_path = Path(args.templates, "packages.html")
+    if packages_template_path.exists():
+        packages_template = packages_template_path.read_text()
+        rendered_packages = fill_template(packages_template, {"BASE": base})
+        (out / "packages").mkdir(parents=True, exist_ok=True)
+        (out / "packages" / "index.html").write_text(rendered_packages)
+
+    print(
+        f"Rendered {len(slim_images)} per-image pages + index "
+        f"+ {len(packages_list)} packages ({unique_package_names} unique names) -> {out}",
+        file=sys.stderr,
+    )
 
 
 if __name__ == "__main__":
