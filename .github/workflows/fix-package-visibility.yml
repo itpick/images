@@ -1,0 +1,120 @@
+name: Fix Package Visibility
+
+# Reconciles org packages that were pushed outside CI (e.g. from a
+# laptop via scripts/local-build-push.sh) and ended up private + with
+# no repository linkage. CI-pushed packages auto-link to the source
+# repo and inherit its visibility; out-of-band pushes don't.
+#
+# What this does, per private+unlinked container package under the
+# `images/<name>` path:
+#   1. Try to flip visibility to public via the REST visibility endpoint.
+#      Requires admin:packages on the token; falls back to logging the
+#      failure when GITHUB_TOKEN is insufficient.
+#
+# Inputs:
+#   pat_secret: name of a repo secret holding a PAT with admin:packages.
+#               When set, we use that instead of GITHUB_TOKEN. Falls back
+#               to GITHUB_TOKEN otherwise (which is expected to 404 for
+#               the visibility endpoint).
+#
+# Usage:
+#   gh workflow run fix-package-visibility.yml --ref main
+#
+# After running, security-scan.yml's existence-filter should jump
+# from ~717 to ~2200+ on the next scan.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "List private packages but don't flip visibility"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+permissions:
+  packages: write
+  contents: read
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List + (optionally) flip visibility
+        env:
+          # Prefer a PAT with admin:packages when available; the
+          # workflow's default GITHUB_TOKEN only has write:packages
+          # which is NOT enough to PATCH the visibility endpoint.
+          GH_TOKEN: ${{ secrets.PACKAGES_ADMIN_PAT || secrets.GITHUB_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          echo "=== Enumerate org container packages ==="
+          # The packages API paginates 30/page; --paginate concatenates.
+          # We filter to packages under images/<name> (the path prefix
+          # the build-and-push workflow uses), since the org may host
+          # other unrelated packages.
+          gh api --paginate '/orgs/nix-containers/packages?package_type=container&visibility=private&per_page=100' \
+            > /tmp/private.json
+          PRIVATE_COUNT=$(jq 'length' /tmp/private.json)
+          echo "Found $PRIVATE_COUNT private container packages."
+
+          # Only consider the images/<name> family. Same filter logic
+          # the resolve-images step in security-scan.yml uses.
+          jq -r '.[] | select(.name | startswith("images/")) | .name' /tmp/private.json \
+            > /tmp/private-images.txt
+          TARGET_COUNT=$(wc -l < /tmp/private-images.txt)
+          echo "$TARGET_COUNT of those are under images/ — the visibility-fix scope."
+          echo ""
+
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "DRY-RUN: would flip visibility for these packages:"
+            head -20 /tmp/private-images.txt
+            [ "$TARGET_COUNT" -gt 20 ] && echo "... and $((TARGET_COUNT - 20)) more."
+            exit 0
+          fi
+
+          echo "=== Flipping visibility to public ==="
+          OK=0
+          FAIL=0
+          MISS_SAMPLE_FILE=$RUNNER_TEMP/visibility-misses.txt
+          : > "$MISS_SAMPLE_FILE"
+          while IFS= read -r pkg; do
+            [ -z "$pkg" ] && continue
+            # URL-encode the slash in 'images/<name>'.
+            ENCODED=$(printf '%s' "$pkg" | python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.stdin.read().strip(), safe=""))')
+            RESP=$(curl -sS -o /tmp/response -w "%{http_code}" -X PATCH \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/orgs/nix-containers/packages/container/${ENCODED}/visibility" \
+              -d '{"visibility":"public"}' || echo "000")
+            case "$RESP" in
+              200|204)
+                OK=$((OK + 1))
+                ;;
+              *)
+                FAIL=$((FAIL + 1))
+                if [ "$FAIL" -le 10 ]; then
+                  printf '%s\thttp=%s\tbody=%s\n' "$pkg" "$RESP" "$(head -c 200 /tmp/response | tr '\n' ' ')" >> "$MISS_SAMPLE_FILE"
+                fi
+                ;;
+            esac
+          done < /tmp/private-images.txt
+
+          echo ""
+          echo "=== Summary ==="
+          echo "  flipped to public: $OK"
+          echo "  failures:          $FAIL"
+          if [ "$FAIL" -gt 0 ]; then
+            echo ""
+            echo "First 10 failure samples:"
+            cat "$MISS_SAMPLE_FILE"
+            echo ""
+            echo "If everything failed with http=404: the GH_TOKEN lacks admin:packages."
+            echo "Create a PAT with admin:packages and store it as repo secret PACKAGES_ADMIN_PAT,"
+            echo "then re-run this workflow."
+          fi
