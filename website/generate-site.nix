@@ -81,6 +81,19 @@ let
           if staticMatch != null then builtins.head staticMatch
           else if dynamicMatch != null then "dynamic-${builtins.head dynamicMatch}"
           else "latest";
+
+      # For images that package a tool straight from nixpkgs (drv = pkgs.<attr>),
+      # the upstream URL isn't in the default.nix text — pull it from the
+      # nixpkgs package's meta.homepage. render.py uses this as the final
+      # fallback when no URL is found in the file text.
+      nixpkgsAttr =
+        let m = builtins.match ".*drv = pkgs\\.([a-zA-Z0-9_'-]+)[ ;\n].*" nixContent;
+        in if m != null then builtins.head m else null;
+      nixpkgsHomepage =
+        if nixpkgsAttr != null && nixpkgsAttr != "stdenv" && nixpkgsAttr != "fetchurl"
+        then (let r = builtins.tryEval ((pkgs.${nixpkgsAttr} or {}).meta.homepage or "");
+              in if r.success then r.value else "")
+        else "";
     in {
       name = imageName;
       description = extractLabel nixContent "org\\.opencontainers\\.image\\.description"
@@ -97,6 +110,7 @@ let
       fromNixpkgs = (lib.hasInfix "drv = pkgs." nixContent)
         && !(lib.hasInfix "drv = pkgs.stdenv" nixContent)
         && !(lib.hasInfix "drv = pkgs.fetchurl" nixContent);
+      inherit nixpkgsHomepage;
       readme = readmeContent;
       pullCommand = "docker pull ghcr.io/nix-containers/images/${imageName}:latest";
       nixCode = nixContent;
