@@ -58,16 +58,23 @@ mkImage {
   name = "gitea";
   tag = pkgs.gitea.version;
   entrypoint = [ "${pkgs.gitea}/bin/gitea" ];
-  cmd = [ "--help" ];
+  # Was `--help` (a one-shot, so the kind-test pod CrashLoops). Run the web
+  # server: `gitea web` auto-generates a default app.ini + SQLite DB on first
+  # start and serves HTTP on 0.0.0.0:3000 (gitea's default bind), reachable by
+  # the kind-test probe. The one thing the nonroot pod can't satisfy is the
+  # default work/custom/HOME dirs under /var/lib/gitea + /home/git (not
+  # writable), so point them at the writable /tmp. Operators mount a PVC there
+  # and supply their own app.ini (external DB, real ROOT_URL, etc.).
+  cmd = [ "web" ];
   # Chainguard runs gitea as user 1000 (git)
   user = "1000:1000";
 
   extraPkgs = with pkgs; [ bash curl dumb-init git gnupg ];
 
   env = {
-    GITEA_WORK_DIR = "/var/lib/gitea";
-    GITEA_CUSTOM = "/var/lib/gitea/custom";
-    HOME = "/home/git";
+    GITEA_WORK_DIR = "/tmp/gitea";
+    GITEA_CUSTOM = "/tmp/gitea/custom";
+    HOME = "/tmp/gitea";
     USER = "git";
   };
 
