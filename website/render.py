@@ -13,6 +13,7 @@ import argparse
 import glob
 import json
 import os
+import re
 import subprocess
 import sys
 import datetime
@@ -583,6 +584,39 @@ def render_popularity(record: dict | None) -> str:
     )
 
 
+_UPSTREAM_LABELS = (
+    "org.opencontainers.image.source",
+    "org.opencontainers.image.url",
+    "io.nix-containers.image.upstream",
+)
+
+
+def upstream_url(img: dict) -> str:
+    """Best-effort upstream project URL for an image, from its default.nix.
+
+    Priority: explicit OCI source/url/upstream label > meta homepage >
+    fetchFromGitHub owner/repo > first `# https://` comment > the nixpkgs
+    package's meta.homepage (resolved at site-gen time into nixpkgsHomepage)."""
+    nix = img.get("nixCode", "") or ""
+    for lbl in _UPSTREAM_LABELS:
+        m = re.search(r'"' + re.escape(lbl) + r'"\s*=\s*"(https?://[^"]+)"', nix)
+        if m:
+            return m.group(1)
+    m = re.search(r'homepage\s*=\s*"(https?://[^"]+)"', nix)
+    if m:
+        return m.group(1)
+    m = re.search(
+        r'fetchFromGitHub\s*\{.*?owner\s*=\s*"([^"]+)".*?repo\s*=\s*"([^"]+)"',
+        nix, re.S,
+    )
+    if m:
+        return f"https://github.com/{m.group(1)}/{m.group(2)}"
+    m = re.search(r'#\s*(https?://\S+)', nix)
+    if m:
+        return m.group(1).rstrip(").,")
+    return (img.get("nixpkgsHomepage", "") or "").strip()
+
+
 def fill_template(template: str, mapping: dict) -> str:
     """Mustache-style substitution. {{KEY}} -> mapping[KEY]. Raises if any
     placeholder is left unfilled — better to catch typos at build time."""
@@ -655,8 +689,15 @@ def main():
         readme_html = render_markdown(img.get("readme", ""), args.cmark)
         nix_html = render_nix(img.get("nixCode", ""), args.pygmentize)
         pop_record = lookup_popularity(name, popularity)
+        upstream = upstream_url(img)
+        upstream_html = (
+            f'<a href="{_html_escape(upstream)}" target="_blank" rel="noopener" '
+            f'class="text-accent-ok hover:underline">Upstream ↗</a>'
+            if upstream else ""
+        )
         mapping = {
             "NAME": name,
+            "UPSTREAM_HTML": upstream_html,
             "DESCRIPTION": img.get("description", ""),
             "CATEGORY": img.get("category", "unknown"),
             "CATEGORY_SLUG": category_slug(img.get("category", "")),
@@ -725,6 +766,7 @@ def main():
             "version": img.get("version", "latest"),
             "hasTest": img.get("hasTest", False),
             "fromNixpkgs": img.get("fromNixpkgs", False),
+            "upstreamUrl": upstream,
             "pullCommand": img.get("pullCommand", ""),
             "usedByCharts": img.get("usedByCharts", []),
             "scan": scan or None,
