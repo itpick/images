@@ -31,7 +31,14 @@ in mkImage {
   name = "livekit-server";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/livekit-server" ];
-  cmd = [ "--help" ];
+  # Was `--help` (a one-shot, so the kind-test pod CrashLoops). Run the SFU:
+  # --dev starts with built-in placeholder API keys (devkey/secret) so the bare
+  # image needs no config or mounted secret, and --bind 0.0.0.0 makes the HTTP/
+  # WebSocket signal server (:7880) + RTC TCP (:7881) reachable by the kind-test
+  # probe. (Verified: the server stays up and listens on 0.0.0.0:7880/7881.)
+  # Operators run production with their own --config / LIVEKIT_CONFIG (real API
+  # keys, Redis, TURN) instead of --dev.
+  cmd = [ "--dev" "--bind" "0.0.0.0" ];
   labels = {
     "org.opencontainers.image.title" = "livekit-server";
     "org.opencontainers.image.description" = "LiveKit open source WebRTC SFU server";
