@@ -28,12 +28,33 @@ let
       runHook postInstall
     '';
   };
+  # apm-server needs a config; bake a minimal one (the binary ships no /etc, so
+  # no shadowing). Bind the intake API on 0.0.0.0:8200 and use the `console`
+  # output so it runs with no Elasticsearch backend. Operators mount their own
+  # config (output.elasticsearch + a real host/auth).
+  apmConfig = pkgs.writeTextDir "etc/apm-server/apm-server.yml" ''
+    apm-server:
+      host: "0.0.0.0:8200"
+
+    output.console:
+      pretty: false
+  '';
 in mkImage {
   inherit drv;
   name = "apm-server";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/apm-server" ];
-  cmd = [ "--help" ];
+  # Was `--help` (a one-shot). Run the intake server with the baked config; log
+  # to stderr (-e), and keep apm-server's home (its bundled assets) + writable
+  # data dir explicit (the default data dir is the read-only install tree).
+  cmd = [
+    "-e"
+    "-c" "/etc/apm-server/apm-server.yml"
+    "--path.home" "${drv}/share/apm-server"
+    "--path.data" "/tmp/apm-server"
+  ];
+
+  extraPkgs = [ apmConfig ];
   labels = {
     "org.opencontainers.image.title" = "apm-server";
     "org.opencontainers.image.version" = version;
