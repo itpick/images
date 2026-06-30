@@ -33,22 +33,29 @@ function updateStats(data) {
     (acc, i) => acc + ((i.scan && i.scan.critical) || 0), 0);
   document.getElementById('critical-count').textContent = totalCritical;
 
-  // Compressed-size summary. Sum is pre-computed by render.py — the
-  // page just formats it. Upstream estimate is our_total × a hardcoded
-  // multiplier (until we maintain a curated nix→docker-hub map).
+  // Size summary. Three numbers from render.py:
+  //   compressed  — on-the-wire pull cost (gzip'd layer sum)
+  //   uncompressed — extracted disk cost (decompressed layer sum)
+  //   upstream    — estimate via 4.5x multiplier on compressed
   const ours = data.totalCompressedBytes || 0;
+  const oursUnc = data.totalUncompressedBytes || 0;
   const upstream = data.estimatedUpstreamBytes || 0;
   const multiplier = data.upstreamSizeMultiplier || 0;
   const sizeEl = document.getElementById('total-size');
+  const uncEl = document.getElementById('total-uncompressed');
   const cmpEl = document.getElementById('upstream-comparison');
   if (ours > 0) {
     sizeEl.textContent = humanBytes(ours);
-    if (upstream > 0 && multiplier > 0) {
+    if (uncEl) {
+      uncEl.textContent = oursUnc > 0 ? `${humanBytes(oursUnc)} extracted` : '';
+    }
+    if (cmpEl && upstream > 0 && multiplier > 0) {
       cmpEl.textContent =
         `~${humanBytes(upstream)} upstream • ${multiplier}× smaller`;
     }
   } else if (sizeEl) {
     sizeEl.textContent = '–';
+    if (uncEl) uncEl.textContent = '';
     if (cmpEl) cmpEl.textContent = 'No tags-data available';
   }
 }

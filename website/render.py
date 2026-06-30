@@ -462,7 +462,8 @@ def render_tags_panel(tags: list[dict] | None, image_name: str) -> str:
         f"<tr>"
         f"<td class=\"font-mono\"><code class=\"text-fg-primary\">{_html_escape(t.get('tag', ''))}</code></td>"
         f"<td class=\"font-mono text-fg-muted text-xs\" title=\"{_html_escape(t.get('digest', ''))}\">{_html_escape(_format_digest(t.get('digest', '')))}</td>"
-        f"<td class=\"font-mono text-fg-muted text-xs\">{_format_size_bytes(t.get('compressed_size'))}</td>"
+        f"<td class=\"font-mono text-fg-muted text-xs\" title=\"On-the-wire pull size\">{_format_size_bytes(t.get('compressed_size'))}</td>"
+        f"<td class=\"font-mono text-fg-muted text-xs\" title=\"Size on disk after pull (decompressed)\">{_format_size_bytes(t.get('uncompressed_size'))}</td>"
         f"<td class=\"text-fg-muted text-xs\">{_html_escape(format_scan_timestamp(t.get('pushed_at', '')))}</td>"
         f"</tr>"
         for t in rows
@@ -480,7 +481,7 @@ def render_tags_panel(tags: list[dict] | None, image_name: str) -> str:
         f'{note}'
         f'<div class="prose max-w-none">'
         f'<table>'
-        f'<thead><tr><th>Tag</th><th>Digest</th><th>Size</th><th>Pushed</th></tr></thead>'
+        f'<thead><tr><th>Tag</th><th>Digest</th><th>Compressed</th><th>Uncompressed</th><th>Pushed</th></tr></thead>'
         f'<tbody>{body_rows}</tbody>'
         f'</table>'
         f'</div>'
@@ -684,11 +685,14 @@ def main():
     build_recent = is_recent(args.last_build) if args.last_build else True
 
     slim_images = []
-    # Accumulators for the homepage's compressed-size stat card.
-    # total_compressed_bytes is the sum of each image's `latest`-tag
-    # size (representative of the on-the-wire pull). sized_image_count
-    # is just for the average; not every image has a tags-data file.
+    # Accumulators for the homepage's size stat cards.
+    # `total_compressed_bytes` is the sum of each image's latest-tag
+    # compressed size (on-the-wire pull cost). `total_uncompressed_bytes`
+    # is the corresponding decompressed-on-disk total — useful for
+    # capacity planning when running every image. `sized_image_count`
+    # tracks how many images contributed (not every image has tags-data).
     total_compressed_bytes = 0
+    total_uncompressed_bytes = 0
     sized_image_count = 0
     for img in data["images"]:
         name = img["name"]
@@ -759,23 +763,26 @@ def main():
         tags = lookup_tags(name, args.tags_data)
         mapping["TAGS_HTML"] = render_tags_panel(tags, name)
 
-        # Capture this image's "minimal compressed size" from the latest tag.
-        # Multiple tags may share a digest (and therefore a size), so picking
-        # any tag is fine; the latest is conventionally what users pull.
-        latest_size = 0
-        if tags:
+        # Capture this image's "minimal size" from the latest tag —
+        # both compressed (on-the-wire pull cost) and uncompressed
+        # (on-disk extracted cost). Multiple tags may share a digest
+        # (and therefore both sizes), so picking any tag is fine; the
+        # latest is what users conventionally pull.
+        def _pick(field: str) -> int:
+            if not tags:
+                return 0
             for t in tags:
-                if t.get("tag") == "latest" and t.get("compressed_size"):
-                    latest_size = t["compressed_size"]
-                    break
-            # Fall back to the first sized tag if no `latest` is set.
-            if latest_size == 0:
-                for t in tags:
-                    if t.get("compressed_size"):
-                        latest_size = t["compressed_size"]
-                        break
-        total_compressed_bytes += latest_size
-        if latest_size > 0:
+                if t.get("tag") == "latest" and t.get(field):
+                    return t[field]
+            for t in tags:
+                if t.get(field):
+                    return t[field]
+            return 0
+        latest_compressed = _pick("compressed_size")
+        latest_uncompressed = _pick("uncompressed_size")
+        total_compressed_bytes += latest_compressed
+        total_uncompressed_bytes += latest_uncompressed
+        if latest_compressed > 0:
             sized_image_count += 1
 
         page_html = fill_template(image_template, mapping)
@@ -833,11 +840,11 @@ def main():
         "totalCount": len(slim_images),
         "images": slim_images,
         "lastUpdated": build_time,
-        # Compressed-size aggregates for the homepage stat card. Bytes.
-        # null-safe on the front-end: tags-data may be absent on local
-        # builds, in which case both totals are 0 and the card renders
-        # a placeholder.
+        # Size aggregates for the homepage stat cards. Bytes. null-safe
+        # on the front-end: tags-data may be absent on local builds, in
+        # which case both totals are 0 and the card renders a placeholder.
         "totalCompressedBytes": total_compressed_bytes,
+        "totalUncompressedBytes": total_uncompressed_bytes,
         "sizedImageCount": sized_image_count,
         "estimatedUpstreamBytes": int(total_compressed_bytes * _UPSTREAM_SIZE_MULTIPLIER),
         "upstreamSizeMultiplier": _UPSTREAM_SIZE_MULTIPLIER,
