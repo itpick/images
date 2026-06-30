@@ -205,9 +205,13 @@
     window.location.href = `/orgs/${ORG}/packages?page=${state.currentPage}`;
   }
 
-  // Phase 2: flipping. Iterates state.targets and POSTs each through
-  // flipPackagePublic. Stays on the same page; no navigation needed.
+  // Phase 2: flipping. Iterates state.targets, then loops back over
+  // state.failures (populated on first pass) to retry any that hit a
+  // transient error. Each failure is logged by name so we know what's
+  // still stuck after the retry pass.
   async function continueFlipping(state) {
+    if (!Array.isArray(state.failures)) state.failures = [];
+    // First pass
     while (state.flipIndex < state.targets.length) {
       const i = state.flipIndex;
       const name = state.targets[i];
@@ -215,9 +219,10 @@
         const res = await flipPackagePublic(name);
         if (res === 'flipped') state.ok++;
         else if (res === 'already-public') state.skipped++;
-        else { state.failed++; log(`[${i + 1}/${state.targets.length}] ${name} → ${res}`); }
+        else { state.failed++; state.failures.push(name); log(`[${i + 1}/${state.targets.length}] ${name} → ${res}`); }
       } catch (e) {
         state.failed++;
+        state.failures.push(name);
         log(`[${i + 1}/${state.targets.length}] ${name} → exception ${e.message}`);
       }
       state.flipIndex++;
@@ -227,8 +232,46 @@
       }
       await new Promise(r => setTimeout(r, 250));
     }
+    // Retry pass — only if there are failures and we haven't already
+    // retried on this run.
+    if (state.failures.length > 0 && !state.retriedOnce) {
+      log(`Retrying ${state.failures.length} failed packages with longer backoff…`);
+      const toRetry = state.failures.slice();
+      state.failures = [];
+      const before = state.ok;
+      for (let i = 0; i < toRetry.length; i++) {
+        const name = toRetry[i];
+        try {
+          const res = await flipPackagePublic(name);
+          if (res === 'flipped') { state.ok++; state.failed = Math.max(0, state.failed - 1); }
+          else if (res === 'already-public') { state.skipped++; state.failed = Math.max(0, state.failed - 1); }
+          else { state.failures.push(name); log(`retry [${i + 1}/${toRetry.length}] ${name} → ${res}`); }
+        } catch (e) {
+          state.failures.push(name);
+          log(`retry [${i + 1}/${toRetry.length}] ${name} → exception ${e.message}`);
+        }
+        if ((i + 1) % 25 === 0) {
+          log(`retry progress: ${i + 1}/${toRetry.length} — recovered ${state.ok - before}`);
+          saveState(state);
+        }
+        // Slower throttle for the retry pass.
+        await new Promise(r => setTimeout(r, 750));
+      }
+      state.retriedOnce = true;
+      log(`Retry recovered ${state.ok - before} of ${toRetry.length}.`);
+    }
     log(`Done. flipped=${state.ok} skipped=${state.skipped} failed=${state.failed}`);
-    clearState();
+    if (state.failures.length > 0) {
+      log(`Still failing (${state.failures.length}): first 10 = ${state.failures.slice(0, 10).join(', ')}`);
+    }
+    // Don't wipe state — keep state.targets around so a follow-up
+    // 'linking' phase can reuse the same list without re-listing.
+    // Mark the phase done so the auto-resume on next page load
+    // doesn't restart anything.
+    state.phase = 'flipped';
+    state.flippedAt = new Date().toISOString();
+    saveState(state);
+    log('State preserved in localStorage as nc-bulk-flip-state for the linking pass.');
   }
 
   async function runBulk() {
@@ -245,6 +288,8 @@
       await continueListing(state);
     } else if (state.phase === 'flipping') {
       await continueFlipping(state);
+    } else if (state.phase === 'flipped') {
+      log(`Flip already complete (${state.flippedAt || '?'}). state.targets has ${state.targets?.length || 0} names — feed them to the link pass when it's ready.`);
     }
     if (btn) btn.disabled = false;
   }
