@@ -31,7 +31,7 @@
   </header>
 
   <main class="max-w-7xl mx-auto px-4 py-8">
-    <div class="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="mb-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
       <div class="card">
         <div class="text-2xl font-bold font-mono text-accent-ok" id="total-images">–</div>
         <div class="text-sm text-fg-muted">Total images</div>
@@ -47,6 +47,11 @@
       <div class="card">
         <div class="text-2xl font-bold font-mono text-accent-bad" id="critical-count">–</div>
         <div class="text-sm text-fg-muted">Critical CVEs</div>
+      </div>
+      <div class="card">
+        <div class="text-2xl font-bold font-mono text-accent-ok" id="total-size">–</div>
+        <div class="text-sm text-fg-muted">Total compressed</div>
+        <div class="text-xs text-fg-muted mt-1" id="upstream-comparison"></div>
       </div>
     </div>
 
