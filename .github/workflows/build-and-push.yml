@@ -77,7 +77,7 @@ jobs:
           # Source Nix environment
           . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
           # Build image using Nix flakes with explicit experimental features
-          nix --extra-experimental-features "nix-command flakes" build .#${{ matrix.name }} --print-build-logs
+          nix --extra-experimental-features "nix-command flakes" build .#"${{ matrix.name }}" --print-build-logs
           echo "BUILD_SUCCESS=true" >> $GITHUB_ENV
 
       - name: Load and push image to registry
@@ -99,7 +99,7 @@ jobs:
             
             # Load using nix2container copyTo function
             echo "Loading image using nix2container..."
-            nix --extra-experimental-features "nix-command flakes" run .#${{ matrix.name }}.copyTo -- docker-daemon:${{ matrix.name }}:latest
+            nix --extra-experimental-features "nix-command flakes" run .#"${{ matrix.name }}".copyTo -- docker-daemon:${{ matrix.name }}:latest
             
             # Get the loaded image details
             echo "=== Available Docker images ==="
@@ -133,8 +133,8 @@ jobs:
             nix_eval() {
               nix --extra-experimental-features "nix-command flakes" eval --raw "$@" 2>/dev/null
             }
-            PACKAGE_VERSION=$(nix_eval ".#${{ matrix.name }}.config.Labels.\"org.opencontainers.image.version\"" \
-              || nix_eval ".#${{ matrix.name }}.imageTag" \
+            PACKAGE_VERSION=$(nix_eval ".#\"${{ matrix.name }}\".config.Labels.\"org.opencontainers.image.version\"" \
+              || nix_eval ".#\"${{ matrix.name }}\".imageTag" \
               || echo "latest")
             echo "Package version: $PACKAGE_VERSION"
             
