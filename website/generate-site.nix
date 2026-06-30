@@ -88,9 +88,18 @@ let
         let
           staticMatch = builtins.match ".*\"org\\.opencontainers\\.image\\.version\"[[:space:]]*=[[:space:]]*\"([^\"]+)\".*" nixContent;
           dynamicMatch = builtins.match ".*\"org\\.opencontainers\\.image\\.version\"[[:space:]]*=[[:space:]]*pkgs\\.([^;]+)\\.version.*" nixContent;
+          # Most inline images set the OCI version label to the `version`
+          # let-binding (`"...image.version" = version;`), which the two
+          # patterns above don't capture — they only match a quoted literal or
+          # pkgs.<attr>.version. Fall back to the `version = "X";` binding so
+          # these show their real version instead of "latest".
+          varLabel = builtins.match ".*\"org\\.opencontainers\\.image\\.version\"[[:space:]]*=[[:space:]]*version[[:space:]]*;.*" nixContent != null;
+          versionBinding = builtins.match ".*[^[:alnum:]_]version[[:space:]]*=[[:space:]]*\"([^\"]+)\".*" nixContent;
         in
           if staticMatch != null then builtins.head staticMatch
           else if dynamicMatch != null then "dynamic-${builtins.head dynamicMatch}"
+          else if varLabel && versionBinding != null && builtins.head versionBinding != "latest"
+            then builtins.head versionBinding
           else "latest";
       nixMeta = nixMetaFor imageName;
     in {
