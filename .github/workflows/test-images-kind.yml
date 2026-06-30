@@ -100,14 +100,14 @@ jobs:
         id: build
         run: |
           set -euo pipefail
-          nix build .#${{ matrix.name }} --print-build-logs
+          nix build .#"${{ matrix.name }}" --print-build-logs
           echo "built=true" >> "$GITHUB_OUTPUT"
 
       - name: Load image into Docker
         id: load
         run: |
           set -euo pipefail
-          nix run .#${{ matrix.name }}.copyTo -- \
+          nix run .#"${{ matrix.name }}".copyTo -- \
             docker-daemon:${{ matrix.name }}:${{ env.IMAGE_TAG }}
           docker images | grep ${{ matrix.name }} | head -1
           echo "loaded=true" >> "$GITHUB_OUTPUT"

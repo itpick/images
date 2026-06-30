@@ -67,7 +67,7 @@ jobs:
         continue-on-error: true
         run: |
           . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-          nix --extra-experimental-features "nix-command flakes" build .#${{ matrix.name }} --print-build-logs
+          nix --extra-experimental-features "nix-command flakes" build .#"${{ matrix.name }}" --print-build-logs
           echo "BUILD_SUCCESS=true" >> $GITHUB_ENV
 
       - name: Load image to Docker
@@ -75,7 +75,7 @@ jobs:
         continue-on-error: true
         run: |
           . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-          nix --extra-experimental-features "nix-command flakes" run .#${{ matrix.name }}.copyTo -- docker-daemon:${{ matrix.name }}:test
+          nix --extra-experimental-features "nix-command flakes" run .#"${{ matrix.name }}".copyTo -- docker-daemon:${{ matrix.name }}:test
           echo "LOAD_SUCCESS=true" >> $GITHUB_ENV
 
       - name: Run comprehensive tests
@@ -85,9 +85,9 @@ jobs:
           . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
           
           # Check if image has specific tests
-          if nix --extra-experimental-features "nix-command flakes" build .#${{ matrix.name }}-test 2>/dev/null; then
+          if nix --extra-experimental-features "nix-command flakes" build .#"${{ matrix.name }}-test" 2>/dev/null; then
             echo "Running comprehensive tests for ${{ matrix.name }}..."
-            nix --extra-experimental-features "nix-command flakes" run .#${{ matrix.name }}-test
+            nix --extra-experimental-features "nix-command flakes" run .#"${{ matrix.name }}-test"
             echo "TESTS_SUCCESS=true" >> $GITHUB_ENV
           else
             echo "No specific tests found for ${{ matrix.name }}, running basic tests..."
