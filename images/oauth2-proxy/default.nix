@@ -10,7 +10,23 @@ mkImage {
   name = "oauth2-proxy";
   tag = "v${pkgs.oauth2-proxy.version}";
   entrypoint = [ "${pkgs.oauth2-proxy}/bin/oauth2-proxy" ];
-  cmd = [ "--help" ];
+  # Was `--help` (a one-shot). Run the proxy with a self-contained default
+  # config (all flags, no config file, no writable dir): bind 0.0.0.0:4180, a
+  # `static://200` upstream (no real backend), and the google provider with
+  # placeholder credentials — the google provider does no startup discovery, so
+  # it starts and serves the sign-in page without contacting any IdP. Operators
+  # override --provider/--client-id/--client-secret/--upstream/--redirect-url
+  # and a real --cookie-secret for production.
+  cmd = [
+    "--http-address=0.0.0.0:4180"
+    "--upstream=static://200"
+    "--provider=google"
+    "--client-id=placeholder-client-id"
+    "--client-secret=placeholder-client-secret"
+    "--cookie-secret=0123456789abcdef0123456789abcdef"
+    "--cookie-secure=false"
+    "--email-domain=*"
+  ];
 
   labels = {
     "org.opencontainers.image.title" = "OAuth2 Proxy";
