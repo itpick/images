@@ -32,7 +32,10 @@ in mkImage {
   name = "pushprox";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/pushprox-proxy" ];
-  cmd = [ "--help" ];
+  # Was `--help` (a one-shot). Run the proxy server: clients register with it and
+  # Prometheus scrapes targets through it. Bind 0.0.0.0:8080 (the default is
+  # :8080) so the kind-test probe can reach it. No config or writable dir needed.
+  cmd = [ "--web.listen-address=0.0.0.0:8080" ];
   labels = {
     "org.opencontainers.image.title" = "pushprox";
     "org.opencontainers.image.description" = "PushProx proxy for scraping Prometheus targets behind NAT/firewalls";
