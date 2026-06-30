@@ -42,12 +42,20 @@ jobs:
       #
       # actions/cache uses a separate quota from the REST API token, so
       # it's available even when 403s hammer gh run list.
+      # Each save uses scan-data-snapshot-<run-id> as the key. On
+      # restore we want the most-recent prefix match, so we use a
+      # `key` that NEVER matches exactly (the current run id won't
+      # have a save yet) and let restore-keys do the prefix match.
+      # The previous version reused the same string for both fields,
+      # which actions/cache@v4 treats as a single key-search and gives
+      # up after the (never-existing) exact-match phase. (See deploy
+      # run 28475325048 — the cache was present but restore failed.)
       - name: Restore scan-data snapshot (fallback)
         id: cached-scan
         uses: actions/cache/restore@v4
         with:
           path: /tmp/cached-scan-data
-          key: scan-data-snapshot-
+          key: scan-data-snapshot-current-${{ github.run_id }}
           restore-keys: |
             scan-data-snapshot-
 
@@ -56,7 +64,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: /tmp/cached-tags-data
-          key: tags-data-snapshot-
+          key: tags-data-snapshot-current-${{ github.run_id }}
           restore-keys: |
             tags-data-snapshot-
 
