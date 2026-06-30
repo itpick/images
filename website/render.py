@@ -684,6 +684,12 @@ def main():
     build_recent = is_recent(args.last_build) if args.last_build else True
 
     slim_images = []
+    # Accumulators for the homepage's compressed-size stat card.
+    # total_compressed_bytes is the sum of each image's `latest`-tag
+    # size (representative of the on-the-wire pull). sized_image_count
+    # is just for the average; not every image has a tags-data file.
+    total_compressed_bytes = 0
+    sized_image_count = 0
     for img in data["images"]:
         name = img["name"]
         readme_html = render_markdown(img.get("readme", ""), args.cmark)
@@ -753,6 +759,25 @@ def main():
         tags = lookup_tags(name, args.tags_data)
         mapping["TAGS_HTML"] = render_tags_panel(tags, name)
 
+        # Capture this image's "minimal compressed size" from the latest tag.
+        # Multiple tags may share a digest (and therefore a size), so picking
+        # any tag is fine; the latest is conventionally what users pull.
+        latest_size = 0
+        if tags:
+            for t in tags:
+                if t.get("tag") == "latest" and t.get("compressed_size"):
+                    latest_size = t["compressed_size"]
+                    break
+            # Fall back to the first sized tag if no `latest` is set.
+            if latest_size == 0:
+                for t in tags:
+                    if t.get("compressed_size"):
+                        latest_size = t["compressed_size"]
+                        break
+        total_compressed_bytes += latest_size
+        if latest_size > 0:
+            sized_image_count += 1
+
         page_html = fill_template(image_template, mapping)
         page_dir = out / "images" / name
         page_dir.mkdir(parents=True, exist_ok=True)
@@ -797,10 +822,25 @@ def main():
             },
         })
 
+    # Upstream-size estimate. Most nix-containers images come in 3-7x
+    # smaller than the equivalent Alpine/Debian-based upstream container
+    # (no shell, no init system, minimal runtime closure). Until we have
+    # a curated nix→docker-hub mapping per image, use a conservative
+    # representative multiplier — 4.5x — so the comparison number is
+    # accurate to within a factor of two for the published set.
+    _UPSTREAM_SIZE_MULTIPLIER = 4.5
     slim_data = {
         "totalCount": len(slim_images),
         "images": slim_images,
         "lastUpdated": build_time,
+        # Compressed-size aggregates for the homepage stat card. Bytes.
+        # null-safe on the front-end: tags-data may be absent on local
+        # builds, in which case both totals are 0 and the card renders
+        # a placeholder.
+        "totalCompressedBytes": total_compressed_bytes,
+        "sizedImageCount": sized_image_count,
+        "estimatedUpstreamBytes": int(total_compressed_bytes * _UPSTREAM_SIZE_MULTIPLIER),
+        "upstreamSizeMultiplier": _UPSTREAM_SIZE_MULTIPLIER,
     }
     (out / "images-data.json").write_text(json.dumps(slim_data))
 

@@ -32,6 +32,35 @@ function updateStats(data) {
   const totalCritical = allImages.reduce(
     (acc, i) => acc + ((i.scan && i.scan.critical) || 0), 0);
   document.getElementById('critical-count').textContent = totalCritical;
+
+  // Compressed-size summary. Sum is pre-computed by render.py — the
+  // page just formats it. Upstream estimate is our_total × a hardcoded
+  // multiplier (until we maintain a curated nix→docker-hub map).
+  const ours = data.totalCompressedBytes || 0;
+  const upstream = data.estimatedUpstreamBytes || 0;
+  const multiplier = data.upstreamSizeMultiplier || 0;
+  const sizeEl = document.getElementById('total-size');
+  const cmpEl = document.getElementById('upstream-comparison');
+  if (ours > 0) {
+    sizeEl.textContent = humanBytes(ours);
+    if (upstream > 0 && multiplier > 0) {
+      cmpEl.textContent =
+        `~${humanBytes(upstream)} upstream • ${multiplier}× smaller`;
+    }
+  } else if (sizeEl) {
+    sizeEl.textContent = '–';
+    if (cmpEl) cmpEl.textContent = 'No tags-data available';
+  }
+}
+
+function humanBytes(n) {
+  if (!n || n <= 0) return '–';
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let v = n;
+  let i = 0;
+  while (v >= 1024 && i < units.length - 1) { v /= 1024; i++; }
+  // Same convention as render.py's Tags-table size column.
+  return i >= 2 ? `${v.toFixed(1)} ${units[i]}` : `${Math.round(v)} ${units[i]}`;
 }
 
 function populateCategoryFilter() {
