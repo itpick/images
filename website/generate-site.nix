@@ -53,6 +53,17 @@ let
 
   chartsForImage = imageName: chartsPerImageRaw.${imageName} or [];
 
+  # Curated nixpkgs metadata (meta.description / longDescription / homepage)
+  # for images packaged directly from nixpkgs (drv = pkgs.<attr>). Generated
+  # offline (scripts/gen-nixpkgs-meta) and committed as JSON, so the site
+  # build stays pure — it never evaluates pkgs.<attr> (which can throw on
+  # broken attrs like spire-agent). Keyed by image name.
+  nixpkgsMeta =
+    if builtins.pathExists ./nixpkgs-meta.json
+    then builtins.fromJSON (builtins.readFile ./nixpkgs-meta.json)
+    else {};
+  nixMetaFor = imageName: nixpkgsMeta.${imageName} or {};
+
   extractLabel = nixContent: label: default:
     let
       pattern = "\"${label}\"[[:space:]]*=[[:space:]]*\"([^\"]+)\"";
@@ -81,10 +92,16 @@ let
           if staticMatch != null then builtins.head staticMatch
           else if dynamicMatch != null then "dynamic-${builtins.head dynamicMatch}"
           else "latest";
+      nixMeta = nixMetaFor imageName;
     in {
       name = imageName;
       description = extractLabel nixContent "org\\.opencontainers\\.image\\.description"
                        "Container image for ${imageName}";
+      # Curated nixpkgs metadata (empty for non-nixpkgs images). render.py
+      # uses these to build a richer "About" block on the Description tab.
+      nixDescription = nixMeta.description or "";
+      nixLongDescription = nixMeta.longDescription or "";
+      nixHomepage = nixMeta.homepage or "";
       version = version;
       category = extractLabel nixContent "io\\.nix-containers\\.image\\.category" "utility";
       upstream = extractLabel nixContent "io\\.nix-containers\\.image\\.upstream" "";

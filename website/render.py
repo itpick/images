@@ -615,7 +615,40 @@ def upstream_url(img: dict) -> str:
     m = re.search(r'#\s*(https?://\S+)', nix)
     if m:
         return m.group(1).rstrip(").,")
-    return (img.get("nixpkgsHomepage", "") or "").strip()
+    # Final fallback: the nixpkgs package's homepage (offline-resolved into
+    # nixHomepage for drv = pkgs.<attr> images).
+    return (img.get("nixHomepage", "") or "").strip()
+
+
+def about_html(img: dict, upstream: str) -> str:
+    """An 'About' block for the Description tab: what the image is, plus its
+    upstream project. The description prefers curated nixpkgs metadata (rich
+    longDescription / description) over the often-generic OCI label."""
+    long_desc = (img.get("nixLongDescription", "") or "").strip()
+    short = (img.get("nixDescription", "") or "").strip()
+    oci = (img.get("description", "") or "").strip()
+    generic = (not oci) or oci.lower().endswith("container image") or \
+        oci.lower().startswith("container image for") or "container image (nixpkgs" in oci.lower()
+    lead = short or (oci if not generic else "")
+    body = long_desc
+    if not lead and not body and not upstream:
+        return ""  # nothing useful to show; tab falls back to README only
+    parts = ['<div class="mb-6">']
+    if lead:
+        parts.append(f'<p class="text-fg-primary text-base mb-3">{_html_escape(lead)}</p>')
+    if body and body != lead:
+        # longDescription can contain hard-wrapped newlines; collapse to spaces.
+        flowed = " ".join(body.split())
+        parts.append(f'<p class="text-fg-muted text-sm mb-3">{_html_escape(flowed)}</p>')
+    if upstream:
+        host = re.sub(r'^https?://', '', upstream).rstrip('/')
+        parts.append(
+            '<p class="text-sm"><span class="text-fg-muted">Upstream project: </span>'
+            f'<a href="{_html_escape(upstream)}" target="_blank" rel="noopener" '
+            f'class="text-accent-ok hover:underline font-mono">{_html_escape(host)} ↗</a></p>'
+        )
+    parts.append('</div>')
+    return "".join(parts)
 
 
 def fill_template(template: str, mapping: dict) -> str:
@@ -708,6 +741,7 @@ def main():
         mapping = {
             "NAME": name,
             "UPSTREAM_HTML": upstream_html,
+            "ABOUT_HTML": about_html(img, upstream),
             "DESCRIPTION": img.get("description", ""),
             "CATEGORY": img.get("category", "unknown"),
             "CATEGORY_SLUG": category_slug(img.get("category", "")),
