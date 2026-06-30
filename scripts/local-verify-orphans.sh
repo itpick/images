@@ -45,6 +45,20 @@ mkdir -p "$STATE_DIR"
 BRANCH=$(git branch --show-current)
 echo "==> driver: branch=$BRANCH batch_size=$BATCH_SIZE push_every=$PUSH_EVERY list=$LIST"
 
+# Branch-safety check before each commit/stage: if the working tree's
+# current branch ever drifts from $BRANCH, bail. This prevents the
+# accidental "I switched branches in another terminal and the loop kept
+# committing on the wrong branch" failure mode.
+assert_branch() {
+  local now
+  now=$(git branch --show-current)
+  if [ "$now" != "$BRANCH" ]; then
+    echo "==> WORKING TREE DRIFTED: was $BRANCH, now $now. Aborting." >&2
+    echo "    State files are intact; re-run after fixing the checkout." >&2
+    exit 4
+  fi
+}
+
 # Build a stub test.nix that smoke-tests the image runs at all. Pattern
 # is conservative: --help is the only invariant we can rely on across
 # images. Some don't even support --help; those fall to fail-smoke.
@@ -77,13 +91,53 @@ total_fail_build=0
 total_fail_load=0
 total_fail_smoke=0
 total_skipped=0
+# Periodically prune the nix store + docker daemon so a 1000-image run
+# doesn't fill the disk. /nix on this host is on a 931G volume; one full
+# verify sweep can balloon /nix/store past 100G if we never GC.
+gc_after=50
+since_gc=0
+maybe_gc() {
+  since_gc=$((since_gc + 1))
+  if [ "$since_gc" -ge "$gc_after" ]; then
+    echo "==> periodic gc (every $gc_after images)"
+    nix-collect-garbage 2>&1 | tail -2 || true
+    docker image prune -f >/dev/null 2>&1 || true
+    since_gc=0
+  fi
+}
+
 
 while IFS= read -r image; do
   [ -z "$image" ] && continue
   state_file="$STATE_DIR/${image}.state"
 
-  # Skip if already processed in a previous run.
+  # Skip if already processed AND the test.nix is still in tree. If the
+  # state says ok but the file is missing (e.g. we pushed to the wrong
+  # branch in an earlier run), regenerate the stub without re-running
+  # the slow build/load/smoke gates — we know it passed before.
   if [ -f "$state_file" ]; then
+    state_val=$(cat "$state_file")
+    if [ "$state_val" = "ok" ] && [ ! -f "images/$image/test.nix" ]; then
+      assert_branch
+      echo "==> [$image] recovering stub (state=ok, test.nix missing)"
+      write_stub_test_nix "$image"
+      git add "images/$image/test.nix"
+      batch_count=$((batch_count + 1))
+      total_ok=$((total_ok + 1))
+      # Flush batch if reached threshold (same logic as below).
+      if [ "$batch_count" -ge "$BATCH_SIZE" ]; then
+        assert_branch
+        git commit -m "test: add smoke-test stubs for $batch_count images (recovery batch)" >/dev/null 2>&1 \
+          && echo "==> committed recovery batch of $batch_count (total ok: $total_ok)"
+        batch_count=0
+        push_count=$((push_count + 1))
+        if [ "$push_count" -ge "$PUSH_EVERY" ]; then
+          git push origin "$BRANCH" 2>&1 | tail -2
+          push_count=0
+        fi
+      fi
+      continue
+    fi
     total_skipped=$((total_skipped + 1))
     continue
   fi
@@ -137,8 +191,12 @@ while IFS= read -r image; do
   # At ~1000 images that adds up to >100GB if we never prune. We don't
   # need the loaded image after the smoke check, so drop it.
   docker rmi -f "$image:latest" >/dev/null 2>&1 || true
+  # Also GC the nix store every 50 images so the build cache doesn't
+  # balloon past 100G. (We hit a "No space left on device" mid-run once.)
+  maybe_gc
 
   if [ "$batch_count" -ge "$BATCH_SIZE" ]; then
+    assert_branch
     git commit -m "test: add smoke-test stubs for $batch_count images (local verify batch)" >/dev/null 2>&1 \
       && echo "==> committed batch of $batch_count (total ok: $total_ok)"
     batch_count=0
