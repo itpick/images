@@ -42,6 +42,9 @@
   /* "Nix" badge: image packaged directly from nixpkgs. Ringed to read as a
      provenance marker rather than another category pill. */
   .badge-nix { @apply badge bg-sky-900/40 text-sky-300 ring-1 ring-sky-500/30; }
+  /* "0 CVE" badge: scan exists AND total severity count is zero.
+     Bright green ring so it pops on the card. */
+  .badge-zero-cve { @apply badge bg-emerald-900/50 text-emerald-300 ring-1 ring-emerald-500/40; }
 
   .card {
     @apply bg-bg-elevated rounded-lg border border-neutral-800 p-4

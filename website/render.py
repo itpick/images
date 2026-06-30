@@ -797,6 +797,8 @@ def main():
             "POPULARITY_HTML": render_popularity(pop_record),
             "BUILD_TIME": build_time,
             "BASE": base,
+            # Defaults; overwritten below once the scan lookup runs.
+            "ZERO_CVE_BADGE_HTML": "",
         }
         used_by = img.get("usedByCharts", []) or []
         if used_by:
@@ -813,6 +815,13 @@ def main():
         mapping["USED_BY_HTML"] = used_by_html
         scan = scan_for_image(name, args.scan_data)
         meta_banner = scan_meta_banner_html(scan, next_scan)
+        # Zero-CVE pill in the page header — only when scan data exists
+        # AND every severity is zero. No scan = no badge (we don't know).
+        if scan and scan.get("total", -1) == 0:
+            mapping["ZERO_CVE_BADGE_HTML"] = (
+                '<span class="badge-zero-cve" '
+                'title="No known CVEs in the latest scan">0 CVE</span>'
+            )
         if scan:
             scan_body = (
                 '<div class="space-y-1 text-sm">'

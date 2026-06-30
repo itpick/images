@@ -142,6 +142,12 @@ function render() {
     const nixBadge = i.fromNixpkgs
       ? `<span class="badge-nix" title="Packaged directly from nixpkgs">Nix</span>`
       : '';
+    // "0 CVE" badge: scan exists and reported zero vulnerabilities at
+    // every severity level. Only shown when we have actual scan data —
+    // missing scan ≠ zero CVE.
+    const zeroCve = (i.scan && i.scan.total === 0)
+      ? `<span class="badge-zero-cve" title="No known CVEs in the latest scan">0 CVE</span>`
+      : '';
     // Show the actual semver when we have it (resolved from the
     // pushed :version tag via tags-data). Falls back to "latest" only
     // when no real version is known — bare "latest" is uninformative
@@ -156,6 +162,7 @@ function render() {
         <div class="font-mono font-bold text-fg-primary">${dot}${escapeHtml(i.name)}</div>
         <div class="flex items-center gap-2">
           ${rank}
+          ${zeroCve}
           ${nixBadge}
           <span class="badge-cat-${escapeAttr(i.categorySlug || 'unknown')}">${escapeHtml(i.category || 'unknown')}</span>
         </div>
