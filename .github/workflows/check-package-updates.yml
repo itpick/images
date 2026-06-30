@@ -12,7 +12,7 @@ on:
 
 jobs:
   check-package-updates:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     if: github.event_name == 'schedule'
     steps:
       - name: Superseded by auto-update.yml

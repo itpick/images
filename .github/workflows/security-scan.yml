@@ -64,7 +64,7 @@ permissions:
 
 jobs:
   resolve-images:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.split.outputs.matrix }}
       has-work: ${{ steps.split.outputs.has-work }}
@@ -177,7 +177,7 @@ jobs:
   scan:
     needs: resolve-images
     if: needs.resolve-images.outputs.has-work == 'true'
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: read
@@ -245,7 +245,7 @@ jobs:
   aggregate:
     needs: [resolve-images, scan]
     if: ${{ always() && needs.resolve-images.outputs.has-work == 'true' }}
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: read

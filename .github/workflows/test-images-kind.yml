@@ -42,7 +42,7 @@ jobs:
   # (non-empty when called via workflow_call) and otherwise build one from
   # the workflow_dispatch `images` CSV input.
   resolve-matrix:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.pick.outputs.matrix }}
     steps:
@@ -68,7 +68,7 @@ jobs:
 
   kind-test:
     needs: [resolve-matrix]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       fail-fast: false

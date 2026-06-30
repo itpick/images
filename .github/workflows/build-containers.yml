@@ -40,7 +40,7 @@ jobs:
     # Priority: explicit `images` input > force_rebuild >
     # (file-changed ∪ version-changed) > nothing.
     needs: [discover-images, check-version-changes, detect-file-changes]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.pick.outputs.matrix }}
       run: ${{ steps.pick.outputs.run }}
@@ -191,7 +191,7 @@ jobs:
   save-versions:
     needs: [build-and-push, check-version-changes]
     if: needs.check-version-changes.outputs.changes-detected == 'true' || github.event.inputs.force_rebuild == 'true'
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:

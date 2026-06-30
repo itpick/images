@@ -9,7 +9,7 @@ on:
 
 jobs:
   discover-images:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
