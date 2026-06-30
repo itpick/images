@@ -34,6 +34,32 @@ jobs:
           echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
           echo "/nix/var/nix/profiles/default/bin" >> $GITHUB_PATH
 
+      # Restore scan-data + tags-data snapshots from the previous
+      # successful deploy. The fresh download below is preferred, but
+      # if it hits rate-limit (we've burnt the GITHUB_TOKEN quota a few
+      # times already), this fallback keeps the site populated rather
+      # than rendering with no CVE counts or Tags tab.
+      #
+      # actions/cache uses a separate quota from the REST API token, so
+      # it's available even when 403s hammer gh run list.
+      - name: Restore scan-data snapshot (fallback)
+        id: cached-scan
+        uses: actions/cache/restore@v4
+        with:
+          path: /tmp/cached-scan-data
+          key: scan-data-snapshot-
+          restore-keys: |
+            scan-data-snapshot-
+
+      - name: Restore tags-data snapshot (fallback)
+        id: cached-tags
+        uses: actions/cache/restore@v4
+        with:
+          path: /tmp/cached-tags-data
+          key: tags-data-snapshot-
+          restore-keys: |
+            tags-data-snapshot-
+
       - name: Download latest non-empty security scan results
         id: scan
         env:
@@ -100,8 +126,33 @@ jobs:
           echo "No recent scan run had a non-empty artifact; vulnerability panels will be omitted."
           echo "path=" >> "$GITHUB_OUTPUT"
 
+      # If fresh download didn't yield anything (rate-limit, artifact
+      # expired, etc.), fall back to the cached snapshot from the last
+      # good deploy. Better stale data than no data — the site stays
+      # populated and the next successful deploy refreshes it.
+      - name: Pick scan-data source (fresh or cached)
+        id: scan-source
+        run: |
+          set -euo pipefail
+          FRESH='${{ steps.scan.outputs.path }}'
+          if [ -n "$FRESH" ] && [ -d "$FRESH" ]; then
+            echo "Using fresh scan-data from $FRESH"
+            echo "path=$FRESH" >> "$GITHUB_OUTPUT"
+            echo "source=fresh" >> "$GITHUB_OUTPUT"
+          elif [ -d /tmp/cached-scan-data ] \
+               && [ "$(find /tmp/cached-scan-data -maxdepth 1 -name '*-trivy.json' 2>/dev/null | wc -l)" -gt 0 ]; then
+            FILES=$(find /tmp/cached-scan-data -maxdepth 1 -name '*-trivy.json' | wc -l)
+            echo "Fresh scan-data unavailable; using cached snapshot ($FILES trivy files)"
+            echo "path=/tmp/cached-scan-data" >> "$GITHUB_OUTPUT"
+            echo "source=cached" >> "$GITHUB_OUTPUT"
+          else
+            echo "No scan-data (fresh failed AND no cached snapshot)"
+            echo "path=" >> "$GITHUB_OUTPUT"
+            echo "source=none" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Stage scan-data inside the build source tree
-        if: steps.scan.outputs.path != ''
+        if: steps.scan-source.outputs.path != ''
         run: |
           set -euo pipefail
           # The Nix build's sandbox can't read /home/runner/work/_temp,
@@ -115,7 +166,7 @@ jobs:
           # via website/.gitignore). This is a transient CI stage —
           # nothing is committed.
           mkdir -p website/scan-data
-          cp -r "${{ steps.scan.outputs.path }}/." website/scan-data/
+          cp -r "${{ steps.scan-source.outputs.path }}/." website/scan-data/
           git config user.email "deploy@nix-containers.local"
           git config user.name "deploy-bot"
           git add -f website/scan-data/
@@ -123,7 +174,7 @@ jobs:
 
       - name: Fetch curated tag list per scanned image
         id: tags
-        if: steps.scan.outputs.path != ''
+        if: steps.scan-source.outputs.path != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -253,7 +304,7 @@ jobs:
         env:
           # Direct path to the downloaded artifact dir (staged into the
           # source tree by the previous step too, but kept as a fallback).
-          SCAN_DATA_PATH: ${{ steps.scan.outputs.path }}
+          SCAN_DATA_PATH: ${{ steps.scan-source.outputs.path }}
           # GH Pages project sites publish at /<repo>/, so absolute asset
           # URLs (/static/css/site.css etc.) need that prefix.
           PAGES_BASE_PATH: /${{ github.event.repository.name }}/
@@ -272,9 +323,26 @@ jobs:
           mkdir -p ./website-build
           cp -r ./result/* ./website-build/
         
+      # Save the fresh scan-data + tags-data as future-deploy fallbacks.
+      # Only saves when this deploy had a real fresh download — caching
+      # the cached-snapshot back to itself would be wasted bytes.
+      - name: Save scan-data snapshot for future deploys
+        if: steps.scan-source.outputs.source == 'fresh'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ steps.scan-source.outputs.path }}
+          key: scan-data-snapshot-${{ github.run_id }}
+
+      - name: Save tags-data snapshot for future deploys
+        if: steps.scan-source.outputs.source == 'fresh' && steps.tags.outputs.wrote != '0' && steps.tags.outputs.wrote != ''
+        uses: actions/cache/save@v4
+        with:
+          path: website/tags-data
+          key: tags-data-snapshot-${{ github.run_id }}
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
-        
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
