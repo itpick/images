@@ -1,0 +1,1686 @@
+{
+ "actions-runner": [
+  "actions-runner"
+ ],
+ "actions-runner-controller": [
+  "actions-runner-controller"
+ ],
+ "adapter": [
+  "prometheus-adapter-fips"
+ ],
+ "admission-webhook": [
+  "prometheus-admission-webhook",
+  "prometheus-admission-webhook-fips"
+ ],
+ "age": [
+  "age-fips"
+ ],
+ "agent": [
+  "grafana-agent-operator"
+ ],
+ "akhq": [
+  "akhq-fips"
+ ],
+ "alertmanager": [
+  "alertmanager-fips",
+  "prometheus-alertmanager-fips"
+ ],
+ "alloy-operator": [
+  "alloy-operator"
+ ],
+ "apache_exporter": [
+  "apache-exporter"
+ ],
+ "api-ui": [
+  "rancher-api-ui"
+ ],
+ "apm-server": [
+  "apm-server",
+  "apm-server-fips"
+ ],
+ "archive-envoy": [
+  "envoy"
+ ],
+ "argo-events": [
+  "argo-events-fips"
+ ],
+ "argo-rollouts": [
+  "argo-rollouts-fips"
+ ],
+ "argo-workflows": [
+  "argo-cli-fips"
+ ],
+ "argocd": [
+  "argo-cd-3.2-repo-server",
+  "argo-cd-fips",
+  "argo-cd-fips-3.2-repo-server",
+  "argocd",
+  "argocd-repo-server",
+  "argocd-repo-server-fips"
+ ],
+ "argocd-extension-installer": [
+  "argocd-extension-installer"
+ ],
+ "argocd-image-updater": [
+  "argocd-image-updater-fips"
+ ],
+ "atlantis": [
+  "atlantis-fips"
+ ],
+ "authservice": [
+  "authservice",
+  "authservice-fips"
+ ],
+ "aws-application-networking-k8s": [
+  "aws-application-networking-k8s",
+  "aws-application-networking-k8s-fips",
+  "aws-gateway-controller",
+  "aws-gateway-controller-fips"
+ ],
+ "aws-ebs-csi-driver": [
+  "aws-ebs-csi-driver-fips"
+ ],
+ "aws-efs-csi-driver": [
+  "aws-efs-csi-driver-fips"
+ ],
+ "aws-for-fluent-bit": [
+  "aws-for-fluent-bit",
+  "aws-for-fluent-bit-fips"
+ ],
+ "aws-load-balancer-controller": [
+  "aws-load-balancer-controller-fips"
+ ],
+ "aws-network-policy-agent": [
+  "aws-network-policy-agent",
+  "aws-network-policy-agent-fips"
+ ],
+ "aws-node-termination-handler": [
+  "aws-node-termination-handler-fips"
+ ],
+ "aws-otel-collector": [
+  "aws-otel-collector",
+  "aws-otel-collector-fips",
+  "aws-otel-collector-healthcheck",
+  "aws-otel-collector-healthcheck-fips"
+ ],
+ "aws-privateca-issuer": [
+  "aws-privateca-issuer",
+  "aws-privateca-issuer-fips"
+ ],
+ "aws-sdk-go": [
+  "aws-cli-fips",
+  "aws-cli-iamguarded",
+  "aws-cli-iamguarded-fips"
+ ],
+ "aws-signer-notation-plugin": [
+  "aws-signer-notation-plugin",
+  "aws-signer-notation-plugin-fips"
+ ],
+ "aws-sigv4-proxy": [
+  "aws-sigv4-proxy",
+  "aws-sigv4-proxy-fips"
+ ],
+ "aznfs-mount": [
+  "aznfs-mount"
+ ],
+ "azure-service-operator": [
+  "azure-service-operator",
+  "azure-service-operator-fips"
+ ],
+ "azure-storage-azcopy": [
+  "azcopy-fips"
+ ],
+ "bank-vaults": [
+  "bank-vaults-fips",
+  "bank-vaults-template",
+  "bank-vaults-template-fips"
+ ],
+ "beat-exporter": [
+  "prometheus-beat-exporter-fips"
+ ],
+ "beyla": [
+  "grafana-beyla"
+ ],
+ "blackbox-exporter": [
+  "prometheus-blackbox-exporter-fips"
+ ],
+ "boring-registry": [
+  "boring-registry",
+  "boring-registry-fips"
+ ],
+ "buildkit": [
+  "buildctl-fips",
+  "buildkitd-fips"
+ ],
+ "calico": [
+  "calico-apiserver-fips",
+  "calico-calicoctl-fips",
+  "calico-cni-fips",
+  "calico-csi",
+  "calico-csi-fips",
+  "calico-goldmane",
+  "calico-goldmane-fips",
+  "calico-key-cert-provisioner",
+  "calico-key-cert-provisioner-fips",
+  "calico-kube-controllers-fips",
+  "calico-node",
+  "calico-node-driver-registrar",
+  "calico-node-driver-registrar-fips",
+  "calico-node-fips",
+  "calico-pod2daemon-fips",
+  "calico-pod2daemon-flexvol-fips",
+  "calico-typha-fips",
+  "calico-typhad",
+  "calico-typhad-fips",
+  "calico-whisker",
+  "calico-whisker-backend",
+  "calico-whisker-backend-fips",
+  "calico-whisker-fips"
+ ],
+ "camunda": [
+  "camunda-zeebe"
+ ],
+ "cassandra-reaper": [
+  "cassandra-reaper"
+ ],
+ "celeborn": [
+  "celeborn"
+ ],
+ "cerbos": [
+  "cerbos",
+  "cerbos-fips",
+  "cerbosctl",
+  "cerbosctl-fips"
+ ],
+ "cert-exporter": [
+  "cert-exporter",
+  "cert-exporter-fips"
+ ],
+ "cert-manager": [
+  "cert-manager-acmesolver-iamguarded",
+  "cert-manager-acmesolver-iamguarded-fips",
+  "cert-manager-cainjector-iamguarded",
+  "cert-manager-cainjector-iamguarded-fips",
+  "cert-manager-cmctl",
+  "cert-manager-cmctl-fips",
+  "cert-manager-controller-iamguarded",
+  "cert-manager-controller-iamguarded-fips",
+  "cert-manager-csi-driver",
+  "cert-manager-csi-driver-fips",
+  "cert-manager-istio-csr",
+  "cert-manager-startupapicheck-fips",
+  "cert-manager-webhook-iamguarded",
+  "cert-manager-webhook-iamguarded-fips",
+  "cert-manager-webhook-pdns",
+  "cert-manager-webhook-pdns-fips"
+ ],
+ "cfssl": [
+  "cfssl-self-sign-fips"
+ ],
+ "chartmuseum": [
+  "chartmuseum",
+  "chartmuseum-fips",
+  "helm-chartmuseum",
+  "helm-chartmuseum-fips"
+ ],
+ "cilium": [
+  "cilium-1.18-clustermesh-apiserver",
+  "cilium-1.18-container-init",
+  "cilium-1.18-hubble-relay",
+  "cilium-1.18-operator-aws",
+  "cilium-1.18-operator-generic",
+  "cilium-agent-fips",
+  "cilium-certgen",
+  "cilium-clustermesh-apiserver",
+  "cilium-clustermesh-apiserver-fips",
+  "cilium-envoy",
+  "cilium-envoy-fips",
+  "cilium-fips",
+  "cilium-fips-1.18-clustermesh-apiserver",
+  "cilium-fips-1.18-container-init",
+  "cilium-fips-1.18-host-utils",
+  "cilium-fips-1.18-hubble-relay",
+  "cilium-fips-1.18-operator-generic",
+  "cilium-hubble-relay",
+  "cilium-hubble-relay-fips",
+  "cilium-hubble-ui",
+  "cilium-hubble-ui-backend",
+  "cilium-hubble-ui-backend-fips",
+  "cilium-hubble-ui-fips",
+  "cilium-operator-aws-fips",
+  "cilium-operator-generic",
+  "cilium-operator-generic-fips"
+ ],
+ "clamav": [
+  "clamav-1.5-clamdscan",
+  "clamav-1.5-scanner"
+ ],
+ "clickhouse": [
+  "clickhouse-keeper",
+  "clickhouse-keeper-iamguarded"
+ ],
+ "cloud-provider-azure": [
+  "cloud-provider-azure-controller-manager",
+  "cloud-provider-azure-controller-manager-fips",
+  "cloud-provider-azure-node-manager",
+  "cloud-provider-azure-node-manager-fips"
+ ],
+ "cloud-sql-proxy": [
+  "cloud-sql-proxy",
+  "cloud-sql-proxy-fips"
+ ],
+ "cluster-api": [
+  "cluster-api-1.9-controller",
+  "cluster-api-1.9-kubeadm-control-plane-controller",
+  "cluster-api-aws-controller",
+  "cluster-api-aws-controller-fips",
+  "cluster-api-azure-controller",
+  "cluster-api-azure-controller-fips",
+  "cluster-api-capd-manager",
+  "cluster-api-clusterctl",
+  "cluster-api-clusterctl-fips",
+  "cluster-api-controller",
+  "cluster-api-controller-fips",
+  "cluster-api-fips-1.9-clusterctl",
+  "cluster-api-fips-1.9-controller",
+  "cluster-api-fips-1.9-kubeadm-bootstrap-controller",
+  "cluster-api-fips-1.9-kubeadm-control-plane-controller",
+  "cluster-api-gcp-controller",
+  "cluster-api-gcp-controller-fips",
+  "cluster-api-helm-controller",
+  "cluster-api-helm-controller-fips",
+  "cluster-api-ipam-provider-in-cluster",
+  "cluster-api-kubeadm-bootstrap-controller",
+  "cluster-api-kubeadm-bootstrap-controller-fips",
+  "cluster-api-kubeadm-control-plane-controller",
+  "cluster-api-kubeadm-control-plane-controller-fips",
+  "cluster-api-provider-vsphere",
+  "cluster-api-provider-vsphere-fips",
+  "cluster-api-vsphere-controller",
+  "cluster-api-vsphere-controller-fips",
+  "cluster-autoscaler-fips",
+  "cluster-proportional-autoscaler-fips"
+ ],
+ "cluster-autoscaler": [
+  "addon-resizer",
+  "addon-resizer-fips"
+ ],
+ "cockroach": [
+  "cockroach",
+  "cockroach-openssl"
+ ],
+ "config-reloader": [
+  "prometheus-config-reloader-fips"
+ ],
+ "consul-k8s": [
+  "consul-k8s",
+  "consul-k8s-fips"
+ ],
+ "containerd": [
+  "containerd-shim-runc-v2",
+  "containerd-shim-runc-v2-fips",
+  "containerd-stress",
+  "containerd-stress-fips",
+  "ctr",
+  "ctr-fips"
+ ],
+ "coredns": [
+  "eks-distro-coredns",
+  "eks-distro-coredns-fips"
+ ],
+ "cortex": [
+  "cortex-fips"
+ ],
+ "cosign": [
+  "sigstore-policy-controller",
+  "sigstore-policy-controller-fips",
+  "sigstore-scaffolding-cloudsqlproxy",
+  "sigstore-scaffolding-cloudsqlproxy-fips",
+  "sigstore-scaffolding-ctlog-createctconfig",
+  "sigstore-scaffolding-ctlog-managectroots",
+  "sigstore-scaffolding-ctlog-managectroots-fips",
+  "sigstore-scaffolding-ctlog-verifyfulcio",
+  "sigstore-scaffolding-ctlog-verifyfulcio-fips",
+  "sigstore-scaffolding-fips-cloudsqlproxy",
+  "sigstore-scaffolding-fips-ctlog-verifyfulcio",
+  "sigstore-scaffolding-fips-fulcio-createcerts",
+  "sigstore-scaffolding-fips-getoidctoken",
+  "sigstore-scaffolding-fips-rekor-createsecret",
+  "sigstore-scaffolding-fips-trillian-createdb",
+  "sigstore-scaffolding-fips-trillian-createtree",
+  "sigstore-scaffolding-fips-trillian-updatetree",
+  "sigstore-scaffolding-fips-tsa-createcertchain",
+  "sigstore-scaffolding-fips-tuf-createsecret",
+  "sigstore-scaffolding-fulcio-createcerts",
+  "sigstore-scaffolding-fulcio-createcerts-fips",
+  "sigstore-scaffolding-getoidctoken",
+  "sigstore-scaffolding-getoidctoken-fips",
+  "sigstore-scaffolding-rekor-createsecret",
+  "sigstore-scaffolding-rekor-createsecret-fips",
+  "sigstore-scaffolding-trillian-createdb",
+  "sigstore-scaffolding-trillian-createdb-fips",
+  "sigstore-scaffolding-trillian-createtree",
+  "sigstore-scaffolding-trillian-createtree-fips",
+  "sigstore-scaffolding-trillian-updatetree",
+  "sigstore-scaffolding-trillian-updatetree-fips",
+  "sigstore-scaffolding-tsa-createcertchain",
+  "sigstore-scaffolding-tsa-createcertchain-fips",
+  "sigstore-scaffolding-tuf-createsecret",
+  "sigstore-scaffolding-tuf-createsecret-fips",
+  "sigstore-scaffolding-tuf-server"
+ ],
+ "cri-tools": [
+  "crictl"
+ ],
+ "criu": [
+  "crac-criu"
+ ],
+ "crossplane": [
+  "crossplane-aws-provider",
+  "crossplane-fips"
+ ],
+ "csi-attacher": [
+  "csi-attacher"
+ ],
+ "csi-node-driver-registrar": [
+  "csi-node-driver-registrar"
+ ],
+ "csi-provisioner": [
+  "csi-provisioner"
+ ],
+ "csi-resizer": [
+  "csi-resizer"
+ ],
+ "dapr": [
+  "dapr-daprd",
+  "dapr-daprd-fips",
+  "dapr-injector",
+  "dapr-injector-fips",
+  "dapr-operator",
+  "dapr-operator-fips",
+  "dapr-placement",
+  "dapr-placement-fips",
+  "dapr-scheduler",
+  "dapr-scheduler-fips",
+  "dapr-sentry",
+  "dapr-sentry-fips"
+ ],
+ "dashboard": [
+  "rancher-dashboard"
+ ],
+ "dataplaneapi": [
+  "dataplaneapi",
+  "dataplaneapi-fips"
+ ],
+ "distribution": [
+  "harbor-registry"
+ ],
+ "dns": [
+  "k8s-dns-node-cache",
+  "node-local-dns"
+ ],
+ "dockerize": [
+  "dockerize",
+  "dockerize-fips"
+ ],
+ "dragonfly-operator": [
+  "dragonfly-operator",
+  "dragonfly-operator-fips"
+ ],
+ "dumb-init": [
+  "dumb-init-privileged-netbindservice"
+ ],
+ "eck-operator": [
+  "eck-operator"
+ ],
+ "eks-pod-identity-agent": [
+  "aws-eks-pod-identity-agent",
+  "aws-eks-pod-identity-agent-fips"
+ ],
+ "elasticsearch-exporter": [
+  "prometheus-elasticsearch-exporter-fips"
+ ],
+ "envoy-gateway": [
+  "envoy-gateway",
+  "envoy-gateway-fips"
+ ],
+ "external-dns": [
+  "external-dns"
+ ],
+ "external-secrets": [
+  "external-secrets-fips"
+ ],
+ "falco": [
+  "falco",
+  "falco-fips"
+ ],
+ "falcosidekick": [
+  "falcosidekick",
+  "falcosidekick-fips"
+ ],
+ "fixuid": [
+  "fixuid"
+ ],
+ "flb-cloudwatch": [
+  "aws-flb-cloudwatch-fips"
+ ],
+ "flb-firehose": [
+  "aws-flb-firehose-fips"
+ ],
+ "flb-kinesis": [
+  "aws-flb-kinesis-fips"
+ ],
+ "fleet": [
+  "rancher-fleet",
+  "rancher-fleet-fips"
+ ],
+ "fleet-agent": [
+  "rancher-fleet-agent",
+  "rancher-fleet-agent-fips"
+ ],
+ "fleet-cli": [
+  "rancher-fleet-cli"
+ ],
+ "fleet-controller": [
+  "rancher-fleet-controller"
+ ],
+ "fleet-server": [
+  "fleet-server",
+  "fleet-server-fips"
+ ],
+ "fleet-termination-log": [
+  "rancher-fleet-termination-log"
+ ],
+ "flux": [
+  "flux-cli-fips",
+  "flux-helm-controller-iamguarded",
+  "flux-helm-controller-iamguarded-fips",
+  "flux-image-automation-controller-iamguarded",
+  "flux-image-automation-controller-iamguarded-fips",
+  "flux-image-reflector-controller-iamguarded",
+  "flux-image-reflector-controller-iamguarded-fips",
+  "flux-kustomize-controller-iamguarded",
+  "flux-kustomize-controller-iamguarded-fips",
+  "flux-notification-controller-iamguarded",
+  "flux-notification-controller-iamguarded-fips",
+  "flux-source-controller-iamguarded",
+  "flux-source-controller-iamguarded-fips"
+ ],
+ "fluxcd-flux": [
+  "flux-fips"
+ ],
+ "function-auto-ready": [
+  "crossplane-function-auto-ready",
+  "crossplane-function-auto-ready-fips"
+ ],
+ "function-environment-configs": [
+  "crossplane-function-environment-configs"
+ ],
+ "function-go-templating": [
+  "crossplane-function-go-templating"
+ ],
+ "fuse-overlayfs-snapshotter": [
+  "fuse-overlayfs-snapshotter"
+ ],
+ "git-lfs": [
+  "git-lfs-fips"
+ ],
+ "git-sync": [
+  "git-sync-fips"
+ ],
+ "gogatekeeper-gatekeeper": [
+  "gogatekeeper"
+ ],
+ "goharbor-harbor-scanner-trivy": [
+  "harbor-scanner-trivy",
+  "harbor-trivy-adapter"
+ ],
+ "graalvm-ce-builds": [
+  "graalvm",
+  "graalvm-25-ce",
+  "graalvm-native"
+ ],
+ "grafana-image-renderer": [
+  "grafana-image-renderer"
+ ],
+ "grafana-operator": [
+  "grafana-operator"
+ ],
+ "grype-db": [
+  "grype-db"
+ ],
+ "harbor": [
+  "harbor-core",
+  "harbor-exporter",
+  "harbor-jobservice",
+  "harbor-registry",
+  "harbor-registryctl"
+ ],
+ "harbor-core": [
+  "harbor-core",
+  "harbor-exporter",
+  "harbor-jobservice",
+  "harbor-registry",
+  "harbor-registryctl"
+ ],
+ "harbor-scanner-trivy": [
+  "trivy-adapter"
+ ],
+ "headlamp": [
+  "headlamp"
+ ],
+ "health-checker": [
+  "health-checker"
+ ],
+ "helm-controller": [
+  "flux-helm-controller",
+  "flux-helm-controller-fips",
+  "helm-controller"
+ ],
+ "helm-mapkubeapis": [
+  "helm-mapkubeapis"
+ ],
+ "helm-set-status": [
+  "helm-set-status"
+ ],
+ "http-echo": [
+  "http-echo"
+ ],
+ "hubble": [
+  "hubble-export-stdout"
+ ],
+ "image-automation-controller": [
+  "flux-image-automation-controller",
+  "flux-image-automation-controller-fips",
+  "image-automation-controller"
+ ],
+ "image-factory": [
+  "image-factory",
+  "image-factory-fips"
+ ],
+ "image-reflector-controller": [
+  "flux-image-reflector-controller",
+  "flux-image-reflector-controller-fips",
+  "image-reflector-controller"
+ ],
+ "influx-cli": [
+  "influx"
+ ],
+ "influxdb": [
+  "influxd"
+ ],
+ "ingress-nginx": [
+  "ingress-nginx",
+  "ingress-nginx-fips"
+ ],
+ "ini-file": [
+  "ini-file",
+  "ini-file-fips"
+ ],
+ "istio": [
+  "istio-install-cni"
+ ],
+ "jaeger": [
+  "jaeger-2-all-in-one",
+  "jaeger-2-anonymizer",
+  "jaeger-2-collector",
+  "jaeger-2-es-index-cleaner",
+  "jaeger-2-es-rollover",
+  "jaeger-2-fips-all-in-one",
+  "jaeger-2-fips-anonymizer",
+  "jaeger-2-fips-collector",
+  "jaeger-2-fips-es-index-cleaner",
+  "jaeger-2-fips-es-rollover",
+  "jaeger-2-fips-ingester",
+  "jaeger-2-fips-query",
+  "jaeger-2-fips-remote-storage",
+  "jaeger-2-fips-tracegen",
+  "jaeger-2-ingester",
+  "jaeger-2-query",
+  "jaeger-2-remote-storage",
+  "jaeger-2-tracegen",
+  "jaeger-all-in-one",
+  "jaeger-all-in-one-fips",
+  "jaeger-anonymizer",
+  "jaeger-anonymizer-fips",
+  "jaeger-collector",
+  "jaeger-collector-fips",
+  "jaeger-es-index-cleaner",
+  "jaeger-es-index-cleaner-fips",
+  "jaeger-es-rollover",
+  "jaeger-es-rollover-fips",
+  "jaeger-ingester",
+  "jaeger-ingester-fips",
+  "jaeger-operator",
+  "jaeger-query",
+  "jaeger-query-fips",
+  "jaeger-remote-storage",
+  "jaeger-remote-storage-fips",
+  "jaeger-tracegen",
+  "jaeger-tracegen-fips"
+ ],
+ "jmx-exporter": [
+  "prometheus-jmx-exporter"
+ ],
+ "jobset": [
+  "jobset"
+ ],
+ "just": [
+  "just-newuidmap-newgidmap"
+ ],
+ "k3s": [
+  "k3s-multicall",
+  "k3s-openssl",
+  "k3s-openssl-static",
+  "k3s-static"
+ ],
+ "k8s-sidecar": [
+  "k8s-sidecar"
+ ],
+ "k8s_gateway": [
+  "k8s_gateway",
+  "k8s_gateway-fips"
+ ],
+ "kafka_exporter": [
+  "kafka_exporter",
+  "kafka_exporter-fips"
+ ],
+ "katib": [
+  "katib-controller",
+  "katib-db-manager",
+  "katib-ui"
+ ],
+ "kiali": [
+  "kiali",
+  "kiali-fips"
+ ],
+ "kiali-operator": [
+  "kiali-operator"
+ ],
+ "kontainer-driver-metadata": [
+  "rancher-kontainer-driver-metadata"
+ ],
+ "kots": [
+  "kots"
+ ],
+ "kube-state-metrics": [
+  "kube-state-metrics-fips"
+ ],
+ "kube-webhook-certgen": [
+  "kube-webhook-certgen"
+ ],
+ "kubectl": [
+  "kube-apiserver",
+  "kube-apiserver-1.34-default",
+  "kube-apiserver-fips",
+  "kube-apiserver-fips-1.34-default",
+  "kube-arangodb",
+  "kube-arangodb-fips",
+  "kube-bench-configs",
+  "kube-bench-configs-fips",
+  "kube-bench-fips",
+  "kube-conformance",
+  "kube-downscaler",
+  "kube-fluentd-operator",
+  "kube-logging-operator",
+  "kube-logging-operator-config-reloader",
+  "kube-logging-operator-custom-runner",
+  "kube-logging-operator-custom-runner-fips",
+  "kube-logging-operator-fluentd",
+  "kube-logging-operator-fluentd-outputs",
+  "kube-logging-operator-node-exporter",
+  "kube-logging-operator-node-exporter-fips",
+  "kube-metrics-adapter",
+  "kube-metrics-adapter-fips",
+  "kube-oidc-proxy",
+  "kube-proxy",
+  "kube-proxy-1.34-default",
+  "kube-proxy-fips",
+  "kube-proxy-fips-1.34-default",
+  "kube-rbac-proxy-fips",
+  "kube-scheduler",
+  "kube-scheduler-1.34-default",
+  "kube-scheduler-fips",
+  "kube-scheduler-fips-1.34-default",
+  "kube-state-metrics-iamguarded",
+  "kube-state-metrics-iamguarded-fips",
+  "kube-vip",
+  "kube-vip-cloud-provider",
+  "kube-vip-fips",
+  "kube-webhook-certgen-fips",
+  "kubernetes-autoscaler-addon-resizer",
+  "kubernetes-autoscaler-addon-resizer-fips",
+  "kubernetes-csi-driver-nfs",
+  "kubernetes-csi-driver-nfs-fips",
+  "kubernetes-csi-external-attacher",
+  "kubernetes-csi-external-attacher-fips",
+  "kubernetes-csi-external-health-monitor",
+  "kubernetes-csi-external-provisioner",
+  "kubernetes-csi-external-provisioner-fips",
+  "kubernetes-csi-external-resizer",
+  "kubernetes-csi-external-resizer-fips",
+  "kubernetes-csi-external-snapshot-controller",
+  "kubernetes-csi-external-snapshot-controller-fips",
+  "kubernetes-csi-external-snapshotter",
+  "kubernetes-csi-external-snapshotter-fips",
+  "kubernetes-csi-livenessprobe",
+  "kubernetes-csi-livenessprobe-fips",
+  "kubernetes-csi-node-driver-registrar",
+  "kubernetes-csi-node-driver-registrar-fips",
+  "kubernetes-dashboard-api",
+  "kubernetes-dashboard-api-fips",
+  "kubernetes-dashboard-auth",
+  "kubernetes-dashboard-auth-fips",
+  "kubernetes-dashboard-metrics-scraper",
+  "kubernetes-dashboard-metrics-scraper-fips",
+  "kubernetes-dashboard-web",
+  "kubernetes-dashboard-web-fips",
+  "kubernetes-dns-node-cache",
+  "kubernetes-dns-node-cache-fips",
+  "kubernetes-event-exporter",
+  "kubernetes-event-exporter-fips",
+  "kubernetes-event-exporter-iamguarded",
+  "kubernetes-event-exporter-iamguarded-fips",
+  "kubernetes-ingress-defaultbackend",
+  "kubernetes-ingress-defaultbackend-fips",
+  "kubernetes-kube-apiserver",
+  "kubernetes-kube-apiserver-fips",
+  "kubernetes-kube-controller-manager",
+  "kubernetes-kube-controller-manager-fips",
+  "kubernetes-kube-proxy",
+  "kubernetes-kube-proxy-fips",
+  "kubernetes-kube-scheduler",
+  "kubernetes-kube-scheduler-fips",
+  "kubernetes-pause",
+  "kubernetes-reflector-fips",
+  "kubernetes-release-go-runner",
+  "kubernetes-release-go-runner-fips",
+  "kubernetes-replicator",
+  "kubernetes-replicator-fips",
+  "kubernetes-secret-generator"
+ ],
+ "kubeflow": [
+  "kubeflow-access-management",
+  "kubeflow-access-management-fips",
+  "kubeflow-admission-webhook",
+  "kubeflow-admission-webhook-fips",
+  "kubeflow-centraldashboard",
+  "kubeflow-jupyter-web-app",
+  "kubeflow-jupyter-web-app-fips",
+  "kubeflow-katib",
+  "kubeflow-katib-controller",
+  "kubeflow-katib-db-manager",
+  "kubeflow-katib-earlystopping-medianstop",
+  "kubeflow-katib-file-metrics-collector",
+  "kubeflow-katib-suggestion-goptuna",
+  "kubeflow-katib-suggestion-hyperband",
+  "kubeflow-katib-suggestion-hyperopt",
+  "kubeflow-katib-suggestion-nas-darts",
+  "kubeflow-katib-suggestion-optuna",
+  "kubeflow-katib-suggestion-pbt",
+  "kubeflow-katib-suggestion-skopt",
+  "kubeflow-notebook-controller",
+  "kubeflow-notebook-controller-fips",
+  "kubeflow-pipelines-api-server",
+  "kubeflow-pipelines-apiserver",
+  "kubeflow-pipelines-cache-deployer",
+  "kubeflow-pipelines-cache-server",
+  "kubeflow-pipelines-cache_server",
+  "kubeflow-pipelines-frontend",
+  "kubeflow-pipelines-metadata-envoy",
+  "kubeflow-pipelines-metadata-writer",
+  "kubeflow-pipelines-persistence_agent",
+  "kubeflow-pipelines-persistenceagent",
+  "kubeflow-pipelines-scheduledworkflow",
+  "kubeflow-pipelines-viewer-crd-controller",
+  "kubeflow-pipelines-visualization-server",
+  "kubeflow-profile-controller",
+  "kubeflow-profile-controller-fips",
+  "kubeflow-pvcviewer-controller",
+  "kubeflow-pvcviewer-controller-fips",
+  "kubeflow-tensorboard-controller",
+  "kubeflow-tensorboard-controller-fips",
+  "kubeflow-volumes-web-app",
+  "kubeflow-volumes-web-app-fips"
+ ],
+ "kubernetes-reflector": [
+  "reflector"
+ ],
+ "kustomize-controller": [
+  "flux-kustomize-controller",
+  "flux-kustomize-controller-fips",
+  "kustomize-controller"
+ ],
+ "kustomize-sops": [
+  "ksops"
+ ],
+ "kyverno": [
+  "kyverno",
+  "kyverno-background-controller",
+  "kyverno-background-controller-fips",
+  "kyverno-cleanup-controller",
+  "kyverno-cleanup-controller-fips",
+  "kyverno-cli-fips",
+  "kyverno-fips",
+  "kyverno-init-container-fips",
+  "kyverno-notation-aws",
+  "kyverno-notation-aws-fips",
+  "kyverno-policy-reporter",
+  "kyverno-policy-reporter-fips",
+  "kyverno-policy-reporter-kyverno-plugin",
+  "kyverno-policy-reporter-kyverno-plugin-fips",
+  "kyverno-policy-reporter-plugin",
+  "kyverno-policy-reporter-plugin-fips",
+  "kyverno-policy-reporter-plugin-kyverno",
+  "kyverno-policy-reporter-plugin-kyverno-fips",
+  "kyverno-policy-reporter-plugin-trivy",
+  "kyverno-policy-reporter-plugin-trivy-fips",
+  "kyverno-policy-reporter-plugins-kyverno",
+  "kyverno-policy-reporter-plugins-kyverno-fips",
+  "kyverno-policy-reporter-plugins-trivy",
+  "kyverno-policy-reporter-plugins-trivy-fips",
+  "kyverno-policy-reporter-ui",
+  "kyverno-policy-reporter-ui-fips",
+  "kyverno-pre-fips",
+  "kyverno-reports-controller",
+  "kyverno-reports-controller-fips",
+  "kyvernopre"
+ ],
+ "liberica": [
+  "liberica-jdk",
+  "liberica-jdk-fips",
+  "liberica-jre",
+  "liberica-jre-fips"
+ ],
+ "linkerd-await": [
+  "linkerd-await"
+ ],
+ "linkerd2-proxy-init": [
+  "linkerd-network-validator"
+ ],
+ "livekit": [
+  "livekit-server",
+  "livekit-server-fips"
+ ],
+ "llvm-project": [
+  "llvm-lld"
+ ],
+ "local-path-provisioner": [
+  "local-path-provisioner"
+ ],
+ "loglevel": [
+  "rancher-loglevel"
+ ],
+ "loki": [
+  "loki-canary-fips"
+ ],
+ "machine": [
+  "rancher-machine"
+ ],
+ "mattermost-operator": [
+  "mattermost-operator"
+ ],
+ "metacontroller": [
+  "metacontroller"
+ ],
+ "metrics-server": [
+  "metrics-server",
+  "metrics-server-fips",
+  "metrics-server-iamguarded"
+ ],
+ "microsoft-go": [
+  "go-msft",
+  "go-msft-fips"
+ ],
+ "mig-parted": [
+  "mig-parted"
+ ],
+ "mimir": [
+  "grafana-mimir",
+  "grafana-mimir-fips"
+ ],
+ "minio-operator": [
+  "minio-operator",
+  "minio-operator-sidecar"
+ ],
+ "mongodb-exporter": [
+  "prometheus-mongodb-exporter-fips"
+ ],
+ "monstache": [
+  "monstache"
+ ],
+ "mysqld-exporter": [
+  "prometheus-mysqld-exporter-fips"
+ ],
+ "nacos": [
+  "nacos"
+ ],
+ "nats": [
+  "nats-fips"
+ ],
+ "natscli": [
+  "nats-box",
+  "nats-box-fips"
+ ],
+ "neuvector": [
+  "neuvector-controller",
+  "neuvector-enforcer"
+ ],
+ "node": [
+  "node-fips"
+ ],
+ "node-exporter": [
+  "prometheus-node-exporter-fips"
+ ],
+ "node-problem-detector": [
+  "log-counter"
+ ],
+ "notification-controller": [
+  "flux-notification-controller",
+  "flux-notification-controller-fips",
+  "notification-controller"
+ ],
+ "nri-apache": [
+  "nri-apache",
+  "nri-apache-fips"
+ ],
+ "nri-cassandra": [
+  "nri-cassandra",
+  "nri-cassandra-fips"
+ ],
+ "nri-consul": [
+  "nri-consul",
+  "nri-consul-fips"
+ ],
+ "nri-couchbase": [
+  "nri-couchbase",
+  "nri-couchbase-fips"
+ ],
+ "nri-discovery-kubernetes": [
+  "nri-discovery-kubernetes",
+  "nri-discovery-kubernetes-fips"
+ ],
+ "nri-elasticsearch": [
+  "nri-elasticsearch",
+  "nri-elasticsearch-fips"
+ ],
+ "nri-f5": [
+  "nri-f5",
+  "nri-f5-fips"
+ ],
+ "nri-haproxy": [
+  "nri-haproxy",
+  "nri-haproxy-fips"
+ ],
+ "nri-jmx": [
+  "nri-jmx",
+  "nri-jmx-fips"
+ ],
+ "nri-kafka": [
+  "nri-kafka",
+  "nri-kafka-fips"
+ ],
+ "nri-kubernetes": [
+  "newrelic-infrastructure-k8s",
+  "newrelic-k8s-events-forwarder",
+  "newrelic-k8s-events-forwarder-fips",
+  "newrelic-kube-events",
+  "newrelic-kubernetes",
+  "newrelic-kubernetes-fips",
+  "newrelic-prometheus",
+  "nri-kubernetes",
+  "nri-kubernetes-fips"
+ ],
+ "nri-memcached": [
+  "nri-memcached",
+  "nri-memcached-fips"
+ ],
+ "nri-mongodb": [
+  "nri-mongodb",
+  "nri-mongodb-fips"
+ ],
+ "nri-mssql": [
+  "nri-mssql",
+  "nri-mssql-fips"
+ ],
+ "nri-mysql": [
+  "nri-mysql",
+  "nri-mysql-fips"
+ ],
+ "nri-nagios": [
+  "nri-nagios",
+  "nri-nagios-fips"
+ ],
+ "nri-nginx": [
+  "nri-nginx",
+  "nri-nginx-fips"
+ ],
+ "nri-postgresql": [
+  "nri-postgresql",
+  "nri-postgresql-fips"
+ ],
+ "nri-prometheus": [
+  "nri-prometheus"
+ ],
+ "nri-rabbitmq": [
+  "nri-rabbitmq",
+  "nri-rabbitmq-fips"
+ ],
+ "nri-redis": [
+  "nri-redis",
+  "nri-redis-fips"
+ ],
+ "nrjmx": [
+  "nrjmx"
+ ],
+ "omni": [
+  "omni",
+  "omni-fips"
+ ],
+ "opa": [
+  "opa-fips"
+ ],
+ "open-liberty": [
+  "open-liberty",
+  "open-liberty-kernel"
+ ],
+ "openjdk-builds": [
+  "jdk-crac"
+ ],
+ "opensearch-dashboards": [
+  "opensearch-dashboards-fips"
+ ],
+ "operator": [
+  "flux-operator-fips"
+ ],
+ "paranoia": [
+  "paranoia"
+ ],
+ "pg_timetable": [
+  "pg-timetable",
+  "pg-timetable-fips",
+  "pg_timetable",
+  "pg_timetable-fips"
+ ],
+ "pgbouncer-exporter": [
+  "prometheus-pgbouncer-exporter-fips"
+ ],
+ "pgpool2_exporter": [
+  "pgpool2_exporter",
+  "pgpool2_exporter-fips"
+ ],
+ "pgwatch": [
+  "pgwatch"
+ ],
+ "pipeline": [
+  "tekton-chains",
+  "tekton-chains-fips",
+  "tekton-cli",
+  "tekton-cli-fips",
+  "tekton-controller",
+  "tekton-controller-fips",
+  "tekton-entrypoint",
+  "tekton-entrypoint-fips",
+  "tekton-events",
+  "tekton-events-fips",
+  "tekton-nop",
+  "tekton-nop-fips",
+  "tekton-pipelines-controller",
+  "tekton-pipelines-entrypoint-fips",
+  "tekton-pipelines-events",
+  "tekton-pipelines-events-fips",
+  "tekton-pipelines-nop",
+  "tekton-pipelines-nop-fips",
+  "tekton-pipelines-resolvers-fips",
+  "tekton-pipelines-sidecarlogresults",
+  "tekton-pipelines-sidecarlogresults-fips",
+  "tekton-pipelines-webhook",
+  "tekton-pipelines-webhook-fips",
+  "tekton-pipelines-workingdirinit",
+  "tekton-pipelines-workingdirinit-fips",
+  "tekton-resolvers",
+  "tekton-resolvers-fips",
+  "tekton-sidecarlogresults",
+  "tekton-sidecarlogresults-fips",
+  "tekton-webhook",
+  "tekton-webhook-fips",
+  "tekton-workingdirinit",
+  "tekton-workingdirinit-fips"
+ ],
+ "pipelines": [
+  "kubeflow-pipelines"
+ ],
+ "plugins": [
+  "cni-plugins-bandwidth",
+  "cni-plugins-fips-loopback",
+  "cni-plugins-host-local",
+  "cni-plugins-loopback",
+  "cni-plugins-portmap",
+  "cni-plugins-tuning"
+ ],
+ "podman-exporter": [
+  "prometheus-podman-exporter",
+  "prometheus-podman-exporter-fips"
+ ],
+ "policy-bot": [
+  "policy-bot"
+ ],
+ "policy-reporter": [
+  "policy-reporter"
+ ],
+ "policy-reporter-kyverno-plugin": [
+  "kyverno-plugin"
+ ],
+ "policy-reporter-ui": [
+  "policy-reporter-ui"
+ ],
+ "postgres-exporter": [
+  "prometheus-postgres-exporter-fips"
+ ],
+ "process-exporter": [
+  "prometheus-process-exporter-fips"
+ ],
+ "prometheus": [
+  "prometheus-alertmanager-iamguarded",
+  "prometheus-alertmanager-iamguarded-fips",
+  "prometheus-blackbox-exporter-iamguarded",
+  "prometheus-blackbox-exporter-iamguarded-fips",
+  "prometheus-cloudwatch-exporter",
+  "prometheus-cloudwatch-exporter-fips",
+  "prometheus-elasticsearch-exporter-iamguarded",
+  "prometheus-elasticsearch-exporter-iamguarded-fips",
+  "prometheus-fips",
+  "prometheus-iamguarded",
+  "prometheus-iamguarded-fips",
+  "prometheus-logstash-exporter",
+  "prometheus-logstash-exporter-fips",
+  "prometheus-mongodb-exporter-iamguarded",
+  "prometheus-mysqld-exporter-iamguarded",
+  "prometheus-mysqld-exporter-iamguarded-fips",
+  "prometheus-node-exporter-iamguarded",
+  "prometheus-node-exporter-iamguarded-fips",
+  "prometheus-operator-iamguarded",
+  "prometheus-operator-iamguarded-fips",
+  "prometheus-postgres-exporter-iamguarded",
+  "prometheus-pushgateway-iamguarded",
+  "prometheus-pushgateway-iamguarded-fips",
+  "prometheus-redis-exporter-iamguarded",
+  "prometheus-redis-exporter-iamguarded-fips",
+  "prometheus-statsd-exporter-iamguarded",
+  "prometheus-yet-another-cloudwatch-exporter",
+  "prometheus-yet-another-cloudwatch-exporter-fips"
+ ],
+ "prometheus-adapter": [
+  "prometheus-adapter"
+ ],
+ "prometheus-operator": [
+  "prometheus-config-reloader",
+  "prometheus-operator",
+  "prometheus-operator-fips"
+ ],
+ "promtail": [
+  "loki-canary-fips"
+ ],
+ "promxy": [
+  "promxy",
+  "promxy-fips"
+ ],
+ "provider-aws": [
+  "crossplane-aws",
+  "crossplane-aws-cloudfront",
+  "crossplane-aws-cloudfront-fips",
+  "crossplane-aws-cloudwatchlogs",
+  "crossplane-aws-cloudwatchlogs-fips",
+  "crossplane-aws-dynamodb",
+  "crossplane-aws-dynamodb-fips",
+  "crossplane-aws-ec2",
+  "crossplane-aws-ec2-fips",
+  "crossplane-aws-eks",
+  "crossplane-aws-eks-fips",
+  "crossplane-aws-fips",
+  "crossplane-aws-firehose",
+  "crossplane-aws-firehose-fips",
+  "crossplane-aws-iam",
+  "crossplane-aws-iam-fips",
+  "crossplane-aws-kinesis",
+  "crossplane-aws-kinesis-fips",
+  "crossplane-aws-kms",
+  "crossplane-aws-kms-fips",
+  "crossplane-aws-lambda",
+  "crossplane-aws-lambda-fips",
+  "crossplane-aws-provider-fips",
+  "crossplane-aws-rds",
+  "crossplane-aws-rds-fips",
+  "crossplane-aws-route53",
+  "crossplane-aws-route53-fips",
+  "crossplane-aws-s3",
+  "crossplane-aws-s3-fips",
+  "crossplane-aws-sns",
+  "crossplane-aws-sns-fips",
+  "crossplane-aws-sqs",
+  "crossplane-aws-sqs-fips",
+  "crossplane-azure",
+  "crossplane-azure-authorization",
+  "crossplane-azure-managedidentity",
+  "crossplane-azure-sql",
+  "crossplane-azure-storage",
+  "crossplane-function-environment-configs-fips",
+  "crossplane-function-go-templating-fips",
+  "crossplane-gcp-cloudplatform",
+  "crossplane-gcp-cloudplatform-fips",
+  "crossplane-gcp-compute",
+  "crossplane-gcp-compute-fips",
+  "crossplane-gcp-container",
+  "crossplane-gcp-container-fips",
+  "crossplane-gcp-dns",
+  "crossplane-gcp-dns-fips",
+  "crossplane-gcp-kms",
+  "crossplane-gcp-kms-fips",
+  "crossplane-gcp-provider-family",
+  "crossplane-gcp-provider-family-fips",
+  "crossplane-gcp-pubsub",
+  "crossplane-gcp-pubsub-fips",
+  "crossplane-gcp-storage",
+  "crossplane-gcp-storage-fips",
+  "crossplane-keycloak",
+  "crossplane-keycloak-fips",
+  "crossplane-provider-aws",
+  "crossplane-sql",
+  "crossplane-sql-fips"
+ ],
+ "provider-aws-cloudfront": [
+  "crossplane-provider-aws-cloudfront",
+  "crossplane-provider-aws-cloudfront-fips"
+ ],
+ "provider-aws-cloudwatchlogs": [
+  "crossplane-provider-aws-cloudwatchlogs-fips"
+ ],
+ "provider-aws-dynamodb": [
+  "crossplane-provider-aws-dynamodb",
+  "crossplane-provider-aws-dynamodb-fips"
+ ],
+ "provider-aws-ec2": [
+  "crossplane-provider-aws-ec2",
+  "crossplane-provider-aws-ec2-fips"
+ ],
+ "provider-aws-eks": [
+  "crossplane-provider-aws-eks",
+  "crossplane-provider-aws-eks-fips"
+ ],
+ "provider-aws-firehose": [
+  "crossplane-provider-aws-firehose",
+  "crossplane-provider-aws-firehose-fips"
+ ],
+ "provider-aws-iam": [
+  "crossplane-provider-aws-iam",
+  "crossplane-provider-aws-iam-fips"
+ ],
+ "provider-aws-kinesis": [
+  "crossplane-provider-aws-kinesis",
+  "crossplane-provider-aws-kinesis-fips"
+ ],
+ "provider-aws-kms": [
+  "crossplane-provider-aws-kms",
+  "crossplane-provider-aws-kms-fips"
+ ],
+ "provider-aws-lambda": [
+  "crossplane-provider-aws-lambda",
+  "crossplane-provider-aws-lambda-fips"
+ ],
+ "provider-aws-rds": [
+  "crossplane-provider-aws-rds",
+  "crossplane-provider-aws-rds-fips"
+ ],
+ "provider-aws-route53": [
+  "crossplane-provider-aws-route53",
+  "crossplane-provider-aws-route53-fips"
+ ],
+ "provider-aws-s3": [
+  "crossplane-provider-aws-s3",
+  "crossplane-provider-aws-s3-fips"
+ ],
+ "provider-aws-sns": [
+  "crossplane-provider-aws-sns-fips"
+ ],
+ "provider-aws-sqs": [
+  "crossplane-provider-aws-sqs",
+  "crossplane-provider-aws-sqs-fips"
+ ],
+ "provider-azure": [
+  "crossplane-provider-azure"
+ ],
+ "provider-azure-authorization": [
+  "crossplane-provider-azure-authorization"
+ ],
+ "provider-azure-family": [
+  "crossplane-provider-azure-family"
+ ],
+ "provider-azure-sql": [
+  "crossplane-provider-azure-sql"
+ ],
+ "provider-azure-storage": [
+  "crossplane-provider-azure-storage"
+ ],
+ "provider-family-aws": [
+  "crossplane-provider-family-aws",
+  "crossplane-provider-family-aws-fips"
+ ],
+ "provider-family-gcp": [
+  "crossplane-provider-family-gcp-fips"
+ ],
+ "provider-gcp": [
+  "crossplane-provider-gcp"
+ ],
+ "provider-gcp-cloudplatform": [
+  "crossplane-provider-gcp-cloudplatform",
+  "crossplane-provider-gcp-cloudplatform-fips"
+ ],
+ "provider-gcp-compute": [
+  "crossplane-provider-gcp-compute",
+  "crossplane-provider-gcp-compute-fips"
+ ],
+ "provider-gcp-container": [
+  "crossplane-provider-gcp-container",
+  "crossplane-provider-gcp-container-fips"
+ ],
+ "provider-gcp-dns": [
+  "crossplane-provider-gcp-dns",
+  "crossplane-provider-gcp-dns-fips"
+ ],
+ "provider-gcp-kms": [
+  "crossplane-provider-gcp-kms",
+  "crossplane-provider-gcp-kms-fips"
+ ],
+ "provider-gcp-pubsub": [
+  "crossplane-provider-gcp-pubsub",
+  "crossplane-provider-gcp-pubsub-fips"
+ ],
+ "provider-gcp-storage": [
+  "crossplane-provider-gcp-storage",
+  "crossplane-provider-gcp-storage-fips"
+ ],
+ "provider-gitlab": [
+  "crossplane-provider-gitlab",
+  "crossplane-provider-gitlab-fips"
+ ],
+ "provider-keycloak": [
+  "crossplane-provider-keycloak",
+  "crossplane-provider-keycloak-fips"
+ ],
+ "provider-kubernetes": [
+  "crossplane-provider-kubernetes",
+  "crossplane-provider-kubernetes-fips"
+ ],
+ "provider-sql": [
+  "crossplane-provider-sql",
+  "crossplane-provider-sql-fips"
+ ],
+ "provider-terraform": [
+  "crossplane-provider-terraform",
+  "crossplane-provider-terraform-fips"
+ ],
+ "proxy": [
+  "istio-envoy",
+  "istio-envoy-fips"
+ ],
+ "pulumi": [
+  "pulumi-language-go",
+  "pulumi-language-nodejs",
+  "pulumi-language-python"
+ ],
+ "pulumi-dotnet": [
+  "pulumi-language-dotnet"
+ ],
+ "pulumi-java": [
+  "pulumi-language-java"
+ ],
+ "pulumi-kubernetes-operator": [
+  "pulumi-kubernetes-operator"
+ ],
+ "pulumi-yaml": [
+  "pulumi-language-yaml"
+ ],
+ "pushgateway": [
+  "prometheus-pushgateway-fips"
+ ],
+ "pushprox": [
+  "pushprox",
+  "pushprox-client",
+  "pushprox-client-fips",
+  "pushprox-fips"
+ ],
+ "pyroscope": [
+  "grafana-pyroscope"
+ ],
+ "rancher": [
+  "rancher-hardened-kubernetes-compat-fips"
+ ],
+ "rancher-agent": [
+  "rancher-agent"
+ ],
+ "rancher-helm": [
+  "rancher-helm"
+ ],
+ "ratify": [
+  "ratify",
+  "ratify-fips",
+  "ratify-fips-sbom",
+  "ratify-fips-vulnerabilityreport",
+  "ratify-sbom",
+  "ratify-vulnerabilityreport"
+ ],
+ "redis-exporter": [
+  "prometheus-redis-exporter-fips"
+ ],
+ "redpanda": [
+  "rpk"
+ ],
+ "regclient": [
+  "regclient-regbot",
+  "regclient-regbot-fips",
+  "regclient-regctl",
+  "regclient-regctl-fips",
+  "regclient-regsync",
+  "regclient-regsync-fips"
+ ],
+ "registry-adapter": [
+  "neuvector-registry-adapter"
+ ],
+ "rekor-server": [
+  "rekor-fips-cli",
+  "rekor-fips-server"
+ ],
+ "reloader": [
+  "reloader",
+  "stakater-reloader",
+  "stakater-reloader-fips"
+ ],
+ "rke2": [
+  "rke2-runtime"
+ ],
+ "rollout-operator": [
+  "rollout-operator"
+ ],
+ "rook": [
+  "rook-ceph-operator"
+ ],
+ "s3-controller": [
+  "aws-s3-controller"
+ ],
+ "scanner": [
+  "neuvector-scanner"
+ ],
+ "sdk": [
+  "bitwarden-sdk-server"
+ ],
+ "sealed-secrets": [
+  "sealed-secrets-kubeseal"
+ ],
+ "security-scan": [
+  "rancher-security-scan",
+  "rancher-security-scan-fips"
+ ],
+ "serving": [
+  "knative-eventing-1.19-channel-controller",
+  "knative-eventing-1.19-channel-dispatcher",
+  "knative-eventing-1.19-controller",
+  "knative-eventing-1.19-filter",
+  "knative-eventing-1.19-ingress",
+  "knative-eventing-1.19-jobsink",
+  "knative-eventing-1.19-mtchannel-broker",
+  "knative-eventing-1.19-webhook",
+  "knative-eventing-channel-controller",
+  "knative-eventing-channel-controller-fips",
+  "knative-eventing-channel-dispatcher",
+  "knative-eventing-channel-dispatcher-fips",
+  "knative-eventing-controller",
+  "knative-eventing-controller-fips",
+  "knative-eventing-filter",
+  "knative-eventing-filter-fips",
+  "knative-eventing-fips-1.19-channel-controller",
+  "knative-eventing-fips-1.19-channel-dispatcher",
+  "knative-eventing-fips-1.19-controller",
+  "knative-eventing-fips-1.19-filter",
+  "knative-eventing-fips-1.19-ingress",
+  "knative-eventing-fips-1.19-jobsink",
+  "knative-eventing-fips-1.19-mtchannel-broker",
+  "knative-eventing-fips-1.19-webhook",
+  "knative-eventing-ingress",
+  "knative-eventing-ingress-fips",
+  "knative-eventing-jobsink",
+  "knative-eventing-jobsink-fips",
+  "knative-eventing-mtchannel-broker",
+  "knative-eventing-mtchannel-broker-fips",
+  "knative-eventing-webhook",
+  "knative-eventing-webhook-fips",
+  "knative-operator",
+  "knative-operator-1.19-webhook",
+  "knative-operator-webhook",
+  "knative-serving",
+  "knative-serving-1.19-activator",
+  "knative-serving-1.19-autoscaler",
+  "knative-serving-1.19-controller",
+  "knative-serving-1.19-queue",
+  "knative-serving-1.19-webhook",
+  "knative-serving-activator",
+  "knative-serving-autoscaler",
+  "knative-serving-controller",
+  "knative-serving-queue",
+  "knative-serving-webhook"
+ ],
+ "shadowsocks-rust": [
+  "shadowsocks-rust-sslocal",
+  "shadowsocks-rust-ssserver"
+ ],
+ "shell": [
+  "rancher-shell",
+  "rancher-shell-fips"
+ ],
+ "snapshot-controller": [
+  "csi-snapshotter",
+  "snapshot-controller",
+  "snapshot-validation-webhook"
+ ],
+ "source-controller": [
+  "flux-source-controller",
+  "flux-source-controller-fips",
+  "source-controller"
+ ],
+ "spark-operator": [
+  "spark-operator"
+ ],
+ "spegel": [
+  "spegel",
+  "spegel-fips"
+ ],
+ "splunk-otel-collector": [
+  "splunk-otel-collector"
+ ],
+ "sql_exporter": [
+  "sql_exporter",
+  "sql_exporter-fips"
+ ],
+ "statsd-exporter": [
+  "prometheus-statsd-exporter-fips"
+ ],
+ "step-cli": [
+  "step-fips"
+ ],
+ "strimzi-kafka-bridge": [
+  "kafka-bridge",
+  "kafka-bridge-fips"
+ ],
+ "system-upgrade-controller": [
+  "rancher-system-upgrade-controller"
+ ],
+ "telemetry": [
+  "rancher-telemetry"
+ ],
+ "temporal": [
+  "tdbg",
+  "temporal-cassandra-tool",
+  "temporal-server",
+  "temporal-server-fips",
+  "temporal-server-schema",
+  "temporal-sql-tool"
+ ],
+ "tetragon": [
+  "tetra",
+  "tetra-fips"
+ ],
+ "thanos": [
+  "thanos-iamguarded-client"
+ ],
+ "traefik": [
+  "traefik-fips"
+ ],
+ "trainer": [
+  "trainer-controller-manager"
+ ],
+ "training-operator": [
+  "kubeflow-trainer"
+ ],
+ "trust-manager": [
+  "trust-manager"
+ ],
+ "ui": [
+  "rancher-ui"
+ ],
+ "ui-driver-linode": [
+  "rancher-ui-driver-linode"
+ ],
+ "vault": [
+  "vault-fips"
+ ],
+ "vault-csi-provider": [
+  "vault-csi-provider"
+ ],
+ "vault-k8s": [
+  "vault-k8s",
+  "vault-k8s-fips"
+ ],
+ "velero-plugin-for-aws": [
+  "velero-plugin-aws"
+ ],
+ "velero-plugin-for-csi": [
+  "velero-plugin-csi"
+ ],
+ "velero-plugin-for-microsoft-azure": [
+  "velero-plugin-azure"
+ ],
+ "vertical-pod-autoscaler": [
+  "addon-resizer",
+  "addon-resizer-fips"
+ ],
+ "volume-modifier-for-k8s": [
+  "aws-volume-modifier-for-k8s",
+  "aws-volume-modifier-for-k8s-fips"
+ ],
+ "webhook": [
+  "rancher-webhook",
+  "rancher-webhook-fips"
+ ],
+ "zitadel": [
+  "zitadel"
+ ]
+}

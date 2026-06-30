@@ -1,0 +1,113 @@
+name: Auto Update Inline Images
+
+# Companion to auto-update.yml. That one covers nixpkgs-sourced images
+# (flake.lock) and the curated pkgs/ packages (nix-update). This one covers the
+# INLINE-fetch images — those that pin their own version + src in
+# images/<name>/default.nix — which neither of those mechanisms touches.
+#
+# It runs nvchecker to find images whose upstream has advanced past the version
+# in old_versions.json, bumps up to `limit` of them (version + every content
+# hash, repaired via scripts/bump-inline-image.sh), and opens a single PR.
+# Bounded per run so it chips away without flooding CI with hundreds of builds.
+
+on:
+  schedule:
+    - cron: '37 7 * * *'   # after check-upstream-versions (06:42)
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Max images to bump in one run'
+        required: false
+        default: '20'
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: auto-update-inline
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install Nix
+        run: |
+          curl --connect-timeout 30 --max-time 300 -fsSL https://nixos.org/nix/install | sh -s -- --daemon --yes
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          mkdir -p ~/.config/nix
+          echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+          echo "access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}" >> ~/.config/nix/nix.conf
+          echo "/nix/var/nix/profiles/default/bin" >> "$GITHUB_PATH"
+
+      - name: Find outdated inline images and bump them
+        id: bump
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LIMIT: ${{ github.event.inputs.limit || '20' }}
+        run: |
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          set -uo pipefail
+          export NIXPKGS_ALLOW_INSECURE=1
+
+          printf '[keys]\ngithub = "%s"\n' "${GH_TOKEN}" > keyfile.toml
+          trap 'rm -f keyfile.toml' EXIT
+
+          echo "-> nvchecker..."
+          nix shell nixpkgs#nvchecker -c nvchecker -c nvchecker.toml --keyfile keyfile.toml || true
+          nix shell nixpkgs#nvchecker -c nvcmp -c nvchecker.toml 2>/dev/null | grep -E '\->' > outdated.txt || true
+          echo "outdated entries: $(wc -l < outdated.txt)"
+
+          chmod +x scripts/bump-inline-image.sh
+          count=0; : > bumped.md; : > failed.md
+          while read -r entry old arrow new; do
+            [ -z "${entry:-}" ] && continue
+            [ "$count" -ge "$LIMIT" ] && break
+            imgs=$(jq -r --arg e "$entry" '.[$e][]? // empty' nvchecker-images.json)
+            [ -z "$imgs" ] && continue
+            entry_ok=1
+            for img in $imgs; do
+              [ "$count" -ge "$LIMIT" ] && { entry_ok=0; break; }
+              if bash scripts/bump-inline-image.sh "$img" "$new" > "/tmp/bump-$img.log" 2>&1; then
+                echo "- \`$img\` ${old} → ${new}" >> bumped.md
+                count=$((count+1))
+              else
+                echo "- \`$img\` (${entry} → ${new}): $(tail -1 /tmp/bump-$img.log)" >> failed.md
+                entry_ok=0
+              fi
+            done
+            # Advance the nvchecker baseline only when every image for this
+            # entry bumped cleanly, so partial failures are retried next run.
+            if [ "$entry_ok" = "1" ]; then
+              tmp=$(mktemp); jq --arg e "$entry" --arg v "$new" '.[$e]=$v' old_versions.json > "$tmp" && mv "$tmp" old_versions.json
+            fi
+          done < outdated.txt
+
+          rm -f new_versions.json.tmp 2>/dev/null || true
+          BUMPED=$(wc -l < bumped.md | tr -d ' ')
+          echo "bumped=$BUMPED" >> "$GITHUB_OUTPUT"
+          echo "## Inline image auto-update" >> "$GITHUB_STEP_SUMMARY"
+          echo "Bumped **$BUMPED** image(s)." >> "$GITHUB_STEP_SUMMARY"
+          [ -s bumped.md ] && cat bumped.md >> "$GITHUB_STEP_SUMMARY" || true
+          if [ -s failed.md ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"; echo "Could not auto-bump (left for review):" >> "$GITHUB_STEP_SUMMARY"
+            cat failed.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Open pull request
+        if: steps.bump.outputs.bumped != '0'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: auto-update/inline-images
+          title: "deps: bump inline-fetch images to latest upstream"
+          commit-message: "deps: bump inline-fetch images to latest upstream"
+          delete-branch: true
+          add-paths: |
+            images/**/default.nix
+            old_versions.json
+          body-path: bumped.md

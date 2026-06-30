@@ -2659,3 +2659,120 @@ source = "github"
 github = "zitadel/zitadel"
 use_latest_release = true
 prefix = "v"
+
+# ---- non-GitHub-hosted binaries (version tracked via GitHub source repo) ----
+
+[clickhouse]
+source = "github"
+github = "ClickHouse/ClickHouse"
+use_latest_release = true
+
+[cloud-sql-proxy]
+source = "github"
+github = "GoogleCloudPlatform/cloud-sql-proxy"
+use_latest_release = true
+
+[open-liberty]
+source = "github"
+github = "OpenLiberty/open-liberty"
+use_latest_release = true
+
+[activemq-artemis]
+source = "github"
+github = "apache/activemq-artemis"
+use_latest_release = true
+
+[celeborn]
+source = "github"
+github = "apache/celeborn"
+use_latest_release = true
+
+[hop]
+source = "github"
+github = "apache/hop"
+use_latest_release = true
+
+[tika]
+source = "github"
+github = "apache/tika"
+use_latest_release = true
+
+[cockroach]
+source = "github"
+github = "cockroachdb/cockroach"
+use_latest_release = true
+
+[dart-lang-sdk]
+source = "github"
+github = "dart-lang/sdk"
+use_latest_release = true
+
+[apm-server]
+source = "github"
+github = "elastic/apm-server"
+use_latest_release = true
+
+[beats]
+source = "github"
+github = "elastic/beats"
+use_latest_release = true
+
+[fleet-server]
+source = "github"
+github = "elastic/fleet-server"
+use_latest_release = true
+
+[falco]
+source = "github"
+github = "falcosecurity/falco"
+use_latest_release = true
+
+[consul-k8s]
+source = "github"
+github = "hashicorp/consul-k8s"
+use_latest_release = true
+
+[http-echo]
+source = "github"
+github = "hashicorp/http-echo"
+use_latest_release = true
+
+[chartmuseum]
+source = "github"
+github = "helm/chartmuseum"
+use_latest_release = true
+
+[influx-cli]
+source = "github"
+github = "influxdata/influx-cli"
+use_latest_release = true
+
+[influxdb]
+source = "github"
+github = "influxdata/influxdb"
+use_latest_release = true
+
+[proxy]
+source = "github"
+github = "istio/proxy"
+use_latest_release = true
+
+[microsoft-go]
+source = "github"
+github = "microsoft/go"
+use_latest_release = true
+
+[moby]
+source = "github"
+github = "moby/moby"
+use_latest_release = true
+
+[opensearch-dashboards]
+source = "github"
+github = "opensearch-project/OpenSearch-Dashboards"
+use_latest_release = true
+
+[sqlite]
+source = "github"
+github = "sqlite/sqlite"
+use_latest_release = true
