@@ -37,7 +37,21 @@ in mkImage {
   name = "cockroach";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/cockroach" ];
-  cmd = [ "version" ];
+  # Was `version` (a one-shot that exits, so the kind-test pod CrashLoops).
+  # Run a real, long-lived server: start-single-node is CockroachDB's
+  # standalone mode (no join/cluster-init needed). --insecure drops the TLS +
+  # auth requirement so the image starts with no mounted certs (operators run
+  # secure with their own certs + --join for a real cluster), and both the SQL
+  # (:26257) and admin-UI/health (:8080) listeners bind 0.0.0.0 so the
+  # kind-test probe can reach them. --store points at the writable /tmp (the
+  # nonroot user can't write the default ./cockroach-data under the store).
+  cmd = [
+    "start-single-node"
+    "--insecure"
+    "--listen-addr=0.0.0.0:26257"
+    "--http-addr=0.0.0.0:8080"
+    "--store=/tmp/cockroach-data"
+  ];
   labels = {
     "org.opencontainers.image.title" = "cockroach";
     "org.opencontainers.image.version" = version;
