@@ -87,11 +87,15 @@ function humanBytes(n) {
 
 function populateCategoryFilter() {
   const cats = [...new Set(allImages.map(i => i.category))].sort();
+  // category -> description, derived from the images' categoryDesc field.
+  const desc = {};
+  allImages.forEach(i => { if (i.category && i.categoryDesc) desc[i.category] = i.categoryDesc; });
   const sel = document.getElementById('category-filter');
   cats.forEach(c => {
     const opt = document.createElement('option');
     opt.value = c;
     opt.textContent = c;
+    if (desc[c]) opt.title = desc[c];   // hover text explaining the category
     sel.appendChild(opt);
   });
 }
@@ -164,7 +168,7 @@ function render() {
           ${rank}
           ${zeroCve}
           ${nixBadge}
-          <span class="badge-cat-${escapeAttr(i.categorySlug || 'unknown')}">${escapeHtml(i.category || 'unknown')}</span>
+          <span class="badge-cat-${escapeAttr(i.categorySlug || 'unknown')}" title="${escapeAttr(i.categoryDesc || '')}">${escapeHtml(i.category || 'unknown')}</span>
         </div>
       </div>
       <p class="text-sm text-fg-muted line-clamp-2">${escapeHtml(i.description || '')}</p>

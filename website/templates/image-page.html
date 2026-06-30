@@ -32,7 +32,7 @@
   <main class="max-w-5xl mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold font-mono mb-2">{{NAME}}</h1>
     <div class="mb-4 flex items-center gap-2 text-sm">
-      <span class="badge-cat-{{CATEGORY_SLUG}}">{{CATEGORY}}</span>
+      <span class="badge-cat-{{CATEGORY_SLUG}}" title="{{CATEGORY_DESC}}">{{CATEGORY}}</span>
       {{ZERO_CVE_BADGE_HTML}}
       <span class="text-fg-muted">{{VERSION}}</span>
       {{UPSTREAM_HTML}}
@@ -234,6 +234,42 @@
             const show = blk.getAttribute('data-variant-block') === target;
             blk.classList.toggle('hidden', !show);
           });
+        });
+      });
+    })();
+
+    // CVE list: severity-count filtering + per-CVE remediation todo checkboxes.
+    (function () {
+      var list = document.querySelector('[data-cve-list]');
+      if (!list) return;
+      var rows = Array.prototype.slice.call(list.querySelectorAll('tbody tr'));
+
+      function filter(sev) {
+        rows.forEach(function (r) {
+          var show = (sev === 'all') || (r.getAttribute('data-severity') === sev);
+          r.classList.toggle('hidden', !show);
+        });
+      }
+      // Clicking a severity count (Critical/High/…) shows just those CVEs.
+      document.querySelectorAll('[data-cve-filter]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          filter(el.getAttribute('data-cve-filter'));
+          list.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+      });
+
+      // Remediation todo: checkbox state persists per image + CVE in localStorage.
+      var key = 'cve-todo:' + (location.pathname || '');
+      var done = {};
+      try { done = JSON.parse(localStorage.getItem(key) || '{}'); } catch (e) { done = {}; }
+      list.querySelectorAll('.cve-todo').forEach(function (cb) {
+        var id = cb.getAttribute('data-cve');
+        if (done[id]) { cb.checked = true; cb.closest('tr').classList.add('opacity-50', 'line-through'); }
+        cb.addEventListener('change', function () {
+          if (cb.checked) { done[id] = 1; } else { delete done[id]; }
+          cb.closest('tr').classList.toggle('opacity-50', cb.checked);
+          cb.closest('tr').classList.toggle('line-through', cb.checked);
+          try { localStorage.setItem(key, JSON.stringify(done)); } catch (e) {}
         });
       });
     })();
