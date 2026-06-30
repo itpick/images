@@ -53,21 +53,30 @@ jobs:
         run: |
           set -euo pipefail
           echo "=== Enumerate org container packages ==="
-          # The packages API paginates 30/page; --paginate concatenates.
-          # We filter to packages under images/<name> (the path prefix
-          # the build-and-push workflow uses), since the org may host
-          # other unrelated packages.
-          gh api --paginate '/orgs/nix-containers/packages?package_type=container&visibility=private&per_page=100' \
-            > /tmp/private.json
-          PRIVATE_COUNT=$(jq 'length' /tmp/private.json)
-          echo "Found $PRIVATE_COUNT private container packages."
+          # The packages API paginates 30/page; we collect all pages by
+          # walking page numbers manually (gh --paginate + complex
+          # query strings emits HTTP 400 in some combos — saw it on the
+          # first run of this workflow).
+          : > /tmp/all-packages.json.parts
+          page=1
+          while :; do
+            resp=$(gh api "/orgs/nix-containers/packages?package_type=container&per_page=100&page=$page" 2>/dev/null || echo '[]')
+            n=$(echo "$resp" | jq 'length')
+            [ "$n" = "0" ] && break
+            echo "$resp" >> /tmp/all-packages.json.parts
+            page=$((page + 1))
+            if [ "$n" -lt 100 ]; then break; fi
+          done
+          jq -s 'add' /tmp/all-packages.json.parts > /tmp/all-packages.json
+          ALL_COUNT=$(jq 'length' /tmp/all-packages.json)
+          echo "Total container packages in org: $ALL_COUNT"
 
-          # Only consider the images/<name> family. Same filter logic
-          # the resolve-images step in security-scan.yml uses.
-          jq -r '.[] | select(.name | startswith("images/")) | .name' /tmp/private.json \
-            > /tmp/private-images.txt
+          # Filter client-side: visibility=private AND name starts with
+          # 'images/' (the convention this repo uses).
+          jq -r '.[] | select(.visibility == "private" and (.name | startswith("images/"))) | .name' \
+            /tmp/all-packages.json > /tmp/private-images.txt
           TARGET_COUNT=$(wc -l < /tmp/private-images.txt)
-          echo "$TARGET_COUNT of those are under images/ — the visibility-fix scope."
+          echo "$TARGET_COUNT private packages under images/ — the visibility-fix scope."
           echo ""
 
           if [ "$DRY_RUN" = "true" ]; then
