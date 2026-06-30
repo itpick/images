@@ -32,6 +32,31 @@
 #   ncurses-terminfo-base (6.5_p20251025-r1)
 #   sqlite-libs (3.51.1-r0)
 
+let
+  # The cmd points -c at /fluent-bit/etc/fluent-bit.conf (the upstream image's
+  # config path), but the nixpkgs package doesn't ship there and nothing baked
+  # it — Fluent Bit exits ("could not open configuration file"). Bake a minimal
+  # classic config there: the built-in `dummy` input feeding the `stdout`
+  # output, plus the HTTP server on 0.0.0.0:2020 for health/metrics. No writable
+  # dir is needed. Operators mount their own config with real inputs/outputs.
+  fluentbitConfig = pkgs.writeTextDir "fluent-bit/etc/fluent-bit.conf" ''
+    [SERVICE]
+        flush        1
+        daemon       off
+        log_level    info
+        http_server  on
+        http_listen  0.0.0.0
+        http_port    2020
+
+    [INPUT]
+        name  dummy
+        tag   dummy
+
+    [OUTPUT]
+        name   stdout
+        match  *
+  '';
+in
 mkImage {
   drv = pkgs.fluent-bit;
   name = "fluent-bit";
@@ -41,7 +66,7 @@ mkImage {
   # Chainguard runs fluent-bit as root
   user = "0:0";
 
-  extraPkgs = with pkgs; [ libcap ];
+  extraPkgs = with pkgs; [ libcap fluentbitConfig ];
 
   labels = {
     "org.opencontainers.image.title" = "Fluent Bit";
