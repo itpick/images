@@ -189,6 +189,19 @@ jobs:
           git add -f website/tags-data/
           echo "wrote=$WROTE" >> "$GITHUB_OUTPUT"
 
+      - name: Enrich tags-data with compressed manifest sizes
+        if: steps.tags.outputs.wrote != '0' && steps.tags.outputs.wrote != ''
+        run: |
+          set -euo pipefail
+          # GitHub's packages API doesn't include per-version size, so we
+          # fetch each manifest from ghcr.io's v2 registry directly.
+          # website/enrich-tags-with-size.py uses an anonymous bearer
+          # token (public packages allow that) and 8-way threading.
+          # Adds ~30-90s to the deploy depending on tag fan-out.
+          python3 website/enrich-tags-with-size.py website/tags-data
+          # Re-stage so the build picks up the size-enriched JSONs.
+          git add -f website/tags-data/
+
       - name: Look up last successful build-containers run
         id: buildcheck
         env:

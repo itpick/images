@@ -414,6 +414,26 @@ def _format_digest(digest: str) -> str:
     return short[:12]
 
 
+def _format_size_bytes(size) -> str:
+    """Render a compressed-size byte count as a short human string
+    (e.g. 73411977 → '70 MB'). Returns '—' for None/0/missing.
+
+    Uses 1024-based units to match how `docker images` reports sizes,
+    so a user comparing the panel to their CLI sees the same number."""
+    if not size or size <= 0:
+        return '<span class="opacity-60">—</span>'
+    units = ["B", "KB", "MB", "GB", "TB"]
+    value = float(size)
+    idx = 0
+    while value >= 1024 and idx < len(units) - 1:
+        value /= 1024.0
+        idx += 1
+    # Below MB use no decimals (small images); MB+ use 1 decimal place.
+    if idx >= 2:
+        return f"{value:.1f} {units[idx]}"
+    return f"{value:.0f} {units[idx]}"
+
+
 def render_tags_panel(tags: list[dict] | None, image_name: str) -> str:
     """Render the Tags panel HTML — table of tag/digest/pushed-at.
 
@@ -441,6 +461,7 @@ def render_tags_panel(tags: list[dict] | None, image_name: str) -> str:
         f"<tr>"
         f"<td class=\"font-mono\"><code class=\"text-fg-primary\">{_html_escape(t.get('tag', ''))}</code></td>"
         f"<td class=\"font-mono text-fg-muted text-xs\" title=\"{_html_escape(t.get('digest', ''))}\">{_html_escape(_format_digest(t.get('digest', '')))}</td>"
+        f"<td class=\"font-mono text-fg-muted text-xs\">{_format_size_bytes(t.get('compressed_size'))}</td>"
         f"<td class=\"text-fg-muted text-xs\">{_html_escape(format_scan_timestamp(t.get('pushed_at', '')))}</td>"
         f"</tr>"
         for t in rows
@@ -458,7 +479,7 @@ def render_tags_panel(tags: list[dict] | None, image_name: str) -> str:
         f'{note}'
         f'<div class="prose max-w-none">'
         f'<table>'
-        f'<thead><tr><th>Tag</th><th>Digest</th><th>Pushed</th></tr></thead>'
+        f'<thead><tr><th>Tag</th><th>Digest</th><th>Size</th><th>Pushed</th></tr></thead>'
         f'<tbody>{body_rows}</tbody>'
         f'</table>'
         f'</div>'
