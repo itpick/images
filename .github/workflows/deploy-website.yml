@@ -50,14 +50,31 @@ jobs:
           # aggregate step shadowed an otherwise-perfect 189-image
           # artifact). The non-empty-file check below guards against
           # picking up genuinely empty/aborted runs.
-          RUNS=$(gh run list \
-            --repo "$GITHUB_REPOSITORY" \
-            --workflow=security-scan.yml \
-            --branch=main \
-            --status=completed \
-            --limit=10 \
-            --json databaseId \
-            --jq '.[].databaseId' || true)
+          #
+          # Retry on rate-limit (HTTP 403 from gh CLI) — when many
+          # workflows merge back-to-back the workflow-token's quota
+          # gets exhausted, returning empty here and silently blanking
+          # the site (#FIX). 5 attempts × increasing backoff.
+          RUNS=""
+          for attempt in 1 2 3 4 5; do
+            RUNS=$(gh run list \
+              --repo "$GITHUB_REPOSITORY" \
+              --workflow=security-scan.yml \
+              --branch=main \
+              --status=completed \
+              --limit=10 \
+              --json databaseId \
+              --jq '.[].databaseId' 2>/tmp/runlist.err || true)
+            if [ -n "${RUNS:-}" ]; then break; fi
+            if grep -qiE 'rate limit|429|403' /tmp/runlist.err 2>/dev/null; then
+              echo "gh run list rate-limited (attempt $attempt/5):"
+              cat /tmp/runlist.err
+              sleep $((attempt * attempt * 10))  # 10s, 40s, 90s, 160s, 250s
+            else
+              # Real failure or genuinely empty — don't retry forever
+              break
+            fi
+          done
           if [ -z "${RUNS:-}" ]; then
             echo "No successful security-scan.yml run found; vulnerability panels will be omitted."
             echo "path=" >> "$GITHUB_OUTPUT"
@@ -211,9 +228,24 @@ jobs:
           # Feeds the green-dot freshness check on the index page: a build
           # within the last 7 days is one of the two gates (the other is
           # a scan within 7 days, per-image).
-          ISO=$(gh run list --repo "$GITHUB_REPOSITORY" \
-                  --workflow=build-containers.yml --branch=main --status=success \
-                  --limit=1 --json createdAt --jq '.[0].createdAt // ""' || true)
+          #
+          # Same rate-limit retry pattern as the scan-data step above —
+          # this call also gets 403'd under concurrent-workflow load.
+          ISO=""
+          for attempt in 1 2 3 4 5; do
+            ISO=$(gh run list --repo "$GITHUB_REPOSITORY" \
+                    --workflow=build-containers.yml --branch=main --status=success \
+                    --limit=1 --json createdAt --jq '.[0].createdAt // ""' \
+                    2>/tmp/buildcheck.err || true)
+            if [ -n "${ISO:-}" ]; then break; fi
+            if grep -qiE 'rate limit|429|403' /tmp/buildcheck.err 2>/dev/null; then
+              echo "gh run list rate-limited (attempt $attempt/5):"
+              cat /tmp/buildcheck.err
+              sleep $((attempt * attempt * 10))
+            else
+              break
+            fi
+          done
           echo "iso=$ISO" >> "$GITHUB_OUTPUT"
           echo "Last successful build-containers.yml run on main: ${ISO:-<none>}"
 
