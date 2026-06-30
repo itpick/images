@@ -120,15 +120,30 @@ jobs:
           TOTAL_CANDIDATES=$(echo "$CANDIDATES_JSON" | jq 'length')
           echo "Total candidates: $TOTAL_CANDIDATES"
 
-          # ---- step 2: existence-filter in parallel (xargs -P 32) ----
-          # docker manifest inspect is HEAD-like; cheap. Parallelize to keep
-          # the resolve step under a minute even for 3000 candidates.
+          # ---- step 2: existence-filter in parallel ----
+          # `docker manifest inspect` against GHCR triggers a secondary
+          # rate limit at -P 32 (the original setting) — half-plus of the
+          # probes 429 silently and those images get dropped from the
+          # matrix even though they're on the registry. Dropped to -P 8
+          # and added a 3-attempt retry with exponential backoff (1s, 3s,
+          # 9s) — same pattern as the tag-fetch step in deploy-website.yml.
+          #
+          # Post-fix expectation: of N candidates, the count flagged as
+          # "not yet published" should match the count we genuinely have
+          # not pushed; rate-limit-induced false negatives go away.
           if [ "$TOTAL_CANDIDATES" -eq 0 ]; then
             EXISTING_JSON="[]"
           else
             echo "$CANDIDATES_JSON" | jq -r '.[]' > /tmp/candidates.txt
-            xargs -a /tmp/candidates.txt -I {} -P 32 sh -c '
-              if docker manifest inspect "$1" >/dev/null 2>&1; then echo "$1"; fi
+            xargs -a /tmp/candidates.txt -I {} -P 8 sh -c '
+              for attempt in 1 2 3; do
+                if docker manifest inspect "$1" >/dev/null 2>&1; then
+                  echo "$1"
+                  exit 0
+                fi
+                # Backoff (1, 3, 9). No sleep after the third attempt.
+                if [ "$attempt" -lt 3 ]; then sleep $((attempt * attempt)); fi
+              done
             ' _ {} > /tmp/existing.txt
             EXISTING_JSON=$(jq -Rc '.' /tmp/existing.txt | jq -cs '.')
           fi
