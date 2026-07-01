@@ -4,21 +4,21 @@
 
 buildGoModule rec {
   pname = "spire";
-  version = "1.14.0";
+  version = "1.15.1";
 
   src = fetchFromGitHub {
     owner = "spiffe";
     repo = "spire";
     rev = "v${version}";
-    hash = "sha256-I5fNjOuij8A60pEPoq+iSfC5oGrTu4DizCd6OnLtJ2I=";
+    hash = "sha256-7SmHj/st2r3ks8Bh6gVRlKoay5mHqpovH25qMxG9s40=";
   };
 
-  vendorHash = null;
+  proxyVendor = true;
+  vendorHash = "sha256-wKVBqjid/PQi5JBB37c3h68Q8kUqbyaiDbLssO7Yo7A=";
 
   subPackages = [
     "cmd/spire-server"
     "cmd/spire-agent"
-    "cmd/oidc-discovery-provider"
   ];
 
   env.CGO_ENABLED = 0;
