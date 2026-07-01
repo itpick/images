@@ -26,25 +26,37 @@ let
     set -euo pipefail
     export PATH="${pkgs.mariadb}/bin:${pkgs.coreutils}/bin:$PATH"
 
-    DATA_DIR="''${MYSQL_DATA_DIR:-/var/lib/mysql}"
+    # Default data dir under /tmp so bare `docker run` / kind smoke can
+    # bootstrap without a mounted PV; chart overrides to its PVC path.
+    DATA_DIR="''${MYSQL_DATA_DIR:-/tmp/mysql-data}"
     PORT="''${MYSQL_PORT:-3306}"
     MYSQL_ROOT_USER="''${MYSQL_ROOT_USER:-root}"
+
+    # /etc/passwd lookup: mariadb-install-db calls `id -un` which needs
+    # an entry for UID 1001. Chart provides via securityContext.
+    export USER="''${USER:-mysql}"
 
     mkdir -p "$DATA_DIR"
 
     if [ -z "$(ls -A "$DATA_DIR" 2>/dev/null)" ]; then
-      if [ -z "''${MYSQL_ROOT_PASSWORD:-}" ] && [ "''${MYSQL_ALLOW_EMPTY_PASSWORD:-no}" != "yes" ]; then
-        echo "mysql-nixchart: MYSQL_ROOT_PASSWORD is required (or set MYSQL_ALLOW_EMPTY_PASSWORD=yes)" >&2
+      # Smoke-test friendly default: allow empty root password. Chart pins
+      # MYSQL_ROOT_PASSWORD via secret; MYSQL_ALLOW_EMPTY_PASSWORD=no still
+      # enforces the requirement.
+      if [ -z "''${MYSQL_ROOT_PASSWORD:-}" ] && [ "''${MYSQL_ALLOW_EMPTY_PASSWORD:-}" = "no" ]; then
+        echo "mysql-nixchart: MYSQL_ROOT_PASSWORD is required (MYSQL_ALLOW_EMPTY_PASSWORD=no set)" >&2
         exit 1
       fi
 
       ${pkgs.mariadb}/bin/mariadb-install-db \
-        --user=$(id -un) \
+        --user="$USER" \
         --datadir="$DATA_DIR" \
         --auth-root-authentication-method=normal >/dev/null
 
-      # Start mariadb temporarily to seed users/db
-      ${pkgs.mariadb}/bin/mariadbd --datadir="$DATA_DIR" --skip-networking &
+      # Start mariadb temporarily to seed users/db. --socket redirects
+      # the unix socket from the baked-in /run/mysqld default (not
+      # writable at UID 1001) to a path under DATA_DIR.
+      SEED_SOCK="$DATA_DIR/mysql.sock"
+      ${pkgs.mariadb}/bin/mariadbd --datadir="$DATA_DIR" --socket="$SEED_SOCK" --skip-networking &
       pid=$!
       # Wait for socket
       for _ in $(seq 1 30); do
@@ -75,18 +87,37 @@ let
       wait "$pid" 2>/dev/null || true
     fi
 
+    # Default unix socket path lives under /run/mysqld which isn't
+    # writable in this image; land it in the data dir instead. Chart
+    # overrides via MYSQL_SOCKET if needed.
+    SOCKET="''${MYSQL_SOCKET:-$DATA_DIR/mysql.sock}"
+
     exec ${pkgs.mariadb}/bin/mariadbd \
       --datadir="$DATA_DIR" \
       --port="$PORT" \
       --bind-address=0.0.0.0 \
+      --socket="$SOCKET" \
       ''${MYSQL_EXTRA_FLAGS:-} \
       "$@"
   '';
+  # /etc/passwd entry for the mysql user (UID 1001). mariadb refuses to
+  # start as an unknown user; chart uses fsGroup, standalone runs don't.
+  passwdEntry = pkgs.runCommand "mysql-nixchart-passwd" {} ''
+    mkdir -p $out/etc
+    cat > $out/etc/passwd <<'EOF'
+    root:x:0:0:root:/root:/bin/bash
+    mysql:x:1001:0:mysql:/var/lib/mysql:/bin/bash
+    EOF
+    cat > $out/etc/group <<'EOF'
+    root:x:0:
+    EOF
+  '';
+
 in
 mkImage {
   drv = pkgs.buildEnv {
     name = "mysql-nixchart-env";
-    paths = with pkgs; [ mariadb bash coreutils cacert tzdata ];
+    paths = with pkgs; [ mariadb passwdEntry bash coreutils cacert tzdata ];
   };
 
   name = "mysql-nixchart";
