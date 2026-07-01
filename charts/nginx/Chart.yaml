@@ -6,7 +6,7 @@ annotations:
     - name: nginx
       image: ghcr.io/nix-containers/nginx-nixchart:v1.30.3
     - name: nginx-exporter
-      image: ghcr.io/nix-containers/nginx-prometheus-exporter-nixchart:1.4.2-debian-12-r9
+      image: ghcr.io/nix-containers/nginx-prometheus-exporter-nixchart:v1.5.1
   licenses: Apache-2.0
   tanzuCategory: clusterUtility
 apiVersion: v2

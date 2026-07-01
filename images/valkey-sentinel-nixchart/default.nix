@@ -1,34 +1,16 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
-
-# valkey-sentinel-nixchart
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
-  name = "valkey-sentinel-nixchart";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "valkey-sentinel-nixchart-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "valkey-sentinel-nixchart";
-      "org.opencontainers.image.description" = "valkey-sentinel-nixchart container image";
-    };
+{ mkImage, pkgs, lib, ... }:
+mkImage {
+  drv = pkgs.buildEnv {
+    name = "valkey-sentinel-nixchart-env";
+    paths = with pkgs; [ valkey bash coreutils cacert tzdata ];
   };
+  name = "valkey-sentinel-nixchart";
+  tag = "v${pkgs.valkey.version}";
+  entrypoint = [ "${pkgs.valkey}/bin/valkey-sentinel" ];
+  cmd = [];
+  user = "1001:0";
+  labels."org.opencontainers.image.title" = "valkey-sentinel-nixchart";
+  labels."org.opencontainers.image.description" = "Valkey Sentinel for the nix-containers charts/valkey chart";
+  labels."org.opencontainers.image.version" = pkgs.valkey.version;
+  labels."io.nix-containers.chart" = "valkey";
 }

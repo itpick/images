@@ -1,36 +1,16 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
-
-# redis-sentinel-nixchart
-# Redis component
-
-let
-  redisPkgs = with pkgs; [
-    redis
-    bash
-    coreutils
-    cacert
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
-  name = "redis-sentinel-nixchart";
-  tag = pkgs.redis.version;
-  copyToRoot = [
-    (buildEnv {
-      name = "redis-sentinel-nixchart-root";
-      paths = base.basePackages ++ redisPkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "redis-sentinel-nixchart";
-      "org.opencontainers.image.description" = "Redis redis-sentinel-nixchart";
-      "org.opencontainers.image.version" = pkgs.redis.version;
-      "io.nix-containers.chart" = "redis";
-    };
+{ mkImage, pkgs, lib, ... }:
+mkImage {
+  drv = pkgs.buildEnv {
+    name = "redis-sentinel-nixchart-env";
+    paths = with pkgs; [ redis bash coreutils cacert tzdata ];
   };
+  name = "redis-sentinel-nixchart";
+  tag = "v${pkgs.redis.version}";
+  entrypoint = [ "${pkgs.redis}/bin/redis-sentinel" ];
+  cmd = [];
+  user = "1001:0";
+  labels."org.opencontainers.image.title" = "redis-sentinel-nixchart";
+  labels."org.opencontainers.image.description" = "Redis Sentinel for the nix-containers charts/redis chart";
+  labels."org.opencontainers.image.version" = pkgs.redis.version;
+  labels."io.nix-containers.chart" = "redis";
 }

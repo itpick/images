@@ -1,34 +1,13 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
-
-# pgpool2-nixchart
-# Container image
-
-let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
-
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
-
-in nix2container.buildImage {
+{ mkImage, pkgs, lib, ... }:
+mkImage {
+  drv = pkgs.pgpool;
   name = "pgpool2-nixchart";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "pgpool2-nixchart-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "pgpool2-nixchart";
-      "org.opencontainers.image.description" = "pgpool2-nixchart container image";
-    };
-  };
+  tag = "v${pkgs.pgpool.version}";
+  entrypoint = [ "${pkgs.pgpool}/bin/pgpool" ];
+  cmd = [ "-n" "-f" "/config/pgpool.conf" ];
+  user = "1001:0";
+  labels."org.opencontainers.image.title" = "pgpool2-nixchart";
+  labels."org.opencontainers.image.description" = "pgpool for the nix-containers charts/postgresql-ha chart";
+  labels."org.opencontainers.image.version" = pkgs.pgpool.version;
+  labels."io.nix-containers.chart" = "postgresql-ha";
 }
