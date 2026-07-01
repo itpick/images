@@ -4,16 +4,16 @@
 
 buildGoModule rec {
   pname = "metrics-server";
-  version = "0.8.0";
+  version = "0.8.1";
 
   src = fetchFromGitHub {
     owner = "kubernetes-sigs";
     repo = "metrics-server";
     rev = "v${version}";
-    hash = "sha256-KyXQ2+CnOiohwu4YnzK6UUWwqpd+rgd8uXAExpe/new=";
+    hash = "sha256-ERrHDcacsPAL/44Ff3EWMaTvSv2c3o61uJeod1nduKc=";
   };
 
-  vendorHash = "sha256-wMaEF1hkVUjubvv4RCFsUIfDTjCQsTvERlHV7EEp9cg=";
+  vendorHash = "sha256-nAzmVQqKV8QrCajWV2o6mmDoTrHXKbWaDxXheTJRko0=";
 
   subPackages = [ "cmd/metrics-server" ];
 
