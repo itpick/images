@@ -58,7 +58,7 @@
 #   ... and 6 more
 
 let
-  version = "3.2.1";
+  version = "3.4.4";
   argocd = buildGoModule {
     pname = "argocd";
     inherit version;
@@ -67,10 +67,10 @@ let
       owner = "argoproj";
       repo = "argo-cd";
       rev = "v${version}";
-      hash = "sha256-AkHGhRHd2ybGYdgy6rNGBdS5YaHZKL4M9oKdqPxWYO0=";
+      hash = "sha256-I3udVhmPpOA2Lf1mkJqG+d+mGpfM16HIKBkEnTiAw0c=";
     };
 
-    vendorHash = "sha256-TmqnAPaOtBfgp9I+k1NVt6k5W1u7pP5ut91Szi4/6kk=";
+    vendorHash = "sha256-w6jFNWKvcwxyeiSy+Pqb43qOfMOXF5UHr2VpyQD2dFw=";
     proxyVendor = true;
 
     env.CGO_ENABLED = 0;
