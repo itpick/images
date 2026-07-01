@@ -1,34 +1,46 @@
 { mkImage, pkgs, lib, ... }:
 
-# zipkin-slim
-# Container image packaging nixpkgs.zipkin
+# Zipkin - Distributed tracing system
+# https://zipkin.io/
+#
+# nixpkgs.zipkin is pinned to an ancient 1.28.1 (2019) whose fat jar bundles
+# long-EOL jackson/tomcat/log4j with dozens of criticals. Package the current
+# upstream exec jar (Maven Central) directly instead.
+
+let
+  version = "3.6.1";
+
+  zipkinJar = pkgs.fetchurl {
+    url = "https://repo1.maven.org/maven2/io/zipkin/zipkin-server/${version}/zipkin-server-${version}-exec.jar";
+    hash = "sha256-2DJuDtT0OFXbqBIo9ohVRwblJXinx4LZqQtz+GgGVKE=";
+  };
+
+  zipkin = pkgs.runCommand "zipkin-${version}"
+    {
+      nativeBuildInputs = [ pkgs.makeWrapper ];
+      meta.mainProgram = "zipkin-server";
+    } ''
+    mkdir -p $out/share/java $out/bin
+    cp ${zipkinJar} $out/share/java/zipkin-server.jar
+    # Root-level zipkin.jar for the `java -jar` entrypoint below.
+    ln -s share/java/zipkin-server.jar $out/zipkin.jar
+    makeWrapper ${pkgs.openjdk21_headless}/bin/java $out/bin/zipkin-server \
+      --add-flags "-jar $out/share/java/zipkin-server.jar"
+  '';
+
+in
 mkImage {
-  drv = pkgs.zipkin;
+  drv = zipkin;
   name = "zipkin-slim";
-  tag = "v${pkgs.zipkin.version}";
-  entrypoint = [ (lib.getExe pkgs.zipkin) ];
-  # Was `--help` (a one-shot, so the kind-test pod CrashLoops). Zipkin's server
-  # starts with NO arguments (in-memory storage, no config), binding
-  # 0.0.0.0:9411 — so run it with an empty cmd. Operators point STORAGE_TYPE /
-  # env at a real backend.
+  tag = "v${version}";
+  entrypoint = [ (lib.getExe zipkin) ];
   cmd = [ ];
 
-  # nixpkgs wraps this old Zipkin (Spring Boot 1.5) with a JDK 21, but Boot 1.5's
-  # cglib does reflective defineClass on java.lang, which JPMS blocks by default
-  # ("module java.base does not open java.lang") — the server dies at startup.
-  # Re-open the packages the old runtime needs via JAVA_TOOL_OPTIONS (the JVM
-  # reads it for extra flags; the wrapper passes cmd args to Spring Boot, not the
-  # JVM, so they can't go there). HOME on the writable /tmp keeps any JVM prefs
-  # write off the read-only rootfs.
-  env = {
-    JAVA_TOOL_OPTIONS = "--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED";
-    HOME = "/tmp";
-  };
+  extraPkgs = with pkgs; [ openjdk21_headless cacert ];
 
   labels = {
     "org.opencontainers.image.title" = "zipkin-slim";
-    "org.opencontainers.image.description" = "zipkin-slim container image (nixpkgs.zipkin)";
-    "org.opencontainers.image.version" = pkgs.zipkin.version;
-    "io.nix-containers.source" = "nixpkgs";
+    "org.opencontainers.image.description" = "zipkin-slim container image";
+    "org.opencontainers.image.version" = version;
   };
 }
