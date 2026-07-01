@@ -6,7 +6,7 @@
 #   flux-image-automation-controller (1.0.4-r3)
 
 let
-  version = "1.0.4";
+  version = "1.2.1";
   image-automation-controller = buildGoModule {
     pname = "image-automation-controller";
     inherit version;
@@ -15,10 +15,10 @@ let
       owner = "fluxcd";
       repo = "image-automation-controller";
       rev = "v${version}";
-      hash = "sha256-G4/RXdLcZ5Cijf/x66bf/3ItzgieYGSHxkkCTMX5uwA=";
+      hash = "sha256-EL5A6jAMBT+4927+DzhzGX9k2zGiLHInn3uRi7nchjo=";
     };
 
-    vendorHash = "sha256-rEUCojsek+784M1OyxCRP23usRwvYQRpLezjKD3/4AY=";
+    vendorHash = "sha256-bFTic3uV92qEx5WZO9yY5aEDLVpMXsxsRMOiuet05RY=";
 
     subPackages = [ "." ];
 
