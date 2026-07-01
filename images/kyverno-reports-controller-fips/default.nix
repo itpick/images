@@ -4,7 +4,7 @@
 # Kyverno policy engine component
 
 let
-  version = "1.14.0";
+  version = "1.18.1";
   kyverno-component = buildGoModule {
     pname = "kyverno-reports-controller-fips";
     inherit version;
@@ -12,9 +12,10 @@ let
       owner = "kyverno";
       repo = "kyverno";
       rev = "v${version}";
-      hash = "sha256-frLuq91CWjyNSj5HFvYIsyR6NFvZqXLil3YQL5Tli6o=";
+      hash = "sha256-zo02ABieJ+CykuqGJlnthXibgBzNGB3t3UdlKMTIkFo=";
     };
-    vendorHash = null;
+    proxyVendor = true;
+    vendorHash = "sha256-oE6/xyznEtAAoypMICvjDB3hOhXCK1VelrV/zJuBeZA=";
     subPackages = [ "cmd/reports-controller" ];
     env.CGO_ENABLED = 1;
     env.GOEXPERIMENT = "boringcrypto";
