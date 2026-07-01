@@ -12,9 +12,19 @@ let
     tzdata
   ];
 
-  # mkDefaultUserEnv provides /etc/passwd + /etc/group (nonroot, uid 65532) and a
-  # writable /tmp (1777) for the generated host key + pid file.
+  # mkDefaultUserEnv provides /etc/passwd + /etc/group (nonroot, uid 65532). Note
+  # its /tmp is NOT usable for writes here: buildEnv folds it into a read-only
+  # store symlink, so the writable /tmp comes from the separate layer below.
   userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+
+  # sshd generates its host key + writes its pid under /tmp, but buildEnv leaves
+  # /tmp a read-only store symlink — declare a real writable /tmp (1777) in its
+  # own layer (same approach as the nginx/hugo images). Without this the host-key
+  # generation fails with "Saving key ... failed: Permission denied" and the pod
+  # crashes.
+  writableDirs = pkgs.runCommand "openssh-server-writable-dirs" { } ''
+    mkdir -p $out/tmp
+  '';
 
   # Minimal sshd config. The stub had no Cmd, so its pod kind-test fails with "no
   # command specified". Listen on 0.0.0.0:2222 (>1024 so the nonroot user can
@@ -53,10 +63,24 @@ in nix2container.buildImage {
   name = "openssh-server";
   # Version-tag the image (matches the org.opencontainers.image.version label).
   tag = pkgs.openssh.version;
-  copyToRoot = [
-    (buildEnv {
-      name = "openssh-server-root";
-      paths = base.basePackages ++ opensshPackages ++ [ userEnv sshdConfig entrypoint ];
+  layers = [
+    (nix2container.buildLayer {
+      copyToRoot = [
+        (buildEnv {
+          name = "openssh-server-root";
+          paths = base.basePackages ++ opensshPackages ++ [ userEnv sshdConfig entrypoint ];
+        })
+      ];
+    })
+    (nix2container.buildLayer {
+      copyToRoot = [ writableDirs ];
+      perms = [
+        {
+          path = writableDirs;
+          regex = "/tmp";
+          mode = "1777";
+        }
+      ];
     })
   ];
   config = nonRoot.defaultConfig // {
