@@ -4,16 +4,17 @@
 
 buildGoModule rec {
   pname = "karpenter";
-  version = "1.8.3";
+  version = "1.13.0";
 
   src = fetchFromGitHub {
     owner = "aws";
     repo = "karpenter-provider-aws";
     rev = "v${version}";
-    hash = "sha256-0CoVojZwmySfP587LE2zfrtXKXtCHDGxo6bj22i8RsE=";
+    hash = "sha256-SYJPFjXIUdtGt09gKkZrUsW6w2bypJOogZ6GvyqltRA=";
   };
 
-  vendorHash = null;
+  proxyVendor = true;
+  vendorHash = "sha256-nXFKPNAFW7I28gAWgPH1t5nKQ3X6ITxQx8zba4hqFw0=";
 
   subPackages = [ "cmd/controller" ];
 
