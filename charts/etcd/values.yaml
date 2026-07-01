@@ -32,7 +32,7 @@ diagnosticMode:
 image:
   registry: ghcr.io
   repository: nix-containers/etcd-nixchart
-  tag: 3.6.4-debian-12-r3
+  tag: v3.6.12
   digest: ""
   pullPolicy: IfNotPresent
   pullSecrets: []

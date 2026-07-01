@@ -2,7 +2,7 @@
 annotations:
   images: |
     - name: etcd
-      image: ghcr.io/nix-containers/etcd-nixchart:3.6.4-debian-12-r3
+      image: ghcr.io/nix-containers/etcd-nixchart:v3.6.12
     - name: os-shell
       image: ghcr.io/nix-containers/os-shell-nixchart:12-debian-12-r50
   licenses: Apache-2.0
