@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Script to automatically fix placeholder hashes in nix image definitions
-# Usage: ./fix-hashes.sh [image-name] or ./fix-hashes.sh --all
+# Usage: scripts/fix-hashes.sh [image-name] or ./fix-hashes.sh --all
 
 set -e
 
