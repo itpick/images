@@ -15,15 +15,29 @@ let
     mkdir -p $out
     ln -s ${pkgs.victoriametrics}/bin/vmauth $out/vmauth-prod
   '';
+
+  # vmauth requires -auth.config or it exits, so cmd=[] CrashLoops. Bake a
+  # minimal config: an unauthenticated catch-all route to a placeholder local
+  # VictoriaMetrics (the Go binary ships no /etc, so no shadowing). Operators
+  # mount their own auth.yml (real users + url_prefix routing).
+  authConfig = pkgs.writeTextDir "etc/vmauth/auth.yml" ''
+    unauthorized_user:
+      url_prefix: "http://localhost:8428/"
+  '';
 in
 mkImage {
   drv = pkgs.victoriametrics;
   name = "victoriametrics-vmauth";
   tag = "v${pkgs.victoriametrics.version}";
   entrypoint = [ "${pkgs.victoriametrics}/bin/vmauth" ];
-  cmd = [];
+  # Run vmauth with the baked config; bind the HTTP proxy on 0.0.0.0:8427 (its
+  # default -httpListenAddr) so the kind-test probe can reach it.
+  cmd = [
+    "-auth.config=/etc/vmauth/auth.yml"
+    "-httpListenAddr=0.0.0.0:8427"
+  ];
 
-  extraPkgs = with pkgs; [ cacert tzdata ];
+  extraPkgs = with pkgs; [ cacert tzdata authConfig ];
   extraContents = [ prodCompat ];
 
   labels = {
