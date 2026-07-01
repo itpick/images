@@ -4,13 +4,13 @@
 
 buildGoModule rec {
   pname = "csi-attacher";
-  version = "4.10.0";
+  version = "4.12.0";
 
   src = fetchFromGitHub {
     owner = "kubernetes-csi";
     repo = "external-attacher";
     rev = "v${version}";
-    hash = "sha256-2QglzhE5lQzVMwB+NKbeCIY6ONhUbf/jKQFXF6Z6H6Y=";
+    hash = "sha256-Q1/r/V1j++rwiqjZQ7CvHO5+DWLiqBN2X3rL7QQJgdc=";
   };
 
   vendorHash = null;

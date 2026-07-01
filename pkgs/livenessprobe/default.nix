@@ -4,13 +4,13 @@
 
 buildGoModule rec {
   pname = "livenessprobe";
-  version = "2.17.0";
+  version = "2.19.0";
 
   src = fetchFromGitHub {
     owner = "kubernetes-csi";
     repo = "livenessprobe";
     rev = "v${version}";
-    hash = "sha256-LESzh1RL1MJBqpki+NwCg1zx/g659YXwF80FVjfhgRY=";
+    hash = "sha256-lJ8qWDwoX41cKPnITA7tVZl+VcxBoC19bY7fiQjVyKM=";
   };
 
   vendorHash = null;
