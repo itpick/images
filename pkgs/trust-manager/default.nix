@@ -4,16 +4,16 @@
 
 buildGoModule rec {
   pname = "trust-manager";
-  version = "0.20.3";
+  version = "0.24.0";
 
   src = fetchFromGitHub {
     owner = "cert-manager";
     repo = "trust-manager";
     rev = "v${version}";
-    hash = "sha256-gwcZsx0kM4kixugEQWmpqAgueuVd3Bgygs4VoBgjiF0=";
+    hash = "sha256-4ek0g9zoMB0TDod5iSvEc5f/KPQk3FxVkduECTWvkds=";
   };
 
-  vendorHash = "sha256-TVVgzh1m5zc7csTeUev1IDX4MRySsrMbJtimPUj3hDw=";
+  vendorHash = "sha256-jxmBDTmj7hZcIbYiOdoSirngkoIm4pWeO2Qu4fB5SHY=";
 
   subPackages = [ "cmd/trust-manager" ];
 

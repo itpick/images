@@ -5,16 +5,16 @@
 
 buildGoModule rec {
   pname = "cloudnative-pg";
-  version = "1.29.1";
+  version = "1.30.0";
 
   src = fetchFromGitHub {
     owner = "cloudnative-pg";
     repo = "cloudnative-pg";
     rev = "v${version}";
-    hash = "sha256-SlisY7v/CFVXH85IAvlBH1RjyrTS+e8hFHJIwh0FgCc=";
+    hash = "sha256-UHgllbD2eNBVYrF5nPZhethZIyyBkEji1xf0okGshoI=";
   };
 
-  vendorHash = "sha256-He5L4HBTMOlzLgB+tAxNbjvDdvGyz5UolC8mMFibwZ4=";
+  vendorHash = "sha256-Eh057tW8NTCNVtgyeY4A+Cc8wQbRDpUYDFmj4l+pn8o=";
 
   subPackages = [ "cmd/manager" ];
 
