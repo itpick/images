@@ -4,7 +4,7 @@
 # https://github.com/stakater/Reloader
 
 let
-  version = "1.4.14";
+  version = "1.4.17";
   reloader = buildGoModule {
     pname = "reloader";
     inherit version;
@@ -13,11 +13,11 @@ let
       owner = "stakater";
       repo = "Reloader";
       rev = "v${version}";
-      hash = "sha256-4d2BwcIn8Hppc0I+mezKbuqQZ/o0dYKJH8ik985zgHk=";
+      hash = "sha256-V95gDRlP3noXbc1PO+U+g0LBoD6qlWG+EG3k2BNZTZI=";
     };
 
     proxyVendor = true;
-    vendorHash = "sha256-BgbaUceVvsYFUcGO6TFwQtKOLJslrflWiewwZs1v68c=";
+    vendorHash = "sha256-H8ruUzLgCkhl4Yz9xEEDpuLED/Fr9Sg/RFwp8TBxKgg=";
 
     subPackages = [ "." ];
 
