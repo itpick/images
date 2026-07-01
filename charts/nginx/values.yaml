@@ -30,7 +30,7 @@ diagnosticMode:
 image:
   registry: ghcr.io
   repository: nix-containers/nginx-nixchart
-  tag: 1.29.1-debian-12-r0
+  tag: v1.30.3
   digest: ""
   pullPolicy: IfNotPresent
   pullSecrets: []
