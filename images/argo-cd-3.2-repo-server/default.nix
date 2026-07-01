@@ -4,7 +4,7 @@
 # https://github.com/argoproj/argo-cd
 
 let
-  version = "3.2.12";
+  version = "3.4.4";
 
   drv = pkgs.stdenv.mkDerivation {
     pname = "argocd";
@@ -12,7 +12,7 @@ let
 
     src = pkgs.fetchurl {
       url = "https://github.com/argoproj/argo-cd/releases/download/v${version}/argocd-linux-amd64";
-      hash = "sha256:09j55jg6g3f4fgqciw40yvnlf8lzv019s121aa7fwv1zdqw8zmcv";
+      hash = "sha256-uTwxKVaIDJWXokan0ecF+7fufxnFIpr/3smbJtVmPgk=";
     };
 
     dontUnpack = true;
