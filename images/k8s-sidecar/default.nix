@@ -1,7 +1,7 @@
 { mkImage, fetchFromGitHub, fetchPypi, python3, pkgs, lib, ... }:
 
 let
-  version = "2.7.3";
+  version = "2.8.0";
 
   # logfmter isn't in nixpkgs as of nixos-25.11; package it inline from
   # PyPI. Pure-Python, no native deps — buildPythonPackage suffices.
@@ -37,7 +37,7 @@ let
       owner = "kiwigrid";
       repo = "k8s-sidecar";
       rev = version;
-      hash = "sha256-ZmDVqniiHWughAGShTMSH+VNn7fkdZLenRL3BTI3Fks=";
+      hash = "sha256-OOIbnXzvlezre2E4JG1jZW8vzhI5IKcE/EUmQy9rvVY=";
     };
 
     dontBuild = true;
