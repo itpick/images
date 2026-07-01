@@ -24,6 +24,15 @@ mkImage {
 
   user = "1001:0";
 
+  # etcd's default data-dir is `default.etcd` (relative to cwd). CWD
+  # isn't writable at UID 1001, so `docker run` and kind smoke tests
+  # fail with "cannot access data directory: mkdir default.etcd:
+  # permission denied". /tmp is 1777 in this image; anchor the default
+  # there. Chart overrides via env.
+  env = {
+    ETCD_DATA_DIR = "/tmp/etcd-data";
+  };
+
   labels = {
     "org.opencontainers.image.title" = "etcd-nixchart";
     "org.opencontainers.image.description" = "etcd image tuned for the nix-containers charts/etcd chart";
