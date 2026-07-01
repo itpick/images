@@ -2,7 +2,7 @@
 annotations:
   images: |
     - name: clickhouse
-      image: ghcr.io/nix-containers/clickhouse-nixchart:25.7.5-debian-12-r0
+      image: ghcr.io/nix-containers/clickhouse-nixchart:v26.6.1
     - name: clickhouse-keeper
       image: ghcr.io/nix-containers/clickhouse-keeper-nixchart:25.7.5-debian-12-r0
     - name: os-shell
