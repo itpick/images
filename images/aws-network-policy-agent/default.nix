@@ -4,7 +4,7 @@
 # AWS Kubernetes component
 
 let
-  version = "1.3.0";
+  version = "1.3.5";
   aws-component = buildGoModule {
     pname = "aws-network-policy-agent";
     inherit version;
@@ -13,10 +13,11 @@ let
       owner = "aws";
       repo = "aws-network-policy-agent";
       rev = "v${version}";
-      hash = "sha256-CuWoeNOmAvfpGbk4ZgxFw/kfvLBIg4zi+dar/bMuySA=";
+      hash = "sha256-NePswunA72apmkdBCOmFjV94FPXvfnbi4L7Y5Oz/GKg=";
     };
 
-    vendorHash = null;
+    proxyVendor = true;
+    vendorHash = "sha256-A3Mlvh7/J/+SGwUpNpIrkjtM5tAvb6LwVWSjWxOc014=";
     subPackages = [ "." ];
     
     env.CGO_ENABLED = 0;
