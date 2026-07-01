@@ -18,12 +18,12 @@
 { nix2container, pkgs, lib, ... }:
 
 let
-  version = "v1.10.0";
+  version = "v1.12.0";
 
   upstreamImage = nix2container.pullImage {
     imageName   = "longhornio/longhorn-manager";
-    imageDigest = "sha256:5b0bc1b88f0cda9b335f57a733df33e44da4138dd9a86f1d5a115e8ceed04a02";
-    sha256      = "sha256-BYDFN1Z8i5yodFGajuZZldJy2MFLIZm/SQ4ZcFgvF3E=";
+    imageDigest = "sha256:fd245bae2e8254ed475073410f8462e95fab8783dd12d1c084777b5ab53bfb86";
+    sha256 = "sha256-kvZNi8+FpsmH7J1/dozkZCxhfIWZMii+u7Qkoveoce8=";
   };
 
 in
