@@ -5,7 +5,7 @@
 # FIPS-compliant build using BoringCrypto
 
 let
-  version = "1.2.1";
+  version = "1.3.1";
 
   age-fips = buildGoModule rec {
     pname = "age-fips";
@@ -15,10 +15,10 @@ let
       owner = "FiloSottile";
       repo = "age";
       rev = "v${version}";
-      hash = "sha256-9ZJdrmqBj43zSvStt0r25wjSfnvitdx3GYtM3urHcaA=";
+      hash = "sha256-Qs/q3zQYV0PukABBPf/aU5V1oOhw95NG6K301VYJk8A=";
     };
 
-    vendorHash = "sha256-ilRLEV7qOBZbqzg2XQi4kt0JAb/1ftT4JmahYT0zSRU=";
+    vendorHash = "sha256-iVDkYXXR2pXlUVywPgVRNMORxOOEhAmzpSM0xqSQMSQ=";
 
     subPackages = [ "cmd/age" "cmd/age-keygen" ];
 

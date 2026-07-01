@@ -4,7 +4,7 @@
 # AWS component
 
 let
-  version = "0.9.1";
+  version = "0.9.5";
   component = buildGoModule {
     pname = "aws-volume-modifier-for-k8s";
     inherit version;
@@ -12,9 +12,10 @@ let
       owner = "awslabs";
       repo = "volume-modifier-for-k8s";
       rev = "v${version}";
-      hash = "sha256-/66Pt6y7lvLFkbG9HNWRR/evUiqE10INp6l5iLJuKMk=";
+      hash = "sha256-1tjBiSCZ0bQ2BXndEXLtRJ3wCDA1p3cMcPpOJwB2Pvo=";
     };
-    vendorHash = null;
+    proxyVendor = true;
+    vendorHash = "sha256-qMz6Yv/msKMHjyp/J6FrIV+llS47X/Ad4CFh3L8Sty0=";
     subPackages = [ "." ];
     env.CGO_ENABLED = 0;
     ldflags = [ "-s" "-w" ];
