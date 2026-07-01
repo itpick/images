@@ -2,7 +2,7 @@
 annotations:
   images: |
     - name: mysql
-      image: ghcr.io/nix-containers/mysql-nixchart:9.4.0-debian-12-r1
+      image: ghcr.io/nix-containers/mysql-nixchart:v11.4.12
     - name: mysqld-exporter
       image: ghcr.io/nix-containers/prometheus-mysqld-exporter-nixchart:0.17.2-debian-12-r16
     - name: os-shell
