@@ -4,7 +4,7 @@ annotations:
     - name: contour
       image: ghcr.io/nix-containers/contour-nixchart:v1.33.5
     - name: envoy
-      image: ghcr.io/nix-containers/envoy-nixchart:1.34.5-debian-12-r0
+      image: ghcr.io/nix-containers/envoy-nixchart:v1.38.3
     - name: nginx
       image: ghcr.io/nix-containers/nginx-nixchart:1.29.1-debian-12-r0
   licenses: Apache-2.0
