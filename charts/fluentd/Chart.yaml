@@ -1,0 +1,24 @@
+
+annotations:
+  images: |
+    - name: fluentd
+      image: ghcr.io/nix-containers/fluentd-nixchart:1.19.0-debian-12-r1
+  licenses: Apache-2.0
+  tanzuCategory: clusterUtility
+apiVersion: v2
+appVersion: 1.19.0
+description: Fluentd collects events from various data sources and writes them to
+  files, RDBMS, NoSQL, IaaS, SaaS, Hadoop and so on.
+home: https://nix-containers.com
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/fluentd/img/fluentd-stack-220x234.png
+keywords:
+- fluentd
+- logging
+- logs
+- data
+- collector
+maintainers:
+name: fluentd
+sources:
+- https://github.com/nix-containers/images
+version: 7.2.6

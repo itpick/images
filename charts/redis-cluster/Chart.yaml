@@ -1,0 +1,27 @@
+
+annotations:
+  images: |
+    - name: os-shell
+      image: ghcr.io/nix-containers/os-shell-nixchart:12-debian-12-r51
+    - name: redis-cluster
+      image: ghcr.io/nix-containers/redis-cluster-nixchart:8.2.1-debian-12-r0
+    - name: redis-exporter
+      image: ghcr.io/nix-containers/prometheus-redis-exporter-nixchart:1.76.0-debian-12-r0
+  licenses: Apache-2.0
+  tanzuCategory: service
+apiVersion: v2
+appVersion: 8.2.1
+description: Redis(R) is an open source, scalable, distributed in-memory cache for
+  applications. It can be used to store and serve data in the form of strings, hashes,
+  lists, sets and sorted sets.
+home: https://nix-containers.com
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/redis/img/redis-stack-220x234.png
+keywords:
+- redis
+- keyvalue
+- database
+maintainers:
+name: redis-cluster
+sources:
+- https://github.com/nix-containers/images
+version: 13.0.5

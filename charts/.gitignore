@@ -1,0 +1,6 @@
+# Chart dependency tarballs — pulled on demand via `helm dep update`, not committed
+*/charts/
+*.tgz
+
+# Local Helm test output
+*.tgz.lock

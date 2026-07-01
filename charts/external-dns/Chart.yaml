@@ -1,0 +1,22 @@
+
+annotations:
+  images: |
+    - name: external-dns
+      image: ghcr.io/nix-containers/external-dns-nixchart:0.18.0-debian-12-r4
+  licenses: Apache-2.0
+  tanzuCategory: clusterUtility
+apiVersion: v2
+appVersion: 0.18.0
+description: ExternalDNS is a Kubernetes addon that configures public DNS servers
+  with information about exposed Kubernetes services to make them discoverable.
+home: https://nix-containers.com
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/external-dns/img/external-dns-stack-220x234.png
+keywords:
+- external-dns
+- network
+- dns
+maintainers:
+name: external-dns
+sources:
+- https://github.com/nix-containers/images
+version: 9.0.4

@@ -1,0 +1,22 @@
+
+annotations:
+  images: |
+    - name: os-shell
+      image: ghcr.io/nix-containers/os-shell-nixchart:12-debian-12-r50
+    - name: zookeeper
+      image: ghcr.io/nix-containers/zookeeper-nixchart:3.9.3-debian-12-r21
+  licenses: Apache-2.0
+  tanzuCategory: clusterUtility
+apiVersion: v2
+appVersion: 3.9.3
+description: Apache ZooKeeper provides a reliable, centralized register of configuration
+  data and services for distributed applications.
+home: https://nix-containers.com
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/zookeeper/img/zookeeper-stack-220x234.png
+keywords:
+- zookeeper
+maintainers:
+name: zookeeper
+sources:
+- https://github.com/nix-containers/images
+version: 13.8.8

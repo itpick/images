@@ -1,0 +1,24 @@
+
+annotations:
+  images: |
+    - name: elasticsearch
+      image: ghcr.io/nix-containers/elasticsearch-nixchart:9.1.2-debian-12-r0
+    - name: elasticsearch-exporter
+      image: ghcr.io/nix-containers/prometheus-elasticsearch-exporter-nixchart:1.9.0-debian-12-r16
+    - name: os-shell
+      image: ghcr.io/nix-containers/os-shell-nixchart:12-debian-12-r50
+  licenses: Apache-2.0
+  tanzuCategory: service
+apiVersion: v2
+appVersion: 9.1.2
+description: Elasticsearch is a distributed search and analytics engine. It is used
+  for web search, log monitoring, and real-time analytics. Ideal for Big Data applications.
+home: https://nix-containers.com
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234.png
+keywords:
+- elasticsearch
+maintainers:
+name: elasticsearch
+sources:
+- https://github.com/nix-containers/images
+version: 22.1.7

@@ -1,0 +1,27 @@
+
+annotations:
+  images: |
+    - name: influxdb
+      image: ghcr.io/nix-containers/influxdb-nixchart:3.4.1-debian-12-r0
+    - name: kubectl
+      image: ghcr.io/nix-containers/kubectl-nixchart:1.33.4-debian-12-r0
+    - name: os-shell
+      image: ghcr.io/nix-containers/os-shell-nixchart:12-debian-12-r51
+  licenses: Apache-2.0
+  tanzuCategory: service
+apiVersion: v2
+appVersion: 3.4.1
+description: InfluxDB(TM) Core is an open source time-series database. It is a core
+  component of the FDAP (Apache Flight, DataFusion, Arrow, and Parquet) stack.
+home: https://nix-containers.com
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/influxdb/img/influxdb-stack-220x234.png
+keywords:
+- influxdb
+- fdap
+- database
+- timeseries
+maintainers:
+name: influxdb
+sources:
+- https://github.com/nix-containers/images
+version: 7.1.21

@@ -5,7 +5,7 @@ _Generated 2026-06-28T04:04Z. Read-only research; no package/workflow files modi
 ## Methodology & caveats
 
 - **Total image directories** under `images/`: **3140** published images (each → `ghcr.io/nix-containers/images/<name>`).
-- After folding `-fips` / `-iamguarded` / `-nonroot` variants into their base software: **2243 base images** ranked here.
+- After folding `-fips` / `-nixchart` / `-nonroot` variants into their base software: **2243 base images** ranked here.
 - **ghcr.io exposes no public pull counts**, so popularity is proxied by the *upstream* signal:
   - **Primary: Docker Hub `pull_count`** of the canonical upstream image (official `library/<name>` where it exists, else the canonical namespaced repo, e.g. `timberio/vector`, `grafana/grafana`). This is the truest 'most downloaded' signal.
   - **Secondary: GitHub stars**, taken from the *exact* `owner/repo` parsed out of each image's `default.nix`/`pkgs` `fetchFromGitHub` block (authoritative — no name-guessing).
@@ -122,7 +122,7 @@ _Generated 2026-06-28T04:04Z. Read-only research; no package/workflow files modi
 | 102 | kube-scheduler | kubernetes/kubernetes |  | 123.3K |  | versioned |
 | 103 | kube-scheduler-1.34-default | kubernetes/kubernetes |  | 123.3K |  | versioned |
 | 104 | kube-scheduler-fips-1.34-default | kubernetes/kubernetes |  | 123.3K |  | versioned |
-| 105 | kube-state-metrics-iamguarded | kubernetes/kubernetes |  | 123.3K |  | versioned |
+| 105 | kube-state-metrics-nixchart | kubernetes/kubernetes |  | 123.3K |  | versioned |
 | 106 | kube-vip | kubernetes/kubernetes |  | 123.3K |  | versioned |
 | 107 | kube-vip-cloud-provider | kubernetes/kubernetes |  | 123.3K |  | versioned |
 | 108 | kube-webhook-certgen | kubernetes/kubernetes |  | 123.3K |  | versioned |
@@ -142,7 +142,7 @@ _Generated 2026-06-28T04:04Z. Read-only research; no package/workflow files modi
 | 122 | kubernetes-dashboard-web | kubernetes/kubernetes |  | 123.3K |  | versioned |
 | 123 | kubernetes-dns-node-cache | kubernetes/kubernetes |  | 123.3K |  | versioned |
 | 124 | kubernetes-event-exporter | kubernetes/kubernetes |  | 123.3K |  | versioned |
-| 125 | kubernetes-event-exporter-iamguarded | kubernetes/kubernetes |  | 123.3K |  | versioned |
+| 125 | kubernetes-event-exporter-nixchart | kubernetes/kubernetes |  | 123.3K |  | versioned |
 | 126 | kubernetes-ingress-defaultbackend | kubernetes/kubernetes |  | 123.3K |  | versioned |
 | 127 | kubernetes-kube-apiserver | kubernetes/kubernetes |  | 123.3K |  | versioned |
 | 128 | kubernetes-kube-controller-manager | kubernetes/kubernetes |  | 123.3K |  | versioned |
@@ -153,17 +153,17 @@ _Generated 2026-06-28T04:04Z. Read-only research; no package/workflow files modi
 | 133 | kubernetes-release-go-runner | kubernetes/kubernetes |  | 123.3K |  | versioned |
 | 134 | kubernetes-replicator | kubernetes/kubernetes |  | 123.3K |  | versioned |
 | 135 | kubernetes-secret-generator | kubernetes/kubernetes |  | 123.3K |  | versioned |
-| 136 | prometheus-alertmanager-iamguarded | prometheus/prometheus |  | 64.8K |  | versioned |
-| 137 | prometheus-blackbox-exporter-iamguarded | prometheus/prometheus |  | 64.8K |  | versioned |
+| 136 | prometheus-alertmanager-nixchart | prometheus/prometheus |  | 64.8K |  | versioned |
+| 137 | prometheus-blackbox-exporter-nixchart | prometheus/prometheus |  | 64.8K |  | versioned |
 | 138 | prometheus-cloudwatch-exporter | prometheus/prometheus |  | 64.8K |  | versioned |
-| 139 | prometheus-elasticsearch-exporter-iamguarded | prometheus/prometheus |  | 64.8K |  | versioned |
-| 140 | prometheus-iamguarded | prometheus/prometheus |  | 64.8K |  | versioned |
+| 139 | prometheus-elasticsearch-exporter-nixchart | prometheus/prometheus |  | 64.8K |  | versioned |
+| 140 | prometheus-nixchart | prometheus/prometheus |  | 64.8K |  | versioned |
 | 141 | prometheus-logstash-exporter | prometheus/prometheus |  | 64.8K |  | versioned |
-| 142 | prometheus-mysqld-exporter-iamguarded | prometheus/prometheus |  | 64.8K |  | versioned |
-| 143 | prometheus-node-exporter-iamguarded | prometheus/prometheus |  | 64.8K |  | versioned |
-| 144 | prometheus-operator-iamguarded | prometheus/prometheus |  | 64.8K |  | versioned |
-| 145 | prometheus-pushgateway-iamguarded | prometheus/prometheus |  | 64.8K |  | versioned |
-| 146 | prometheus-redis-exporter-iamguarded | prometheus/prometheus |  | 64.8K |  | versioned |
+| 142 | prometheus-mysqld-exporter-nixchart | prometheus/prometheus |  | 64.8K |  | versioned |
+| 143 | prometheus-node-exporter-nixchart | prometheus/prometheus |  | 64.8K |  | versioned |
+| 144 | prometheus-operator-nixchart | prometheus/prometheus |  | 64.8K |  | versioned |
+| 145 | prometheus-pushgateway-nixchart | prometheus/prometheus |  | 64.8K |  | versioned |
+| 146 | prometheus-redis-exporter-nixchart | prometheus/prometheus |  | 64.8K |  | versioned |
 | 147 | prometheus-yet-another-cloudwatch-exporter | prometheus/prometheus |  | 64.8K |  | versioned |
 | 148 | istio-install-cni | istio/istio |  | 38.2K |  | versioned |
 | 149 | trivy | aquasecurity/trivy |  | 36.6K |  | versioned |
@@ -265,17 +265,17 @@ _Generated 2026-06-28T04:04Z. Read-only research; no package/workflow files modi
 | 245 | coredns | coredns/coredns |  | 14.1K |  | versioned |
 | 246 | thanos | thanos-io/thanos |  | 14.1K |  | versioned |
 | 247 | cert-manager-acmesolver | cert-manager/cert-manager |  | 13.9K |  | versioned |
-| 248 | cert-manager-acmesolver-iamguarded | cert-manager/cert-manager |  | 13.9K |  | versioned |
+| 248 | cert-manager-acmesolver-nixchart | cert-manager/cert-manager |  | 13.9K |  | versioned |
 | 249 | cert-manager-cainjector | cert-manager/cert-manager |  | 13.9K |  | versioned |
-| 250 | cert-manager-cainjector-iamguarded | cert-manager/cert-manager |  | 13.9K |  | versioned |
+| 250 | cert-manager-cainjector-nixchart | cert-manager/cert-manager |  | 13.9K |  | versioned |
 | 251 | cert-manager-cmctl | cert-manager/cert-manager |  | 13.9K |  | versioned |
 | 252 | cert-manager-controller | cert-manager/cert-manager |  | 13.9K |  | versioned |
-| 253 | cert-manager-controller-iamguarded | cert-manager/cert-manager |  | 13.9K |  | versioned |
+| 253 | cert-manager-controller-nixchart | cert-manager/cert-manager |  | 13.9K |  | versioned |
 | 254 | cert-manager-csi-driver | cert-manager/cert-manager |  | 13.9K |  | versioned |
 | 255 | cert-manager-istio-csr | cert-manager/cert-manager |  | 13.9K |  | versioned |
 | 256 | cert-manager-startupapicheck | cert-manager/cert-manager |  | 13.9K |  | versioned |
 | 257 | cert-manager-webhook | cert-manager/cert-manager |  | 13.9K |  | versioned |
-| 258 | cert-manager-webhook-iamguarded | cert-manager/cert-manager |  | 13.9K |  | versioned |
+| 258 | cert-manager-webhook-nixchart | cert-manager/cert-manager |  | 13.9K |  | versioned |
 | 259 | cert-manager-webhook-pdns | cert-manager/cert-manager |  | 13.9K |  | versioned |
 | 260 | rook-ceph-operator | rook/rook |  | 13.6K |  | versioned |
 | 261 | crossplane | crossplane/crossplane |  | 11.8K |  | versioned |
@@ -312,16 +312,16 @@ _Generated 2026-06-28T04:04Z. Read-only research; no package/workflow files modi
 | 292 | vertical-pod-autoscaler | kubernetes/autoscaler |  | 8.9K |  | latest-only |
 | 293 | cloudnative-pg | cloudnative-pg/cloudnative-pg |  | 8.9K | ✓ | versioned |
 | 294 | aws-cli | aws/aws-sdk-go |  | 8.7K |  | versioned |
-| 295 | aws-cli-iamguarded | aws/aws-sdk-go |  | 8.7K |  | versioned |
+| 295 | aws-cli-nixchart | aws/aws-sdk-go |  | 8.7K |  | versioned |
 | 296 | prometheus-alertmanager | prometheus/alertmanager |  | 8.5K |  | versioned |
 | 297 | metallb | metallb/metallb |  | 8.2K |  | latest-only |
 | 298 | flux-cli | fluxcd/flux2 |  | 8.2K |  | versioned |
-| 299 | flux-helm-controller-iamguarded | fluxcd/flux2 |  | 8.2K |  | versioned |
-| 300 | flux-image-automation-controller-iamguarded | fluxcd/flux2 |  | 8.2K |  | versioned |
-| 301 | flux-image-reflector-controller-iamguarded | fluxcd/flux2 |  | 8.2K |  | versioned |
-| 302 | flux-kustomize-controller-iamguarded | fluxcd/flux2 |  | 8.2K |  | versioned |
-| 303 | flux-notification-controller-iamguarded | fluxcd/flux2 |  | 8.2K |  | versioned |
-| 304 | flux-source-controller-iamguarded | fluxcd/flux2 |  | 8.2K |  | versioned |
+| 299 | flux-helm-controller-nixchart | fluxcd/flux2 |  | 8.2K |  | versioned |
+| 300 | flux-image-automation-controller-nixchart | fluxcd/flux2 |  | 8.2K |  | versioned |
+| 301 | flux-image-reflector-controller-nixchart | fluxcd/flux2 |  | 8.2K |  | versioned |
+| 302 | flux-kustomize-controller-nixchart | fluxcd/flux2 |  | 8.2K |  | versioned |
+| 303 | flux-notification-controller-nixchart | fluxcd/flux2 |  | 8.2K |  | versioned |
+| 304 | flux-source-controller-nixchart | fluxcd/flux2 |  | 8.2K |  | versioned |
 | 305 | kyverno | kyverno/kyverno |  | 7.9K |  | versioned |
 | 306 | kyverno-background-controller | kyverno/kyverno |  | 7.9K |  | versioned |
 | 307 | kyverno-cleanup-controller | kyverno/kyverno |  | 7.9K |  | versioned |

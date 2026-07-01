@@ -1,0 +1,26 @@
+
+annotations:
+  images: |
+    - name: oauth2-proxy
+      image: ghcr.io/nix-containers/oauth2-proxy-nixchart:7.12.0-debian-12-r0
+  licenses: Apache-2.0
+  tanzuCategory: clusterUtility
+apiVersion: v2
+appVersion: 7.12.0
+description: A reverse proxy and static file server that provides authentication using
+  Providers (Google, GitHub, and others) to validate accounts by email, domain or
+  group.
+home: https://nix-containers.com
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/oauth2-proxy/img/oauth2-proxy-stack-220x234.png
+keywords:
+- kubernetes
+- oauth
+- oauth2
+- authentication
+- google
+- github
+maintainers:
+name: oauth2-proxy
+sources:
+- https://github.com/nix-containers/images
+version: 8.0.3

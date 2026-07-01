@@ -1,0 +1,22 @@
+
+annotations:
+  images: |
+    - name: superset
+      image: ghcr.io/nix-containers/superset-nixchart:5.0.0-debian-12-r71
+  licenses: Apache-2.0
+  tanzuCategory: application
+apiVersion: v2
+appVersion: 5.0.0
+description: Superset is a modern data exploration and data visualization platform.
+home: https://nix-containers.com
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/superset/img/superset-stack-220x234.png
+keywords:
+- superset
+- analytics
+maintainers:
+name: superset
+sources:
+- https://github.com/nix-containers/images
+- https://github.com/nix-containers/containers/tree/main/nix-containers/superset
+- https://github.com/apache/superset
+version: 5.0.1

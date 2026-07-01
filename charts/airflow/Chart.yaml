@@ -1,0 +1,26 @@
+
+annotations:
+  images: |
+    - name: airflow
+      image: ghcr.io/nix-containers/airflow-nixchart:3.0.5-debian-12-r0
+    - name: statsd-exporter
+      image: ghcr.io/nix-containers/prometheus-statsd-exporter-nixchart:0.28.0-debian-12-r24
+  licenses: Apache-2.0
+  tanzuCategory: service
+apiVersion: v2
+appVersion: 3.0.5
+description: Apache Airflow is a tool to express and execute workflows as directed
+  acyclic graphs (DAGs). It includes utilities to schedule tasks, monitor task progress
+  and handle task dependencies.
+home: https://nix-containers.com
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/airflow/img/airflow-stack-220x234.png
+keywords:
+- apache
+- airflow
+- workflow
+- dag
+maintainers:
+name: airflow
+sources:
+- https://github.com/nix-containers/images
+version: 25.1.0

@@ -1,0 +1,26 @@
+
+annotations:
+  images: |
+    - name: clickhouse
+      image: ghcr.io/nix-containers/clickhouse-nixchart:25.7.5-debian-12-r0
+    - name: clickhouse-keeper
+      image: ghcr.io/nix-containers/clickhouse-keeper-nixchart:25.7.5-debian-12-r0
+    - name: os-shell
+      image: ghcr.io/nix-containers/os-shell-nixchart:12-debian-12-r51
+  licenses: Apache-2.0
+  tanzuCategory: service
+apiVersion: v2
+appVersion: 25.7.5
+description: ClickHouse is an open-source column-oriented OLAP database management
+  system. Use it to boost your database performance while providing linear scalability
+  and hardware efficiency.
+home: https://nix-containers.com
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/clickhouse/img/clickhouse-stack-220x234.png
+keywords:
+- database
+- sharding
+maintainers:
+name: clickhouse
+sources:
+- https://github.com/nix-containers/images
+version: 9.4.7

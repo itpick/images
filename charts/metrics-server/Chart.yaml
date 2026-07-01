@@ -1,0 +1,23 @@
+
+annotations:
+  images: |
+    - name: metrics-server
+      image: ghcr.io/nix-containers/metrics-server-nixchart:0.8.0-debian-12-r4
+  licenses: Apache-2.0
+  tanzuCategory: clusterUtility
+apiVersion: v2
+appVersion: 0.8.0
+description: Metrics Server aggregates resource usage data, such as container CPU
+  and memory usage, in a Kubernetes cluster and makes it available via the Metrics
+  API.
+home: https://nix-containers.com
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/metrics-server/img/metrics-server-stack-220x234.png
+keywords:
+- metrics-server
+- cluster
+- metrics
+maintainers:
+name: metrics-server
+sources:
+- https://github.com/nix-containers/images
+version: 7.4.13

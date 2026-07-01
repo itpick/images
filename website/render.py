@@ -249,7 +249,7 @@ def render_cve_list(cves: list[dict]) -> str:
 # Applied in order; first match wins. Mirrors the methodology in
 # IMAGE-POPULARITY.md, where `-fips`, `-iamguarded`, `-nonroot` variants
 # share the popularity record of their base.
-_POPULARITY_VARIANT_SUFFIXES = ("-fips", "-iamguarded", "-nonroot")
+_POPULARITY_VARIANT_SUFFIXES = ("-fips", "-nixchart", "-nonroot")
 
 
 def next_cve_scan_utc() -> str:
@@ -756,6 +756,8 @@ def main():
                     help="URL base path (e.g. '/' locally, '/images/' on GH Pages project site). Trailing slash required.")
     ap.add_argument("--last-build", default=None,
                     help="ISO timestamp of the last successful build-containers.yml run on main. When omitted, freshness-gates assume build is recent.")
+    ap.add_argument("--charts-data", default=None,
+                    help="Optional path to charts-data.json (charts/ index + per-chart pages)")
     args = ap.parse_args()
     base = args.base_path if args.base_path.endswith("/") else args.base_path + "/"
 
@@ -803,6 +805,20 @@ def main():
     # /packages/ directory page generated below.
     pkg_index: dict[tuple[str, str, str], set[str]] = {}
     total_package_instances = 0
+
+    # Reverse map: which nix-containers charts (in charts/) consume each image.
+    # Empty if --charts-data was not passed. Populated by scanning the charts
+    # payload once here so each per-image page can render clickable chart chips.
+    image_to_charts: dict[str, list[str]] = {}
+    if args.charts_data and Path(args.charts_data).exists():
+        with open(args.charts_data) as f:
+            _charts_payload = json.load(f)
+        for c in _charts_payload.get("charts", []):
+            for img_name in c.get("images", []):
+                image_to_charts.setdefault(img_name, []).append(c["name"])
+        for img_name in image_to_charts:
+            image_to_charts[img_name].sort()
+
     for img in data["images"]:
         name = img["name"]
         readme_html = render_markdown(img.get("readme", ""), args.cmark)
@@ -846,16 +862,40 @@ def main():
             # Defaults; overwritten below once the scan lookup runs.
             "ZERO_CVE_BADGE_HTML": "",
         }
-        used_by = img.get("usedByCharts", []) or []
-        if used_by:
+        # "Used by" section — two lists:
+        #   1. nix-containers charts (in charts/): clickable → /charts/<name>/
+        #   2. Upstream tracked charts (from chart-image-mapping.nix): static chips
+        our_charts = image_to_charts.get(name, [])
+        upstream_charts = img.get("usedByCharts", []) or []
+
+        our_chips_html = ""
+        if our_charts:
             chips = " ".join(
-                f'<span class="inline-block bg-bg-input text-fg-primary rounded-full px-3 py-1 text-xs font-mono mr-2 mb-2">{c}</span>'
-                for c in used_by
+                f'<a href="{base}charts/{c}/" '
+                f'class="inline-block bg-accent-ok/20 hover:bg-accent-ok/30 '
+                f'text-accent-ok rounded-full px-3 py-1 text-xs font-mono '
+                f'mr-2 mb-2 transition-colors">{c}</a>'
+                for c in our_charts
             )
-            used_by_html = (
-                '<p class="text-fg-muted text-sm mb-3">This image is consumed by:</p>'
+            our_chips_html = (
+                '<p class="text-fg-muted text-sm mb-2 mt-3">Shipped with these '
+                'nix-containers charts:</p>'
                 f'<div class="flex flex-wrap">{chips}</div>'
             )
+
+        upstream_chips_html = ""
+        if upstream_charts:
+            chips = " ".join(
+                f'<span class="inline-block bg-bg-input text-fg-primary rounded-full px-3 py-1 text-xs font-mono mr-2 mb-2">{c}</span>'
+                for c in upstream_charts
+            )
+            upstream_chips_html = (
+                '<p class="text-fg-muted text-sm mb-2 mt-3">Also consumed by upstream Helm charts:</p>'
+                f'<div class="flex flex-wrap">{chips}</div>'
+            )
+
+        if our_chips_html or upstream_chips_html:
+            used_by_html = our_chips_html + upstream_chips_html
         else:
             used_by_html = '<p class="text-fg-muted italic text-sm">Not used by any tracked chart.</p>'
         mapping["USED_BY_HTML"] = used_by_html
@@ -1055,9 +1095,62 @@ def main():
         (out / "packages").mkdir(parents=True, exist_ok=True)
         (out / "packages" / "index.html").write_text(rendered_packages)
 
+    # Charts pages — one index + one per-chart detail page. Feeds the
+    # "Charts" nav link and the clickable chips on per-image pages
+    # showing which nix-containers charts consume each image.
+    charts_rendered = 0
+    if args.charts_data and Path(args.charts_data).exists():
+        with open(args.charts_data) as f:
+            charts_payload = json.load(f)
+        charts_list = charts_payload.get("charts", [])
+        charts_template_path = Path(args.templates, "charts-index.html")
+        chart_page_template_path = Path(args.templates, "chart-page.html")
+        if charts_template_path.exists() and chart_page_template_path.exists():
+            charts_template = charts_template_path.read_text()
+            chart_page_template = chart_page_template_path.read_text()
+            (out / "charts").mkdir(parents=True, exist_ok=True)
+            # Emit a slim charts.json for client-side JS on the index
+            (out / "charts.json").write_text(json.dumps({
+                "charts": sorted(charts_list, key=lambda c: c["name"]),
+                "totalCount": len(charts_list),
+                "lastUpdated": build_time,
+            }))
+            (out / "charts" / "index.html").write_text(
+                fill_template(charts_template, {"BASE": base})
+            )
+            # Per-chart pages
+            for chart in charts_list:
+                cname = chart["name"]
+                readme_html = render_markdown(chart.get("readme", ""), args.cmark)
+                images = chart.get("images", [])
+                images_chips = " ".join(
+                    f'<a href="{base}images/{img}/" '
+                    f'class="inline-block bg-bg-input hover:bg-bg-elevated '
+                    f'text-fg-primary rounded-full px-3 py-1 text-xs '
+                    f'font-mono mr-2 mb-2 transition-colors">{img}</a>'
+                    for img in images
+                )
+                images_html = (
+                    f'<div class="flex flex-wrap">{images_chips}</div>'
+                    if images
+                    else '<p class="text-fg-muted italic text-sm">No image references detected.</p>'
+                )
+                page = fill_template(chart_page_template, {
+                    "BASE": base,
+                    "NAME": cname,
+                    "README_HTML": readme_html or '<p class="text-fg-muted italic text-sm">No README.</p>',
+                    "IMAGES_HTML": images_html,
+                    "IMAGE_COUNT": str(len(images)),
+                    "SOURCE_URL": f"https://github.com/nix-containers/images/tree/main/charts/{cname}",
+                })
+                (out / "charts" / cname).mkdir(parents=True, exist_ok=True)
+                (out / "charts" / cname / "index.html").write_text(page)
+                charts_rendered += 1
+
     print(
         f"Rendered {len(slim_images)} per-image pages + index "
-        f"+ {len(packages_list)} packages ({unique_package_names} unique names) -> {out}",
+        f"+ {len(packages_list)} packages ({unique_package_names} unique names) "
+        f"+ {charts_rendered} chart pages -> {out}",
         file=sys.stderr,
     )
 

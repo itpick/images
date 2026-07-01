@@ -1,0 +1,25 @@
+
+annotations:
+  images: |
+    - name: logstash
+      image: ghcr.io/nix-containers/logstash-nixchart:9.1.2-debian-12-r0
+    - name: os-shell
+      image: ghcr.io/nix-containers/os-shell-nixchart:12-debian-12-r50
+  licenses: Apache-2.0
+  tanzuCategory: clusterUtility
+apiVersion: v2
+appVersion: 9.1.2
+description: Logstash is an open source data processing engine. It ingests data from
+  multiple sources, processes it, and sends the output to final destination in real-time.
+  It is a core component of the ELK stack.
+home: https://nix-containers.com
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/logstash/img/logstash-stack-220x234.png
+keywords:
+- logstash
+- logging
+- elk
+maintainers:
+name: logstash
+sources:
+- https://github.com/nix-containers/images
+version: 7.0.12

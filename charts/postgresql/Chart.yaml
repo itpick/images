@@ -1,0 +1,27 @@
+annotations:
+  category: Database
+  images: |
+    - name: os-shell
+      image: ghcr.io/nix-containers/os-shell-nixchart:latest
+    - name: postgres-exporter
+      image: ghcr.io/nix-containers/prometheus-postgres-exporter-nixchart:latest
+    - name: postgresql
+      image: ghcr.io/nix-containers/postgres-nixchart:latest
+  licenses: Apache-2.0
+apiVersion: v2
+appVersion: 17.6.0
+description: PostgreSQL (Postgres) is an open source object-relational database known for reliability
+  and data integrity. ACID-compliant, it supports foreign keys, joins, views, triggers and stored procedures.
+home: https://github.com/nix-containers/images
+keywords:
+- postgresql
+- postgres
+- database
+- sql
+- replication
+- cluster
+maintainers:
+name: postgresql
+sources:
+- https://github.com/nix-containers/images/tree/main/charts/postgresql
+version: 17.1.0

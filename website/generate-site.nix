@@ -136,6 +136,53 @@ let
     totalCount = builtins.length imagesData;
   });
 
+  # Charts data — one entry per top-level directory under ../charts/ that has
+  # a Chart.yaml. Feeds the /charts/ index and per-chart detail pages.
+  chartsPath = ../charts;
+  chartDirs =
+    if builtins.pathExists chartsPath
+    then builtins.filter (n:
+      let sub = chartsPath + "/${n}"; in
+      builtins.pathExists (sub + "/Chart.yaml")
+    ) (builtins.attrNames (builtins.readDir chartsPath))
+    else [];
+
+  generateChartData = chartName:
+    let
+      chartYamlPath = chartsPath + "/${chartName}/Chart.yaml";
+      chartYaml = if builtins.pathExists chartYamlPath
+                  then builtins.readFile chartYamlPath else "";
+      readmePath = chartsPath + "/${chartName}/README.md";
+      readmeContent = if builtins.pathExists readmePath
+                      then builtins.readFile readmePath else "";
+      # Pull image references out of the raw Chart.yaml annotations block —
+      # cheap regex-ish extraction so we don't need a YAML parser in Nix.
+      lines = lib.splitString "\n" chartYaml;
+      # Look for lines like:  image: ghcr.io/nix-containers/<image-name>:tag
+      imageRefLines = builtins.filter (l:
+        (lib.hasInfix "ghcr.io/nix-containers/" l) || (lib.hasInfix "nix-containers/images/" l)
+      ) lines;
+      extractImageName = line:
+        let
+          # Strip everything up to and including the last '/'
+          afterSlash = lib.last (lib.splitString "/" line);
+          # Strip trailing tag (":...")
+          beforeColon = builtins.head (lib.splitString ":" afterSlash);
+        in beforeColon;
+      imageNamesConsumed = lib.unique (map extractImageName imageRefLines);
+    in {
+      name = chartName;
+      readme = readmeContent;
+      images = imageNamesConsumed;
+    };
+
+  chartsData = map generateChartData chartDirs;
+
+  chartsJson = pkgs.writeText "charts-data.json" (builtins.toJSON {
+    charts = chartsData;
+    totalCount = builtins.length chartsData;
+  });
+
 in
 pkgs.stdenv.mkDerivation {
   name = "nix-containers-website";
@@ -232,6 +279,7 @@ pkgs.stdenv.mkDerivation {
     fi
     python3 render.py \
       --data ${imagesJsonFull} \
+      --charts-data ${chartsJson} \
       --templates ./templates \
       --out $OUT_DIR \
       --cmark ${pkgs.cmark}/bin/cmark \
@@ -245,6 +293,7 @@ pkgs.stdenv.mkDerivation {
     echo "-> Build complete. Output:"
     ls -la $OUT_DIR/
     echo "Image pages: $(ls $OUT_DIR/images/ | wc -l)"
+    echo "Chart pages: $(ls $OUT_DIR/charts/ 2>/dev/null | wc -l)"
 
     runHook postBuild
   '';
