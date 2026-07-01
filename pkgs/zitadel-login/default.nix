@@ -12,18 +12,18 @@
 { lib, stdenv, dockerTools, undocker }:
 
 let
-  version = "4.15.1";
+  version = "4.15.3";
 
   # Pull the upstream image (architecture-specific)
   upstreamImage = dockerTools.pullImage ({
     imageName = "ghcr.io/zitadel/zitadel-login";
     finalImageTag = "v${version}";
   } // (if stdenv.hostPlatform.isAarch64 then {
-    imageDigest = "sha256:68115b61a15d590011bf5c41191e5e3754d8f7476d7b86941e798283d79b2a36";
-    hash = "sha256-f4RXaeDDK4NAeKosKir3VCnDammeagtEF0L5ajEvsiE=";
+    imageDigest = "sha256:82a449a3042eaa0fce759ed3505ff31b5f1f577817ef8249d9690130c2ced81f";
+    hash = "sha256-bfmzXCZcBvkZUXD5nGgZ81i3NWI+rmfDZyiHF/bXOEM=";
   } else {
-    imageDigest = "sha256:4878745e09a56748c457675bec5781b209c3c15fedbf27f7836011702f811f00";
-    hash = "sha256-96IriRrUEoXlUlwOhhE/KnOeDvNN9dXAA+4uV/ikYqY=";
+    imageDigest = "sha256:d47f2c812dfdc26a9ec318a4c228f9cbfe235e852d8a504a4467f5659a621c97";
+    hash = "sha256-mXfEw7OGCZWqoQAyEmLFu/mWqKRzm+WhNwHukSHVQ+Q=";
   }));
 
 in stdenv.mkDerivation {
