@@ -7,6 +7,29 @@
 
 # GitLab Container Registry is a fork of Docker Registry with GitLab integration
 
+let
+  # `registry serve` requires a config file, but nothing baked the
+  # /etc/docker/registry/config.yml the cmd points at, so the image exited
+  # immediately. The old env also forced the storage root to /var/lib/registry,
+  # which is read-only on the image rootfs. Bake the canonical minimal config
+  # (the Go binary ships no /etc, so no shadowing): filesystem storage under the
+  # writable /tmp mkImage provides, and the HTTP API on 0.0.0.0:5000. Operators
+  # mount their own config (real storage backend, metadata DB, auth, TLS) + a
+  # PVC for the registry root.
+  registryConfig = pkgs.writeTextDir "etc/docker/registry/config.yml" ''
+    version: 0.1
+    log:
+      level: info
+    storage:
+      filesystem:
+        rootdirectory: /tmp/registry
+      delete:
+        enabled: true
+    http:
+      addr: 0.0.0.0:5000
+  '';
+
+in
 mkImage {
   drv = pkgs.gitlab-container-registry;
   name = "gitlab-container-registry";
@@ -22,11 +45,8 @@ mkImage {
     cacert
     tini
     tzdata
+    registryConfig
   ];
-
-  env = {
-    REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY = "/var/lib/registry";
-  };
 
   labels = {
     "org.opencontainers.image.title" = "GitLab Container Registry";
