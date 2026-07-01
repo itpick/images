@@ -7,18 +7,18 @@
 { lib, stdenv, fetchurl, autoPatchelfHook }:
 
 let
-  version = "1.131.0";
+  version = "1.146.0";
 
   arch = if stdenv.hostPlatform.isAarch64 then "arm64" else "amd64";
 
   srcs = {
     amd64 = fetchurl {
       url = "https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/v${version}/victoria-metrics-linux-amd64-v${version}-enterprise.tar.gz";
-      hash = "sha256-afyvTMhgGRBaGmRA76Ez7Df5UuCjJFlCrKCzfC+aeh0=";
+      hash = "sha256-OzAjpDgMaUGw9ppLicaMj5KxQMxtRLlpvvW5xJps8Mk=";
     };
     arm64 = fetchurl {
       url = "https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/v${version}/victoria-metrics-linux-arm64-v${version}-enterprise.tar.gz";
-      hash = "sha256-LxouPiGk4uYp14DXi+2dybBsKqbXnksOtiSqo4Xm/BU=";
+      hash = "sha256-9hbHg1084YvTHXskEMaAgdtgPxPV2iumvDlCetODe9Y=";
     };
   };
 
