@@ -17,12 +17,12 @@
 { nix2container, pkgs, lib, ... }:
 
 let
-  version = "v1.18.5";
+  version = "v1.20.1";
 
   upstreamImage = nix2container.pullImage {
     imageName   = "rook/ceph";
-    imageDigest = "sha256:b76f9fdb4154939c7896466d6d1d6cce1cf02c232d5dcf97ce9603107ab4c426";
-    sha256      = "sha256-9WXIovuuj+y+MOtM8D3Zx2ykOmoiylQz5PWmrVvLkwU=";
+    imageDigest = "sha256:ff1260dd0d015cb09d7ac607a8adfa8ca3e8f1a89144c8d1842d1ee43b1bd344";
+    sha256      = "sha256-wN6zrR4+Am0KnN4kj26bMtK0jsDuMEMnjHkpkcCsF88=";
   };
 
 in
