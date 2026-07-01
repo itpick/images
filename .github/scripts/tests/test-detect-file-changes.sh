@@ -85,11 +85,48 @@ test_shared_lib() {
     "$out"
 }
 
-test_shared_pkgs() {
+# The overlay index itself (pkgs/default.nix) can restructure the whole attr
+# set, so a change there still triggers rebuild-all.
+test_pkgs_default_nix_rebuild_all() {
   local out
-  out=$(run "pkgs/some-package/default.nix")
-  assert_eq "shared pkgs/ -> rebuild-all" \
+  out=$(run "pkgs/default.nix")
+  assert_eq "pkgs/default.nix (overlay index) -> rebuild-all" \
     '{"changes-detected":"true","changed-images":{"include":[]},"rebuild-all":"true"}' \
+    "$out"
+}
+
+# A fixture repo where image `redis` consumes the overlay package built from
+# pkgs/some-package (exposed as attr `myredis`), and `postgres-fips` does not.
+_make_pkg_fixture() {
+  local root; root=$(mktemp -d)
+  mkdir -p "$root/pkgs" "$root/images/redis" "$root/images/postgres-fips"
+  printf '{ pkgs }: {\n  myredis = pkgs.callPackage ./some-package { };\n}\n' > "$root/pkgs/default.nix"
+  printf '{ mkImage, pkgs, ... }: mkImage { drv = pkgs.myredis; }\n' > "$root/images/redis/default.nix"
+  printf '{ mkImage, pkgs, ... }: mkImage { drv = pkgs.postgresql; }\n' > "$root/images/postgres-fips/default.nix"
+  printf '%s' "$root"
+}
+
+# A change to a specific overlay package rebuilds the images that consume it
+# (resolved via pkgs/default.nix attr mapping + image references), NOT all.
+test_pkgs_dependency_maps_to_consumers() {
+  local root out
+  root=$(_make_pkg_fixture)
+  out=$(REPO_ROOT="$root" run "pkgs/some-package/default.nix")
+  rm -rf "$root"
+  assert_eq "pkgs/<dep> -> images that consume it" \
+    '{"changes-detected":"true","changed-images":{"include":[{"name":"redis","path":"images/redis/"}]},"rebuild-all":"false"}' \
+    "$out"
+}
+
+# A changed overlay package with no consumers in the discovered matrix yields
+# no rebuilds (and definitely not rebuild-all).
+test_pkgs_dependency_no_consumers() {
+  local root out
+  root=$(_make_pkg_fixture)
+  out=$(REPO_ROOT="$root" run "pkgs/orphan-package/default.nix")
+  rm -rf "$root"
+  assert_eq "pkgs/<dep> with no consumers -> no changes" \
+    '{"changes-detected":"false","changed-images":{"include":[]},"rebuild-all":"false"}' \
     "$out"
 }
 
@@ -126,7 +163,9 @@ test_shared_root_nix() {
 }
 
 test_shared_lib
-test_shared_pkgs
+test_pkgs_default_nix_rebuild_all
+test_pkgs_dependency_maps_to_consumers
+test_pkgs_dependency_no_consumers
 test_shared_bundler
 test_shared_flake_lock
 test_shared_flake_nix
