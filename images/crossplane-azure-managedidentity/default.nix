@@ -4,17 +4,17 @@
 # Crossplane provider/component
 
 let
-  version = "1.0.0";
+  version = "0.20.0";
   component = buildGoModule {
     pname = "crossplane-azure-managedidentity";
     inherit version;
     src = fetchFromGitHub {
       owner = "crossplane-contrib";
-      repo = "provider-aws";
+      repo = "provider-azure";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-nq9ME3PrUK269QT666RbCEKdA1OuDPn405qU8SLPWYs=";
     };
-    vendorHash = null;
+    vendorHash = "sha256-orQzhW4IFOdBm1roRr/80PBQSwAJCynPHhmSkEnma6M=";
     subPackages = [ "cmd/provider" ];
     env.CGO_ENABLED = 0;
     ldflags = [ "-s" "-w" ];
