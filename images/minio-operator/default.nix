@@ -8,7 +8,7 @@
 # MinIO Operator for deploying and managing MinIO clusters on Kubernetes
 
 let
-  version = "7.1.0";
+  version = "7.1.1";
   minio-operator = buildGoModule {
     pname = "minio-operator";
     inherit version;
@@ -17,10 +17,10 @@ let
       owner = "minio";
       repo = "operator";
       rev = "v${version}";
-      hash = "sha256-K+q1cL1q5InBTA35R35aPvab17pNrlL0t6iDarWPbdI=";
+      hash = "sha256-kodVsPWGIUl94Q+UtuTJ/RvdPO9ygjpshlNttKRge8o=";
     };
 
-    vendorHash = "sha256-SJTFdJdEjtwAXGvBEa6lHQ3AaJcABEc6ER9ZmLGDccU=";  # TODO: Fix hash after first build
+    vendorHash = "sha256-SJTFdJdEjtwAXGvBEa6lHQ3AaJcABEc6ER9ZmLGDccU=";
 
     subPackages = [ "cmd/operator" ];
 
