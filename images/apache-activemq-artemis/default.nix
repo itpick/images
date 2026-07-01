@@ -34,7 +34,6 @@ let
       cp -r . $out/artemis/
       mkdir -p $out/bin
       ln -s $out/artemis/bin/artemis $out/bin/artemis
-      ln -s $out/artemis/bin/artemis-service $out/bin/artemis-service
       runHook postInstall
     '';
 
