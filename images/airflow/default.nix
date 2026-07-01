@@ -8,7 +8,12 @@ mkImage {
   name = "airflow";
   tag = pkgs.apache-airflow.version;
   entrypoint = [ "${pkgs.apache-airflow}/bin/airflow" ];
-  cmd = [ "version" ];
+  # Was `version` (a one-shot, so the kind-test pod CrashLoops). `airflow
+  # standalone` is the single-command all-in-one mode: it initialises the
+  # (SQLite) metadata DB, creates an admin user, and runs the API server +
+  # scheduler + dag-processor + triggerer. See env below for the writable-HOME,
+  # username and bind-address settings it needs to come up as nonroot.
+  cmd = [ "standalone" ];
 
   extraPkgs = with pkgs; [
     cacert
@@ -21,7 +26,16 @@ mkImage {
   ];
 
   env = {
-    AIRFLOW_HOME = "/opt/airflow";
+    # /opt/airflow isn't writable on the read-only root; airflow writes its
+    # config, SQLite DB and logs under AIRFLOW_HOME, so point it at /tmp.
+    AIRFLOW_HOME = "/tmp/airflow";
+    # airflow calls getpass.getuser(); the nonroot uid has no /etc/passwd entry
+    # and no $USER, so it would crash ("No username set in the environment").
+    USER = "airflow";
+    # Bind the API server on all interfaces (reachable by the probe) and skip
+    # the example DAGs for a clean, fast standalone start.
+    AIRFLOW__API__HOST = "0.0.0.0";
+    AIRFLOW__CORE__LOAD_EXAMPLES = "False";
   };
 
   # Airflow typically runs as non-root user 50000
