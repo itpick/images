@@ -1,37 +1,19 @@
-{ mkImage, fetchFromGitHub, buildGoModule, pkgs, lib, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # prometheus-nixchart
-# Prometheus ecosystem component
-
-let
-  version = "3.0.0";
-  component = buildGoModule {
-    pname = "prometheus-nixchart";
-    inherit version;
-    src = fetchFromGitHub {
-      owner = "prometheus";
-      repo = "prometheus";
-      rev = "v${version}";
-      hash = "sha256-IMYDtAb2ojzZLBqRJkMcB8yFpmmJPwbbyAxFfbCikkA=";
-    };
-    vendorHash = null;
-    subPackages = [ "." ];
-    env.CGO_ENABLED = 0;
-    ldflags = [ "-s" "-w" ];
-    doCheck = false;
-  };
-
-in mkImage {
-  drv = component;
+# ===================
+# Prometheus for consumption by the charts/prometheus chart.
+mkImage {
+  drv = pkgs.prometheus;
   name = "prometheus-nixchart";
-  tag = "v${version}";
-  entrypoint = [ "${component}/bin/prometheus-nixchart" ];
+  tag = "v${pkgs.prometheus.version}";
+  entrypoint = [ "${pkgs.prometheus}/bin/prometheus" ];
   cmd = [];
-  extraPkgs = with pkgs; [ cacert tzdata ];
+  user = "1001:0";
   labels = {
     "org.opencontainers.image.title" = "prometheus-nixchart";
-    "org.opencontainers.image.description" = "Prometheus prometheus-nixchart";
-    "org.opencontainers.image.version" = version;
+    "org.opencontainers.image.description" = "Prometheus tuned for the nix-containers charts/prometheus chart";
+    "org.opencontainers.image.version" = pkgs.prometheus.version;
     "io.nix-containers.chart" = "prometheus";
   };
 }

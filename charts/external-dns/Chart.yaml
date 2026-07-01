@@ -2,7 +2,7 @@
 annotations:
   images: |
     - name: external-dns
-      image: ghcr.io/nix-containers/external-dns-nixchart:0.18.0-debian-12-r4
+      image: ghcr.io/nix-containers/external-dns-nixchart:v0.21.0
   licenses: Apache-2.0
   tanzuCategory: clusterUtility
 apiVersion: v2
