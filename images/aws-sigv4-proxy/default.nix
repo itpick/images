@@ -4,7 +4,7 @@
 # AWS Kubernetes component
 
 let
-  version = "1.10";
+  version = "1.11.1";
   aws-component = buildGoModule {
     pname = "aws-sigv4-proxy";
     inherit version;
@@ -13,7 +13,7 @@ let
       owner = "awslabs";
       repo = "aws-sigv4-proxy";
       rev = "v${version}";
-      hash = "sha256-DC9JJeMdwxKeALQYA53BmMdAxQlUfPowAEul7+dTh4s=";
+      hash = "sha256-ni5uE9Sa2PblePxg+mZBQ0jD8YHugfIXhtNRuLrQCzY=";
     };
 
     vendorHash = null;
