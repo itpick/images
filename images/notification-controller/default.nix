@@ -10,7 +10,7 @@
 #   ld-linux (2.42-r4)
 
 let
-  version = "1.7.5";
+  version = "1.9.1";
   notification-controller = buildGoModule {
     pname = "notification-controller";
     inherit version;
@@ -19,10 +19,10 @@ let
       owner = "fluxcd";
       repo = "notification-controller";
       rev = "v${version}";
-      hash = "sha256-IQuhu6p9NBfa4lGJA2eAKNYjqf/ioeNasKezoB4ZOn4=";
+      hash = "sha256-x8UO9+4PmWhsned0ZTFJLdi+v8DZMSj6YXxD/XfQmxs=";
     };
 
-    vendorHash = "sha256-+xsR9hNBa3APAeVV2SjEvHnCmXbzJPh3V7dP23cHCSo=";
+    vendorHash = "sha256-FlRXlSqoCApw8zhBtB1auM72oIhz5OuKdgUXR5oJx1A=";
 
     subPackages = [ "." ];
 

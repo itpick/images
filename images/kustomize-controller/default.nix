@@ -53,7 +53,7 @@
 #   ... and 7 more
 
 let
-  version = "1.7.3";
+  version = "1.9.1";
   kustomize-controller = buildGoModule {
     pname = "kustomize-controller";
     inherit version;
@@ -62,10 +62,10 @@ let
       owner = "fluxcd";
       repo = "kustomize-controller";
       rev = "v${version}";
-      hash = "sha256-ep3SHPUYbG/BoRaQXtluM7eu/Lcga/+4ojBfoubEEUc=";
+      hash = "sha256-1cMtlfjWR9YvRNokBrRwNixN1OJVaxehbg089UZkoKM=";
     };
 
-    vendorHash = "sha256-0qpZzrKlCkCApm5OD5lDR+/Fe8630qXXrPuHa1I4ecs=";
+    vendorHash = "sha256-4k7qZzTK89/pczogTdpnHmP2Ljo5MjL6jBhbdGINrac=";
 
     subPackages = [ "." ];
 
