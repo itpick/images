@@ -38,7 +38,7 @@ let
       owner = "kubernetes";
       repo = "dns";
       rev = "${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-H9kjbnKkbmNUgjq91qUgVAsPPUk6EvtfgD51mb94XMI=";  # TODO: Fix hash after first build
     };
 
     vendorHash = null;  # TODO: Update after first build

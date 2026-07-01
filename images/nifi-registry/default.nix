@@ -14,7 +14,7 @@ let
   # Download NiFi Registry distribution
   nifiRegistry = pkgs.fetchzip {
     url = "https://archive.apache.org/dist/nifi/${version}/nifi-registry-${version}-bin.zip";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    hash = "sha256-IPCZ2E7hcuMoXCVNtsqzxeuAkLmQ9cAUozjUz+vSyYA=";  # TODO: Fix hash after first build
   };
 
 in
