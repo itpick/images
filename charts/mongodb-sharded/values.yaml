@@ -32,7 +32,7 @@ diagnosticMode:
 image:
   registry: ghcr.io
   repository: nix-containers/mongodb-sharded-nixchart
-  tag: 8.0.13-debian-12-r0
+  tag: v8.0.26
   digest: ""
   pullPolicy: IfNotPresent
   pullSecrets: []
