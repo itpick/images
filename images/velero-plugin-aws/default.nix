@@ -20,10 +20,10 @@ let
       owner = "vmware-tanzu";
       repo = "velero-plugin-for-aws";
       rev = "v${version}";
-      hash = "sha256-kcZ9ZlPp6rW8MBF9GZj7mLkZ7L0fg8NjBVkB/a1YDNY=";
+      hash = "sha256-RzTbgQpTUWhH+ryCLPu2lUUncgXi7G6V8CnNHwyhAgI=";
     };
 
-    vendorHash = "sha256-tYp/JwXgZKxCHkwk/U1J/iVWPfg7FKyDO1y0kqgHE0Y=";
+    vendorHash = "sha256-eC+pb6gp/q4KRRJ2Rk7CHkWn89Uztrrbdo6bU16I8bM=";
 
     subPackages = [ "." ];
 

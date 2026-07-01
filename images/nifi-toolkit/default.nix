@@ -14,7 +14,7 @@ let
   # Download NiFi Toolkit distribution
   nifiToolkit = pkgs.fetchzip {
     url = "https://archive.apache.org/dist/nifi/${version}/nifi-toolkit-${version}-bin.zip";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    hash = "sha256-+wJelu9ld4ZhQ/ew5D1fNaQ12oYoDQhPEnM68hYmnVw=";  # TODO: Fix hash after first build
   };
 
 in

@@ -23,7 +23,7 @@ let
       hash = "sha256-JgzJarBwLWewTmpaSdYlYzNLo07GFD085mzU2NF0NZQ=";
     };
 
-    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    vendorHash = "sha256-9ymZzC3JkfSJxiI3WZIEE35y1ItgIgAKjrtwuluS/uI=";  # TODO: Fix hash after first build
 
     subPackages = [ "." ];
 

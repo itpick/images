@@ -15,7 +15,7 @@ let
       owner = "grafana";
       repo = "rollout-operator";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+      hash = "sha256-m0tgGLELn8V6BL05MdahPzJOti1nCNIcrKByq5VKSRw=";  # TODO: Fix hash after first build
     };
 
     vendorHash = null;  # TODO: Update after first build

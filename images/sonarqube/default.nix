@@ -15,7 +15,7 @@ let
   # Download SonarQube distribution
   sonarqube = pkgs.fetchzip {
     url = "https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-${version}.zip";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    hash = "sha256-RTd/etDpALKMpVCbIL8gF1u6n7gD+kdtRpsN4ujaGgk=";  # TODO: Fix hash after first build
   };
 
   # Wrapper script for SonarQube
