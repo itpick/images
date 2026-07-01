@@ -2,7 +2,7 @@
 annotations:
   images: |
     - name: minio
-      image: ghcr.io/nix-containers/minio-nixchart:2025.7.23-debian-12-r3
+      image: ghcr.io/nix-containers/minio-nixchart:2025-10-15T17-29-55Z
     - name: minio-client
       image: ghcr.io/nix-containers/minio-client-nixchart:2025.7.21-debian-12-r2
     - name: minio-object-browser

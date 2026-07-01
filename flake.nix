@@ -102,6 +102,14 @@
             inherit system;
             config = {
               allowUnfree = true;
+              # MinIO's newest date-stamped releases get flagged insecure in
+              # nixpkgs (upstream's "no free release since Aug 2025" policy
+              # rippled through into a marker). We ship minio-nixchart and
+              # need to allow the package to evaluate — we're on the current
+              # release either way; the marker is upstream-policy, not a CVE.
+              permittedInsecurePackages = [
+                "minio-2025-10-15T17-29-55Z"
+              ];
             };
             overlays = [
               # Custom packages overlay

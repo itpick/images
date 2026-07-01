@@ -28,7 +28,7 @@ extraDeploy: []
 image:
   registry: ghcr.io
   repository: nix-containers/minio-nixchart
-  tag: 2025.7.23-debian-12-r3
+  tag: 2025-10-15T17-29-55Z
   digest: ""
   pullPolicy: IfNotPresent
   pullSecrets: []
