@@ -4,7 +4,7 @@
 # https://gitlab.com/gitlab-org/cluster-integration/gitlab-agent
 
 let
-  version = "17.10.1";
+  version = "18.7.0";
   gitlab-agent-fips = buildGoModule {
     pname = "gitlab-agent-fips";
     inherit version;
@@ -13,10 +13,11 @@ let
       owner = "gitlab-org";
       repo = "cluster-integration/gitlab-agent";
       rev = "v${version}";
-      hash = "sha256-eupwFR1XQLCJc99E80d+CTuPM2zj6o8HauYW+ObeVfU=";
+      hash = "sha256-2TYqFLc5UxJ7S5dk0rTiT2hko5ZfATn6upZ+DEBgFFk=";
     };
 
-    vendorHash = null;
+    proxyVendor = true;
+    vendorHash = "sha256-vAAetRPslNBEdTREeLfmkemDGWS+EwCuCFzkxV79O94=";
     subPackages = [ "cmd/kas" ];
 
     env.CGO_ENABLED = 1;
