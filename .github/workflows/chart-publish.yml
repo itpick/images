@@ -1,0 +1,100 @@
+name: Chart Publish
+
+# Packages every chart under charts/ and pushes it to GHCR as an OCI
+# artifact. Fires on:
+#   * push to main touching charts/**  → publish with the chart's
+#     Chart.yaml `version:` (idempotent — Helm's OCI push will 409 if
+#     the tag already exists, so we only bump publishes when
+#     Chart.yaml's version bumps).
+#   * workflow_dispatch → same but skippable on demand.
+#
+# The result lives at:
+#   oci://ghcr.io/nix-containers/charts/<name>:<version>
+#
+# Install: `helm install my-release oci://ghcr.io/nix-containers/charts/<name>`.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'charts/**'
+      - '.github/workflows/chart-publish.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: chart-publish
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      charts: ${{ steps.list.outputs.charts }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: List charts
+        id: list
+        run: |
+          set -euo pipefail
+          charts=$(ls -d charts/*/ 2>/dev/null \
+            | awk -F/ '{print $2}' \
+            | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "charts=$charts" >> "$GITHUB_OUTPUT"
+          echo "Discovered $(echo "$charts" | jq 'length') charts"
+
+  publish:
+    needs: discover
+    runs-on: ubuntu-latest
+    if: needs.discover.outputs.charts != '[]'
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        chart: ${{ fromJSON(needs.discover.outputs.charts) }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: azure/setup-helm@v4
+        with:
+          version: v3.16.4
+
+      - name: Login to GHCR
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" \
+            | helm registry login ghcr.io \
+              --username "${{ github.actor }}" --password-stdin
+
+      - name: Read chart version
+        id: ver
+        run: |
+          set -euo pipefail
+          v=$(grep -oE '^version:\s*[0-9][0-9.]*' \
+                "charts/${{ matrix.chart }}/Chart.yaml" \
+              | awk '{print $2}')
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+
+      - name: helm package
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/chart-pkg
+          helm package "charts/${{ matrix.chart }}" \
+            --destination /tmp/chart-pkg
+
+      - name: helm push (skip if tag exists)
+        run: |
+          set -euo pipefail
+          v="${{ steps.ver.outputs.version }}"
+          # Check if version already published — HEAD on the manifest
+          if helm show chart \
+               "oci://ghcr.io/${{ github.repository_owner }}/charts/${{ matrix.chart }}" \
+               --version "$v" >/dev/null 2>&1; then
+            echo "Version $v of ${{ matrix.chart }} already published — skipping"
+            exit 0
+          fi
+          helm push \
+            "/tmp/chart-pkg/${{ matrix.chart }}-$v.tgz" \
+            "oci://ghcr.io/${{ github.repository_owner }}/charts"
+          echo "Published oci://ghcr.io/${{ github.repository_owner }}/charts/${{ matrix.chart }}:$v"
