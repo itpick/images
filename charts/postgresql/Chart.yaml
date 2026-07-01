@@ -6,7 +6,7 @@ annotations:
     - name: postgres-exporter
       image: ghcr.io/nix-containers/prometheus-postgres-exporter-nixchart:latest
     - name: postgresql
-      image: ghcr.io/nix-containers/postgres-nixchart:latest
+      image: ghcr.io/nix-containers/postgres-nixchart:v17.10
   licenses: Apache-2.0
 apiVersion: v2
 appVersion: 17.6.0
