@@ -24,6 +24,7 @@ import json
 import os
 import sys
 import threading
+import time
 import urllib.error
 import urllib.request
 
@@ -34,6 +35,17 @@ REPO_PREFIX = "nix-containers/images"
 # decompression itself is CPU-bound and runs after read.
 BLOB_TIMEOUT = 300
 MANIFEST_TIMEOUT = 30
+
+# Wall-clock budget for the *uncompressed* sizing pass (env-overridable).
+# Compressed sizes come free from the manifest, but uncompressed requires
+# downloading + gunzipping every unique layer blob — for a large catalog with
+# many freshly-pushed images not yet in the snapshot, that can take tens of
+# minutes and stall the whole deploy. Once the budget is spent we stop starting
+# new blob downloads: those tags keep their compressed size and get a null
+# uncompressed size (rendered "—"), which fills in on later runs as layers land
+# in the snapshot cache. 0 disables the budget.
+UNCOMPRESSED_BUDGET_SECONDS = int(os.environ.get("ENRICH_UNCOMPRESSED_BUDGET", "420"))
+_deadline: float | None = None
 
 # Order matters — registries can return either an OCI index or a Docker
 # manifest list as the top-level when an image is multi-platform.
@@ -149,6 +161,11 @@ def sizes_for_digest(image: str, digest: str, token: str) -> tuple[int | None, i
         with _layer_cache_lock:
             cached = _layer_size_cache.get(ldig, "miss")
         if cached == "miss":
+            # Past the budget: don't start new blob downloads. Keep the
+            # compressed size (already known) and return a null uncompressed so
+            # the deploy isn't held hostage by a cold cache full of fresh images.
+            if _deadline is not None and time.monotonic() > _deadline:
+                return compressed, None
             blob_url = f"https://{REGISTRY}/v2/{REPO_PREFIX}/{image}/blobs/{ldig}"
             measured = _decompressed_size(blob_url, token)
             with _layer_cache_lock:
@@ -215,6 +232,11 @@ def main(argv: list[str]) -> int:
         if f.endswith(".json")
     )
     print(f"Enriching {len(files)} tags files with compressed + uncompressed sizes...")
+    global _deadline
+    if UNCOMPRESSED_BUDGET_SECONDS > 0:
+        _deadline = time.monotonic() + UNCOMPRESSED_BUDGET_SECONDS
+        print(f"Uncompressed-size budget: {UNCOMPRESSED_BUDGET_SECONDS}s "
+              f"(compressed sizes are always computed; uncompressed is best-effort).")
     total_tags = 0
     total_enriched = 0
     misses: list[str] = []
@@ -249,6 +271,9 @@ def main(argv: list[str]) -> int:
         f"Layer cache: {sum(1 for v in _layer_size_cache.values() if v is not None)} hits "
         f"/ {len(_layer_size_cache)} unique digests."
     )
+    if _deadline is not None and time.monotonic() > _deadline:
+        print("Uncompressed-size budget reached — remaining tags kept their "
+              "compressed size with a null uncompressed size (fills in next run).")
     if misses:
         print("Partial misses:")
         for m in misses[:25]:
