@@ -9,13 +9,13 @@
 { nix2container, pkgs, lib, ... }:
 
 let
-  version = "1.36.3";
+  version = "1.38.3";
 
   # Download Envoy binary from tetratelabs archive
   # This provides stable permalinks for Envoy releases
   envoyBin = pkgs.fetchurl {
     url = "https://github.com/tetratelabs/archive-envoy/releases/download/v${version}/envoy-v${version}-linux-amd64.tar.xz";
-    hash = "sha256-TBlwEnf1AKm2vt0gCcYadRvH055c5yJmyGcOTMu54Vc=";
+    hash = "sha256-iS9N6UdbWqddx5W1W16s8fOSy0irlT1hq9UjGFQVgCk=";
   };
 
 in

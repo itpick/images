@@ -6,7 +6,7 @@
 #   kube-logging-operator-config-reloader (6.2.1-r1)
 
 let
-  version = "1.2.1";
+  version = "1.4.17";
   reloader = buildGoModule {
     pname = "reloader";
     inherit version;
@@ -15,11 +15,16 @@ let
       owner = "stakater";
       repo = "Reloader";
       rev = "v${version}";
-      hash = "sha256-tRHHDw09PxjjKPoEDsyJw7ZNSvNb2xk7zYqJJe4d/MI=";
+      hash = "sha256-V95gDRlP3noXbc1PO+U+g0LBoD6qlWG+EG3k2BNZTZI=";
     };
 
     proxyVendor = true;
-    vendorHash = "sha256-Ueu3rFpOpUUZWvu6TYwFU3sdJBxEzc4wuMFTOR24xfo=";
+    vendorHash = "sha256-H8ruUzLgCkhl4Yz9xEEDpuLED/Fr9Sg/RFwp8TBxKgg=";
+
+    # 1.4.x removed the ./test/loadtest/cmd/loadtest submodule from the main
+    # module tree — restrict to the main binary so buildGoModule doesn't try
+    # to compile every subdir.
+    subPackages = [ "." ];
 
     env.CGO_ENABLED = 0;
 
