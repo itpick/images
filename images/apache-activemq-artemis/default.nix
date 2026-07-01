@@ -43,14 +43,47 @@ let
     };
   };
 
+  # `artemis run` requires a broker *instance* (its own etc/broker.xml + data
+  # dir), which the bare distribution doesn't have — the old `cmd = [ "help" ]`
+  # was a one-shot that exits, so the kind-test pod CrashLoops. Create a broker
+  # instance under the writable /tmp on first start (non-interactive), then run
+  # it. --host/--http-host 0.0.0.0 so the acceptor (61616: CORE/AMQP/MQTT/STOMP/
+  # OpenWire) and the web console (8161) are reachable. Operators override the
+  # user/password via env or mount their own broker instance at ARTEMIS_BROKER_HOME.
+  # writeShellApplication runs shellcheck at build time.
+  entrypoint = pkgs.writeShellApplication {
+    name = "docker-entrypoint.sh";
+    runtimeInputs = [ pkgs.jre pkgs.coreutils ];
+    text = ''
+      BROKER="''${ARTEMIS_BROKER_HOME:-/tmp/broker}"
+      if [ ! -f "$BROKER/etc/broker.xml" ]; then
+        "${drv}/bin/artemis" create "$BROKER" \
+          --user "''${ARTEMIS_USER:-artemis}" \
+          --password "''${ARTEMIS_PASSWORD:-artemis}" \
+          --allow-anonymous \
+          --host 0.0.0.0 \
+          --http-host 0.0.0.0 \
+          --no-autotune \
+          --silent
+      fi
+      exec "$BROKER/bin/artemis" run
+    '';
+  };
+
 in mkImage {
   inherit drv;
   name = "apache-activemq-artemis";
   tag = "v${version}";
-  entrypoint = [ "${drv}/bin/artemis" ];
-  cmd = [ "help" ];
+  entrypoint = [ "${entrypoint}/bin/docker-entrypoint.sh" ];
+  cmd = [ ];
 
   extraPkgs = [ pkgs.jre ];
+
+  env = {
+    # Artemis' launcher + the JVM write only under the broker instance (in /tmp);
+    # keep any JVM prefs write off the read-only rootfs too.
+    HOME = "/tmp";
+  };
 
   labels = {
     "org.opencontainers.image.title" = "apache-activemq-artemis";
