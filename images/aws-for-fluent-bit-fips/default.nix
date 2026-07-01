@@ -4,7 +4,7 @@
 # AWS Kubernetes component
 
 let
-  version = "3.1.1";
+  version = "3.4.4";
   aws-component = buildGoModule {
     pname = "aws-for-fluent-bit-fips";
     inherit version;
@@ -13,10 +13,11 @@ let
       owner = "aws";
       repo = "aws-for-fluent-bit";
       rev = "v${version}";
-      hash = "sha256-Du5Td3bxTSfcocJv9/AaC0lNsRIF+qUPVy2oFzUWAtY=";
+      hash = "sha256-qroUNTzP2V/4epBbn7w2jXqIk2/1G7mGT/+K231WCQ8=";
     };
 
-    vendorHash = null;
+    proxyVendor = true;
+    vendorHash = "sha256-ZA9GHiEhHFfRechrZUvx2QnsvPjRtRGK0wRUyhtWfTc=";
     subPackages = [ "." ];
     
     env.CGO_ENABLED = 1;

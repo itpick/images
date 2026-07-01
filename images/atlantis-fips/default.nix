@@ -5,7 +5,7 @@
 # FIPS-compliant build for FedRAMP compliance
 
 let
-  version = "0.31.0";
+  version = "0.46.0";
 
   atlantis-fips = buildGoModule rec {
     pname = "atlantis-fips";
@@ -15,10 +15,11 @@ let
       owner = "runatlantis";
       repo = "atlantis";
       rev = "v${version}";
-      hash = "sha256-K7GLO7ZGWqJF1WajgEi88KP3EJ0kVPxws6GQ0KwxCIU=";  # TODO: Update with actual hash
+      hash = "sha256-4twWPp+ZgK6YmNL5RJmLKhtxe33T1GDCu1qejUbqXkA=";  # TODO: Update with actual hash
     };
 
-    vendorHash = null;  # Uses vendor directory - update if needed
+    proxyVendor = true;
+    vendorHash = "sha256-QhWE7EYdWM0l2QBhUyC9kxwP3y6cbfd5x8KhNTi99NU=";
 
     subPackages = [ "." ];
 
