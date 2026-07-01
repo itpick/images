@@ -1,0 +1,68 @@
+name: Chart CI
+
+# Runs `helm lint` and a `helm template` smoke test on every chart under
+# charts/ on any PR that touches the charts/ tree. Blocks merge if any
+# chart fails to lint or fails to render its default template pass.
+#
+# Fast (<1 min for 36 charts) and mechanical — catches the kind of
+# template regressions we hit twice during the initial import refactor.
+
+on:
+  pull_request:
+    paths:
+      - 'charts/**'
+      - '.github/workflows/chart-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'charts/**'
+
+concurrency:
+  group: chart-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      charts: ${{ steps.list.outputs.charts }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: List charts
+        id: list
+        run: |
+          set -euo pipefail
+          charts=$(ls -d charts/*/ 2>/dev/null \
+            | awk -F/ '{print $2}' \
+            | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "charts=$charts" >> "$GITHUB_OUTPUT"
+          echo "Discovered $(echo "$charts" | jq 'length') charts"
+
+  lint:
+    needs: discover
+    runs-on: ubuntu-latest
+    if: needs.discover.outputs.charts != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        chart: ${{ fromJSON(needs.discover.outputs.charts) }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: azure/setup-helm@v4
+        with:
+          version: v3.16.4
+      - name: helm lint
+        run: |
+          set -euo pipefail
+          helm lint "charts/${{ matrix.chart }}"
+      - name: helm template (default values)
+        run: |
+          set -euo pipefail
+          helm template test-release "charts/${{ matrix.chart }}" \
+            --namespace default \
+            > /tmp/rendered.yaml
+          # Basic sanity — at least one document rendered
+          if ! grep -q '^kind:' /tmp/rendered.yaml; then
+            echo "helm template rendered no resources"; exit 1
+          fi
+          echo "Rendered $(grep -c '^kind:' /tmp/rendered.yaml) resources"
