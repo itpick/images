@@ -19,7 +19,10 @@ let
 
     nativeBuildInputs = [ pkgs.autoPatchelfHook ];
 
-    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+    # libaio provides libaio.so.1, needed by the bundled native journal library
+    # (artemis/bin/lib/linux-x86_64/libartemis-native-64.so). Without it,
+    # autoPatchelfHook fails: "could not satisfy dependency libaio.so.1".
+    buildInputs = [ pkgs.stdenv.cc.cc.lib pkgs.libaio ];
 
     sourceRoot = "apache-artemis-${version}";
 
