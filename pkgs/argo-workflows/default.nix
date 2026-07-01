@@ -9,13 +9,13 @@
 { lib, fetchFromGitHub, buildGoModule, symlinkJoin }:
 
 let
-  version = "3.6.4";
+  version = "3.6.19";
 
   src = fetchFromGitHub {
     owner = "argoproj";
     repo = "argo-workflows";
     rev = "v${version}";
-    hash = "sha256-R6njT6Lae+8KiTyXjxE5/U922pP0VqgCIRwGhWBOZUI=";
+    hash = "sha256-oNvQ8J+c6979mD7/IJAj57bghqJSFVJiRb7qx7v9UkU=";
   };
 
   commonAttrs = {
@@ -38,7 +38,7 @@ let
   ];
 
   # All components share the same vendor hash since they use the same go.mod
-  vendorHash = "sha256-uCIdZkoPgppJtrFf7nOVIyEXo1bVILYXNs5LtLLLmsY=";
+  vendorHash = "sha256-LxVCf3MdjZI8QM+p4RX7ujozqnLUELfJed0TS3cr/co=";
 
   # CLI
   argo-cli = buildGoModule (commonAttrs // {
