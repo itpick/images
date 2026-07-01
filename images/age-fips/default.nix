@@ -18,7 +18,7 @@ let
       hash = "sha256-9ZJdrmqBj43zSvStt0r25wjSfnvitdx3GYtM3urHcaA=";
     };
 
-    vendorHash = "sha256-OlDtiD4yP/vhoFZE5OQct0FOwdYp/E39+OJVxasDpfE=";
+    vendorHash = "sha256-ilRLEV7qOBZbqzg2XQi4kt0JAb/1ftT4JmahYT0zSRU=";
 
     subPackages = [ "cmd/age" "cmd/age-keygen" ];
 

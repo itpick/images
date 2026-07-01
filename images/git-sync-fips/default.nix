@@ -15,7 +15,7 @@ let
       owner = "kubernetes";
       repo = "git-sync";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Update with actual hash
+      hash = "sha256-kOIO/F8hud6PUqB5v6ZKTYdnh3PnEK1h4k0kNoHPO6E=";  # TODO: Update with actual hash
     };
 
     vendorHash = null;  # Uses vendor directory - update if needed

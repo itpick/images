@@ -22,7 +22,7 @@ let
       hash = "sha256-zqQY5RrCPWODEKAriBNWG/KJQnA4+bOEMcaI2T75DoU=";
     };
 
-    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # TODO: Fix hash after first build
+    vendorHash = "sha256-lnxQLYzLyfk5SoqB/WkWcYXqNUYmlkiP7T+PRBQH9g4=";  # TODO: Fix hash after first build
 
     subPackages = [ "cmd" ];
 
