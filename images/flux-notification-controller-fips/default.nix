@@ -4,7 +4,7 @@
 # Flux GitOps component
 
 let
-  version = "1.3.0";
+  version = "1.9.1";
   flux-component = buildGoModule {
     pname = "flux-notification-controller-fips";
     inherit version;
@@ -13,10 +13,11 @@ let
       owner = "fluxcd";
       repo = "notification-controller";
       rev = "v${version}";
-      hash = "sha256-xZKGNf81SpaWaA/V5u2giKCsxM9nvVpnxhYIZ38dnqg=";
+      hash = "sha256-x8UO9+4PmWhsned0ZTFJLdi+v8DZMSj6YXxD/XfQmxs=";
     };
 
-    vendorHash = null;
+    proxyVendor = true;
+    vendorHash = "sha256-4aordFiVUW4JjyidfIyEqYwseN5V8WwN5PoxOPF043s=";
     subPackages = [ "." ];
     
     env.CGO_ENABLED = 1;
