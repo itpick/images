@@ -61,7 +61,7 @@ defaultInitContainers:
 image:
   registry: ghcr.io
   repository: nix-containers/clickhouse-nixchart
-  tag: 25.7.5-debian-12-r0
+  tag: v26.6.1
   digest: ""
   pullPolicy: IfNotPresent
   pullSecrets: []
