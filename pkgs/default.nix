@@ -10,6 +10,7 @@
   argo-events = pkgs.callPackage ./argo-events { };
   argo-rollouts = pkgs.callPackage ./argo-rollouts { };
   argo-workflows = pkgs.callPackage ./argo-workflows { };
+  argo-workflows-fips = pkgs.callPackage ./argo-workflows-fips { };
   argocd-image-updater = pkgs.callPackage ./argocd-image-updater { };
   aws-ebs-csi-driver = pkgs.callPackage ./aws-ebs-csi-driver { };
   aws-efs-csi-driver = pkgs.callPackage ./aws-efs-csi-driver { };
