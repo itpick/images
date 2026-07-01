@@ -104,8 +104,11 @@ jobs:
           
           IMAGES=$(nix --extra-experimental-features "nix-command flakes" eval --json .#discoveredImages | jq -r '.[]')
           for IMAGE in $IMAGES; do
-            CURRENT_VERSION=$(jq -r ".$IMAGE // \"none\"" current-versions.json)
-            PREVIOUS_VERSION=$(jq -r ".$IMAGE // \"none\"" previous-versions.json)
+            # jq's bare `.$IMAGE` accessor breaks on hyphens/dots (which
+            # most image names contain). Pass the key via --arg and use
+            # the safe .["key"] form instead.
+            CURRENT_VERSION=$(jq -r --arg k "$IMAGE" '.[$k] // "none"' current-versions.json)
+            PREVIOUS_VERSION=$(jq -r --arg k "$IMAGE" '.[$k] // "none"' previous-versions.json)
             
             echo "📦 $IMAGE: $PREVIOUS_VERSION → $CURRENT_VERSION"
             
