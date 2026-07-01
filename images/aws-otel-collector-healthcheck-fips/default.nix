@@ -4,7 +4,7 @@
 # AWS Kubernetes component
 
 let
-  version = "0.46.0";
+  version = "0.48.0";
   aws-component = buildGoModule {
     pname = "aws-otel-collector-healthcheck-fips";
     inherit version;
@@ -13,7 +13,7 @@ let
       owner = "aws-observability";
       repo = "aws-otel-collector";
       rev = "v${version}";
-      hash = "sha256-aUXyCMzZFys1niPtGhysUe34g/pQBAcyfRD6X57D6CA=";
+      hash = "sha256-ceSC/G6wWFAN814ZNriBskcn7xXccVPMxK2iOU/yjuw=";
     };
 
     vendorHash = null;
