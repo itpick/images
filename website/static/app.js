@@ -133,11 +133,17 @@ function render() {
     return;
   }
   c.innerHTML = filteredImages.map(i => {
-    // Green dot when scan + sbom + dep-check are all recent (≤7d).
-    const dot = (i.freshness && i.freshness.isFresh)
-      ? `<span class="inline-block w-2 h-2 rounded-full bg-accent-ok mr-2 align-middle"
-               title="Fresh data: scanned, SBOM available, deps checked within 7 days"></span>`
-      : '';
+    // Status dot: RED when the latest scan found critical CVEs (this
+    // overrides freshness — a fresh-but-vulnerable image is not "good"),
+    // otherwise GREEN when scan + sbom + dep-check are all recent (≤7d).
+    const criticalCount = (i.scan && i.scan.critical) || 0;
+    const dot = criticalCount > 0
+      ? `<span class="inline-block w-2 h-2 rounded-full bg-accent-bad mr-2 align-middle"
+               title="${criticalCount} critical CVE${criticalCount === 1 ? '' : 's'} in the latest scan"></span>`
+      : (i.freshness && i.freshness.isFresh)
+        ? `<span class="inline-block w-2 h-2 rounded-full bg-accent-ok mr-2 align-middle"
+                 title="Fresh data: scanned, SBOM available, deps checked within 7 days"></span>`
+        : '';
     // Rank from IMAGE-POPULARITY.md, when present.
     const rank = (i.popularity && i.popularity.rank)
       ? `<span class="text-xs text-fg-muted font-mono">#${i.popularity.rank}</span>`
