@@ -4,18 +4,19 @@
 
 buildGoModule rec {
   pname = "aws-ebs-csi-driver";
-  version = "1.53.0";
+  version = "1.62.0";
 
   src = fetchFromGitHub {
     owner = "kubernetes-sigs";
     repo = "aws-ebs-csi-driver";
     rev = "v${version}";
-    hash = "sha256-5BSbtGM9MnN8ifr8Q3yKMk1uO0lzdXBX4lMCCD3oWCA=";
+    hash = "sha256-icBhilkR55c6J7mn4NYpO2C8Pq2j4LXRmgt+dCJ89yg=";
   };
 
-  vendorHash = null;
+  proxyVendor = true;
+  vendorHash = "sha256-b1lFUUTnEWmW9WyrYlNyTtsJXx0pZVp82wQRW0xOsnE=";
 
-  subPackages = [ "cmd/main" ];
+  subPackages = [ "cmd" ];
 
   env.CGO_ENABLED = 0;
 
@@ -25,7 +26,7 @@ buildGoModule rec {
   ];
 
   postInstall = ''
-    mv $out/bin/main $out/bin/aws-ebs-csi-driver
+    mv $out/bin/cmd $out/bin/aws-ebs-csi-driver
   '';
 
   doCheck = false;
