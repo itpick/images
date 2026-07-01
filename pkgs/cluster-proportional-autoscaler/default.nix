@@ -4,13 +4,13 @@
 
 buildGoModule rec {
   pname = "cluster-proportional-autoscaler";
-  version = "1.9.0";
+  version = "1.10.3";
 
   src = fetchFromGitHub {
     owner = "kubernetes-sigs";
     repo = "cluster-proportional-autoscaler";
     rev = "v${version}";
-    hash = "sha256-vWEYypS1rAE79ldGJ9uVZ7jhAFwsLIHsXzKja+jx3oU=";
+    hash = "sha256-qL3dzsfTO26OURdezIg7MxLXKy8fjQ+3jNpGHKtZLno=";
   };
 
   vendorHash = null;
