@@ -4,16 +4,16 @@
 
 buildGoModule rec {
   pname = "velero-plugin-for-gcp";
-  version = "1.14.1";
+  version = "1.14.2";
 
   src = fetchFromGitHub {
     owner = "vmware-tanzu";
     repo = "velero-plugin-for-gcp";
     rev = "v${version}";
-    hash = "sha256-v7CDS3fzPu6yvP4FrAo33zi9/dgPMEm2NZao7vokE0E=";
+    hash = "sha256-sYYXDe6A8T/8VTPM2L0aL3nSraxm2SyMu/6wiilPF8E=";
   };
 
-  vendorHash = "sha256-lsTRT2V/n3ViSQ6C9wkvsVZuRrXRpds0lGyJeIEgCBM=";
+  vendorHash = "sha256-hM7ddZaFQBOFKM1gqpNoHxx4hoJNmGtf5EdcFXOe7L8=";
 
   env.CGO_ENABLED = 0;
 
