@@ -4,7 +4,7 @@
 # Flux GitOps component
 
 let
-  version = "1.0.1";
+  version = "1.6.1";
   flux-component = buildGoModule {
     pname = "flux-helm-controller-fips";
     inherit version;
@@ -13,10 +13,11 @@ let
       owner = "fluxcd";
       repo = "helm-controller";
       rev = "v${version}";
-      hash = "sha256-n0lC00qEqZLPRWQpurC6IYUXPF0Bgaf+NOLUCJYCHsU=";
+      hash = "sha256-2FQ7bmi2W2Mx+8ymf0lnHZl3w/BVM+qPrzWQG9/N/Ks=";
     };
 
-    vendorHash = null;
+    proxyVendor = true;
+    vendorHash = "sha256-IXg8ucc5uGSbqbH5ZxvzkcHXcqlTzh/lNWvuu9NJBRw=";
     subPackages = [ "." ];
     
     env.CGO_ENABLED = 1;

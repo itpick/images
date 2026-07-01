@@ -4,7 +4,7 @@
 # Flux GitOps component
 
 let
-  version = "0.38.0";
+  version = "1.2.1";
   flux-component = buildGoModule {
     pname = "flux-image-automation-controller-fips";
     inherit version;
@@ -13,10 +13,11 @@ let
       owner = "fluxcd";
       repo = "image-automation-controller";
       rev = "v${version}";
-      hash = "sha256-18NslR5XXTgZHfB9HXeRzWRPAaEfe6aZFfSW3mN4Ryc=";
+      hash = "sha256-EL5A6jAMBT+4927+DzhzGX9k2zGiLHInn3uRi7nchjo=";
     };
 
-    vendorHash = null;
+    proxyVendor = true;
+    vendorHash = "sha256-0R7V/cQAOjJ6s17BCoP2OFDQVlPnuvs4e/gNUgludPE=";
     subPackages = [ "." ];
     
     env.CGO_ENABLED = 1;
