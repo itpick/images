@@ -13,6 +13,19 @@
 # scheme so downstream consumers can swap the image without renaming.
 
 let
+  # Track the latest upstream Keycloak release, ahead of the nixpkgs pin.
+  # A plain version + src override on the nixpkgs derivation (the dist is a
+  # prebuilt zip, no build logic to patch).
+  keycloak = pkgs.keycloak.overrideAttrs (old: rec {
+    version = "26.6.4";
+    # nixpkgs fetches the dist with fetchzip (auto-unpacked), so the hash is
+    # over the unpacked tree, not the raw .zip.
+    src = pkgs.fetchzip {
+      url = "https://github.com/keycloak/keycloak/releases/download/${version}/keycloak-${version}.zip";
+      hash = "sha256-rb3Wdzc3g8jMvUffOfMfJ4Uw9HJomznXzLtPOrHoWU8=";
+    };
+  });
+
   keycloakUser = {
     uid = 999;
     gid = 999;
@@ -96,7 +109,7 @@ let
   # Pre-creates data/{import,sessions} too (compose mounts host paths here).
   keycloakDist = pkgs.runCommand "keycloak-fips-dist" {} ''
     mkdir -p $out/opt
-    cp -rL ${pkgs.keycloak} $out/opt/keycloak
+    cp -rL ${keycloak} $out/opt/keycloak
     chmod -R u+w $out/opt/keycloak
     # Replace ALL nixpkgs C-wrapper launchers with shell wrappers (see
     # mkKcWrapper). Leaving any of them keeps the full JDK + store keycloak
@@ -122,7 +135,7 @@ let
 
 in nix2container.buildImage {
   name = "keycloak-fips";
-  tag = pkgs.keycloak.version;
+  tag = keycloak.version;
 
   layers = [
     (nix2container.buildLayer {
@@ -172,7 +185,7 @@ in nix2container.buildImage {
       "io.nix-containers.build-method" = "Built from source using Nix";
       "org.opencontainers.image.title" = "keycloak-fips";
       "org.opencontainers.image.description" = "Keycloak identity broker (FIPS-intent build) with docker-library-compatible entrypoint, runs as uid 999";
-      "org.opencontainers.image.version" = pkgs.keycloak.version;
+      "org.opencontainers.image.version" = keycloak.version;
       "io.nix-containers.compliance" = "FIPS-140-2";
     };
   };
