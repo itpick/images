@@ -10,7 +10,7 @@ annotations:
     - name: redis-exporter
       image: ghcr.io/nix-containers/prometheus-redis-exporter-nixchart:1.76.0-debian-12-r0
     - name: redis-sentinel
-      image: ghcr.io/nix-containers/redis-sentinel-nixchart:8.2.1-debian-12-r0
+      image: ghcr.io/nix-containers/redis-sentinel-nixchart:v8.8.0
   licenses: Apache-2.0
   tanzuCategory: service
 apiVersion: v2

@@ -4,7 +4,7 @@ annotations:
     - name: os-shell
       image: ghcr.io/nix-containers/os-shell-nixchart:12-debian-12-r51
     - name: redis-cluster
-      image: ghcr.io/nix-containers/redis-cluster-nixchart:8.2.1-debian-12-r0
+      image: ghcr.io/nix-containers/redis-cluster-nixchart:v8.8.0
     - name: redis-exporter
       image: ghcr.io/nix-containers/prometheus-redis-exporter-nixchart:1.76.0-debian-12-r0
   licenses: Apache-2.0
