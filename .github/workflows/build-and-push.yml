@@ -65,6 +65,12 @@ jobs:
           sudo systemctl start docker
 
       - name: Login to Container Registry
+        # PR events (esp. from feature branches) can't push to GHCR — the token
+        # doesn't have write access to packages it didn't create. Skip login on
+        # PR so the whole push chain no-ops instead of failing 100% of the time
+        # with `denied: permission_denied: write_package`. Push happens on the
+        # subsequent main-branch push after merge.
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
@@ -81,7 +87,11 @@ jobs:
           echo "BUILD_SUCCESS=true" >> $GITHUB_ENV
 
       - name: Load and push image to registry
-        if: env.NIX_INSTALLED == 'true' && env.BUILD_SUCCESS == 'true'
+        # See "Login to Container Registry" above — PR runs skip the push
+        # entirely. The `Build nix2container image` step above still runs on
+        # PRs and validates the Nix build; only registry side-effects are
+        # gated to main-branch pushes.
+        if: env.NIX_INSTALLED == 'true' && env.BUILD_SUCCESS == 'true' && github.event_name != 'pull_request'
         run: |
           # Load the nix2container image and push directly to registry
           if [ -f ./result ]; then
