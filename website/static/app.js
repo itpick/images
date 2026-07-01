@@ -1,5 +1,6 @@
 let allImages = [];
 let filteredImages = [];
+let criticalsOnly = false;
 const BASE = window.SITE_BASE || '/';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -7,7 +8,28 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('search').addEventListener('input', filter);
   document.getElementById('category-filter').addEventListener('change', filter);
   document.getElementById('chart-filter').addEventListener('change', filter);
+  const critCard = document.getElementById('critical-card');
+  if (critCard) {
+    const toggleCrit = () => {
+      criticalsOnly = !criticalsOnly;
+      critCard.classList.toggle('border-accent-bad', criticalsOnly);
+      critCard.setAttribute('aria-pressed', String(criticalsOnly));
+      filter();
+      if (criticalsOnly) {
+        document.getElementById('images-container')
+          .scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+    critCard.addEventListener('click', toggleCrit);
+    critCard.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCrit(); }
+    });
+  }
 });
+
+function imgCritical(i) {
+  return (i.scan && i.scan.critical) || 0;
+}
 
 async function loadImages() {
   try {
@@ -125,8 +147,13 @@ function filter() {
     const matchesCat = !cat || i.category === cat;
     const matchesChart = !chartsOnly ||
       (Array.isArray(i.usedByCharts) && i.usedByCharts.length > 0);
-    return matchesQ && matchesCat && matchesChart;
+    const matchesCrit = !criticalsOnly || imgCritical(i) > 0;
+    return matchesQ && matchesCat && matchesChart && matchesCrit;
   });
+  // When filtering to critical-CVE images, surface the worst offenders first.
+  if (criticalsOnly) {
+    filteredImages.sort((a, b) => imgCritical(b) - imgCritical(a));
+  }
   render();
 }
 
@@ -136,9 +163,17 @@ function render() {
   if (counter) {
     const shown = filteredImages.length;
     const total = allImages.length;
-    counter.textContent = shown === total
-      ? `Showing all ${total.toLocaleString()} images`
-      : `Showing ${shown.toLocaleString()} of ${total.toLocaleString()} images`;
+    if (criticalsOnly) {
+      const totalCrit = filteredImages.reduce((a, i) => a + imgCritical(i), 0);
+      counter.textContent =
+        `${shown.toLocaleString()} image${shown === 1 ? '' : 's'} with `
+        + `${totalCrit.toLocaleString()} critical CVE${totalCrit === 1 ? '' : 's'} `
+        + `— click any image for its CVE list`;
+    } else {
+      counter.textContent = shown === total
+        ? `Showing all ${total.toLocaleString()} images`
+        : `Showing ${shown.toLocaleString()} of ${total.toLocaleString()} images`;
+    }
   }
   if (filteredImages.length === 0) {
     c.innerHTML = `<div class="col-span-full text-center py-12 text-fg-muted">
@@ -172,6 +207,11 @@ function render() {
     const zeroCve = (i.scan && i.scan.total === 0)
       ? `<span class="badge-zero-cve" title="No known CVEs in the latest scan">0 CVE</span>`
       : '';
+    // Critical-CVE count badge — links straight to the image's vulnerabilities.
+    const critBadge = criticalCount > 0
+      ? `<span class="badge bg-accent-bad/20 text-accent-bad font-mono"
+               title="${criticalCount} critical CVE${criticalCount === 1 ? '' : 's'} — click the image to see them">${criticalCount} crit</span>`
+      : '';
     // Show the actual semver when we have it (resolved from the
     // pushed :version tag via tags-data). Falls back to "latest" only
     // when no real version is known — bare "latest" is uninformative
@@ -186,6 +226,7 @@ function render() {
         <div class="font-mono font-bold text-fg-primary">${dot}${escapeHtml(i.name)}</div>
         <div class="flex items-center gap-2">
           ${rank}
+          ${critBadge}
           ${zeroCve}
           ${nixBadge}
           <span class="badge-cat-${escapeAttr(i.categorySlug || 'unknown')}" title="${escapeAttr(i.categoryDesc || '')}">${escapeHtml(i.category || 'unknown')}</span>
