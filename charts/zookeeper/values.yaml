@@ -33,7 +33,7 @@ diagnosticMode:
 image:
   registry: ghcr.io
   repository: nix-containers/zookeeper-nixchart
-  tag: 3.9.3-debian-12-r21
+  tag: v3.9.5
   digest: ""
   pullPolicy: IfNotPresent
   pullSecrets: []
