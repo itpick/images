@@ -51,7 +51,8 @@ in mkImage {
   name = "mongodb-sharded-nixchart";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/mongos" ];
-  cmd = [ "--help" ];
+  cmd = [];
+  user = "1001:0";
 
   labels = {
     "org.opencontainers.image.title" = "mongodb-sharded-nixchart";

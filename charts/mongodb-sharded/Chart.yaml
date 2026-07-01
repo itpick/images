@@ -4,7 +4,7 @@ annotations:
     - name: mongodb-exporter
       image: ghcr.io/nix-containers/prometheus-mongodb-exporter-nixchart:0.47.0-debian-12-r1
     - name: mongodb-sharded
-      image: ghcr.io/nix-containers/mongodb-sharded-nixchart:8.0.13-debian-12-r0
+      image: ghcr.io/nix-containers/mongodb-sharded-nixchart:v8.0.26
     - name: os-shell
       image: ghcr.io/nix-containers/os-shell-nixchart:12-debian-12-r51
   licenses: Apache-2.0

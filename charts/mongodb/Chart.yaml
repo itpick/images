@@ -4,7 +4,7 @@ annotations:
     - name: kubectl
       image: ghcr.io/nix-containers/kubectl-nixchart:1.33.4-debian-12-r0
     - name: mongodb
-      image: ghcr.io/nix-containers/mongodb-nixchart:8.0.13-debian-12-r0
+      image: ghcr.io/nix-containers/mongodb-nixchart:v8.0.26
     - name: mongodb-exporter
       image: ghcr.io/nix-containers/prometheus-mongodb-exporter-nixchart:0.47.0-debian-12-r1
     - name: nginx
