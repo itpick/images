@@ -10,13 +10,13 @@
 { lib, fetchFromGitHub, buildGoModule, symlinkJoin }:
 
 let
-  version = "1.18.4";
+  version = "1.19.5";
 
   src = fetchFromGitHub {
     owner = "cilium";
     repo = "cilium";
     rev = "v${version}";
-    hash = "sha256-m7RSxl5gVnPVkw0Ql9YuAl0kCvqnIV5yghFaO+Qje/A=";
+    hash = "sha256-0/GlsmRG6YuHJ8ROoVrCiksFf1+wokxUEzO6V6gvme4=";
   };
 
   commonAttrs = {
