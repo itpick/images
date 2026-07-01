@@ -8,7 +8,7 @@
 
 stdenvNoCC.mkDerivation rec {
   pname = "apache-nifi";
-  version = "2.6.0";
+  version = "2.10.0";
 
   src = fetchurl {
     urls = [
@@ -16,7 +16,7 @@ stdenvNoCC.mkDerivation rec {
       "https://downloads.apache.org/nifi/${version}/nifi-${version}-bin.zip"
     ];
     # SHA512 hash from https://downloads.apache.org/nifi/${version}/nifi-${version}-bin.zip.sha512
-    hash = "sha512-y3HU6b9434SBv3n971np7jfqKqIv5Eaeadp2Dp7R3/M0QZF583eIc+Op8dIp1m53eVTYC03B5ZhI2/bBipEgvg==";
+    hash = "sha512-pWyTytZ5S+zuqi45ii7pchFgrN0W5HkFDFeHmmYQJBEzYMXVd4vMN5x25khYBYaeJM21NLz4yzDGlW0JN3Fp1w==";
   };
 
   nativeBuildInputs = [ makeWrapper unzip ];
