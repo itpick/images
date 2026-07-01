@@ -24,7 +24,7 @@ extraDeploy: []
 image:
   registry: ghcr.io
   repository: nix-containers/thanos-nixchart
-  tag: 0.39.2-debian-12-r2
+  tag: v0.41.0
   digest: ""
   pullPolicy: IfNotPresent
   pullSecrets: []

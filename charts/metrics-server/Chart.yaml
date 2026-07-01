@@ -2,7 +2,7 @@
 annotations:
   images: |
     - name: metrics-server
-      image: ghcr.io/nix-containers/metrics-server-nixchart:0.8.0-debian-12-r4
+      image: ghcr.io/nix-containers/metrics-server-nixchart:v0.8.1
   licenses: Apache-2.0
   tanzuCategory: clusterUtility
 apiVersion: v2

@@ -1,18 +1,18 @@
 { mkImage, pkgs, lib, ... }:
 
 # thanos-nixchart
-# Container image packaging nixpkgs.thanos
+# Runs Thanos; chart passes subcommand + flags via values.args.
 mkImage {
   drv = pkgs.thanos;
   name = "thanos-nixchart";
   tag = "v${pkgs.thanos.version}";
   entrypoint = [ (lib.getExe pkgs.thanos) ];
-  cmd = [ "--help" ];
-
+  cmd = [];
+  user = "1001:0";
   labels = {
     "org.opencontainers.image.title" = "thanos-nixchart";
-    "org.opencontainers.image.description" = "thanos-nixchart container image (nixpkgs.thanos)";
+    "org.opencontainers.image.description" = "Thanos tuned for the nix-containers charts/thanos chart";
     "org.opencontainers.image.version" = pkgs.thanos.version;
-    "io.nix-containers.source" = "nixpkgs";
+    "io.nix-containers.chart" = "thanos";
   };
 }
