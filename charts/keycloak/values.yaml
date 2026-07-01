@@ -37,7 +37,7 @@ usePasswordFiles: true
 image:
   registry: ghcr.io
   repository: nix-containers/keycloak-nixchart
-  tag: 26.3.3-debian-12-r0
+  tag: v26.6.3
   digest: ""
   pullPolicy: IfNotPresent
   pullSecrets: []
