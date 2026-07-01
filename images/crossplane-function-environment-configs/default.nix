@@ -16,7 +16,7 @@ let
       hash = "sha256-cIX9PQRzn8jhEv7gfpos9k4vEbvnbdSxPP8xwfFdpMk=";
     };
 
-    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    vendorHash = "sha256-u3XxEzwDAFJV2g/oAm+F8yR+0TeIWF3oR/DnYxhGNj0=";
 
     subPackages = [ "." ];
 

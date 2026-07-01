@@ -15,10 +15,10 @@ let
       owner = "kubernetes";
       repo = "kube-state-metrics";
       rev = "v${version}";
-      hash = "sha256-zBSyj+LIuOvPGqQ7S8k9XZGdHQ8Yb7g0KYXqN7XGo/c=";
+      hash = "sha256-w55FOWw9p7yV/bt4leZucOLqjVyHYFF+gVLWLGQKF9M=";
     };
 
-    vendorHash = "sha256-oH25MZIHKTGtR8zDmYfMCmqTdL3kCxJFdY/NMbDDSJY=";
+    vendorHash = "sha256-pcoqeYyOehFNkwD4fWqrk9725BJkv+8sKy1NLv+HJPE=";
 
     subPackages = [ "." ];
 
