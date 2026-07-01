@@ -4,13 +4,13 @@
 
 buildGoModule rec {
   pname = "csi-provisioner";
-  version = "6.1.0";
+  version = "6.3.0";
 
   src = fetchFromGitHub {
     owner = "kubernetes-csi";
     repo = "external-provisioner";
     rev = "v${version}";
-    hash = "sha256-cuLWhL/NteR2ESj8eWNwUVnJpq1Kx8hYkqac9313fKE=";
+    hash = "sha256-akUg/j82I0VhSNHQ2n/OChiHwUkPvhpva329zh1Gce8=";
   };
 
   vendorHash = null;
