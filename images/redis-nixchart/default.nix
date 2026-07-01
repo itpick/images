@@ -28,7 +28,9 @@ let
   entrypoint = pkgs.writeShellScript "redis-entrypoint" ''
     set -euo pipefail
 
-    export REDIS_DATA_DIR="''${REDIS_DATA_DIR:-/data}"
+    # Default REDIS_DATA_DIR to /tmp/redis-data — /data isn't writable at
+    # UID 1001 in this image. Chart overrides via env to its PVC mount.
+    export REDIS_DATA_DIR="''${REDIS_DATA_DIR:-/tmp/redis-data}"
     export REDIS_PORT="''${REDIS_PORT:-6379}"
 
     mkdir -p "$REDIS_DATA_DIR"
@@ -38,10 +40,14 @@ let
       --port "$REDIS_PORT"
     )
 
+    # Password default: allow empty when nothing is set. The chart's
+    # values.yaml always sets a password (or explicitly ALLOW_EMPTY=yes),
+    # so this default only matters for smoke tests / bare `docker run`.
+    # Explicit ALLOW_EMPTY_PASSWORD=no still errors out.
     if [ -n "''${REDIS_PASSWORD:-}" ]; then
       args+=(--requirepass "$REDIS_PASSWORD")
-    elif [ "''${ALLOW_EMPTY_PASSWORD:-no}" != "yes" ]; then
-      echo "redis-nixchart: REDIS_PASSWORD is required (or set ALLOW_EMPTY_PASSWORD=yes)" >&2
+    elif [ "''${ALLOW_EMPTY_PASSWORD:-}" = "no" ]; then
+      echo "redis-nixchart: REDIS_PASSWORD is required (ALLOW_EMPTY_PASSWORD=no set)" >&2
       exit 1
     fi
 
