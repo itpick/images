@@ -4,17 +4,17 @@
 # Crossplane provider/component
 
 let
-  version = "1.0.0";
+  version = "0.15.0";
   component = buildGoModule {
     pname = "crossplane-sql-fips";
     inherit version;
     src = fetchFromGitHub {
       owner = "crossplane-contrib";
-      repo = "provider-aws";
+      repo = "provider-sql";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-3u/5qzQsDCUsGG2BVavZABCJcc8pPpEuqHLZnWxekss=";
     };
-    vendorHash = null;
+    vendorHash = "sha256-L2nFm3RqlZBz1INcR7bJ+Q4cct5SM+mtSBsL7sovtdI=";
     subPackages = [ "cmd/provider" ];
     env.CGO_ENABLED = 1;
     env.GOEXPERIMENT = "boringcrypto";

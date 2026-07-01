@@ -4,17 +4,17 @@
 # Crossplane provider/component
 
 let
-  version = "1.0.0";
+  version = "2.21.1";
   component = buildGoModule {
     pname = "crossplane-keycloak-fips";
     inherit version;
     src = fetchFromGitHub {
       owner = "crossplane-contrib";
-      repo = "provider-aws";
+      repo = "provider-keycloak";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-3dR/P94XPLv9YaksqT3W63orOBSw3o5hbM2vMvXFhP0=";
     };
-    vendorHash = null;
+    vendorHash = "sha256-4VTsvmkdTJzeJQWNWfL3BbN+wl7zrH/i8dIeESFnRKQ=";
     subPackages = [ "cmd/provider" ];
     env.CGO_ENABLED = 1;
     env.GOEXPERIMENT = "boringcrypto";
