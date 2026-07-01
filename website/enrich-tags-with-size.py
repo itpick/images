@@ -222,12 +222,28 @@ def main(argv: list[str]) -> int:
     # 10-100 MB blobs serially before the global cache fills, so the
     # bottleneck is bandwidth not requests. Going higher hurts more than
     # it helps and risks tripping anonymous-pull throttles.
+    failures: list[str] = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:
-        for image, enriched, total in ex.map(enrich_one, files):
+        futs = {ex.submit(enrich_one, f): f for f in files}
+        for fut in concurrent.futures.as_completed(futs):
+            # A single image's manifest/blob fetch failing (transient registry
+            # error, throttle, a just-pushed tag) must not abort the whole site
+            # build — log it and move on. Size data is best-effort enrichment.
+            try:
+                image, enriched, total = fut.result()
+            except Exception as e:  # noqa: BLE001 - deliberately broad
+                failures.append(f"  {os.path.basename(futs[fut])}: {e}")
+                continue
             total_tags += total
             total_enriched += enriched
             if total and enriched < total:
                 misses.append(f"  {image}: {enriched}/{total} tags fully sized")
+    if failures:
+        print(f"{len(failures)} images could not be sized (skipped, non-fatal):")
+        for m in failures[:25]:
+            print(m)
+        if len(failures) > 25:
+            print(f"  ...and {len(failures) - 25} more.")
     print(
         f"Enriched {total_enriched}/{total_tags} tags across {len(files)} images. "
         f"Layer cache: {sum(1 for v in _layer_size_cache.values() if v is not None)} hits "
