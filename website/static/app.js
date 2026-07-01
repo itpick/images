@@ -73,6 +73,20 @@ function updateStats(data) {
   if (pkgInstEl && pkgInstances > 0) {
     pkgInstEl.textContent = `${pkgInstances.toLocaleString()} instances`;
   }
+
+  // Charts stat card. Async fetch of /charts.json — this file is only
+  // emitted when render.py runs with --charts-data (i.e. the charts/
+  // directory exists), so an absent JSON just means "no charts yet"
+  // and we leave the card at "–".
+  const chartsEl = document.getElementById('total-charts');
+  if (chartsEl) {
+    fetch(BASE + 'charts.json')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (d && d.totalCount) chartsEl.textContent = d.totalCount.toLocaleString();
+      })
+      .catch(() => {});
+  }
 }
 
 function humanBytes(n) {
