@@ -4,7 +4,7 @@
 # https://github.com/envoyproxy/gateway
 
 let
-  version = "1.8.1";
+  version = "1.8.2";
 
   drv = pkgs.stdenv.mkDerivation {
     pname = "envoy-gateway";
@@ -12,7 +12,7 @@ let
 
     src = pkgs.fetchurl {
       url = "https://github.com/envoyproxy/gateway/releases/download/v${version}/envoy-gateway_v${version}_linux_amd64.tar.gz";
-      hash = "sha256-kFE+3YwgbZ8Sia66tFDgddFNTOUVACWILm1wnUJVmLI=";
+      hash = "sha256-habJf24qUSopbq+5b60rj0p3dCtgKygqAQAGWIPX/IM=";
     };
 
     nativeBuildInputs = [ pkgs.autoPatchelfHook ];
