@@ -1,34 +1,54 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ nix2container, pkgs, lib, ... }:
 
 # envoy-nixchart
-# Container image
+# ==============
+# Envoy Proxy for consumption by the charts/envoy chart. Uses the
+# pre-built binary from tetratelabs/archive-envoy — same source as
+# images/envoy/ — since compiling from source via Bazel/C++ takes hours.
+#
+# Chart supplies envoy.yaml via ConfigMap.
 
 let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = "1.38.3";
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+  envoyBin = pkgs.fetchurl {
+    url = "https://github.com/tetratelabs/archive-envoy/releases/download/v${version}/envoy-v${version}-linux-amd64.tar.xz";
+    hash = "sha256-iS9N6UdbWqddx5W1W16s8fOSy0irlT1hq9UjGFQVgCk=";
+  };
 
-in nix2container.buildImage {
+  envoyInstall = pkgs.runCommand "envoy-nixchart-install" {
+    nativeBuildInputs = [ pkgs.xz ];
+  } ''
+    mkdir -p $out/bin
+    tar -xJf ${envoyBin} --strip-components=2 -C $out/bin
+    chmod +x $out/bin/envoy
+  '';
+
+in
+nix2container.buildImage {
   name = "envoy-nixchart";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "envoy-nixchart-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
+  tag = "v${version}";
+
+  copyToRoot = pkgs.buildEnv {
+    name = "envoy-nixchart-root";
+    paths = [ pkgs.bash pkgs.coreutils pkgs.cacert envoyInstall ];
+    pathsToLink = [ "/bin" "/etc" ];
+  };
+
+  config = {
+    Entrypoint = [ "/bin/envoy" ];
+    Cmd = [];
+    User = "1001:0";
+    Env = [
+      "PATH=/bin"
+      "SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt"
+    ];
+    Labels = {
       "org.opencontainers.image.title" = "envoy-nixchart";
-      "org.opencontainers.image.description" = "envoy-nixchart container image";
+      "org.opencontainers.image.description" = "Envoy proxy tuned for the nix-containers charts/envoy chart";
+      "org.opencontainers.image.version" = version;
+      "io.nix-containers.binary-download" = "true";
+      "io.nix-containers.chart" = "envoy";
     };
   };
 }
