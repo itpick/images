@@ -9,19 +9,27 @@
 { lib, fetchFromGitHub, buildGoModule, symlinkJoin }:
 
 let
-  version = "3.6.19";
+  version = "4.0.6";
 
   src = fetchFromGitHub {
     owner = "argoproj";
     repo = "argo-workflows";
     rev = "v${version}";
-    hash = "sha256-oNvQ8J+c6979mD7/IJAj57bghqJSFVJiRb7qx7v9UkU=";
+    hash = "sha256-3UTvyOI3T7BvQAPi1Zl+DhUw7Y+TiBVT50Y2CL5eEm0=";
   };
 
   commonAttrs = {
     inherit version src;
     env.CGO_ENABLED = 0;
     doCheck = false;
+    # v4 embeds the web UI (ui/embed.go: //go:embed dist/app); the UI is built
+    # separately and is absent from the source tarball. The CLI, controller and
+    # executor do not serve the UI, so a placeholder satisfies the embed without
+    # needing a JS/yarn build.
+    preBuild = ''
+      mkdir -p ui/dist/app
+      touch ui/dist/app/index.html
+    '';
     meta = with lib; {
       description = "Container native workflow engine for Kubernetes";
       homepage = "https://argoproj.github.io/argo-workflows/";
@@ -29,16 +37,18 @@ let
     };
   };
 
+  # v4 moved the version vars from /v3/pkg/version to the root /v4 package.
   ldflags = [
     "-s" "-w"
-    "-X github.com/argoproj/argo-workflows/v3/pkg/version.version=${version}"
-    "-X github.com/argoproj/argo-workflows/v3/pkg/version.buildDate=1970-01-01T00:00:00Z"
-    "-X github.com/argoproj/argo-workflows/v3/pkg/version.gitCommit=unknown"
-    "-X github.com/argoproj/argo-workflows/v3/pkg/version.gitTreeState=clean"
+    "-X github.com/argoproj/argo-workflows/v4.version=${version}"
+    "-X github.com/argoproj/argo-workflows/v4.buildDate=1970-01-01T00:00:00Z"
+    "-X github.com/argoproj/argo-workflows/v4.gitCommit=unknown"
+    "-X github.com/argoproj/argo-workflows/v4.gitTreeState=clean"
+    "-X github.com/argoproj/argo-workflows/v4.gitTag=v${version}"
   ];
 
   # All components share the same vendor hash since they use the same go.mod
-  vendorHash = "sha256-LxVCf3MdjZI8QM+p4RX7ujozqnLUELfJed0TS3cr/co=";
+  vendorHash = "sha256-G9/tUdx37sVXTXjmaZUXIXB+IYqk50OVG/vMHxVeMRU=";
 
   # CLI
   argo-cli = buildGoModule (commonAttrs // {
