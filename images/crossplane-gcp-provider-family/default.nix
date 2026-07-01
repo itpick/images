@@ -4,17 +4,17 @@
 # Crossplane provider/component
 
 let
-  version = "1.0.0";
+  version = "0.22.0";
   component = buildGoModule {
     pname = "crossplane-gcp-provider-family";
     inherit version;
     src = fetchFromGitHub {
       owner = "crossplane-contrib";
-      repo = "provider-aws";
+      repo = "provider-gcp";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-A4wrBy8zNtbKF6zFPoJHGHqPbPZSUVbWzX0TJvfVAuo=";
     };
-    vendorHash = null;
+    vendorHash = "sha256-WmxxE5BEkGTn5wayO7QsXd8OnHFFQ8SYJzUJ7wH9KOI=";
     subPackages = [ "cmd/provider" ];
     env.CGO_ENABLED = 0;
     ldflags = [ "-s" "-w" ];
