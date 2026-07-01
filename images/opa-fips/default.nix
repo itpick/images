@@ -32,7 +32,13 @@ in mkImage {
   name = "opa-fips";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/opa" ];
-  cmd = [ "--help" ];
+  # Was `--help` (a one-shot, so the kind-test pod CrashLoops). Run the policy
+  # engine's REST API: `run --server`. OPA needs no config file, datastore or
+  # writable dir to start (in-memory store; bundles load from read-only paths).
+  # IMPORTANT: in OPA v1 (this is v1.18.1) `--addr` defaults to LOCALHOST only,
+  # so the kind-test probe couldn't reach it — bind 0.0.0.0:8181 explicitly.
+  # Same tool as the sibling `opa` image, whose kind-test validates this cmd.
+  cmd = [ "run" "--server" "--addr" "0.0.0.0:8181" ];
   labels = {
     "org.opencontainers.image.title" = "opa-fips";
     "org.opencontainers.image.description" = "Open Policy Agent policy engine";
