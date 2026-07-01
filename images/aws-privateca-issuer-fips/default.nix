@@ -4,7 +4,7 @@
 # AWS Kubernetes component
 
 let
-  version = "1.8.0";
+  version = "1.9.0";
   aws-component = buildGoModule {
     pname = "aws-privateca-issuer-fips";
     inherit version;
@@ -13,10 +13,11 @@ let
       owner = "cert-manager";
       repo = "aws-privateca-issuer";
       rev = "v${version}";
-      hash = "sha256-sN8Jvm0ZduxVAua+ru1G3Ws6f0gG6+4MST/bMaJ5ltY=";
+      hash = "sha256-HZ5gcVIrKRGFzMSl81SKroIBhyozAF/lx+NVOKRKd/8=";
     };
 
-    vendorHash = null;
+    proxyVendor = true;
+    vendorHash = "sha256-psUI7Ciguk/V2Dg9caN7ozRJtQfbtH8Sz1REp1pwyC0=";
     subPackages = [ "." ];
     
     env.CGO_ENABLED = 1;
