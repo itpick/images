@@ -4,7 +4,7 @@ annotations:
     - name: git
       image: ghcr.io/nix-containers/git-nixchart:2.51.0-debian-12-r0
     - name: nginx
-      image: ghcr.io/nix-containers/nginx-nixchart:1.29.1-debian-12-r0
+      image: ghcr.io/nix-containers/nginx-nixchart:v1.30.3
     - name: nginx-exporter
       image: ghcr.io/nix-containers/nginx-prometheus-exporter-nixchart:1.4.2-debian-12-r9
   licenses: Apache-2.0

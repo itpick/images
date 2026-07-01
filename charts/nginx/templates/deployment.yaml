@@ -115,11 +115,8 @@ spec:
             - -ec
             - |
               #!/bin/bash
-              . /opt/nix-containers/scripts/libfs.sh
-              # We copy the logs folder because it has symlinks to stdout and stderr
-              if ! is_dir_empty /opt/nix-containers/nginx/logs; then
-                cp -r /opt/nix-containers/nginx/logs /emptydir/app-logs-dir
-              fi
+              # No-op: the nginx-nixchart image does not use log-symlink hacks.
+              true
           volumeMounts:
             - name: empty-dir
               mountPath: /emptydir
