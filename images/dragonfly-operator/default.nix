@@ -6,7 +6,7 @@
 #   dragonfly-operator (1.3.1-r1)
 
 let
-  version = "1.1.11";
+  version = "1.6.1";
   operator = buildGoModule {
     pname = "dragonfly-operator";
     inherit version;
@@ -15,10 +15,10 @@ let
       owner = "dragonflydb";
       repo = "dragonfly-operator";
       rev = "v${version}";
-      hash = "sha256-7VpYKg/VsMDhLzHTW93+02MzgTZHRHZwL3uHZnQPOS0=";
+      hash = "sha256-Eb3ooF64SUkjwIdD/fd8EtnANz8KIg+JKuLItKgLvdk=";
     };
 
-    vendorHash = "sha256-C4CkrpLK6yMLhOx3vJKFUhOtF0Ht68I8DqCRJm1vbVA=";
+    vendorHash = "sha256-aHF2pqni4Voj7NEfPFiUTigpuTZJ4BpSGyx7e9DxxrA=";
 
     env.CGO_ENABLED = 0;
 
