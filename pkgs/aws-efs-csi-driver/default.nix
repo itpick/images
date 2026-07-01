@@ -4,18 +4,18 @@
 
 buildGoModule rec {
   pname = "aws-efs-csi-driver";
-  version = "2.2.0";
+  version = "3.3.0";
 
   src = fetchFromGitHub {
     owner = "kubernetes-sigs";
     repo = "aws-efs-csi-driver";
     rev = "v${version}";
-    hash = "sha256-xshuhWeOI4G+sIEppNuq+GLYiwh/RDK0XG7lyvQVgVA=";
+    hash = "sha256-tcq8l/WDjo0PGjyN2JcDCMOoVEKx2hW7lMqmaVpB8i0=";
   };
 
   vendorHash = null;
 
-  subPackages = [ "cmd/main" ];
+  subPackages = [ "cmd" ];
 
   env.CGO_ENABLED = 0;
 
@@ -25,7 +25,7 @@ buildGoModule rec {
   ];
 
   postInstall = ''
-    mv $out/bin/main $out/bin/aws-efs-csi-driver
+    mv $out/bin/cmd $out/bin/aws-efs-csi-driver
   '';
 
   doCheck = false;
