@@ -58,7 +58,17 @@ mkImage {
   name = "postgres-exporter";
   tag = pkgs.prometheus-postgres-exporter.version;
   entrypoint = [ "${pkgs.prometheus-postgres-exporter}/bin/postgres_exporter" ];
-  cmd = [ "--help" ];
+  # Was `--help` (a one-shot, so the kind-test pod CrashLoops). Run the exporter:
+  # it requires a DATA_SOURCE_NAME (else it exits), so provide a placeholder
+  # local DSN — the exporter starts, serves metrics on :9187 (its default
+  # --web.listen-address binds all interfaces), and stays up even though that
+  # Postgres isn't reachable (it just logs scrape errors). Operators override
+  # DATA_SOURCE_NAME with their real connection string.
+  cmd = [];
+
+  env = {
+    DATA_SOURCE_NAME = "postgresql://postgres@localhost:5432/postgres?sslmode=disable";
+  };
 
   labels = {
     "org.opencontainers.image.title" = "PostgreSQL Exporter";
