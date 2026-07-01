@@ -4,7 +4,7 @@
 # Flux GitOps component
 
 let
-  version = "0.32.0";
+  version = "1.2.1";
   flux-component = buildGoModule {
     pname = "flux-image-reflector-controller";
     inherit version;
@@ -13,10 +13,10 @@ let
       owner = "fluxcd";
       repo = "image-reflector-controller";
       rev = "v${version}";
-      hash = "sha256-D4hKUTUwS1Vk6XZM150HiAMZp5veJzNYkyJC/c4bK/U=";
+      hash = "sha256-Qq3oaLSk7hg1/zeIBavSfRofgvo5EI8hYz4fHtzPX4w=";
     };
 
-    vendorHash = "sha256-S0pRkjS8oBKBDFUNu8EY9+tWhTnmpKDBduCl5+PaNbI=";
+    vendorHash = "sha256-E0rE8PU3RoSpwDM6oL2aNn89I/6fWobT+PRgKSfRPMg=";
     subPackages = [ "." ];
     
     env.CGO_ENABLED = 0;
