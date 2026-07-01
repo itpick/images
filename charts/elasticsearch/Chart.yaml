@@ -2,7 +2,7 @@
 annotations:
   images: |
     - name: elasticsearch
-      image: ghcr.io/nix-containers/elasticsearch-nixchart:9.1.2-debian-12-r0
+      image: ghcr.io/nix-containers/elasticsearch-nixchart:v7.17.27
     - name: elasticsearch-exporter
       image: ghcr.io/nix-containers/prometheus-elasticsearch-exporter-nixchart:1.9.0-debian-12-r16
     - name: os-shell

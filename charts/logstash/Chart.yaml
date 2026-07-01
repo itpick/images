@@ -2,7 +2,7 @@
 annotations:
   images: |
     - name: logstash
-      image: ghcr.io/nix-containers/logstash-nixchart:9.1.2-debian-12-r0
+      image: ghcr.io/nix-containers/logstash-nixchart:v7.17.27
     - name: os-shell
       image: ghcr.io/nix-containers/os-shell-nixchart:12-debian-12-r50
   licenses: Apache-2.0

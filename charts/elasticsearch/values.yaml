@@ -61,7 +61,7 @@ useIstioLabels: true
 image:
   registry: ghcr.io
   repository: nix-containers/elasticsearch-nixchart
-  tag: 9.1.2-debian-12-r0
+  tag: v7.17.27
   digest: ""
   pullPolicy: IfNotPresent
   pullSecrets: []

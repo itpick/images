@@ -1,34 +1,45 @@
-{ nix2container, lib, buildEnv, pkgs, base, nonRoot, ... }:
+{ mkImage, pkgs, lib, ... }:
 
 # logstash-nixchart
-# Container image
+# =================
+# Logstash for consumption by the charts/logstash chart.
+#
+# Runs logstash with the chart-mounted config directory.
+# Chart mounts pipeline configs at /nix-containers/logstash/config.
 
 let
-  imagePkgs = with pkgs; [
-    bash
-    coreutils
-    cacert
-    tzdata
-  ];
+  version = pkgs.logstash.version;
+  entrypoint = pkgs.writeShellScript "logstash-entrypoint" ''
+    set -euo pipefail
 
-  userEnv = nonRoot.mkDefaultUserEnv pkgs [];
+    args=()
+    [ -n "''${LOGSTASH_CONF_FILENAME:-}" ] && args+=(-f "''${LOGSTASH_CONF_FILENAME}")
+    [ -n "''${LOGSTASH_DATA_DIR:-}" ]      && args+=(--path.data "''${LOGSTASH_DATA_DIR}")
+    [ -n "''${LOGSTASH_API_PORT_NUMBER:-}" ] && args+=(--api.http.port "''${LOGSTASH_API_PORT_NUMBER}")
 
-in nix2container.buildImage {
+    if [ "''${LOGSTASH_EXPOSE_API:-no}" = "yes" ]; then
+      args+=(--api.http.host "0.0.0.0")
+    fi
+
+    exec ${pkgs.logstash}/bin/logstash "''${args[@]}" "$@"
+  '';
+in
+mkImage {
+  drv = pkgs.buildEnv {
+    name = "logstash-nixchart-env";
+    paths = with pkgs; [ logstash bash coreutils cacert tzdata ];
+  };
+
   name = "logstash-nixchart";
-  tag = "latest";
-  copyToRoot = [
-    (buildEnv {
-      name = "logstash-nixchart-root";
-      paths = base.basePackages ++ imagePkgs ++ [ userEnv ];
-    })
-  ];
-  config = nonRoot.defaultConfig // {
-    Env = base.defaultEnv ++ nonRoot.userEnv;
-    Labels = base.defaultLabels // {
-      "io.nix-containers.build-type" = "source";
-      "io.nix-containers.build-method" = "Built from source using Nix";
-      "org.opencontainers.image.title" = "logstash-nixchart";
-      "org.opencontainers.image.description" = "logstash-nixchart container image";
-    };
+  tag = "v${version}";
+  entrypoint = [ "${entrypoint}" ];
+  cmd = [];
+  user = "1001:0";
+
+  labels = {
+    "org.opencontainers.image.title" = "logstash-nixchart";
+    "org.opencontainers.image.description" = "Logstash image tuned for the nix-containers charts/logstash chart";
+    "org.opencontainers.image.version" = version;
+    "io.nix-containers.chart" = "logstash";
   };
 }
