@@ -34,12 +34,33 @@ jobs:
         id: current-versions
         run: |
           . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-          
+
           echo "📋 Getting current package versions..."
-          
-          # Use the built-in version checker and clean the output
-          nix --extra-experimental-features "nix-command flakes" run .#check-versions | sed 's/🔍 Checking package versions...//' | jq . > current-versions.json
-          
+
+          # check-versions emits a human-readable listing:
+          #   Package versions:
+          #     actionlint: 1.7.12
+          #     act: 0.2.89
+          # It used to emit JSON (with a "🔍 Checking..." header stripped
+          # via sed), but was refactored to plain-text without updating
+          # this workflow — jq . on the plain-text form silently worked
+          # under the old curl-install fallback (NIX_INSTALLED=false ⇒
+          # step no-op'd on install failure) and now fails hard under
+          # cachix/install-nix-action.
+          #
+          # Rebuild the JSON here from the plain-text output.
+          nix --extra-experimental-features "nix-command flakes" run .#check-versions \
+            | grep -E '^  [A-Za-z0-9._-]+: ' \
+            | sed 's/^  //' \
+            | jq -R -s '
+                split("\n")
+                | map(select(length > 0))
+                | map(split(": "))
+                | map(select(length == 2))
+                | map({ (.[0]): .[1] })
+                | add // {}
+              ' > current-versions.json
+
           echo "📋 Current versions:"
           cat current-versions.json
 
