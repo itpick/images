@@ -31,7 +31,13 @@ in mkImage {
   name = "apache-exporter";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/apache_exporter" ];
-  cmd = [ "--help" ];
+  # Was `--help` (a one-shot, so the kind-test pod CrashLoops). Run the exporter
+  # with its defaults: apache_exporter is pull-based, so it starts and serves
+  # metrics on its default --web.listen-address :9117 (all interfaces) regardless
+  # of whether the scraped Apache (default --scrape_uri
+  # http://localhost/server-status/?auto) is reachable — it only scrapes on each
+  # /metrics request. Operators set --scrape_uri to their Apache server-status.
+  cmd = [];
   labels = {
     "org.opencontainers.image.title" = "apache-exporter";
     "org.opencontainers.image.description" = "Prometheus exporter for Apache HTTP Server metrics";
