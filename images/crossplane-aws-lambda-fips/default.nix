@@ -4,7 +4,7 @@
 # Crossplane provider/component
 
 let
-  version = "1.0.0";
+  version = "0.58.0";
   component = buildGoModule {
     pname = "crossplane-aws-lambda-fips";
     inherit version;
@@ -12,9 +12,9 @@ let
       owner = "crossplane-contrib";
       repo = "provider-aws";
       rev = "v${version}";
-      hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      hash = "sha256-z1ZqesqvW6VLgnxfqnlccJ0HqNqA3zd0vGvnxtUgkPI=";
     };
-    vendorHash = null;
+    vendorHash = "sha256-dNA0DOQjL9tp/RSgo2wmFghxjDMybeMLtglJTLYyM8A=";
     subPackages = [ "cmd/provider" ];
     env.CGO_ENABLED = 1;
     env.GOEXPERIMENT = "boringcrypto";
