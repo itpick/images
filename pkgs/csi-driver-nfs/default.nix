@@ -4,13 +4,13 @@
 
 buildGoModule rec {
   pname = "csi-driver-nfs";
-  version = "4.12.1";
+  version = "4.13.4";
 
   src = fetchFromGitHub {
     owner = "kubernetes-csi";
     repo = "csi-driver-nfs";
     rev = "v${version}";
-    hash = "sha256-pVxCeHOKbOGw8nXzjcaLOy7SgnTNLj3tU1YLPIM9XA4=";
+    hash = "sha256-2TQ97Z6ft5gzpNdIjad/7SuNC/GzRePuq56Js6mFcKo=";
   };
 
   vendorHash = null;
