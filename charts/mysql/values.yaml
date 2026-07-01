@@ -34,7 +34,7 @@ diagnosticMode:
 image:
   registry: ghcr.io
   repository: nix-containers/mysql-nixchart
-  tag: 9.4.0-debian-12-r1
+  tag: v11.4.12
   digest: ""
   pullPolicy: IfNotPresent
   pullSecrets: []
