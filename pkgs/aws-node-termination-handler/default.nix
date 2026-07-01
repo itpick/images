@@ -4,18 +4,18 @@
 
 buildGoModule rec {
   pname = "aws-node-termination-handler";
-  version = "1.25.3";
+  version = "1.25.6";
 
   src = fetchFromGitHub {
     owner = "aws";
     repo = "aws-node-termination-handler";
     rev = "v${version}";
-    hash = "sha256-oOkWynLQFUwdb6/fPC4d1zPQSwPuu4DN+YoqU6kD9PQ=";
+    hash = "sha256-QKLxJ5gt6yStMsw6tr+MrGNZX014PGCDPSQ7wgAwFEw=";
   };
 
-  vendorHash = "sha256-4qlqqdj9OdTA6Afeaf5TcQH9zuzX4L5tnG/4p6iDDlo=";
+  vendorHash = "sha256-PR0HZtsTlDYUtp0BsJrwmQ0U0gc6YT6ZtepL4G0DQ9M=";
 
-  subPackages = [ "cmd/node-termination-handler" ];
+  subPackages = [ "cmd" ];
 
   env.CGO_ENABLED = 0;
 
@@ -25,7 +25,7 @@ buildGoModule rec {
   ];
 
   postInstall = ''
-    mv $out/bin/node-termination-handler $out/bin/aws-node-termination-handler
+    mv $out/bin/cmd $out/bin/aws-node-termination-handler
   '';
 
   doCheck = false;

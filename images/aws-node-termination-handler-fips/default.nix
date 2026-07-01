@@ -4,7 +4,7 @@
 # AWS component
 
 let
-  version = "1.25.3";
+  version = "1.25.6";
   component = buildGoModule {
     pname = "aws-node-termination-handler-fips";
     inherit version;
@@ -12,10 +12,14 @@ let
       owner = "aws";
       repo = "aws-node-termination-handler";
       rev = "v${version}";
-      hash = "sha256-oOkWynLQFUwdb6/fPC4d1zPQSwPuu4DN+YoqU6kD9PQ=";
+      hash = "sha256-QKLxJ5gt6yStMsw6tr+MrGNZX014PGCDPSQ7wgAwFEw=";
     };
-    vendorHash = null;
-    subPackages = [ "." ];
+    proxyVendor = true;
+    vendorHash = "sha256-F9kG+1U36epTwnvEmi1ULP4XbMGkOkBl7PqKgwJCr7I=";
+    subPackages = [ "cmd" ];
+    postInstall = ''
+      mv $out/bin/cmd $out/bin/aws-node-termination-handler
+    '';
     env.CGO_ENABLED = 1;
     env.GOEXPERIMENT = "boringcrypto";
     ldflags = [ "-s" "-w" ];
