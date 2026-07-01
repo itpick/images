@@ -6,7 +6,7 @@
 #   spegel (0.5.1-r2)
 
 let
-  version = "0.0.27";
+  version = "0.7.2";
   spegel = buildGoModule {
     pname = "spegel";
     inherit version;
@@ -15,11 +15,16 @@ let
       owner = "spegel-org";
       repo = "spegel";
       rev = "v${version}";
-      hash = "sha256-tQqsDgaguLAqMYJQ0+bcnJP/2BRNLcsKJLE+j3P5g3Q=";
+      hash = "sha256-6U1DF6gy0L0m8tBcWQGPbIAEkiSSWBagYHgjPWfh9XQ=";
     };
 
     proxyVendor = true;
-    vendorHash = "sha256-FX+nwKeEP1Q7+iVJ5QOpG0AcKvQpdRS3uj3DdKXSc+A=";
+    vendorHash = "sha256-Brc5jR/2VYe07zmC/WUKBdtgz1AICvt7ORiCUN3Pfjg=";
+
+    # 0.7.x moved test/integration/containerd out of the main go.mod tree —
+    # restrict subPackages to the top-level binary so buildGoModule doesn't
+    # try to walk into it.
+    subPackages = [ "." ];
 
     env.CGO_ENABLED = 0;
 
