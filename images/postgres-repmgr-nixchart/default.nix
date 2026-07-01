@@ -3,18 +3,18 @@
 # postgres-repmgr-nixchart
 # ========================
 # PostgreSQL + EnterpriseDB/repmgr — the replication manager used by
-# charts/postgresql-ha for automatic failover. repmgr is a Postgres
-# extension (installed as .so under pkg_libdir plus a `repmgr` CLI).
+# charts/postgresql-ha for automatic failover. repmgr ships as a
+# Postgres extension (.so under pkg_libdir) plus a `repmgr` CLI and
+# `repmgrd` daemon.
 #
 # Not in nixpkgs, so we build it here as a PGXS extension against
-# pkgs.postgresql.
+# pkgs.postgresql (see the `repmgr` derivation below).
 
 let
   postgres = pkgs.postgresql;
 
-  # nixpkgs' postgresql is built with clang, and PGXS bakes the same
-  # compiler into the extension build recipes. Use clangStdenv so
-  # `clang` is on PATH during `make`.
+  # nixpkgs' postgres is built with clang and PGXS bakes the same
+  # compiler into extension recipes; use clangStdenv so clang is on PATH.
   repmgr = pkgs.clangStdenv.mkDerivation rec {
     pname = "repmgr";
     version = "5.5.0";
@@ -40,14 +40,13 @@ let
       pkgs.libkrb5
     ];
 
-    # PGXS wants pg_config on PATH; nativeBuildInputs already puts it there.
     makeFlags = [ "USE_PGXS=1" ];
 
     installPhase = ''
       runHook preInstall
-      # DESTDIR redirects install paths under $out; the pg install layout
-      # ends up mirrored under $out/${postgres} — flatten to $out root.
       make USE_PGXS=1 DESTDIR=$out install
+      # PGXS mirrors the install layout under $out/${postgres}/…; flatten
+      # so bin/lib/share land at the store root.
       if [ -d "$out/${postgres}" ]; then
         cp -r $out/${postgres}/. $out/
         rm -rf $out/nix
@@ -62,13 +61,69 @@ let
     };
   };
 
+  # Entrypoint dispatches on the first arg. `postgres` gets full first-run
+  # initdb + start (mirrors postgres-nixchart's behavior) so kubectl smoke
+  # tests and `docker run` come up green. `repmgr` / `repmgrd` (used by
+  # the chart's ha-cluster StatefulSet) exec through untouched.
   entrypoint = pkgs.writeShellScript "postgres-repmgr-entrypoint" ''
-    set -e
-    # The chart's stateful set runs `repmgr` for cluster registration
-    # and starts postgres separately. Default cmd is `postgres` so the
-    # container behaves like a stock postgres image; chart pods override
-    # to `repmgr <subcommand>` where needed.
+    set -euo pipefail
+
+    if [ "''${1:-}" = "postgres" ]; then
+      shift
+      # Default PGDATA lives under /tmp so a bare `docker run` / kind smoke
+      # test can initdb without a mounted PV. The chart overrides PGDATA
+      # to its PVC mount path.
+      export PGDATA="''${PGDATA:-/tmp/pgdata}"
+      export POSTGRES_USER="''${POSTGRES_USER:-postgres}"
+      export POSTGRES_DB="''${POSTGRES_DB:-$POSTGRES_USER}"
+      mkdir -p "$PGDATA"
+
+      if [ -z "$(ls -A "$PGDATA" 2>/dev/null)" ]; then
+        # First-run: default to trust auth so smoke tests work without a
+        # password. The chart overrides via POSTGRES_HOST_AUTH_METHOD=md5
+        # + a POSTGRES_PASSWORD secret when it wants real auth.
+        AUTH_METHOD="''${POSTGRES_HOST_AUTH_METHOD:-trust}"
+        if [ -n "''${POSTGRES_PASSWORD:-}" ]; then
+          ${postgres}/bin/initdb \
+            --username="$POSTGRES_USER" \
+            --auth="$AUTH_METHOD" \
+            --pwfile=<(printf '%s' "$POSTGRES_PASSWORD") \
+            --pgdata="$PGDATA"
+        else
+          ${postgres}/bin/initdb \
+            --username="$POSTGRES_USER" \
+            --auth="$AUTH_METHOD" \
+            --pgdata="$PGDATA"
+        fi
+      fi
+
+      # unix_socket_directories under /tmp; the default /run/postgresql
+      # isn't writable in this image (no /run tmpfs mounted). Chart pods
+      # can override via POSTGRES_UNIX_SOCKET_DIR or extra `-c` args.
+      exec ${postgres}/bin/postgres \
+        -D "$PGDATA" \
+        -c listen_addresses='*' \
+        -c unix_socket_directories="''${POSTGRES_UNIX_SOCKET_DIR:-/tmp}" \
+        "$@"
+    fi
+
+    # Non-postgres cmd (repmgr, repmgrd, psql, sh, etc.) — exec through.
     exec "$@"
+  '';
+
+  # initdb refuses to run when getpwuid() has no entry for the effective
+  # UID. Ship a minimal /etc/passwd + /etc/group so postgres:1001 resolves.
+  # (The chart's k8s pod securityContext usually solves this via fsGroup,
+  # but standalone `docker run` and kind smoke tests don't get that.)
+  passwdEntry = pkgs.runCommand "postgres-repmgr-passwd" {} ''
+    mkdir -p $out/etc
+    cat > $out/etc/passwd <<'EOF'
+    root:x:0:0:root:/root:/bin/bash
+    postgres:x:1001:0:postgres:/var/lib/postgresql:/bin/bash
+    EOF
+    cat > $out/etc/group <<'EOF'
+    root:x:0:
+    EOF
   '';
 
 in
@@ -78,6 +133,7 @@ mkImage {
     paths = [
       postgres
       repmgr
+      passwdEntry
       pkgs.bash
       pkgs.coreutils
       pkgs.cacert
@@ -86,7 +142,7 @@ mkImage {
       pkgs.gnused
       pkgs.gnugrep
     ];
-    # postgres + repmgr both ship `pg_config` / share/ — allow overlap.
+    # postgres + repmgr both ship files under share/; allow overlap.
     ignoreCollisions = true;
   };
   name = "postgres-repmgr-nixchart";
