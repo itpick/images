@@ -42,7 +42,12 @@ in mkImage {
   name = "apache-tika";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/tika-server" ];
-  cmd = [ "--help" ];
+  # Was `--help` (a one-shot, so the kind-test pod CrashLoops). Run the Tika
+  # server: `--host *` binds all interfaces (Tika's own syntax for 0.0.0.0 — a
+  # bare 0.0.0.0 is treated as a literal hostname), `--port 9998` is the default
+  # REST port. Default (forked) mode, matching upstream's official container;
+  # mkImage provides the writable /tmp the forked worker needs.
+  cmd = [ "--host" "*" "--port" "9998" ];
 
   labels = {
     "org.opencontainers.image.title" = "apache-tika";
