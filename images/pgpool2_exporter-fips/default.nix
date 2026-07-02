@@ -1,48 +1,41 @@
 { mkImage, pkgs, lib, ... }:
 
-# pgpool2_exporter-fips - Prometheus exporter for Pgpool-II (upstream binary)
+# pgpool2_exporter-fips - Prometheus exporter for Pgpool-II (variant)
 # https://github.com/pgpool/pgpool2_exporter
+# Note: no FIPS claim; naming variant of pgpool2_exporter.
+#
+# Built from source with nixpkgs' current Go — see pgpool2_exporter/default.nix.
 
 let
   version = "1.2.2";
 
-  drv = pkgs.stdenv.mkDerivation {
-    pname = "pgpool2_exporter";
+  drv = pkgs.buildGoModule {
+    pname = "pgpool2_exporter-fips";
     inherit version;
 
-    src = pkgs.fetchurl {
-      url = "https://github.com/pgpool/pgpool2_exporter/releases/download/v${version}/pgpool2_exporter-${version}.linux-amd64.tar.gz";
-      hash = "sha256:0k40irayj9fnnb95ldckpppn727wr3s9xgrv48nssys8cq0xqxbq";
+    src = pkgs.fetchFromGitHub {
+      owner = "pgpool";
+      repo = "pgpool2_exporter";
+      rev = "v${version}";
+      hash = "sha256-0W6v51+r+CbLfuPZxRAeT8/WELASJ6ueRxvUcZuM5Sc=";
     };
 
-    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
-    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+    vendorHash = "sha256-66ygOVY8cOPzuj2sFGSkiecEB1n7fZgT0GnLg086bq4=";
 
-    sourceRoot = "pgpool2_exporter-${version}.linux-amd64";
-
-    installPhase = ''
-      runHook preInstall
-      install -Dm755 pgpool2_exporter $out/bin/pgpool2_exporter
-      runHook postInstall
-    '';
-
-    meta = with lib; {
-      description = "Prometheus exporter for Pgpool-II";
-      homepage = "https://github.com/pgpool/pgpool2_exporter";
-      license = licenses.asl20;
-      platforms = [ "x86_64-linux" ];
-    };
+    ldflags = [ "-s" "-w" ];
+    env.CGO_ENABLED = 0;
+    doCheck = false;
   };
 in mkImage {
   inherit drv;
   name = "pgpool2_exporter-fips";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/pgpool2_exporter" ];
-  cmd = [ "--help" ];
+  cmd = [];
   labels = {
     "org.opencontainers.image.title" = "pgpool2_exporter-fips";
     "org.opencontainers.image.description" = "Prometheus exporter for Pgpool-II";
     "org.opencontainers.image.version" = version;
-    "io.nix-containers.source" = "upstream-binary";
+    "io.nix-containers.source" = "source-build";
   };
 }
