@@ -1,38 +1,30 @@
 { mkImage, pkgs, lib, ... }:
 
 # monstache - sync daemon from MongoDB to Elasticsearch
-# https://github.com/rwynn/monstache  (prebuilt Linux x86_64 release binary)
+# https://github.com/rwynn/monstache
+#
+# v6.8.0 prebuilt is Go-stdlib stale (2 crit CVEs). Rebuild from source
+# at same tag with nixpkgs' Go.
 
 let
   version = "6.8.0";
 
-  drv = pkgs.stdenv.mkDerivation {
+  drv = pkgs.buildGoModule {
     pname = "monstache";
     inherit version;
 
-    src = pkgs.fetchurl {
-      url = "https://github.com/rwynn/monstache/releases/download/v${version}/monstache_v${version}_linux_x86_64.tar.gz";
-      hash = "sha256-zGcm3HcQgCGWJyYfSi3IDp+Zv9divaXR5wMcFO2zqBQ=";
+    src = pkgs.fetchFromGitHub {
+      owner = "rwynn";
+      repo = "monstache";
+      rev = "v${version}";
+      hash = "sha256-unjrm9cnuxSBXeuACLghosN9zfnTX8dtyT5kl1b1sUg=";
     };
 
-    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    vendorHash = "sha256-sJvTOEjqKTVfcwWER30B9T5IwZAGAybRRIYQTF/UDsk=";
 
-    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
-
-    sourceRoot = ".";
-
-    installPhase = ''
-      runHook preInstall
-      install -Dm755 monstache $out/bin/monstache
-      runHook postInstall
-    '';
-
-    meta = with lib; {
-      description = "Sync daemon that keeps Elasticsearch/OpenSearch in sync with MongoDB";
-      homepage = "https://github.com/rwynn/monstache";
-      license = licenses.mit;
-      platforms = [ "x86_64-linux" ];
-    };
+    ldflags = [ "-s" "-w" ];
+    env.CGO_ENABLED = 0;
+    doCheck = false;
   };
 
 in mkImage {
@@ -40,12 +32,12 @@ in mkImage {
   name = "monstache";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/monstache" ];
-  cmd = [ "--help" ];
+  cmd = [];
 
   labels = {
     "org.opencontainers.image.title" = "monstache";
     "org.opencontainers.image.description" = "Sync daemon from MongoDB to Elasticsearch";
     "org.opencontainers.image.version" = version;
-    "io.nix-containers.source" = "upstream-binary";
+    "io.nix-containers.source" = "source-build";
   };
 }
