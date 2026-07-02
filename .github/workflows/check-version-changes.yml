@@ -114,7 +114,13 @@ jobs:
             
             if [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ]; then
               echo "  ✅ Version changed, will rebuild"
-              CHANGED_IMAGES=$(echo "$CHANGED_IMAGES" | jq ". + [{\"name\": \"$IMAGE\"}]")
+              # jq -c so the accumulator stays on a single line — GHA's
+              # $GITHUB_OUTPUT rejects multi-line values without a
+              # heredoc delimiter (errors "Invalid format '  {'"). Once
+              # jq pretty-prints across newlines, the final `echo
+              # changed-images=$CHANGED_IMAGES >> $GITHUB_OUTPUT`
+              # fails the whole step.
+              CHANGED_IMAGES=$(echo "$CHANGED_IMAGES" | jq -c ". + [{\"name\": \"$IMAGE\"}]")
               CHANGES_DETECTED=true
             else
               echo "  ⏭️  No change, skipping"
