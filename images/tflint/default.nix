@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.tflint;
   name = "tflint";
-  tag = "latest";
+  tag = "v${pkgs.tflint.version}";
   
   entrypoint = [ "tflint" ];
   cmd = [ "--help" ];

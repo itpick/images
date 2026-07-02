@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.steampipe;
   name = "steampipe";
-  tag = "latest";
+  tag = "v${pkgs.steampipe.version}";
   
   entrypoint = [ "steampipe" ];
   cmd = [ "--help" ];

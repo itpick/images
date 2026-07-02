@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.wasmtime;
   name = "wasmtime";
-  tag = "latest";
+  tag = "v${pkgs.wasmtime.version}";
   
   entrypoint = [ "wasmtime" ];
   cmd = [ "--help" ];
