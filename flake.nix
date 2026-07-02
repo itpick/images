@@ -53,48 +53,6 @@
       in
         refPkgs.lib.lists.unique imageNamesList;
 
-      # Import user's image selection config
-      imageBuildConfig = import ./images-to-build.nix;
-
-      # Helper function to check if a string matches a glob pattern
-      matchesPattern = pattern: name:
-        let
-          # Simple glob matching: * at start, end, or both
-          hasStartWildcard = refPkgs.lib.hasPrefix "*" pattern;
-          hasEndWildcard = refPkgs.lib.hasSuffix "*" pattern;
-          stripped = refPkgs.lib.removePrefix "*" (refPkgs.lib.removeSuffix "*" pattern);
-        in
-          if pattern == name then true
-          else if hasStartWildcard && hasEndWildcard then
-            refPkgs.lib.hasInfix stripped name
-          else if hasStartWildcard then
-            refPkgs.lib.hasSuffix stripped name
-          else if hasEndWildcard then
-            refPkgs.lib.hasPrefix stripped name
-          else
-            pattern == name;
-
-      # Expand categories and patterns to image names
-      expandImageSpec = spec:
-        if refPkgs.lib.hasPrefix "@" spec then
-          # Category reference
-          let categoryName = refPkgs.lib.removePrefix "@" spec;
-          in imageCategories.${categoryName} or []
-        else if refPkgs.lib.hasInfix "*" spec then
-          # Glob pattern
-          builtins.filter (matchesPattern spec) discoveredImages
-        else
-          # Exact name
-          if builtins.elem spec discoveredImages then [ spec ] else [];
-
-      # Get selected images from config
-      selectedImages =
-        let
-          expanded = refPkgs.lib.flatten (map expandImageSpec imageBuildConfig.images);
-          excluded = refPkgs.lib.flatten (map expandImageSpec (imageBuildConfig.exclude or []));
-        in
-          refPkgs.lib.filter (img: !(builtins.elem img excluded)) expanded;
-
       # Generate packages for a specific system
       mkPackages = system:
         let
@@ -345,12 +303,6 @@
             paths = builtins.attrValues images;
           };
 
-          # Build selected images from images-to-build.nix
-          selected-images = pkgs.symlinkJoin {
-            name = "selected-images";
-            paths = map (name: images.${name}) (builtins.filter (n: images ? ${n}) selectedImages);
-          };
-
           # Category-based image builds
           infrastructure-images = pkgs.symlinkJoin {
             name = "infrastructure-images";
@@ -494,14 +446,6 @@
             echo "Total images: $IMAGES_BUILT"
           '';
 
-          # List selected images script
-          list-selected = pkgs.writeShellScriptBin "list-selected" ''
-            echo "Selected images from images-to-build.nix:"
-            ${pkgs.lib.concatStringsSep "\n" (map (name: ''echo "  - ${name}"'') selectedImages)}
-            echo ""
-            echo "Total: ${toString (builtins.length selectedImages)} images"
-          '';
-
           # Load all images at once
           load-all-to-docker = pkgs.stdenv.mkDerivation {
             name = "load-all-to-docker";
@@ -562,7 +506,7 @@
           };
 
         } // (import ./lib/pipelines.nix {
-          inherit pkgs imageNames selectedImages imageCategories getPackageVersion discoveredImages;
+          inherit pkgs imageNames imageCategories getPackageVersion discoveredImages;
         }) // (import ./lib/chart-tools.nix {
           inherit pkgs;
           chartDefs = chartDefs;
@@ -577,7 +521,6 @@
             buildInputs = with pkgs; [
               nix
               docker
-              act
               jq
               git
               gh
@@ -592,8 +535,6 @@
               echo "  nix run .#pipeline-build       [target]  - Build images"
               echo "  nix run .#pipeline-test        [target]  - Test images"
               echo "  nix run .#pipeline-push        [target]  - Push to registry"
-              echo "  nix run .#pipeline-check-versions       - Check for version changes"
-              echo "  nix run .#pipeline-save-versions        - Save current versions"
               echo ""
               echo "  Targets: all, selected, <category>, or <image-name>"
               echo "  Environment: SKIP_TEST=true SKIP_PUSH=true PARALLEL=4"
@@ -601,13 +542,11 @@
               echo "Direct build commands:"
               echo "  nix build .#<image-name>           - Build single image"
               echo "  nix build .#all-images             - Build ALL images"
-              echo "  nix build .#selected-images        - Build images from images-to-build.nix"
               echo "  nix build .#<category>-images      - Build by category"
               echo ""
               echo "Categories: infrastructure, database, web, runtime, cli, devops, nix, build"
               echo ""
               echo "Available images: ${toString (builtins.length discoveredImages)}"
-              echo "Selected images: ${toString (builtins.length selectedImages)}"
             '';
           };
 
@@ -642,7 +581,7 @@
           };
 
           pipelines = import ./lib/pipelines.nix {
-            inherit pkgs imageNames selectedImages imageCategories getPackageVersion discoveredImages;
+            inherit pkgs imageNames imageCategories getPackageVersion discoveredImages;
           };
 
           chartTools = import ./lib/chart-tools.nix {
@@ -668,9 +607,6 @@
 
       # Export discovered images for external use
       inherit discoveredImages;
-
-      # Export selected images (from images-to-build.nix)
-      inherit selectedImages;
 
       # Export image categories
       inherit imageCategories;

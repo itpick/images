@@ -205,10 +205,6 @@ make list-images              # List available images
 # Test specific images
 make test-image IMAGE=bash    # Test single image
 make test-bash                # Quick test for bash image
-
-# GitHub Actions testing
-make test-workflows           # Test workflows with act (dry run)
-make install-act              # Install act tool automatically
 ```
 
 ### Pure Nix Commands (Advanced)
@@ -239,7 +235,6 @@ nix run .#discover-images
 The **Makefile serves as "training wheels"** for developers:
 - **Familiar interface**: `make test` is more intuitive than complex Nix commands
 - **Documentation**: `make help` shows available tasks without knowing Nix
-- **Tool management**: Automatically installs `act` and handles dependencies
 - **IDE integration**: Most editors understand Makefiles for task running
 - **Onboarding**: New contributors can be productive without learning Nix first
 
@@ -328,23 +323,9 @@ nix develop
 The development shell includes:
 - **nix** - Nix package manager and build tools
 - **docker** & **docker-compose** - Container runtime and orchestration
-- **act** - Run GitHub Actions locally for pipeline testing
 - **jq** - JSON processing for workflow debugging
 - **git** & **gh** - Version control and GitHub CLI
 - **just** & **gnumake** - Build automation tools
-
-### Testing GitHub Actions Locally
-
-```bash
-# List available workflows
-act -l
-
-# Test the build workflow locally
-act -j build-containers
-
-# Force x86_64 architecture (if needed on ARM systems)
-act --container-architecture linux/amd64
-```
 
 ### Using Development Shell Library
 

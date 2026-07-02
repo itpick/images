@@ -37,11 +37,11 @@
 # Usage in flake.nix:
 #   let
 #     pipelines = import ./lib/pipelines.nix {
-#       inherit pkgs imageNames selectedImages imageCategories getPackageVersion discoveredImages;
+#       inherit pkgs imageNames imageCategories getPackageVersion discoveredImages;
 #     };
 #   in pipelines
 
-{ pkgs, imageNames, selectedImages, imageCategories, getPackageVersion, discoveredImages }:
+{ pkgs, imageNames, imageCategories, getPackageVersion, discoveredImages }:
 
 let
   inherit (pkgs) lib;
@@ -191,12 +191,6 @@ in {
         # Load dev variants of all images
         IMAGE_LIST="${lib.concatStringsSep " " (map (n: "${n}-dev") imageNames)}"
         ;;
-      selected)
-        IMAGE_LIST="${lib.concatStringsSep " " selectedImages}"
-        ;;
-      selected-dev)
-        IMAGE_LIST="${lib.concatStringsSep " " (map (n: "${n}-dev") selectedImages)}"
-        ;;
       infrastructure)
         IMAGE_LIST="${lib.concatStringsSep " " imageCategories.infrastructure}"
         ;;
@@ -304,9 +298,6 @@ in {
       all)
         IMAGE_LIST="${lib.concatStringsSep " " imageNames}"
         ;;
-      selected)
-        IMAGE_LIST="${lib.concatStringsSep " " selectedImages}"
-        ;;
       infrastructure)
         IMAGE_LIST="${lib.concatStringsSep " " imageCategories.infrastructure}"
         ;;
@@ -401,9 +392,6 @@ in {
       all)
         IMAGE_LIST="${lib.concatStringsSep " " imageNames}"
         ;;
-      selected)
-        IMAGE_LIST="${lib.concatStringsSep " " selectedImages}"
-        ;;
       infrastructure|database|web|runtime|cli|devops|nix|build)
         IMAGE_LIST="$(run_nix "nix eval --raw '.#imageCategories.$IMAGES' --apply 'builtins.concatStringsSep \" \"'" 2>/dev/null || echo "")"
         ;;
@@ -482,65 +470,4 @@ in {
     echo "=========================================="
   '';
 
-  # Pipeline: Check for version changes
-  pipeline-check-versions = pkgs.writeShellScriptBin "pipeline-check-versions" ''
-    set -euo pipefail
-
-    ${commonHelpers}
-
-    VERSIONS_FILE="''${1:-package-versions.json}"
-
-    echo "=== Checking for Version Changes ==="
-    echo "OS: $OS ($ARCH)"
-    echo ""
-
-    check_lima
-
-    if [ -f "$VERSIONS_FILE" ]; then
-      echo "Comparing with $VERSIONS_FILE..."
-
-      CHANGED=""
-      ${lib.concatStringsSep "\n" (map (imageName:
-        let version = getPackageVersion imageName; in
-        ''
-          OLD_VER=$(${pkgs.jq}/bin/jq -r '.[\"${imageName}\"] // \"unknown\"' "$VERSIONS_FILE" 2>/dev/null || echo "unknown")
-          NEW_VER="${version}"
-          if [ "$OLD_VER" != "$NEW_VER" ]; then
-            echo "  ${imageName}: $OLD_VER -> $NEW_VER"
-            CHANGED="$CHANGED ${imageName}"
-          fi
-        ''
-      ) discoveredImages)}
-
-      if [ -n "$CHANGED" ]; then
-        echo ""
-        echo "Changed images:$CHANGED"
-      else
-        echo ""
-        echo "No version changes detected."
-      fi
-    else
-      echo "No previous versions file found at $VERSIONS_FILE"
-    fi
-  '';
-
-  # Pipeline: Save current versions
-  pipeline-save-versions = pkgs.writeShellScriptBin "pipeline-save-versions" ''
-    set -euo pipefail
-
-    VERSIONS_FILE="''${1:-package-versions.json}"
-
-    echo "Saving package versions to $VERSIONS_FILE..."
-
-    cat > "$VERSIONS_FILE" << 'VERSIONS_EOF'
-    {
-      ${lib.concatStringsSep ",\n  " (map (imageName:
-        let version = getPackageVersion imageName; in
-        ''"${imageName}": "${version}"''
-      ) discoveredImages)}
-    }
-    VERSIONS_EOF
-
-    echo "Done! Versions saved to $VERSIONS_FILE"
-  '';
 }

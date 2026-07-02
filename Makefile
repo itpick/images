@@ -1,21 +1,10 @@
 # Makefile for testing nix-containers builds
 
-.PHONY: help test-all test-workflows test-image list-images cleanup install-act
+.PHONY: help test-all test-image list-images cleanup
 
 help: ## Show this help message
 	@echo "Available targets:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
-
-install-act: ## Install act (GitHub Actions local runner)
-	@echo "Installing act..."
-	@if command -v brew >/dev/null 2>&1; then \
-		brew install act; \
-	elif command -v apt-get >/dev/null 2>&1; then \
-		curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash; \
-	else \
-		echo "Please install act manually from: https://github.com/nektos/act"; \
-		exit 1; \
-	fi
 
 list-images: ## List all available images using Nix discovery
 	@echo "📋 Available images (via Nix discovery):"
@@ -34,22 +23,6 @@ test-image: ## Test build for specific image (usage: make test-image IMAGE=bash)
 
 test-all: ## Build and test all images locally
 	@./scripts/test-image-build.sh all
-
-test-workflows: ## Test GitHub Actions workflows locally with act (dry run)
-	@echo "Testing workflows with act (dry run)..."
-	@if ! command -v act >/dev/null 2>&1; then \
-		echo "Error: act is not installed. Run 'make install-act' first."; \
-		exit 1; \
-	fi
-	@./scripts/test-local-build.sh all
-
-test-workflow: ## Test specific workflow (usage: make test-workflow WORKFLOW=build-containers.yml)
-	@if [ -z "$(WORKFLOW)" ]; then \
-		echo "Error: Please specify WORKFLOW=<filename>"; \
-		echo "Example: make test-workflow WORKFLOW=build-containers.yml"; \
-		exit 1; \
-	fi
-	@./scripts/test-local-build.sh workflow .github/workflows/$(WORKFLOW)
 
 verify: ## Run all 3 verification tests
 	@./scripts/verify-builds.sh all
