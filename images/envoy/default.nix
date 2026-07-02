@@ -31,14 +31,27 @@ nix2container.buildImage {
       pkgs.coreutils
       pkgs.cacert
 
-      # Install Envoy binary
-      (pkgs.runCommand "envoy-install" {
-        nativeBuildInputs = [ pkgs.xz ];
-      } ''
+      # Install Envoy binary.
+      # tetratelabs ships a standard Linux ELF that expects
+      # /lib64/ld-linux-x86-64.so.2 as its dynamic loader. This image
+      # has no /lib64 (everything under /nix/store), so a naive
+      # extract+chmod resulted in "exec /bin/envoy: no such file"
+      # (missing ELF interp, not the binary). autoPatchelfHook rewrites
+      # interp + RPATH to nixpkgs' loader/libc.
+      (pkgs.stdenv.mkDerivation {
+        pname = "envoy-install";
+        inherit version;
+        src = envoyBin;
+        nativeBuildInputs = [ pkgs.xz pkgs.autoPatchelfHook ];
+        buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+        sourceRoot = ".";
+        dontConfigure = true;
+        dontBuild = true;
+        installPhase = ''
         mkdir -p $out/bin $out/etc/envoy $out/tmp
 
-        # Extract Envoy (archive has directory structure: envoy-v$version-linux-amd64/bin/envoy)
-        tar -xJf ${envoyBin} --strip-components=2 -C $out/bin
+        # Tarball layout: envoy-v${version}-linux-amd64/bin/envoy
+        find . -type f -name envoy -executable -exec cp {} $out/bin/envoy \;
         chmod +x $out/bin/envoy
 
         # Create default config
@@ -78,7 +91,8 @@ admin:
       address: 0.0.0.0
       port_value: 9901
 EOF
-      '')
+        '';
+      })
     ];
     pathsToLink = [ "/bin" "/etc" "/tmp" ];
   };
