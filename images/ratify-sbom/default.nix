@@ -2,33 +2,42 @@
 
 # Ratify SBOM verifier plugin
 # https://github.com/notaryproject/ratify
+#
+# Built from source with nixpkgs' current Go — the plugin lives at
+# plugins/verifier/sbom in the upstream repo.
+
 let
   version = "1.4.0";
-  drv = pkgs.stdenv.mkDerivation {
+
+  drv = pkgs.buildGoModule {
     pname = "ratify-sbom";
     inherit version;
-    src = pkgs.fetchurl {
-      url = "https://github.com/notaryproject/ratify/releases/download/v${version}/ratify_${version}_linux_amd64.tar.gz";
-      hash = "sha256-23Ois9IL0X22bz+lJ3pgee1YcjpcmKONgcyofo9mZxo=";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "notaryproject";
+      repo = "ratify";
+      rev = "v${version}";
+      hash = "sha256-qE+FUjCpJdAxZWjK90DQmGjIKx4vJS0REjjqhC79XYE=";
     };
-    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
-    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
-    sourceRoot = ".";
-    installPhase = ''
-      runHook preInstall
-      install -Dm755 sbom $out/bin/sbom
-      runHook postInstall
-    '';
+
+    vendorHash = "sha256-w3ZOMpiPGVixZFM1scibOEwDLTO9WCxZuQf4VkqwmiA=";
+
+    subPackages = [ "plugins/verifier/sbom" ];
+
+    ldflags = [ "-s" "-w" ];
+    env.CGO_ENABLED = 0;
+    doCheck = false;
   };
 in mkImage {
   inherit drv;
   name = "ratify-sbom";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/sbom" ];
-  cmd = [ "--help" ];
+  cmd = [];
   labels = {
     "org.opencontainers.image.title" = "ratify-sbom";
+    "org.opencontainers.image.description" = "Ratify SBOM verifier plugin";
     "org.opencontainers.image.version" = version;
-    "io.nix-containers.source" = "upstream-binary";
+    "io.nix-containers.source" = "source-build";
   };
 }
