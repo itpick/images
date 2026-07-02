@@ -1,45 +1,43 @@
 { mkImage, pkgs, lib, ... }:
 
 # Ratify - verification framework for container images and artifacts
+# (-fips variant; naming only, no FIPS claim)
 # https://github.com/notaryproject/ratify
-# (-fips variant packages the same upstream binary)
+#
+# Built from source with nixpkgs' current Go — see ratify/default.nix.
 
 let
   version = "1.4.0";
 
-  drv = pkgs.stdenv.mkDerivation {
+  drv = pkgs.buildGoModule {
     pname = "ratify-fips";
     inherit version;
 
-    src = pkgs.fetchurl {
-      url = "https://github.com/notaryproject/ratify/releases/download/v${version}/ratify_${version}_linux_amd64.tar.gz";
-      hash = "sha256:06k7cs7pxa6ch66s762w79r5ivbrc1x2g99zdyv7vl8bsars4wyv";
+    src = pkgs.fetchFromGitHub {
+      owner = "notaryproject";
+      repo = "ratify";
+      rev = "v${version}";
+      hash = "sha256-qE+FUjCpJdAxZWjK90DQmGjIKx4vJS0REjjqhC79XYE=";
     };
 
-    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    vendorHash = "sha256-w3ZOMpiPGVixZFM1scibOEwDLTO9WCxZuQf4VkqwmiA=";
 
-    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+    subPackages = [ "cmd/ratify" ];
 
-    sourceRoot = ".";
-
-    installPhase = ''
-      runHook preInstall
-      install -Dm755 ratify $out/bin/ratify
-      runHook postInstall
-    '';
+    ldflags = [ "-s" "-w" ];
+    env.CGO_ENABLED = 0;
+    doCheck = false;
   };
-
 in mkImage {
   inherit drv;
   name = "ratify-fips";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/ratify" ];
-  cmd = [ "--help" ];
-
+  cmd = [];
   labels = {
     "org.opencontainers.image.title" = "ratify-fips";
     "org.opencontainers.image.description" = "Verification framework for container images and artifacts";
     "org.opencontainers.image.version" = version;
-    "io.nix-containers.source" = "upstream-binary";
+    "io.nix-containers.source" = "source-build";
   };
 }
