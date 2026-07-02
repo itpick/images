@@ -2,39 +2,39 @@
 
 # KSOPS - kustomize SOPS plugin
 # https://github.com/viaduct-ai/kustomize-sops
+#
+# v4.5.1 prebuilt is Go-stdlib stale (2 crit CVEs). Rebuild from source
+# at same tag with nixpkgs' Go.
 
 let
   version = "4.5.1";
 
-  drv = pkgs.stdenv.mkDerivation {
+  drv = pkgs.buildGoModule {
     pname = "ksops";
     inherit version;
 
-    src = pkgs.fetchurl {
-      url = "https://github.com/viaduct-ai/kustomize-sops/releases/download/v${version}/ksops_${version}_Linux_x86_64.tar.gz";
-      hash = "sha256-lkHgOjAb8vxLmNDoN6A1HhykQ+zXposl5q8hSfuy7zA=";
+    src = pkgs.fetchFromGitHub {
+      owner = "viaduct-ai";
+      repo = "kustomize-sops";
+      rev = "v${version}";
+      hash = "sha256-OYn31OBnpZF1jCO7OgGCZig/7G+V6PlljINsA67z2XM=";
     };
 
-    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
-    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+    vendorHash = "sha256-4NyrK3iaAqIaoikfProfsghYA5kX6dSGChnchhZZZ9A=";
 
-    sourceRoot = ".";
-
-    installPhase = ''
-      runHook preInstall
-      install -Dm755 ksops $out/bin/ksops
-      runHook postInstall
-    '';
+    ldflags = [ "-s" "-w" ];
+    env.CGO_ENABLED = 0;
+    doCheck = false;
   };
 in mkImage {
   inherit drv;
   name = "ksops";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/ksops" ];
-  cmd = [ "--help" ];
+  cmd = [];
   labels = {
     "org.opencontainers.image.title" = "ksops";
     "org.opencontainers.image.version" = version;
-    "io.nix-containers.source" = "upstream-binary";
+    "io.nix-containers.source" = "source-build";
   };
 }
