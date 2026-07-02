@@ -264,6 +264,21 @@ jobs:
           git add -f website/tags-data/
           echo "wrote=$WROTE" >> "$GITHUB_OUTPUT"
 
+      # Carry prior-run sizes forward. Sizes are content-addressed by manifest
+      # digest, so seeding the freshly-generated tags-data from the restored
+      # snapshot means the (budgeted) enricher only sizes NEW digests — coverage
+      # accumulates to 100% across runs instead of re-sizing from scratch and
+      # losing most of it to the budget (which under-counted the size totals).
+      - name: Seed tags-data sizes from previous snapshot
+        if: steps.tags.outputs.wrote != '0' && steps.tags.outputs.wrote != ''
+        run: |
+          set -euo pipefail
+          if [ -d /tmp/cached-tags-data ]; then
+            python3 website/merge-cached-sizes.py website/tags-data /tmp/cached-tags-data
+          else
+            echo "No cached tags-data snapshot to seed from."
+          fi
+
       - name: Enrich tags-data with compressed manifest sizes
         if: steps.tags.outputs.wrote != '0' && steps.tags.outputs.wrote != ''
         run: |
@@ -271,8 +286,8 @@ jobs:
           # GitHub's packages API doesn't include per-version size, so we
           # fetch each manifest from ghcr.io's v2 registry directly.
           # website/enrich-tags-with-size.py uses an anonymous bearer
-          # token (public packages allow that) and 8-way threading.
-          # Adds ~30-90s to the deploy depending on tag fan-out.
+          # token (public packages allow that). Already-sized tags (seeded
+          # above) are skipped, so the budget only covers new digests.
           python3 website/enrich-tags-with-size.py website/tags-data
           # Re-stage so the build picks up the size-enriched JSONs.
           git add -f website/tags-data/
