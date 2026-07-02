@@ -2,36 +2,29 @@
 
 # fixuid - reconcile container user/group ownership at runtime
 # https://github.com/boxboat/fixuid
+#
+# v0.6.0 upstream prebuilt tarball is Go-stdlib stale (4 crit CVEs).
+# Rebuild from source at same tag with nixpkgs' Go.
 
 let
   version = "0.6.0";
 
-  drv = pkgs.stdenv.mkDerivation {
+  drv = pkgs.buildGoModule {
     pname = "fixuid";
     inherit version;
 
-    src = pkgs.fetchurl {
-      url = "https://github.com/boxboat/fixuid/releases/download/v${version}/fixuid-${version}-linux-amd64.tar.gz";
-      hash = "sha256:057sqmw0nld9dmvcxnnyzkvikngajx0fm5hphxwhxipfqi7gciwc";
+    src = pkgs.fetchFromGitHub {
+      owner = "boxboat";
+      repo = "fixuid";
+      rev = "v${version}";
+      hash = "sha256-XYu72Sexm+sbMG+jE68CETu8BI0zul9gqEZ7OQJK6Qo=";
     };
 
-    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
-    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+    vendorHash = "sha256-t6Ym/JFEThxaHxedmcCtVoGoumbO9oqg7zs1XS+eiRE=";
 
-    sourceRoot = ".";
-
-    installPhase = ''
-      runHook preInstall
-      install -Dm755 fixuid $out/bin/fixuid
-      runHook postInstall
-    '';
-
-    meta = with lib; {
-      description = "Reconcile container user/group ownership at runtime";
-      homepage = "https://github.com/boxboat/fixuid";
-      license = licenses.mit;
-      platforms = [ "x86_64-linux" ];
-    };
+    ldflags = [ "-s" "-w" ];
+    env.CGO_ENABLED = 0;
+    doCheck = false;
   };
 
 in mkImage {
@@ -39,12 +32,11 @@ in mkImage {
   name = "fixuid";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/fixuid" ];
-  cmd = [ "--help" ];
-
+  cmd = [];
   labels = {
     "org.opencontainers.image.title" = "fixuid";
     "org.opencontainers.image.description" = "Reconcile container user/group ownership at runtime";
     "org.opencontainers.image.version" = version;
-    "io.nix-containers.source" = "upstream-binary";
+    "io.nix-containers.source" = "source-build";
   };
 }
