@@ -16,13 +16,51 @@ let
     hash = "sha256-iS9N6UdbWqddx5W1W16s8fOSy0irlT1hq9UjGFQVgCk=";
   };
 
-  envoyInstall = pkgs.runCommand "envoy-nixchart-install" {
-    nativeBuildInputs = [ pkgs.xz ];
-  } ''
-    mkdir -p $out/bin
-    tar -xJf ${envoyBin} --strip-components=2 -C $out/bin
-    chmod +x $out/bin/envoy
-  '';
+  # The tetratelabs prebuilt envoy expects a standard Linux dynamic
+  # loader at /lib64/ld-linux-x86-64.so.2. Our image has no /lib64 —
+  # everything lives under /nix/store. autoPatchelfHook rewrites the
+  # ELF interp + RPATH to point at nixpkgs' loader/libc, so exec works
+  # inside the container.
+  envoyInstall = pkgs.stdenv.mkDerivation {
+    pname = "envoy-nixchart-install";
+    inherit version;
+    src = envoyBin;
+    nativeBuildInputs = [ pkgs.xz pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+    sourceRoot = ".";
+    dontConfigure = true;
+    dontBuild = true;
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/bin $out/etc/envoy
+      # Tarball layout: envoy-v${version}-linux-amd64/bin/envoy
+      find . -type f -name envoy -executable -exec cp {} $out/bin/envoy \;
+      chmod +x $out/bin/envoy
+      # Minimal default config so bare `docker run` boots; chart mounts
+      # its own envoy.yaml at /etc/envoy/envoy.yaml.
+      cat > $out/etc/envoy/envoy.yaml <<'CFG'
+      admin:
+        address:
+          socket_address: { address: 0.0.0.0, port_value: 9901 }
+      static_resources:
+        listeners:
+        - name: default
+          address:
+            socket_address: { address: 0.0.0.0, port_value: 10000 }
+          filter_chains:
+          - filters:
+            - name: envoy.filters.network.http_connection_manager
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                stat_prefix: ingress
+                route_config: { name: default, virtual_hosts: [{ name: local, domains: ["*"], routes: [{ match: { prefix: "/" }, direct_response: { status: 200, body: { inline_string: "ok" } } }] }] }
+                http_filters:
+                - name: envoy.filters.http.router
+                  typed_config: { "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router }
+      CFG
+      runHook postInstall
+    '';
+  };
 
 in
 nix2container.buildImage {
@@ -37,7 +75,10 @@ nix2container.buildImage {
 
   config = {
     Entrypoint = [ "/bin/envoy" ];
-    Cmd = [];
+    # Chart mounts its own envoy.yaml at /etc/envoy/envoy.yaml; the
+    # default cmd points at the same path so bare `docker run` uses the
+    # shipped default.
+    Cmd = [ "-c" "/etc/envoy/envoy.yaml" ];
     User = "1001:0";
     Env = [
       "PATH=/bin"
