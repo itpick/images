@@ -9,7 +9,7 @@
 # Harbor Registry is based on distribution/distribution with Harbor extensions
 
 let
-  version = "3.0.0";
+  version = "3.1.1";
   # Harbor uses a fork of distribution registry
   harbor-registry = buildGoModule {
     pname = "harbor-registry";

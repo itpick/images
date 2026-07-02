@@ -5,7 +5,7 @@
 # The -fips variant packages the same upstream dataplaneapi binary.
 
 let
-  version = "3.3.5";
+  version = "3.4.0";
 
   drv = pkgs.stdenv.mkDerivation {
     pname = "dataplaneapi";
@@ -13,7 +13,7 @@ let
 
     src = pkgs.fetchurl {
       url = "https://github.com/haproxytech/dataplaneapi/releases/download/v${version}/dataplaneapi_${version}_linux_x86_64.tar.gz";
-      hash = "sha256-hWPt7HnZZTm1L7cvDSKthyEwCceQVD8oS6BVZctqDR0=";
+      hash = "sha256-jwOOU6Mq73f6rcr63HCxhTiOEEY2yWNQBLpNqQch7h0=";
     };
 
     nativeBuildInputs = [ pkgs.autoPatchelfHook ];

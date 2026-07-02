@@ -5,7 +5,7 @@
 # FIPS-compliant build using BoringCrypto
 
 let
-  version = "4.5.0";
+  version = "4.7.0";
 
   git-sync-fips = buildGoModule rec {
     pname = "git-sync-fips";
@@ -15,7 +15,7 @@ let
       owner = "kubernetes";
       repo = "git-sync";
       rev = "v${version}";
-      hash = "sha256-kOIO/F8hud6PUqB5v6ZKTYdnh3PnEK1h4k0kNoHPO6E=";  # TODO: Update with actual hash
+      hash = "sha256-7qCgI4wMfA0gcdgGsOssrd95QwPiFq6JpmLf9VkU8jk=";  # TODO: Update with actual hash
     };
 
     vendorHash = null;  # Uses vendor directory - update if needed

@@ -29,7 +29,7 @@
 #   libstdc++ (15.2.0-r6)
 
 let
-  version = "1.23.1";
+  version = "1.26.0";
   node-local-dns = buildGoModule {
     pname = "node-local-dns";
     inherit version;
@@ -38,7 +38,7 @@ let
       owner = "kubernetes";
       repo = "dns";
       rev = "${version}";
-      hash = "sha256-H9kjbnKkbmNUgjq91qUgVAsPPUk6EvtfgD51mb94XMI=";  # TODO: Fix hash after first build
+      hash = "sha256-Rlke8bN+89UnlY0srtqzrsmKhYHW+36hsHghKs7g+gM=";  # TODO: Fix hash after first build
     };
 
     vendorHash = null;  # TODO: Update after first build

@@ -8,7 +8,7 @@
 # Harbor Scanner Trivy provides vulnerability scanning via Trivy for Harbor registry
 
 let
-  version = "0.34.1";
+  version = "0.38.0";
   harbor-scanner-trivy = buildGoModule {
     pname = "harbor-scanner-trivy";
     inherit version;
@@ -17,10 +17,10 @@ let
       owner = "goharbor";
       repo = "harbor-scanner-trivy";
       rev = "v${version}";
-      hash = "sha256-8KCgtTZWug/tb8slvWW2ZU+UtiH+VTT2lSIIcOxH0M0=";
+      hash = "sha256-A70zU9JXBb1xdF+jOMg3JYyGv6SKII0JfGP6mQqIsR8=";
     };
 
-    vendorHash = "sha256-InLGaSg/jWMwZMLM5BNy3SyiM2XIGyq3FYtwdUdMQ58=";
+    vendorHash = "sha256-pTCQYmA/Oym917JuFMzP4sZwkcWrTyAtMg2267SQ+yk=";
     proxyVendor = true;  # Vendor directory is out of sync with go.mod
 
     subPackages = [ "cmd/scanner-trivy" ];

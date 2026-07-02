@@ -4,7 +4,7 @@
 # Cilium networking component
 
 let
-  version = "1.17.0";
+  version = "1.19.5";
   cilium-component = buildGoModule {
     pname = "cilium-1.18-clustermesh-apiserver";
     inherit version;
@@ -12,7 +12,7 @@ let
       owner = "cilium";
       repo = "cilium";
       rev = "v${version}";
-      hash = "sha256-bSXOa8txx4AMpv0IWJ0Fy/4loAG3rBYPsGLsaxqPkSo=";
+      hash = "sha256-0/GlsmRG6YuHJ8ROoVrCiksFf1+wokxUEzO6V6gvme4=";
     };
     vendorHash = null;
     subPackages = [ "." ];

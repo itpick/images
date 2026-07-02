@@ -4,7 +4,7 @@
 # https://github.com/crossplane-contrib/function-environment-configs
 
 let
-  version = "0.1.0";
+  version = "0.7.2";
   function-environment-configs = buildGoModule {
     pname = "function-environment-configs";
     inherit version;
@@ -13,10 +13,10 @@ let
       owner = "crossplane-contrib";
       repo = "function-environment-configs";
       rev = "v${version}";
-      hash = "sha256-cIX9PQRzn8jhEv7gfpos9k4vEbvnbdSxPP8xwfFdpMk=";
+      hash = "sha256-K1v/mjbyjZH/oowpG/ewG1VKXGMEZGoO6idCm2p+oT0=";
     };
 
-    vendorHash = "sha256-u3XxEzwDAFJV2g/oAm+F8yR+0TeIWF3oR/DnYxhGNj0=";
+    vendorHash = "sha256-5OwZeowGKsQf14POOkCmoJ7srXaIAMQVZaFDhqS92hA=";
 
     subPackages = [ "." ];
 
