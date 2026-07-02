@@ -1,38 +1,40 @@
 { mkImage, pkgs, lib, ... }:
 
-# k8s_gateway - a CoreDNS-based DNS server that resolves Kubernetes Ingress/Service
-# hostnames from outside the cluster.
+# k8s_gateway - CoreDNS-based DNS server for Kubernetes Ingress/Service hostnames
 # https://github.com/ori-edge/k8s_gateway
+#
+# v0.4.0 prebuilt is Go-stdlib stale (4 crit CVEs). Rebuild from source
+# at same tag with nixpkgs' Go. The upstream Makefile builds a CoreDNS
+# binary with the k8s_gateway plugin baked in — same approach here via
+# buildGoModule.
 
 let
   version = "0.4.0";
 
-  drv = pkgs.stdenv.mkDerivation {
+  drv = pkgs.buildGoModule {
     pname = "k8s_gateway";
     inherit version;
 
-    src = pkgs.fetchurl {
-      url = "https://github.com/ori-edge/k8s_gateway/releases/download/v${version}/k8s_gateway_${version}_linux_amd64.tar.gz";
-      hash = "sha256-JIit6iXJq2qSGbFO9p3vidr/5ohEGbqRybGtLctJrUg=";
+    src = pkgs.fetchFromGitHub {
+      owner = "ori-edge";
+      repo = "k8s_gateway";
+      rev = "v${version}";
+      hash = "sha256-O2sQ/o3Me7hLzjgr/lcU+mm4nWrWu3k94+MoaPkoKi8=";
     };
 
-    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
-    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+    vendorHash = "sha256-2F4RlNdI5iyQuqxXFrzNpyHsqGFEiDnNxLBLohTjfYQ=";
 
-    sourceRoot = ".";
+    ldflags = [ "-s" "-w" ];
+    env.CGO_ENABLED = 0;
+    doCheck = false;
 
-    installPhase = ''
-      runHook preInstall
-      install -Dm755 coredns $out/bin/k8s_gateway
-      runHook postInstall
+    # Upstream builds under `coredns` binary name; rename to match the
+    # installPhase target in the prior prebuilt version.
+    postInstall = ''
+      if [ -f "$out/bin/coredns" ]; then
+        mv "$out/bin/coredns" "$out/bin/k8s_gateway"
+      fi
     '';
-
-    meta = with lib; {
-      description = "CoreDNS-based DNS server for exposing Kubernetes resources externally";
-      homepage = "https://github.com/ori-edge/k8s_gateway";
-      license = licenses.asl20;
-      platforms = [ "x86_64-linux" ];
-    };
   };
 
 in mkImage {
@@ -40,12 +42,12 @@ in mkImage {
   name = "k8s_gateway";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/k8s_gateway" ];
-  cmd = [ "-version" ];
+  cmd = [];
 
   labels = {
     "org.opencontainers.image.title" = "k8s_gateway";
     "org.opencontainers.image.description" = "CoreDNS-based DNS server for exposing Kubernetes resources externally";
     "org.opencontainers.image.version" = version;
-    "io.nix-containers.source" = "upstream-binary";
+    "io.nix-containers.source" = "source-build";
   };
 }
