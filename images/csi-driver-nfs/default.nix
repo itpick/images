@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.csi-driver-nfs;
   name = "csi-driver-nfs";
-  tag = "latest";
+  tag = "v${pkgs.csi-driver-nfs.version}";
   
   entrypoint = [ "csi-driver-nfs" ];
   cmd = [ "--help" ];

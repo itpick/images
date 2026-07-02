@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.flyway;
   name = "flyway";
-  tag = "latest";
+  tag = "v${pkgs.flyway.version}";
   
   entrypoint = [ "flyway" ];
   cmd = [ "--help" ];

@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.csi-driver-smb;
   name = "csi-driver-smb";
-  tag = "latest";
+  tag = "v${pkgs.csi-driver-smb.version}";
   
   entrypoint = [ "csi-driver-smb" ];
   cmd = [ "--help" ];

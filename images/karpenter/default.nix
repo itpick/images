@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.karpenter;
   name = "karpenter";
-  tag = "latest";
+  tag = "v${pkgs.karpenter.version}";
   
   entrypoint = [ "karpenter" ];
   cmd = [ "--help" ];

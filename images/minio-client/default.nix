@@ -22,7 +22,7 @@
 mkImage {
   drv = pkgs.minio-client;
   name = "mc";
-  tag = "latest";
+  tag = "v${pkgs.minio-client.version}";
   entrypoint = [ "${pkgs.minio-client}/bin/mc" ];
   cmd = [ "--help" ];
 

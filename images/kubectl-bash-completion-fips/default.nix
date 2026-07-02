@@ -5,7 +5,7 @@
 mkImage {
   drv = pkgs.kubectl;
   name = "kubectl-bash-completion-fips";
-  tag = "latest";
+  tag = "v${pkgs.kubectl.version}";
   
   entrypoint = [ "kubectl" ];
   cmd = [ "--help" ];

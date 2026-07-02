@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.cluster-proportional-autoscaler;
   name = "cluster-proportional-autoscaler";
-  tag = "latest";
+  tag = "v${pkgs.cluster-proportional-autoscaler.version}";
   
   entrypoint = [ "cluster-proportional-autoscaler" ];
   cmd = [ "--help" ];
