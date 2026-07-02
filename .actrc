@@ -1,9 +1,0 @@
-# Act configuration for local GitHub Actions testing
-# Use medium size runner for better performance
--P ubuntu-latest=catthehacker/ubuntu:act-latest
-# Set default event type
---eventpath .github/act/push.json
-# Enable verbose logging
---verbose
-# Use Docker socket
---use-gitignore=false

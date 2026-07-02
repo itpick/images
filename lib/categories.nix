@@ -3,7 +3,7 @@
 # This file defines logical groupings of container images.
 # Categories are used for:
 #   - Building subsets of images (nix build .#database-images)
-#   - Selecting images in images-to-build.nix (@database)
+#   - Building image bundles via category attrs (@database)
 #   - Organizing the image catalog
 
 {
