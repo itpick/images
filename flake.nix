@@ -72,6 +72,22 @@
             overlays = [
               # Custom packages overlay
               (final: prev: import ./pkgs { pkgs = final; })
+
+              # OpenSearch 3.5.0 (current nixpkgs pin) ships jackson-databind
+              # 2.20.1, netty 4.2.9, bouncycastle 1.78.1, kafka-clients 4.1.1
+              # — a nest of high/critical CVEs. Override to 3.7.0 which
+              # bumps jackson→2.21.3, netty→4.2.15, bouncycastle→2.1.x.
+              # This cascades through every image referencing pkgs.opensearch
+              # (~40 opensearch-dashboards-3-* variants).
+              (final: prev: {
+                opensearch = prev.opensearch.overrideAttrs (o: rec {
+                  version = "3.7.0";
+                  src = prev.fetchurl {
+                    url = "https://artifacts.opensearch.org/releases/bundle/opensearch/${version}/opensearch-${version}-linux-x64.tar.gz";
+                    hash = "sha256-rk7fDoD/OO+eUCpRIAx/VOMTzEJ1Ag//W2B4kIFUYYQ=";
+                  };
+                });
+              })
             ];
           };
 
