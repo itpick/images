@@ -2,47 +2,40 @@
 
 # paranoia - inspect the certificate authorities in container images
 # https://github.com/jetstack/paranoia
+#
+# v0.5.0 prebuilt is Go-stdlib stale (2 crit CVEs). Rebuild from source
+# at same tag with nixpkgs' Go.
 
 let
   version = "0.5.0";
 
-  drv = pkgs.stdenv.mkDerivation {
+  drv = pkgs.buildGoModule {
     pname = "paranoia";
     inherit version;
 
-    src = pkgs.fetchurl {
-      url = "https://github.com/jetstack/paranoia/releases/download/v${version}/paranoia-linux-amd64";
-      hash = "sha256:14m7vlvg83nl9yggpzfrpfli7qh46qvkzrpy5yhkvwf1jg5sppja";
+    src = pkgs.fetchFromGitHub {
+      owner = "jetstack";
+      repo = "paranoia";
+      rev = "v${version}";
+      hash = "sha256-o1a7xI2TeSVIUoebS4AdcxhWOYMudL9CsbgcvCbiKL0=";
     };
 
-    dontUnpack = true;
+    vendorHash = "sha256-MP4YcvFZ8CnUWyjB/VqUvVkk4cqLpY5JpciRuU8ivvU=";
 
-    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
-    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
-
-    installPhase = ''
-      runHook preInstall
-      install -Dm755 $src $out/bin/paranoia
-      runHook postInstall
-    '';
-
-    meta = with lib; {
-      description = "Inspect the certificate authorities in container images";
-      homepage = "https://github.com/jetstack/paranoia";
-      license = licenses.asl20;
-      platforms = [ "x86_64-linux" ];
-    };
+    ldflags = [ "-s" "-w" ];
+    env.CGO_ENABLED = 0;
+    doCheck = false;
   };
 in mkImage {
   inherit drv;
   name = "paranoia";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/paranoia" ];
-  cmd = [ "--help" ];
+  cmd = [];
   labels = {
     "org.opencontainers.image.title" = "paranoia";
     "org.opencontainers.image.description" = "Inspect the certificate authorities in container images";
     "org.opencontainers.image.version" = version;
-    "io.nix-containers.source" = "upstream-binary";
+    "io.nix-containers.source" = "source-build";
   };
 }
