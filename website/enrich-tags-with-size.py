@@ -191,6 +191,20 @@ def enrich_one(file_path: str) -> tuple[str, int, int]:
     if not tags:
         return image, 0, 0
 
+    # Sizes are content-addressed by manifest digest and never change, so a
+    # tag that already carries BOTH sizes (seeded from the previous run's
+    # snapshot) needs no re-fetching. Only size the digests still missing — this
+    # is what lets the per-run uncompressed budget ACCUMULATE to full coverage
+    # across runs instead of re-doing everything and losing to the budget each
+    # time (which under-counted the catalog size totals).
+    def _sized(t: dict) -> bool:
+        return t.get("compressed_size") is not None and t.get("uncompressed_size") is not None
+
+    need_digests = {t.get("digest") for t in tags if t.get("digest") and not _sized(t)}
+    if not need_digests:
+        # Fully seeded from the snapshot — nothing to fetch.
+        return image, sum(1 for t in tags if _sized(t)), len(tags)
+
     token = anonymous_token(image)
     if not token:
         for tag in tags:
@@ -198,27 +212,25 @@ def enrich_one(file_path: str) -> tuple[str, int, int]:
             tag.setdefault("uncompressed_size", None)
         with open(file_path, "w") as f:
             json.dump(tags, f, separators=(",", ":"))
-        return image, 0, len(tags)
+        return image, sum(1 for t in tags if _sized(t)), len(tags)
 
-    # Dedupe by manifest digest — `latest` and the version tag commonly
-    # point to the same digest.
+    # Only compute the digests that aren't already sized (dedup: `latest` and
+    # the version tag usually share a digest).
     digest_to_sizes: dict[str, tuple[int | None, int | None]] = {}
-    for tag in tags:
-        digest = tag.get("digest")
-        if digest and digest not in digest_to_sizes:
-            digest_to_sizes[digest] = sizes_for_digest(image, digest, token)
+    for digest in need_digests:
+        digest_to_sizes[digest] = sizes_for_digest(image, digest, token)
 
-    enriched = 0
     for tag in tags:
-        c, u = digest_to_sizes.get(tag.get("digest"), (None, None))
-        tag["compressed_size"] = c
-        tag["uncompressed_size"] = u
-        if c is not None and u is not None:
-            enriched += 1
+        dg = tag.get("digest")
+        if dg in digest_to_sizes:
+            c, u = digest_to_sizes[dg]
+            tag["compressed_size"] = c
+            tag["uncompressed_size"] = u
+        # tags not in digest_to_sizes keep their already-seeded sizes
 
     with open(file_path, "w") as f:
         json.dump(tags, f, separators=(",", ":"))
-    return image, enriched, len(tags)
+    return image, sum(1 for t in tags if _sized(t)), len(tags)
 
 
 def main(argv: list[str]) -> int:
