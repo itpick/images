@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.netcat;
   name = "netcat";
-  tag = "latest";
+  tag = "v${pkgs.netcat.version}";
   
   entrypoint = [ "netcat" ];
   cmd = [ "--help" ];

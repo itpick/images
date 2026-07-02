@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.swift;
   name = "swift";
-  tag = "latest";
+  tag = "v${pkgs.swift.version}";
   
   entrypoint = [ "swift" ];
   cmd = [ "--help" ];

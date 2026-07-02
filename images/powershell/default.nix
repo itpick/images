@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.powershell;
   name = "powershell";
-  tag = "latest";
+  tag = "v${pkgs.powershell.version}";
   
   entrypoint = [ "powershell" ];
   cmd = [ "--help" ];

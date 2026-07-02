@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.wordpress;
   name = "wordpress";
-  tag = "latest";
+  tag = "v${pkgs.wordpress.version}";
   
   entrypoint = [ "wordpress" ];
   cmd = [ "--help" ];

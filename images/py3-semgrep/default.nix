@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.semgrep;
   name = "py3-semgrep";
-  tag = "latest";
+  tag = "v${pkgs.semgrep.version}";
   
   entrypoint = [ "semgrep" ];
   cmd = [ "--help" ];

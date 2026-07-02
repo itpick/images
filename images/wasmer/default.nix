@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.wasmer;
   name = "wasmer";
-  tag = "latest";
+  tag = "v${pkgs.wasmer.version}";
   
   entrypoint = [ "wasmer" ];
   cmd = [ "--help" ];
