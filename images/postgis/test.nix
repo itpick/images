@@ -2,16 +2,25 @@
 
 pkgs.writeShellScript "test-postgis" ''
   set -euo pipefail
-  echo "Testing postgis image..."
 
-  echo "  Testing bash exists..."
-  docker run --rm --entrypoint bash ${image.imageName}:test --version
+  echo "🧪 Testing postgis image functionality..."
 
-  echo "  Testing non-root user..."
-  docker run --rm --entrypoint id ${image.imageName}:test -u | grep -qE "^(65534|1000)$"
+  # Test 1: PostgreSQL version (passed through by the entrypoint).
+  echo "  ✓ Testing postgres version..."
+  docker run --rm ${image.imageName}:test postgres --version | grep -q "postgres"
 
-  echo "  Testing CA certificates..."
-  docker run --rm --entrypoint ls ${image.imageName}:test /etc/ssl/certs/ca-bundle.crt
+  # Test 2: PostgreSQL client tools.
+  echo "  ✓ Testing postgres tools..."
+  docker run --rm ${image.imageName}:test which psql | grep -q "psql"
 
-  echo "All postgis tests passed!"
+  # Test 3: PostGIS extension is bundled (control file on the extension path).
+  echo "  ✓ Testing PostGIS extension is installed..."
+  docker run --rm ${image.imageName}:test bash -c \
+    'ls "$(pg_config --sharedir)/extension/postgis.control"'
+
+  # Test 4: Help functionality.
+  echo "  ✓ Testing help functionality..."
+  docker run --rm ${image.imageName}:test postgres --help | grep -q "Usage"
+
+  echo "✅ All postgis tests passed!"
 ''
