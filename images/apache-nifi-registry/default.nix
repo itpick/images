@@ -1,11 +1,16 @@
 { mkImage, pkgs, lib, ... }:
 
 # Apache NiFi Registry - versioned control / storage for NiFi flow resources
-# https://nifi.apache.org/registry  (standalone registry, last 1.x line)
+# https://nifi.apache.org/registry
 # Upstream prebuilt distribution: nifi-registry-<ver>-bin.zip (runs on the JVM).
+#
+# 2.10.0 bumped from 1.28.1 — the older release carried 16 critical
+# Java-dep CVEs (bouncycastle 1.79, spring-web 5.3.39, jersey 2.45,
+# azure-keyvault 4.8.8). NiFi 2.x is on Spring 6 + BC 1.81 + Jersey
+# 3.x, clearing them.
 
 let
-  version = "1.28.1";
+  version = "2.10.0";
 
   drv = pkgs.stdenv.mkDerivation {
     pname = "nifi-registry";
@@ -13,7 +18,7 @@ let
 
     src = pkgs.fetchurl {
       url = "https://archive.apache.org/dist/nifi/${version}/nifi-registry-${version}-bin.zip";
-      hash = "sha256-SPKW+WOnCJIawhGBJvRbflh3jB2Syqi13Ikj8dRKqZU=";
+      hash = "sha256-hnr7mhd5eWbEF7+qjAjJhyHoMoWSEN2ywVZYUeClxdg=";
     };
 
     nativeBuildInputs = [ pkgs.autoPatchelfHook pkgs.unzip pkgs.makeWrapper ];
@@ -30,9 +35,9 @@ let
 
       makeWrapper ${pkgs.bash}/bin/bash $out/bin/nifi-registry \
         --add-flags "$out/share/nifi-registry/bin/nifi-registry.sh" \
-        --set JAVA_HOME ${pkgs.jdk17_headless} \
+        --set JAVA_HOME ${pkgs.jdk21_headless} \
         --prefix PATH : ${lib.makeBinPath [
-          pkgs.jdk17_headless pkgs.coreutils pkgs.gnugrep pkgs.gnused
+          pkgs.jdk21_headless pkgs.coreutils pkgs.gnugrep pkgs.gnused
           pkgs.gawk pkgs.which pkgs.findutils pkgs.procps
         ]}
       runHook postInstall
