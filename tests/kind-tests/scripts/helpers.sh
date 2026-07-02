@@ -47,12 +47,21 @@ helm_install() {
     local extra_args=("$@")
 
     echo "  Installing Helm chart $chart as $release..."
-    helm upgrade --install "$release" "$chart" \
+    # Capture stderr into a buffer so successful installs stay quiet
+    # (matches the prior 2>/dev/null behavior) but failures still surface
+    # the actual helm error — before this, every helm-install failure
+    # in CI showed as a mysterious exit 1 with nothing to diagnose.
+    local err
+    err=$(helm upgrade --install "$release" "$chart" \
         --namespace "$namespace" \
         --create-namespace \
         --wait \
         --timeout 5m \
-        "${extra_args[@]}" 2>/dev/null
+        "${extra_args[@]}" 2>&1 >/dev/null) && return 0
+    local rc=$?
+    echo "  helm install failed (exit $rc):" >&2
+    echo "$err" >&2
+    return $rc
 }
 
 # Uninstall Helm chart
