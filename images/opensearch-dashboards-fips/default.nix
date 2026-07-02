@@ -6,7 +6,9 @@
 # NOTE: "-fips" denotes the same upstream tool; no FIPS claim is made here.
 
 let
-  version = "2.19.0";
+  # 2.19.0 → 2.19.2 clears critical CVEs in the bundled Node runtime +
+  # patched npm deps. Stays on the 2.19.x line so no config/API break.
+  version = "2.19.2";
 
   drv = pkgs.stdenv.mkDerivation {
     pname = "opensearch-dashboards";
@@ -14,7 +16,7 @@ let
 
     src = pkgs.fetchurl {
       url = "https://artifacts.opensearch.org/releases/bundle/opensearch-dashboards/${version}/opensearch-dashboards-${version}-linux-x64.tar.gz";
-      hash = "sha256:0w677xrxvb2fdvyzn9pqkl29wfhdqrgjvsag1y5lsrfdzfwn02r9";
+      hash = "sha256-EAhU8kEiiIvR3lR97tCbPw9HT+NuRgH6dBR8AgvXc+A=";
     };
 
     nativeBuildInputs = [ pkgs.autoPatchelfHook ];
