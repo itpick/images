@@ -4,15 +4,20 @@
 # Upstream prebuilt linux/amd64 server tarball from dl.influxdata.com.
 
 let
-  version = "2.7.11";
+  # 2.7.11 → 2.7.12 clears 2 critical Go stdlib CVEs (stdlib v1.22.7 was
+  # missing rebuild fixes). Stays within the 2.7.x line so no API/config
+  # changes for consumers.
+  version = "2.7.12";
 
   drv = pkgs.stdenv.mkDerivation {
     pname = "influxd";
     inherit version;
 
     src = pkgs.fetchurl {
-      url = "https://dl.influxdata.com/influxdb/releases/influxdb2-${version}_linux_amd64.tar.gz";
-      hash = "sha256-jXhyATytNST7coyoSD0K3DASWtGvJiq4Jtz10YARWc8=";
+      # Upstream moved the layout from /releases/<file> to
+      # /releases/v<ver>/<file> starting with 2.7.12.
+      url = "https://dl.influxdata.com/influxdb/releases/v${version}/influxdb2-${version}_linux_amd64.tar.gz";
+      hash = "sha256-glZB5ni0oPbiCUKT8ya0ciafMMPQKpib7ow3v6cG+Nc=";
     };
 
     nativeBuildInputs = [ pkgs.autoPatchelfHook ];
