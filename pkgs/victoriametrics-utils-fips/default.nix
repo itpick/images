@@ -9,18 +9,18 @@
 { lib, stdenv, fetchurl, autoPatchelfHook }:
 
 let
-  version = "1.131.0";
+  version = "1.146.0";
 
   arch = if stdenv.hostPlatform.isAarch64 then "arm64" else "amd64";
 
   srcs = {
     amd64 = fetchurl {
       url = "https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/v${version}/vmutils-linux-amd64-v${version}-enterprise.tar.gz";
-      hash = "sha256-Mg7fcSgUPvmdahsJK9FH2Sjxf4ItAhRiqdlTnz2CsSQ=";
+      hash = "sha256-wicKJfTy0idv6LSSurpUthyjnk05JIJhRlrhqjq6BMk=";
     };
     arm64 = fetchurl {
       url = "https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/v${version}/vmutils-linux-arm64-v${version}-enterprise.tar.gz";
-      hash = "sha256-hXh0EoDD4dnEEjbcqDIAh/P2ZFhteaVxjt1L3RtilFM=";
+      hash = "sha256-WIdB9ejGbrhUhVSQ70L6APInakXlUDI53RmfGyXR1zc=";
     };
   };
 
