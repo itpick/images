@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.metallb;
   name = "metallb";
-  tag = "latest";
+  tag = "v${pkgs.metallb.version}";
   
   entrypoint = [ "metallb" ];
   cmd = [ "--help" ];

@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.bazel;
   name = "bazel";
-  tag = "latest";
+  tag = "v${pkgs.bazel.version}";
   
   entrypoint = [ "bazel" ];
   cmd = [ "--help" ];

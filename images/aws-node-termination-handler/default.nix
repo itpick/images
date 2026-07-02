@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.aws-node-termination-handler;
   name = "aws-node-termination-handler";
-  tag = "latest";
+  tag = "v${pkgs.aws-node-termination-handler.version}";
   
   entrypoint = [ "aws-node-termination-handler" ];
   cmd = [ "--help" ];

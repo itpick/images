@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.buildah;
   name = "buildah";
-  tag = "latest";
+  tag = "v${pkgs.buildah.version}";
   
   entrypoint = [ "buildah" ];
   cmd = [ "--help" ];

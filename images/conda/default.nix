@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.conda;
   name = "conda";
-  tag = "latest";
+  tag = "v${pkgs.conda.version}";
   
   entrypoint = [ "conda" ];
   cmd = [ "--help" ];

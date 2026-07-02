@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.kubectl;
   name = "kubectl-1.34-default";
-  tag = "latest";
+  tag = "v${pkgs.kubectl.version}";
   
   entrypoint = [ "kubectl" ];
   cmd = [ "--help" ];

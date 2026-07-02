@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.asciinema;
   name = "asciinema";
-  tag = "latest";
+  tag = "v${pkgs.asciinema.version}";
   
   entrypoint = [ "asciinema" ];
   cmd = [ "--help" ];

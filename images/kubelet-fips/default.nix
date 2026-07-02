@@ -5,7 +5,7 @@
 mkImage {
   drv = pkgs.kubernetes;
   name = "kubelet-fips";
-  tag = "latest";
+  tag = "v${pkgs.kubernetes.version}";
   
   entrypoint = [ "kubernetes" ];
   cmd = [ "--help" ];

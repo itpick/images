@@ -4,7 +4,7 @@
 mkImage {
   drv = pkgs.kubernetes;
   name = "kubelet-1.33-default";
-  tag = "latest";
+  tag = "v${pkgs.kubernetes.version}";
   
   entrypoint = [ "kubernetes" ];
   cmd = [ "--help" ];
