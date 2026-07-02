@@ -36,7 +36,17 @@ in mkImage {
   name = "influxd";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/influxd" ];
-  cmd = [ "--help" ];
+  # Was `--help` (a one-shot, so the kind-test pod CrashLoops). Run the server:
+  # influxd binds the HTTP API on 0.0.0.0:8086 by default. Its bolt/engine/sqlite
+  # stores default to $HOME/.influxdbv2, but influxd resolves the home from the
+  # passwd entry (not $HOME), which is read-only here — so point them explicitly
+  # at the writable /tmp mkImage provides (influxd creates the dirs). Operators
+  # mount a PVC and override these paths.
+  cmd = [
+    "--bolt-path=/tmp/influxdb/influxd.bolt"
+    "--engine-path=/tmp/influxdb/engine"
+    "--sqlite-path=/tmp/influxdb/influxd.sqlite"
+  ];
 
   labels = {
     "org.opencontainers.image.title" = "influxd";
