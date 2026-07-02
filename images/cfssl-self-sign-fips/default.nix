@@ -1,35 +1,34 @@
 { mkImage, pkgs, lib, ... }:
 
-# cfssl - CloudFlare's PKI/TLS toolkit (upstream prebuilt binaries)
+# cfssl - CloudFlare's PKI/TLS toolkit
 # https://github.com/cloudflare/cfssl
+#
+# Upstream's v1.6.5 prebuilt binaries were built against an old Go
+# toolchain (8 crit Go-stdlib CVEs). Rebuild from source at the same
+# tag with nixpkgs' current Go to pick up the stdlib rebuild.
+
 let
   version = "1.6.5";
 
-  cfsslBin = pkgs.fetchurl {
-    url = "https://github.com/cloudflare/cfssl/releases/download/v${version}/cfssl_${version}_linux_amd64";
-    hash = "sha256-/006E4fqPh7nT0u45f/py6tb7kPHEDM8IG0UGZVD698=";
-  };
-
-  cfssljsonBin = pkgs.fetchurl {
-    url = "https://github.com/cloudflare/cfssl/releases/download/v${version}/cfssljson_${version}_linux_amd64";
-    hash = "sha256-CfvLejs9Y5STbqYeq/8eilmorDtSje6xTPZs276aU08=";
-  };
-
-  drv = pkgs.stdenv.mkDerivation {
+  drv = pkgs.buildGoModule {
     pname = "cfssl-self-sign-fips";
     inherit version;
 
-    dontUnpack = true;
+    src = pkgs.fetchFromGitHub {
+      owner = "cloudflare";
+      repo = "cfssl";
+      rev = "v${version}";
+      hash = "sha256-Xczpv6tLJiy2dXoGJ0QUmXwOn0p6S+lm2oz61oytQec=";
+    };
 
-    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
-    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+    # cfssl vendors its deps in-tree — no separate go-modules download.
+    vendorHash = null;
 
-    installPhase = ''
-      runHook preInstall
-      install -Dm755 ${cfsslBin} $out/bin/cfssl
-      install -Dm755 ${cfssljsonBin} $out/bin/cfssljson
-      runHook postInstall
-    '';
+    subPackages = [ "cmd/cfssl" "cmd/cfssljson" ];
+
+    ldflags = [ "-s" "-w" ];
+    env.CGO_ENABLED = 0;
+    doCheck = false;
   };
 in
 mkImage {
@@ -42,6 +41,6 @@ mkImage {
     "org.opencontainers.image.title" = "cfssl-self-sign-fips";
     "org.opencontainers.image.description" = "CloudFlare cfssl PKI/TLS toolkit";
     "org.opencontainers.image.version" = version;
-    "io.nix-containers.source" = "upstream-binary";
+    "io.nix-containers.source" = "source-build";
   };
 }
