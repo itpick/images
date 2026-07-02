@@ -2,38 +2,39 @@
 
 # http-echo - tiny HTTP server that echoes a response (HashiCorp)
 # https://github.com/hashicorp/http-echo
+#
+# v1.0.0 prebuilt from releases.hashicorp.com is Go-stdlib stale
+# (4 crit CVEs). Rebuild from source with nixpkgs' current Go.
+
 let
   version = "1.0.0";
 
-  drv = pkgs.stdenv.mkDerivation {
+  drv = pkgs.buildGoModule {
     pname = "http-echo";
     inherit version;
 
-    src = pkgs.fetchurl {
-      url = "https://releases.hashicorp.com/http-echo/${version}/http-echo_${version}_linux_amd64.zip";
-      hash = "sha256:0wg4gpa5h6kc3ngvcrm9q36y7dd4kn88l2wj125vr6ilnpal8h9y";
+    src = pkgs.fetchFromGitHub {
+      owner = "hashicorp";
+      repo = "http-echo";
+      rev = "v${version}";
+      hash = "sha256-LybeXldGYQZ4w66QXPQRI0wBmj05/A7cDvR0WTArEm8=";
     };
 
-    nativeBuildInputs = [ pkgs.autoPatchelfHook pkgs.unzip ];
-    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+    vendorHash = null;
 
-    sourceRoot = ".";
-
-    installPhase = ''
-      runHook preInstall
-      install -Dm755 http-echo $out/bin/http-echo
-      runHook postInstall
-    '';
+    ldflags = [ "-s" "-w" ];
+    env.CGO_ENABLED = 0;
+    doCheck = false;
   };
 in mkImage {
   inherit drv;
   name = "http-echo";
   tag = "v${version}";
   entrypoint = [ "${drv}/bin/http-echo" ];
-  cmd = [ "-version" ];
+  cmd = [];
   labels = {
     "org.opencontainers.image.title" = "http-echo";
     "org.opencontainers.image.version" = version;
-    "io.nix-containers.source" = "upstream-binary";
+    "io.nix-containers.source" = "source-build";
   };
 }
