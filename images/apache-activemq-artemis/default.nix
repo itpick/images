@@ -72,6 +72,16 @@ let
     '';
   };
 
+  # `artemis create` generates $BROKER/bin/artemis as a bash script with
+  # a `#!/usr/bin/env bash` shebang. Our image doesn't ship /usr/bin/env
+  # (Nix keeps everything in /nix/store), so kernel exec fails with
+  # "/usr/bin/env: bad interpreter: No such file or directory". Provide
+  # the symlink at /usr/bin/env so the generated scripts run.
+  usrBinEnv = pkgs.runCommand "usr-bin-env" {} ''
+    mkdir -p $out/usr/bin
+    ln -s ${pkgs.coreutils}/bin/env $out/usr/bin/env
+  '';
+
 in mkImage {
   inherit drv;
   name = "apache-activemq-artemis";
@@ -79,7 +89,7 @@ in mkImage {
   entrypoint = [ "${entrypoint}/bin/docker-entrypoint.sh" ];
   cmd = [ ];
 
-  extraPkgs = [ pkgs.jre ];
+  extraPkgs = [ pkgs.jre usrBinEnv ];
 
   env = {
     # Artemis' launcher + the JVM write only under the broker instance (in /tmp);
