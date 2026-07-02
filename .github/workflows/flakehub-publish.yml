@@ -62,6 +62,10 @@ jobs:
             | determinate-nixd auth login token --token-file /dev/stdin
 
       - name: Push to FlakeHub
+        # FlakeHub is a non-critical mirror; transient upstream errors (e.g.
+        # "504 Gateway Timeout from metadata POST") were failing the whole
+        # pipeline for no operational reason. Don't let a mirror hiccup go red.
+        continue-on-error: true
         uses: DeterminateSystems/flakehub-push@main
         with:
           # Visibility on flakehub.com. 'public' = anyone can pull;
