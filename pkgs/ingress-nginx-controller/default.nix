@@ -4,7 +4,7 @@
 
 buildGoModule rec {
   pname = "ingress-nginx-controller";
-  version = "helm-chart-4.15.1";
+  version = "1.15.1";
 
   src = fetchFromGitHub {
     owner = "kubernetes";

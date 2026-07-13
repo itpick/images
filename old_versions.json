@@ -923,5 +923,18 @@
   "kayenta": "0.13.1-20200501030017",
   "portieris": "0.13.32",
   "backstage": "1.34.0",
-  "mongodb": "8.0.16"
+  "mongodb": "8.0.16",
+  "logstash-9.2-env2yaml": "9.2.0",
+  "rekor-fips-backfill-index": "v1.5.3",
+  "tritonserver-backend-onnxruntime-cuda": "26.06-py3",
+  "tritonserver-backend-openvino-cuda": "26.06-py3",
+  "tritonserver-backend-python-cuda": "26.06-py3",
+  "tritonserver-backend-pytorch-cuda": "26.06-pyt-python-py3",
+  "tritonserver-backend-tensorrt-cuda": "26.06-py3",
+  "tritonserver-backend-tensorrtllm-cuda": "26.06-trtllm-python-py3",
+  "tritonserver-backend-vllm-cuda": "26.06-vllm-python-py3",
+  "tritonserver-backend-vllm-meta-cuda": "26.06-vllm-python-py3",
+  "tritonserver-cuda": "26.06-py3",
+  "tritonserver-fips": "26.06-py3",
+  "tritonserver-no-backend": "26.06-py3"
 }

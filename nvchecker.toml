@@ -7061,3 +7061,96 @@ source = "github"
 github = "IBM/portieris"
 use_latest_release = true
 prefix = "v"
+
+# --- auto-added by local-nvchecker-coverage-expand.sh ---
+
+["logstash-9.2-env2yaml"]
+source = "container"
+container = "logstash/logstash"
+registry = "docker.elastic.co"
+include_regex = "v?[0-9]+\\.[0-9]+(\\.[0-9]+)?"
+prefix = "v"
+
+[rekor-fips-backfill-index]
+source = "container"
+container = "projectsigstore/rekor-server"
+registry = "gcr.io"
+include_regex = "v?[0-9]+\\.[0-9]+(\\.[0-9]+)?"
+prefix = "v"
+
+[tritonserver-backend-onnxruntime-cuda]
+source = "container"
+container = "nvidia/tritonserver"
+registry = "nvcr.io"
+include_regex = "v?[0-9]+\\.[0-9]+(\\.[0-9]+)?"
+prefix = "v"
+
+[tritonserver-backend-openvino-cuda]
+source = "container"
+container = "nvidia/tritonserver"
+registry = "nvcr.io"
+include_regex = "v?[0-9]+\\.[0-9]+(\\.[0-9]+)?"
+prefix = "v"
+
+[tritonserver-backend-python-cuda]
+source = "container"
+container = "nvidia/tritonserver"
+registry = "nvcr.io"
+include_regex = "v?[0-9]+\\.[0-9]+(\\.[0-9]+)?"
+prefix = "v"
+
+[tritonserver-backend-pytorch-cuda]
+source = "container"
+container = "nvidia/tritonserver"
+registry = "nvcr.io"
+include_regex = "v?[0-9]+\\.[0-9]+(\\.[0-9]+)?"
+prefix = "v"
+
+[tritonserver-backend-tensorrt-cuda]
+source = "container"
+container = "nvidia/tritonserver"
+registry = "nvcr.io"
+include_regex = "v?[0-9]+\\.[0-9]+(\\.[0-9]+)?"
+prefix = "v"
+
+[tritonserver-backend-tensorrtllm-cuda]
+source = "container"
+container = "nvidia/tritonserver"
+registry = "nvcr.io"
+include_regex = "v?[0-9]+\\.[0-9]+(\\.[0-9]+)?"
+prefix = "v"
+
+[tritonserver-backend-vllm-cuda]
+source = "container"
+container = "nvidia/tritonserver"
+registry = "nvcr.io"
+include_regex = "v?[0-9]+\\.[0-9]+(\\.[0-9]+)?"
+prefix = "v"
+
+[tritonserver-backend-vllm-meta-cuda]
+source = "container"
+container = "nvidia/tritonserver"
+registry = "nvcr.io"
+include_regex = "v?[0-9]+\\.[0-9]+(\\.[0-9]+)?"
+prefix = "v"
+
+[tritonserver-cuda]
+source = "container"
+container = "nvidia/tritonserver"
+registry = "nvcr.io"
+include_regex = "v?[0-9]+\\.[0-9]+(\\.[0-9]+)?"
+prefix = "v"
+
+[tritonserver-fips]
+source = "container"
+container = "nvidia/tritonserver"
+registry = "nvcr.io"
+include_regex = "v?[0-9]+\\.[0-9]+(\\.[0-9]+)?"
+prefix = "v"
+
+[tritonserver-no-backend]
+source = "container"
+container = "nvidia/tritonserver"
+registry = "nvcr.io"
+include_regex = "v?[0-9]+\\.[0-9]+(\\.[0-9]+)?"
+prefix = "v"

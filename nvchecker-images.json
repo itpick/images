@@ -32,7 +32,8 @@
   "apm-server-fips"
  ],
  "archive-envoy": [
-  "envoy"
+  "envoy",
+  "envoy-fips"
  ],
  "argo-events": [
   "argo-events-fips"
@@ -426,7 +427,8 @@
   "envoy-gateway-fips"
  ],
  "external-dns": [
-  "external-dns"
+  "external-dns",
+  "external-dns-fips"
  ],
  "external-secrets": [
   "external-secrets-fips"
@@ -579,7 +581,8 @@
   "http-echo"
  ],
  "hubble": [
-  "hubble-export-stdout"
+  "hubble-export-stdout",
+  "hubble-export-stdout-fips"
  ],
  "image-automation-controller": [
   "flux-image-automation-controller",
@@ -664,7 +667,8 @@
   "k3s-static"
  ],
  "k8s-sidecar": [
-  "k8s-sidecar"
+  "k8s-sidecar",
+  "k8s-sidecar-fips"
  ],
  "k8s_gateway": [
   "k8s_gateway",
@@ -1561,7 +1565,8 @@
   "spegel-fips"
  ],
  "splunk-otel-collector": [
-  "splunk-otel-collector"
+  "splunk-otel-collector",
+  "splunk-otel-collector-fips"
  ],
  "sql_exporter": [
   "sql_exporter",
@@ -1654,10 +1659,12 @@
   "cis-operator"
  ],
  "envoy-nixchart": [
-  "envoy-nixchart"
+  "envoy-nixchart",
+  "envoy-nixchart-fips"
  ],
  "external-dns-nixchart": [
-  "external-dns-nixchart"
+  "external-dns-nixchart",
+  "external-dns-nixchart-fips"
  ],
  "falco-exporter": [
   "falco-exporter"
@@ -1690,7 +1697,8 @@
   "kafka-proxy-fips"
  ],
  "keycloak-config-cli-nixchart": [
-  "keycloak-config-cli-nixchart"
+  "keycloak-config-cli-nixchart",
+  "keycloak-config-cli-nixchart-fips"
  ],
  "keycloak-fips": [
   "keycloak-fips"
@@ -1735,7 +1743,8 @@
   "ollama-fips"
  ],
  "postgres-repmgr-nixchart": [
-  "postgres-repmgr-nixchart"
+  "postgres-repmgr-nixchart",
+  "postgres-repmgr-nixchart-fips"
  ],
  "prometheus-alertmanager-nixchart": [
   "prometheus-alertmanager-nixchart"
@@ -3653,7 +3662,8 @@
  ],
  "azure-functions-python": [
   "azure-functions-host-python3.13-worker",
-  "azure-functions-python"
+  "azure-functions-python",
+  "azure-functions-python-fips"
  ],
  "dotnet-aspnet": [
   "aspnet-10-runtime"
@@ -3775,6 +3785,46 @@
   "backstage"
  ],
  "mongodb": [
-  "mongodb"
+  "mongodb",
+  "mongodb-fips"
+ ],
+ "logstash-9.2-env2yaml": [
+  "logstash-9.2-env2yaml"
+ ],
+ "rekor-fips-backfill-index": [
+  "rekor-fips-backfill-index"
+ ],
+ "tritonserver-backend-onnxruntime-cuda": [
+  "tritonserver-backend-onnxruntime-cuda"
+ ],
+ "tritonserver-backend-openvino-cuda": [
+  "tritonserver-backend-openvino-cuda"
+ ],
+ "tritonserver-backend-python-cuda": [
+  "tritonserver-backend-python-cuda"
+ ],
+ "tritonserver-backend-pytorch-cuda": [
+  "tritonserver-backend-pytorch-cuda"
+ ],
+ "tritonserver-backend-tensorrt-cuda": [
+  "tritonserver-backend-tensorrt-cuda"
+ ],
+ "tritonserver-backend-tensorrtllm-cuda": [
+  "tritonserver-backend-tensorrtllm-cuda"
+ ],
+ "tritonserver-backend-vllm-cuda": [
+  "tritonserver-backend-vllm-cuda"
+ ],
+ "tritonserver-backend-vllm-meta-cuda": [
+  "tritonserver-backend-vllm-meta-cuda"
+ ],
+ "tritonserver-cuda": [
+  "tritonserver-cuda"
+ ],
+ "tritonserver-fips": [
+  "tritonserver-fips"
+ ],
+ "tritonserver-no-backend": [
+  "tritonserver-no-backend"
  ]
 }

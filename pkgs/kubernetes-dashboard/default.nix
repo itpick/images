@@ -4,7 +4,7 @@
 
 buildGoModule rec {
   pname = "kubernetes-dashboard";
-  version = "7.14.0";
+  version = "kubernetes-dashboard-7.14.0";
 
   src = fetchFromGitHub {
     owner = "kubernetes";

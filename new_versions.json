@@ -1115,8 +1115,8 @@
     },
     "gitlab": {
       "version": "20260713",
-      "revision": "dd218612cea0997c871dc5baa90cffdd38165e4a",
-      "url": "https://gitlab.com/gitlab-org/gitlab/-/commit/dd218612cea0997c871dc5baa90cffdd38165e4a"
+      "revision": "757fe36887eaa7cc74409a11173e0c7f6d71ca50",
+      "url": "https://gitlab.com/gitlab-org/gitlab/-/commit/757fe36887eaa7cc74409a11173e0c7f6d71ca50"
     },
     "gitlab-runner": {
       "version": "20260713",
@@ -2024,6 +2024,9 @@
       "gitref": "refs/tags/v9.4.3",
       "url": "https://github.com/elastic/logstash/releases/tag/v9.4.3"
     },
+    "logstash-9.2-env2yaml": {
+      "version": "9.4.3"
+    },
     "logstash-exporter": {
       "version": "1.9.1"
     },
@@ -2206,6 +2209,9 @@
     },
     "modelmesh-runtime-adapter": {
       "version": "0.12.0"
+    },
+    "mongodb": {
+      "version": "8.3.4"
     },
     "mongodb-kubernetes-operator": {
       "version": "0.13.0"
@@ -3152,6 +3158,9 @@
       "version": "0.2.8",
       "gitref": "refs/tags/v0.2.8",
       "url": "https://github.com/neuvector/registry-adapter/releases/tag/v0.2.8"
+    },
+    "rekor-fips-backfill-index": {
+      "version": "1.5.3"
     },
     "rekor-server": {
       "version": "1.5.3",

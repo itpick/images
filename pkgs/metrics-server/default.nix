@@ -4,7 +4,7 @@
 
 buildGoModule rec {
   pname = "metrics-server";
-  version = "metrics-server-helm-chart-3.13.1";
+  version = "0.9.0";
 
   src = fetchFromGitHub {
     owner = "kubernetes-sigs";
