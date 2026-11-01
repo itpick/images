@@ -4,7 +4,7 @@
 
 buildGoModule rec {
   pname = "cluster-autoscaler";
-  version = "cluster-autoscaler-1.37.0";
+  version = "1.37.0";
 
   src = fetchFromGitHub {
     owner = "kubernetes";
