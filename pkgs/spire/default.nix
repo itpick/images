@@ -4,13 +4,13 @@
 
 buildGoModule rec {
   pname = "spire";
-  version = "1.15.5";
+  version = "1.16.0";
 
   src = fetchFromGitHub {
     owner = "spiffe";
     repo = "spire";
     rev = "v${version}";
-    hash = "sha256-PB9YWdJR7Iy5CXh4fPyp6buUQkijT9SW0Dx5dVGD5z0=";
+    hash = "sha256-tZZNekIoik4BXi+xAcsg+Sxuw0QSI1RpmdYWTmUvOlk=";
   };
 
   proxyVendor = true;
