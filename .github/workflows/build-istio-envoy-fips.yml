@@ -1,0 +1,125 @@
+name: Build Istio Envoy (AWS-LC FIPS)
+
+# Manual-dispatch only. Runs scripts/build-istio-envoy-fips.sh from the
+# dispatched ref (e.g. `gh workflow run build-istio-envoy-fips.yml --ref
+# istio-fips-1.31.4`) on the self-hosted `nixcontainers-heavy` runner (homelab
+# ARC scale set, dind, one runner): the build needs docker, ~60 GB disk and
+# many cores, which GitHub-hosted runners for this org do not offer.
+#
+# Output: the gzipped Envoy as a workflow artifact, plus (publish=true) a NEW
+# release `istio-envoy-awslc-fips-<istio_tag>` with the asset attached. An
+# existing release is never modified: the job fails instead, because
+# pkgs/istio-fips pins the asset by hash.
+
+on:
+  workflow_dispatch:
+    inputs:
+      istio_tag:
+        description: "Istio version (must match the script defaults on the dispatched ref)"
+        required: true
+        default: "1.31.4"
+      publish:
+        description: "Create the GitHub release with the asset"
+        type: boolean
+        default: false
+      jobs:
+        description: "Bazel --jobs"
+        default: "16"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-istio-envoy-fips
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: nixcontainers-heavy
+    timeout-minutes: 360
+    permissions:
+      contents: write # gh release create (publish=true only)
+    env:
+      ISTIO_TAG: ${{ inputs.istio_tag }}
+      JOBS: ${{ inputs.jobs }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Tooling
+        run: |
+          set -euo pipefail
+          # WORK must live under /home/runner/_work (RUNNER_TEMP is
+          # _work/_temp): that volume is mounted at the same path in the dind
+          # sidecar, so the script's `docker run -v $WORK/...` bind mounts
+          # resolve on the docker host.
+          echo "WORK=$RUNNER_TEMP/envoy-fips" >> "$GITHUB_ENV"
+          docker version --format '{{.Server.Version}}'
+          nproc; free -g; df -h "$GITHUB_WORKSPACE/.."
+          # the script's verification step needs nm/strings (binutils)
+          if ! command -v nm >/dev/null || ! command -v strings >/dev/null; then
+            sudo apt-get update -qq
+            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq binutils
+          fi
+
+      - name: Build
+        run: |
+          set -euo pipefail
+          grep -q "ISTIO_TAG:-${ISTIO_TAG}}" scripts/build-istio-envoy-fips.sh \
+            || { echo "script defaults on this ref do not track istio ${ISTIO_TAG}" >&2; exit 1; }
+          mkdir -p "$WORK"
+          ./scripts/build-istio-envoy-fips.sh 2>&1 | tee "$RUNNER_TEMP/build.log"
+
+      - name: Collect asset
+        id: asset
+        run: |
+          set -euo pipefail
+          f=$(ls "$WORK"/istio-envoy-awslc-fips-3.1.0-*.gz)
+          [ "$(echo "$f" | wc -l)" = 1 ]
+          sha=$(sha256sum "$f" | cut -d' ' -f1)
+          sri="sha256-$(printf '%b' "$(echo "$sha" | sed 's/../\\x&/g')" | base64 -w0)"
+          bin_sha=$(grep -oE 'sha256 \(uncompressed\): [0-9a-f]{64}' "$RUNNER_TEMP/build.log" | awk '{print $3}')
+          {
+            echo "path=$f"
+            echo "name=$(basename "$f")"
+            echo "sha256=$sha"
+            echo "sri=$sri"
+            echo "bin_sha256=$bin_sha"
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo "### Envoy AWS-LC FIPS for istio ${ISTIO_TAG}"
+            echo "- asset: \`$(basename "$f")\`"
+            echo "- .gz sha256: \`$sha\`"
+            echo "- nix SRI (pkgs/istio-fips hash): \`$sri\`"
+            echo "- binary sha256: \`$bin_sha\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.asset.outputs.name }}
+          path: ${{ steps.asset.outputs.path }}
+          compression-level: 0
+          retention-days: 14
+
+      - name: Publish release
+        if: ${{ inputs.publish }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: istio-envoy-awslc-fips-${{ inputs.istio_tag }}
+          ASSET: ${{ steps.asset.outputs.path }}
+          SHA: ${{ steps.asset.outputs.sha256 }}
+          BIN_SHA: ${{ steps.asset.outputs.bin_sha256 }}
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "release $TAG already exists; refusing to modify it" >&2
+            exit 1
+          fi
+          proxy_sha=$(basename "$ASSET" .gz); proxy_sha=${proxy_sha##*-}
+          gh release create "$TAG" "$ASSET" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --latest=false \
+            --title "istio-envoy-awslc-fips ${ISTIO_TAG} (AWS-LC FIPS 3.1.0, CMVP #5314)" \
+            --notes "Envoy for Istio ${ISTIO_TAG} (istio/proxy ${proxy_sha:0:8}) linked against AWS-LC FIPS 3.1.0 (CMVP #5314), module built per Security Policy section 11.1; Envoy patched so the FIPS_202205 compliance policy is applied on AWS-LC (TLS1.3 AES-GCM only, P-256/P-384). Built by ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID} from ${GITHUB_SHA}. sha256 of the .gz: ${SHA}. Binary sha256: ${BIN_SHA}."
