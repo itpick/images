@@ -13,15 +13,22 @@
 # caveat: #5314 was tested on Amazon Linux 2023 only, so running elsewhere
 # (e.g. GKE COS) is a user affirmation, not a CMVP-listed configuration.
 #
-# Both halves come from the same release: pilot-agent from istio/istio 1.30.4
-# source, envoy from PROXY_REPO_SHA as pinned in that tag's istio.deps — not a
-# mix of versions.
+# Both halves come from the same release: pilot-agent from istio/istio source at
+# pkgs.istio-fips.version, envoy from PROXY_REPO_SHA as pinned in that tag's
+# istio.deps — not a mix of versions.
+#
+# TRIMMED RUNTIME CLOSURE. iptables and iproute2 are kept (istio-iptables and
+# TPROXY interception need them) but come from pkgs.istio-fips.iptablesMin /
+# iproute2Min, which cut the RDMA (-> perl) and debuginfod (-> curl, openssl,
+# libssh2, krb5) chains that put unpatched Critical CVEs into the 1.30.4 image.
 
 { mkImage, pkgs, lib, ... }:
 
 let
   istio = pkgs.istio-fips;
   version = istio.version;
+  # See TRIMMED RUNTIME CLOSURE above (defined in pkgs/istio-fips).
+  inherit (istio) iptablesMin iproute2Min;
 in
 mkImage {
   drv = istio.proxyv2-bin;
@@ -37,14 +44,14 @@ mkImage {
     # it as ca-bundle.crt, which matches none of istio's candidates, so every
     # proxy logged "OS CA Cert could not be found for agent".
     istio-fips.osCaCompat
-    iptables
-    iproute2
+    iptablesMin
+    iproute2Min
   ];
 
   noBusybox = true; # iproute2 conflicts with busybox
 
   env = {
-    PATH = "/bin:${pkgs.iptables}/bin:${pkgs.iproute2}/bin";
+    PATH = "/bin:${iptablesMin}/bin:${iproute2Min}/bin";
   };
 
   labels = {

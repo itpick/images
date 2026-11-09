@@ -1,0 +1,23 @@
+From: Lucas Pick <lpick@tiberius.com>
+Subject: [PATCH] tls: declare the CNSA compliance policies on AWS-LC
+
+Envoy 1.39 added TlsParameters CNSA2_202603/CNSA1_202603, mapped to
+ssl_compliance_policy_cnsa{2,1}_202603, which only BoringSSL defines, so
+context_impl.cc does not compile on AWS-LC. Declare the enumerators; the
+SSL_CTX_set_compliance_policy shim (0014) rejects anything but FIPS_202205,
+so a CNSA config fails cleanly instead of being silently ignored.
+Applies after 0014.
+---
+--- a/source/common/tls/aws_lc_compat.h
++++ b/source/common/tls/aws_lc_compat.h
+@@ -30,6 +30,10 @@
+ // earlier cipher/curve configuration, matching BoringSSL's behaviour.
+ enum ssl_compliance_policy_t {
+   ssl_compliance_policy_fips_202205 = 1,
++  // Declared only so Envoy 1.39's CNSA cases compile; the shim above
++  // rejects them (returns 0), so such a config fails context creation.
++  ssl_compliance_policy_cnsa2_202603 = 2,
++  ssl_compliance_policy_cnsa1_202603 = 3,
+ };
+ 
+ inline int SSL_CTX_set_compliance_policy(SSL_CTX* ctx, enum ssl_compliance_policy_t policy) {

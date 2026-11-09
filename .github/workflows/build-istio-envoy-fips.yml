@@ -23,8 +23,8 @@ on:
         type: boolean
         default: false
       jobs:
-        description: "Bazel --jobs"
-        default: "16"
+        description: "Bazel --jobs (also the build container's CPU cap); keep low, see runner-nixcontainers-heavy-hr.yaml"
+        default: "6"
 
 permissions:
   contents: read
@@ -36,7 +36,7 @@ concurrency:
 jobs:
   build:
     runs-on: nixcontainers-heavy
-    timeout-minutes: 360
+    timeout-minutes: 600 # JOBS=6 is ~3x slower than the 20-core estimate
     permissions:
       contents: write # gh release create (publish=true only)
     env:

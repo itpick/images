@@ -1,0 +1,18 @@
+From: Lucas Pick <lpick@tiberius.com>
+Subject: [PATCH] gcp_authn: include openssl/sha.h instead of openssl/sha2.h
+
+openssl/sha2.h is a recent BoringSSL/AWS-LC header. The CMVP #5314 AWS-LC
+FIPS 3.1.0 module ships only openssl/sha.h, which declares the SHA256() and
+SHA256_DIGEST_LENGTH this file uses (BoringSSL also still provides sha.h).
+---
+--- a/source/extensions/filters/http/gcp_authn/crypto_utils.cc
++++ b/source/extensions/filters/http/gcp_authn/crypto_utils.cc
+@@ -3,7 +3,7 @@
+ #include <openssl/bio.h>
+ #include <openssl/mem.h>
+ #include <openssl/pem.h>
+-#include <openssl/sha2.h>
++#include <openssl/sha.h>
+ #include <openssl/x509.h>
+ 
+ #include <memory>

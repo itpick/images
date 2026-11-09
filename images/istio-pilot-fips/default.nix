@@ -35,7 +35,8 @@ mkImage {
   extraPkgs = with pkgs; [
     busybox
     cacert
-    iptables
+    # Same trimmed iptables as istio-proxyv2-fips: no libpcap RDMA -> perl.
+    istio-fips.iptablesMin
   ];
 
   labels = {
