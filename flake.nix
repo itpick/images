@@ -217,16 +217,23 @@
               })
               # Vendored Go modules ahead of upstream releases (lib/goModBump.nix).
               # Through overrideAttrs the modules derivation reads
-              # passthru.overrideModAttrs, so the bump is wired in there.
+              # passthru.overrideModAttrs, so the bump is wired in there,
+              # composed after the package's own (grafana filters a yarn hook
+              # out of its modules derivation there).
               (final: prev:
                 let
-                  goModBump = import ./lib/goModBump.nix { inherit (prev) lib; };
+                  inherit (prev) lib;
+                  goModBump = import ./lib/goModBump.nix { inherit lib; };
                   withGoModBump = pkg: vendorHash: deps:
                     let b = goModBump deps; in
                     pkg.overrideAttrs (o: {
                       inherit vendorHash;
                       preBuild = (o.preBuild or "") + b.preBuild;
-                      passthru = (o.passthru or { }) // { inherit (b) overrideModAttrs; };
+                      passthru = (o.passthru or { }) // {
+                        overrideModAttrs = lib.composeExtensions
+                          (o.passthru.overrideModAttrs or (_: _: { }))
+                          b.overrideModAttrs;
+                      };
                     });
                 in {
                   # klauspost/compress GO-2026-6865 (fixed 1.20.2)
@@ -236,6 +243,11 @@
                   victorialogs = withGoModBump prev.victorialogs
                     "sha256-+fbixr/uZzPUhJPTbdeDvPb4dNYClciDb/J0VgSAN9w="
                     [ "github.com/klauspost/compress@v1.20.2" ];
+                  # apache/thrift CVE-2026-63772, -66055, -82458, -83663,
+                  # -94637 (fixed 0.25.0)
+                  grafana = withGoModBump prev.grafana
+                    "sha256-45v9jTh1O8PNc0Ys5we04eSqNBjCm5HBEcoeteDiubo="
+                    [ "github.com/apache/thrift@v0.25.0" ];
                 })
               # gatekeeper 3.22.2 → 3.23.0: bundled x/net + x/crypto refresh
               # (was 12 high; new bump clears many).
