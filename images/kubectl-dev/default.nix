@@ -8,6 +8,49 @@
 # cluster shell — but stays as light as is reasonable.
 
 let
+  goModBump = import ../../lib/goModBump.nix { inherit lib; };
+  netFix = "golang.org/x/net@v0.62.0";
+
+  # kubectl from the same Kubernetes release as nixpkgs, built as a plain Go
+  # module so its vendored dependencies can be bumped. nixpkgs builds it via
+  # the Kubernetes Makefile against the in-tree vendor/, which pins x/net 0.57
+  # (GO-2026 Criticals fixed in 0.60). The staging replace directives in
+  # go.mod still resolve, since the whole source tree is present.
+  kubectl = pkgs.buildGoModule ({
+    pname = "kubectl";
+    inherit (pkgs.kubectl) version src;
+    vendorHash = "sha256-p8NbO2BDQlN9G4IZUUnDOPUzgmuxDwC7gWrje9iVRsg=";
+    subPackages = [ "cmd/kubectl" ];
+    # go.work at the repo root puts `go mod vendor` in workspace mode.
+    env = { CGO_ENABLED = 0; GOWORK = "off"; };
+    ldflags = [
+      "-s" "-w"
+      "-X k8s.io/client-go/pkg/version.gitVersion=v${pkgs.kubectl.version}"
+      "-X k8s.io/component-base/version.gitVersion=v${pkgs.kubectl.version}"
+    ];
+    doCheck = false;
+    meta.mainProgram = "kubectl";
+  } // goModBump [ netFix ]);
+
+  sops = pkgs.sops.overrideAttrs (o:
+    let b = goModBump [
+      netFix
+      "google.golang.org/grpc@v1.83.2"
+      "github.com/go-jose/go-jose/v4@v4.1.6"
+    ]; in {
+      vendorHash = "sha256-xigysI19GGKL2bIhZ1jgiD6SUahoQimdIS0fEGC7Q/c=";
+      preBuild = (o.preBuild or "") + b.preBuild;
+      passthru = (o.passthru or { }) // { inherit (b) overrideModAttrs; };
+    });
+
+  # HTTP(S)-only curl. The default build links libssh2 (scp/sftp) and krb5
+  # (GSSAPI), which carry High/Critical CVEs with no fixed release yet and
+  # are not needed for cluster debugging. (curlMinimal is not minimal here:
+  # it resolves to the same derivation as curl.)
+  curlHttp = pkgs.curlMinimal.override { scpSupport = false; gssSupport = false; };
+  # Same for dig/nslookup: GSS-TSIG is the only thing pulling krb5 back in.
+  bindNoGss = pkgs.bind.override { enableGSSAPI = false; };
+
   devPackages = with pkgs; [
     # Kubernetes
     kubectl
@@ -25,9 +68,9 @@ let
     less
 
     # Network / debug
-    curl
+    curlHttp
     wget
-    bind            # dig, nslookup
+    bindNoGss.dnsutils  # dig, nslookup
     iputils         # ping
     openssl         # cert inspection
     netcat-gnu
@@ -48,7 +91,7 @@ let
 in
 nix2container.buildImage {
   name = "kubectl-dev";
-  tag  = "v${pkgs.kubectl.version}-dev";
+  tag  = "v${kubectl.version}-dev";
 
   copyToRoot = [
     (buildEnv {
@@ -74,7 +117,7 @@ nix2container.buildImage {
       "org.opencontainers.image.url"         = "https://github.com/nix-containers/images";
       "org.opencontainers.image.source"      = "https://github.com/nix-containers/images";
       "org.opencontainers.image.vendor"      = "nix-containers";
-      "org.opencontainers.image.version"     = "v${pkgs.kubectl.version}-dev";
+      "org.opencontainers.image.version"     = "v${kubectl.version}-dev";
       "io.nix-containers.image.upstream"     = "https://kubernetes.io/";
       "io.nix-containers.image.category"     = "devops-tool";
       "io.nix-containers.image.aliases"      = "kubectl-dev,k8s-toolkit,cluster-shell";

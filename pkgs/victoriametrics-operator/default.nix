@@ -1,62 +1,44 @@
 # VictoriaMetrics Operator - Kubernetes operator for VictoriaMetrics
 # https://github.com/VictoriaMetrics/operator
 #
-# Extracts pre-built binary from the official container image
-# Since Docker Hub requires authentication for blob access, we use runCommand with crane
+# Built from source. This used to extract the binary from upstream's
+# container image, which froze whatever Go toolchain upstream built with
+# (go1.26.4 in 0.71.0, carrying stdlib Criticals) and could not be rebuilt.
 
-{ lib, stdenvNoCC, crane, cacert }:
+{ lib, buildGoModule, fetchFromGitHub }:
 
 let
-  version = "0.71.0";
-  imageRef = "victoriametrics/operator:v${version}";
-
-  # Layer digests containing the binary for each architecture
-  layerDigests = {
-    amd64 = "sha256:1f1a2c7ab2ba0095dc3a921f500af2f608b8efb058af695bc4a66455b638d463";
-    arm64 = "sha256:f6b10b9b4818058bdcd819e21689ad60afe5c2cac2399af56873b62b06695aa0";
-  };
-
-  # Output hashes for the fixed-output derivation
-  outputHashes = {
-    amd64 = "sha256-NmXGN5IEeVxC0EcWawLS4mFGdnrqe7t9oyWIWP+hsCw=";
-    arm64 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
-  };
-
-  arch = if stdenvNoCC.hostPlatform.isAarch64 then "arm64" else "amd64";
+  goModBump = import ../../lib/goModBump.nix { inherit lib; };
 in
-stdenvNoCC.mkDerivation {
+
+buildGoModule (finalAttrs: {
   pname = "victoriametrics-operator";
-  inherit version;
+  version = "0.75.2";
 
-  # No src - we fetch during build
-  dontUnpack = true;
+  src = fetchFromGitHub {
+    owner = "VictoriaMetrics";
+    repo = "operator";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-C63ZwSU30jsmFV/tIU18Uv+ZJvuPuIZwj0INrlE6Rsw=";
+  };
 
-  nativeBuildInputs = [ crane ];
+  vendorHash = "sha256-v9A73zkjIGCenqPe9Pwel9rjO6KniSIjtcgkb8Zve9E=";
 
-  # crane needs SSL certs
-  SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
+  # Upstream's `make build` compiles ./cmd (main.go); config-reloader and
+  # helm-converter are separate binaries we do not ship here.
+  subPackages = [ "cmd" ];
 
-  buildPhase = ''
-    runHook preBuild
-    mkdir -p extract
-    crane blob ${imageRef}@${layerDigests.${arch}} | tar -xz -C extract
-    runHook postBuild
+  env.CGO_ENABLED = 0;
+  doCheck = false;
+
+  ldflags = [
+    "-s" "-w"
+    "-X 'github.com/VictoriaMetrics/VictoriaMetrics/lib/buildinfo.Version=operator-v${finalAttrs.version}'"
+  ];
+
+  postInstall = ''
+    mv $out/bin/cmd $out/bin/vm-operator
   '';
-
-  installPhase = ''
-    runHook preInstall
-    mkdir -p $out/bin
-    install -m755 extract/app $out/bin/vm-operator
-    runHook postInstall
-  '';
-
-  # Mark as not substitutable since we fetch at build time
-  preferLocalBuild = true;
-
-  # Fixed-output derivation to cache the result
-  outputHashMode = "recursive";
-  outputHashAlgo = "sha256";
-  outputHash = outputHashes.${arch};
 
   meta = with lib; {
     description = "Kubernetes operator for VictoriaMetrics";
@@ -65,4 +47,6 @@ stdenvNoCC.mkDerivation {
     mainProgram = "vm-operator";
     platforms = [ "x86_64-linux" "aarch64-linux" ];
   };
-}
+} // goModBump [
+  "github.com/klauspost/compress@v1.20.2"
+])

@@ -14,7 +14,7 @@
 #         | grep 'zitadel-linux-amd64.tar.gz' | awk '{print $1}')"
 
 let
-  version = "4.19.1";
+  version = "4.20.2";
 
   zitadelBin = pkgs.stdenvNoCC.mkDerivation {
     pname = "zitadel";
@@ -22,7 +22,7 @@ let
 
     src = pkgs.fetchurl {
       url = "https://github.com/zitadel/zitadel/releases/download/v${version}/zitadel-linux-amd64.tar.gz";
-      hash = "sha256-Ump6TK8MBzG9QGE24ypMC3OrFIOvN2frAsccgrvSxKE=";
+      hash = "sha256-/LwzF7moP4n1czd8M5CZJB6U4yt4Aes577+cFvsyQiM=";
     };
 
     # Upstream tarball nests everything under zitadel-linux-amd64/.

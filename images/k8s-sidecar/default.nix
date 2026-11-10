@@ -1,12 +1,12 @@
 { mkImage, fetchFromGitHub, fetchPypi, python3, pkgs, lib, ... }:
 
 let
-  version = "2.8.1";
+  version = "2.14.3";
 
   # logfmter isn't in nixpkgs as of nixos-25.11; package it inline from
   # PyPI. Pure-Python, no native deps — buildPythonPackage suffices.
   # Pinned to the version k8s-sidecar 2.7.3's pyproject.toml requires.
-  logfmter = python3.pkgs.buildPythonPackage rec {
+  logfmter = pythonPatched.pkgs.buildPythonPackage rec {
     pname = "logfmter";
     version = "0.0.12";
     pyproject = true;
@@ -14,12 +14,48 @@ let
       inherit pname version;
       hash = "sha256-lY0OG+IVYhRRhF+V+OMmYNjadgpLzY7MVWSgx5Vwxnk=";
     };
-    build-system = [ python3.pkgs.setuptools ];
+    build-system = [ pythonPatched.pkgs.setuptools ];
     doCheck = false;
     meta.license = lib.licenses.mit;
   };
 
-  python = python3.withPackages (ps: with ps; [
+  # CVE: nixpkgs lags on these three (oauthlib GHSA-3jp2-3mrg-2vxc,
+  # pyasn1 GHSA-2qm8-x737-gmw5 et al., urllib3 GHSA-8988-9cw3-xx77).
+  # Drop each override once nixpkgs reaches the version pinned here.
+  pythonPatched = python3.override {
+    self = pythonPatched;
+    packageOverrides = pyFinal: pyPrev: {
+      # Rebuilt only because urllib3 changed; its test suite is flaky in the
+      # build sandbox (signal handling) and it is not in the runtime closure.
+      uvloop = pyPrev.uvloop.overridePythonAttrs { doCheck = false; };
+      oauthlib = pyPrev.oauthlib.overridePythonAttrs (o: rec {
+        version = "4.0.1";
+        src = fetchFromGitHub {
+          owner = "oauthlib"; repo = "oauthlib"; tag = "v${version}";
+          hash = "sha256-0Me+Szy6US7+TV3A22Yb8hhJzMQhv7ZSUEHhDVI0FHw=";
+        };
+        doCheck = false;
+      });
+      pyasn1 = pyPrev.pyasn1.overridePythonAttrs (o: rec {
+        version = "0.6.5";
+        src = fetchPypi {
+          pname = "pyasn1"; inherit version;
+          hash = "sha256-axFhamvPOkDmNfCCuyMvpXteDdf1F7193WnsN5RQikc=";
+        };
+        doCheck = false;
+      });
+      urllib3 = pyPrev.urllib3.overridePythonAttrs (o: rec {
+        version = "2.8.0";
+        src = fetchPypi {
+          pname = "urllib3"; inherit version;
+          hash = "sha256-Y78urUyHlCbr8i7yp4HutKo7SueYoENVBvhof9W7m2M=";
+        };
+        doCheck = false;
+      });
+    };
+  };
+
+  python = pythonPatched.withPackages (ps: with ps; [
     kubernetes
     requests
     # New deps for k8s-sidecar 2.7.x — missed when image was first
@@ -37,7 +73,7 @@ let
       owner = "kiwigrid";
       repo = "k8s-sidecar";
       rev = version;
-      hash = "sha256-FDWzIQaU0SjLGNPfaRoRZBf1Y9Z1FXA+22Z6IT3HzQ8=";
+      hash = "sha256-7fbbl+WCe1/6NVaIzDVIwVHEe37usS/JZVmYkbfHDwc=";
     };
 
     dontBuild = true;

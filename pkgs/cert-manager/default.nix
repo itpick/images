@@ -6,13 +6,15 @@
 # So we build each component separately and combine them
 
 let
-  version = "1.20.4";
+  goModBump = import ../../lib/goModBump.nix { inherit lib; };
+
+  version = "1.21.3";
 
   src = fetchFromGitHub {
     owner = "cert-manager";
     repo = "cert-manager";
     rev = "v${version}";
-    hash = "sha256-Krr/HUO0sA1NerWLAmnYRQhVNmD9wwBV13YVQmr4r3g=";
+    hash = "sha256-qqUbhmh8kwEOQ3AWJ9pmEv52Jh/FwLjn0bCI02rv5fE=";
   };
 
   commonAttrs = {
@@ -25,12 +27,15 @@ let
       homepage = "https://github.com/cert-manager/cert-manager";
       license = licenses.asl20;
     };
-  };
+  } // goModBump [
+    "github.com/go-jose/go-jose/v4@v4.1.6"
+    "golang.org/x/net@v0.62.0"
+  ];
 
   controller = buildGoModule (commonAttrs // {
     pname = "cert-manager-controller";
     modRoot = "cmd/controller";
-    vendorHash = "sha256-l5Pv8fO2qk3nqzu2mwOeYKk7oxTb3a2yo0uhjAcQy0g=";
+    vendorHash = "sha256-Be3P251IogntUKtXquZITW7VrH29XxaZRAn4SAWWjeE=";
     ldflags = [
       "-s" "-w"
       "-X github.com/cert-manager/cert-manager/pkg/util.AppVersion=${version}"
@@ -43,7 +48,7 @@ let
   cainjector = buildGoModule (commonAttrs // {
     pname = "cert-manager-cainjector";
     modRoot = "cmd/cainjector";
-    vendorHash = "sha256-LjZslBC5OiHy/32YGFAGZ2Q6dIr0hAQ9rAuZd7kYkkI=";
+    vendorHash = "sha256-AtHkmr9pVBacA+YWbgj1R/OaRb5GQGxvDO4G/CwTc7I=";
     ldflags = [ "-s" "-w" ];
     postInstall = ''
       mv $out/bin/cainjector-binary $out/bin/cert-manager-cainjector
@@ -53,7 +58,7 @@ let
   webhook = buildGoModule (commonAttrs // {
     pname = "cert-manager-webhook";
     modRoot = "cmd/webhook";
-    vendorHash = "sha256-EGGpZg9sfG74oO12sMIWkks9PALtH5SuvxmKTp9aAeg=";
+    vendorHash = "sha256-FuGpVeXHf+8o3fsWyQBTOcwJlwMHQ1kzygZ0xKzwQ/Q=";
     ldflags = [ "-s" "-w" ];
     postInstall = ''
       mv $out/bin/webhook-binary $out/bin/cert-manager-webhook
@@ -63,7 +68,7 @@ let
   acmesolver = buildGoModule (commonAttrs // {
     pname = "cert-manager-acmesolver";
     modRoot = "cmd/acmesolver";
-    vendorHash = "sha256-Aj6ZLkj3zNJmbJGnC6iHAB5BInVPkxVgG6n0h+4vJU8=";
+    vendorHash = "sha256-X4lpP03ssIJeeXeES5wgi/a64798VWbp5ZuLKrDzYJo=";
     ldflags = [ "-s" "-w" ];
     postInstall = ''
       mv $out/bin/acmesolver-binary $out/bin/cert-manager-acmesolver

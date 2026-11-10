@@ -3,7 +3,10 @@
 # Built from wolfi-dev/os cloudnative-pg.yaml
 # https://github.com/cloudnative-pg/cloudnative-pg
 
-buildGoModule rec {
+let
+  goModBump = import ../../lib/goModBump.nix { inherit lib; };
+in
+buildGoModule (rec {
   pname = "cloudnative-pg";
   version = "1.30.1";
 
@@ -14,7 +17,7 @@ buildGoModule rec {
     hash = "sha256-ZtIUtp4KwSxpqh97Hi9/8MnZfH3sGj3gNa0bwHF0FhM=";
   };
 
-  vendorHash = "sha256-Eh057tW8NTCNVtgyeY4A+Cc8wQbRDpUYDFmj4l+pn8o=";
+  vendorHash = "sha256-ckeJmK1YT0Z7JCa9p1gRgmFsQEvPPihscUQsP3Rup18=";
 
   subPackages = [ "cmd/manager" ];
 
@@ -39,4 +42,6 @@ buildGoModule rec {
     homepage = "https://github.com/cloudnative-pg/cloudnative-pg";
     license = licenses.asl20;
   };
-}
+} // goModBump [
+  "golang.org/x/net@v0.62.0"
+])

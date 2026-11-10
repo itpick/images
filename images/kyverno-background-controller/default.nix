@@ -1,8 +1,10 @@
 { mkImage, fetchFromGitHub, buildGoModule, lib, ... }:
 
 let
-  version = "1.18.1";
-  kyverno-background-controller = buildGoModule {
+  version = "1.19.2";
+  goModBump = import ../../lib/goModBump.nix { inherit lib; };
+
+  kyverno-background-controller = buildGoModule ({
     pname = "kyverno-background-controller";
     inherit version;
 
@@ -10,11 +12,11 @@ let
       owner = "kyverno";
       repo = "kyverno";
       rev = "v${version}";
-      hash = "sha256-zo02ABieJ+CykuqGJlnthXibgBzNGB3t3UdlKMTIkFo=";
+      hash = "sha256-Q94qvOTrGl/82cooREqFAw+G7lY/tnpmaOb1JA2ZYOQ=";
     };
 
     proxyVendor = true;
-    vendorHash = "sha256-oE6/xyznEtAAoypMICvjDB3hOhXCK1VelrV/zJuBeZA=";
+    vendorHash = "sha256-BAsSihfNp4EpJkjnM461WNaPpHparzoZYSMu0+LcCaY=";
 
     env.CGO_ENABLED = 0;
 
@@ -36,7 +38,10 @@ let
       homepage = "https://github.com/kyverno/kyverno";
       license = licenses.asl20;
     };
-  };
+  } // goModBump [
+    "github.com/go-jose/go-jose/v4@v4.1.6"
+    "github.com/klauspost/compress@v1.20.2"
+  ]);
 
 in
 mkImage {

@@ -4,7 +4,10 @@
 # https://github.com/kedacore/keda
 # Builds all 3 KEDA binaries: keda (operator), keda-adapter, keda-admission-webhooks
 
-buildGoModule rec {
+let
+  goModBump = import ../../lib/goModBump.nix { inherit lib; };
+in
+buildGoModule (rec {
   pname = "keda";
   version = "2.21.0";
 
@@ -15,8 +18,11 @@ buildGoModule rec {
     hash = "sha256-P/039bvT7xK8lv3YTDdOWmn8T1Olk08zizpstODAkqg=";
   };
 
-  # KEDA includes vendor directory
-  vendorHash = null;
+  # KEDA commits a vendor/ tree whose modules.txt fails Go >= 1.27's
+  # explicit-requirement check. Drop it and fetch modules via the proxy.
+  postPatch = "rm -rf vendor";
+  proxyVendor = true;
+  vendorHash = "sha256-3PVj9a6rcneUW2SBaUIrCunrM/kx6tdS1GKlfAth2hc=";
 
   # Build all 3 components
   subPackages = [
@@ -47,4 +53,9 @@ buildGoModule rec {
     homepage = "https://github.com/kedacore/keda";
     license = licenses.asl20;
   };
-}
+} // goModBump [
+  "github.com/andybalholm/brotli@v1.2.7"
+  "github.com/go-jose/go-jose/v4@v4.1.6"
+  "github.com/klauspost/compress@v1.20.2"
+  "golang.org/x/net@v0.62.0"
+])

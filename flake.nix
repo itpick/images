@@ -215,18 +215,28 @@
                   '';
                 });
               })
-              # prometheus-alertmanager 0.31.1 → 0.33.1: newer x/net + x/crypto,
-              # jose-jwt refresh — meaningful CVE reduction on a BigBang image.
-              (final: prev: {
-                prometheus-alertmanager = prev.prometheus-alertmanager.overrideAttrs (o: rec {
-                  version = "0.33.1";
-                  src = prev.fetchFromGitHub {
-                    owner = "prometheus"; repo = "alertmanager"; rev = "v${version}";
-                    hash = "sha256-LGjBuZ7kbtABunEk2YyCKILsPS/0FlS/6Mf/2qVpseI=";
-                  };
-                  vendorHash = "sha256-t5jQtccln3dfcHlnEOnLQHfjzfU9kY9Y7q+r4AigvBE=";
-                });
-              })
+              # Vendored Go modules ahead of upstream releases (lib/goModBump.nix).
+              # Through overrideAttrs the modules derivation reads
+              # passthru.overrideModAttrs, so the bump is wired in there.
+              (final: prev:
+                let
+                  goModBump = import ./lib/goModBump.nix { inherit (prev) lib; };
+                  withGoModBump = pkg: vendorHash: deps:
+                    let b = goModBump deps; in
+                    pkg.overrideAttrs (o: {
+                      inherit vendorHash;
+                      preBuild = (o.preBuild or "") + b.preBuild;
+                      passthru = (o.passthru or { }) // { inherit (b) overrideModAttrs; };
+                    });
+                in {
+                  # klauspost/compress GO-2026-6865 (fixed 1.20.2)
+                  prometheus-alertmanager = withGoModBump prev.prometheus-alertmanager
+                    "sha256-TayCpFUGlPsWiLrg2tscfaUGFjvL2K970Qtl8b2tQ5o="
+                    [ "github.com/klauspost/compress@v1.20.2" ];
+                  victorialogs = withGoModBump prev.victorialogs
+                    "sha256-+fbixr/uZzPUhJPTbdeDvPb4dNYClciDb/J0VgSAN9w="
+                    [ "github.com/klauspost/compress@v1.20.2" ];
+                })
               # gatekeeper 3.22.2 → 3.23.0: bundled x/net + x/crypto refresh
               # (was 12 high; new bump clears many).
               (final: prev: {
@@ -331,18 +341,27 @@
                   vendorHash = null;
                 });
               })
-              # victoriametrics 1.142.0 vendors old x/net + x/crypto.
-              # 1.146.0 pulls x/net v0.56, x/crypto v0.53. 4 images cascade.
+              # victoriametrics: track the latest upstream release ahead of nixpkgs
+              # for vendored x/net, x/text, grpc, go-jose fixes. 4 images cascade.
               (final: prev: {
                 victoriametrics = prev.victoriametrics.overrideAttrs (o: rec {
-                  version = "1.146.0";
+                  version = "1.156.0";
                   src = prev.fetchFromGitHub {
                     owner = "VictoriaMetrics";
                     repo = "VictoriaMetrics";
                     rev = "v${version}";
-                    hash = "sha256-EWRVbUeugyLsExP3NyPVLd7v2kwbRg5OjFg2WAY1FuM=";
+                    hash = "sha256-J+3D/Ly+bD+ZrAQ/3lNkTikFDfhkaaCAR2YKi7wEf4k=";
                   };
                   vendorHash = null;
+                  # The base postPatch also stretches test timeouts in
+                  # lib/storage/storage_test.go, which no longer matches 1.156.
+                  # Tests are off here, so keep only the build-relevant edits.
+                  doCheck = false;
+                  postPatch = ''
+                    rm -f app/vmui/packages/vmui/web/{go.mod,main.go}
+                    sed -i -E 's/^(go[[:space:]]+[[:digit:]]+\.[[:digit:]]+)\.[[:digit:]]+$/\1/' go.mod
+                    sed -i -E 's/^(## explicit; go[[:space:]]+[[:digit:]]+\.[[:digit:]]+)\.[[:digit:]]+$/\1/' vendor/modules.txt
+                  '';
                 });
               })
               # vitess 23.0.3 (nixpkgs) vendors x/net v0.47, x/crypto v0.45,

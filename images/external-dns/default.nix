@@ -6,7 +6,7 @@
 #   external-dns-0.20 (0.20.0-r2)
 
 let
-  version = "0.21.0";
+  version = "0.24.0";
   externalDns = buildGoModule {
     pname = "external-dns";
     inherit version;
@@ -15,12 +15,17 @@ let
       owner = "kubernetes-sigs";
       repo = "external-dns";
       rev = "v${version}";
-      hash = "sha256-oqEMIfq7wh3tPjO6ZZ9gwgEE6TwSWaP3GiUwhybo2B4=";
+      hash = "sha256-3NCwSCJD/estqITJxpuM2FD7hnQ4o1p0HhilQwW4Oo0=";
     };
 
-    vendorHash = "sha256-3q/8CODlIDVNdl1EhyFM6c3+IQyO9vtDl8uhXZXPNEI=";
+    vendorHash = "sha256-QnCfamOyk9IpNK5DLc62ma5qHFhuhHdoEs4IdMXmZPs=";
 
     env.CGO_ENABLED = 0;
+
+    ldflags = [
+      "-s" "-w"
+      "-X sigs.k8s.io/external-dns/pkg/version.Version=v${version}"
+    ];
 
     postInstall = ''
       mkdir -p $out/usr/bin

@@ -13,13 +13,13 @@ buildGoModule rec {
     hash = "sha256-MKKJol0nK/isXqYwemvASI/DPIhGKvCUHrFfT3Y+LQM=";
   };
 
-  vendorHash = "sha256-o4JWhqLbfHmlIY1XhaupIhYLfXJNguFueH+SpAe9xaw=";
+  vendorHash = "sha256-KAMFvTbJ3v5Vast4BoKtCpMHHZisva5RjrTY4wzlgiQ=";
 
   env.CGO_ENABLED = 0;
 
   ldflags = [
     "-s" "-w"
-    "-X main.VERSION=${version}"
+    "-X github.com/oauth2-proxy/oauth2-proxy/v7/pkg/version.VERSION=v${version}"
   ];
 
   doCheck = false;

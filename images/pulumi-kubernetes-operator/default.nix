@@ -23,9 +23,11 @@
 # fails silently. Match upstream's ENTRYPOINT ["/tini","--"] + CMD ["/manager"].
 
 let
-  version = "2.9.0";
+  version = "2.10.0";
 
-  pkoBin = pkgs.buildGoModule rec {
+  goModBump = import ../../lib/goModBump.nix { inherit lib; };
+
+  pkoBin = pkgs.buildGoModule (rec {
     pname = "pulumi-kubernetes-operator";
     inherit version;
 
@@ -33,12 +35,12 @@ let
       owner = "pulumi";
       repo = "pulumi-kubernetes-operator";
       rev = "v${version}";
-      hash = "sha256-Aw2cGvn3LpSm0NZMtlxi2dRbM9eZMZmZgNvQ6zbgY+o=";
+      hash = "sha256-esLPmI0ZIo1epRxFGVs0E02vj6ih8BLCGQbWiIVj5Ko=";
     };
 
     # To bump: set vendorHash to lib.fakeHash, run `nix build`, copy the
     # "got:" value from the resulting hash-mismatch error.
-    vendorHash = "sha256-8Kwd1Mq/gi8fsBfktKViXjV7glooiWxjJGv1ZNEUjY4=";
+    vendorHash = "sha256-Oug4HKa8CNLboqQMxJuzJNI+aY8MWd9HOLMK1Kd2jUw=";
 
     # Single Go module (github.com/pulumi/pulumi-kubernetes-operator/v2);
     # `agent` is a subpackage, not a separate module.
@@ -66,7 +68,10 @@ let
       license = licenses.asl20;
       platforms = [ "x86_64-linux" "aarch64-linux" ];
     };
-  };
+  } // goModBump [
+    "github.com/go-jose/go-jose/v4@v4.1.6"
+    "github.com/klauspost/compress@v1.20.2"
+  ]);
 
   # Top-level symlinks. /manager is what the chart's args invoke; /agent and
   # /tini are what the bootstrap init container copies out with
